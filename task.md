@@ -18,9 +18,9 @@ Update the checkboxes and the "Where we left off" section at the end of every se
 
 ## Where we left off
 
-- **Done:** F0–F8. Digital mock: setup with availability fixes, booklet, bubble sheet (drawer on phone), timer with milestones, auto-save, restore after reload, submit dialog, results with rating, pacing, and checking the paper. Tested in the browser with a 25-item exam.
-- **Not done:** Vercel deploy (needs your sign-in and domain). Phone airplane-mode test. Printed mock (print and tap entry) is a placeholder.
-- **Next action:** F9, printed mock exam.
+- **Done:** F0–F9, all frontend steps. Printed mock: print layout (booklet, answer sheet with corner markers, optional key) for A4, Letter, Folio, and tap entry with Blank, Back, Skip, keyboard keys, and a missing-items check before grading. Tested in the browser.
+- **Not done:** Vercel deploy (needs your sign-in and domain). Real print test on paper (plan DX R9). Phone airplane-mode test.
+- **Next action:** final verify pass, then Vercel deploy when you are ready.
 
 Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-hooks 4.4, Vite 8.3, TypeScript 7.0, Vitest 5.1, vite-plugin-pwa 2.0, `@fontsource-variable/geist` and `@fontsource-variable/geist-mono` 5.3. Node 26, npm 11.
 
@@ -108,10 +108,10 @@ Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-ho
 - [x] Results: score, rule check, checking the paper with filters, pacing checkpoints
 
 ### F9. Mock exam, printed
-- [ ] Print styles for A4, Letter, Folio; 1 or 2 columns; large print
-- [ ] Answer sheet with corner markers and the exam label in large text (no QR code in v1)
-- [ ] Optional answer key page
-- [ ] Tap-entry grading with Blank, Back, and a count before grading
+- [x] Print styles for A4, Letter, Folio; 1 or 2 columns; large print
+- [x] Answer sheet with corner markers and the exam label in large text (no QR code in v1)
+- [x] Optional answer key page
+- [x] Tap-entry grading with Blank, Back, and a count before grading
 
 ### Verify
 - [ ] `npx tsc --noEmit` passes

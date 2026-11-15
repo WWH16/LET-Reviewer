@@ -13,6 +13,8 @@ import { Progress } from '../features/progress/Progress';
 import { MockSetup } from '../features/mock/MockSetup';
 import { MockExam } from '../features/mock/MockExam';
 import { MockResults } from '../features/mock/MockResults';
+import { MockPrint } from '../features/mock/MockPrint';
+import { MockEntry } from '../features/mock/MockEntry';
 import { useSettings } from '../db/hooks';
 import { useEffect } from 'react';
 
@@ -62,8 +64,8 @@ export function App() {
         <Route path="/review" element={<Navigate to="/session?mode=review" replace />} />
         <Route path="/mock" element={<MockSetup />} />
         <Route path="/mock/:id" element={<MockExam />} />
-        <Route path="/mock/:id/print" element={<Todo title="Print exam" />} />
-        <Route path="/mock/:id/entry" element={<Todo title="Enter answers" />} />
+        <Route path="/mock/:id/print" element={<MockPrint />} />
+        <Route path="/mock/:id/entry" element={<MockEntry />} />
         <Route path="/mock/:id/results" element={<MockResults />} />
         <Route path="/progress" element={<Progress />} />
         <Route path="/bank" element={<Bank />} />

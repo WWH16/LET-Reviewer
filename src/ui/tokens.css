@@ -740,7 +740,7 @@ dialog::backdrop {
 }
 .paper .page {
   border: 1px solid var(--line);
-  padding: var(--s6);
+  padding: 11mm; /* clears the 5 mm corner markers set 3 mm in */
   margin-bottom: var(--s6);
   position: relative;
 }
@@ -772,34 +772,62 @@ dialog::backdrop {
   min-width: 12em;
   border-bottom: 1px solid #000;
 }
-.paper .p-bubbles {
-  columns: 3;
-  column-gap: 1.5em;
+/* Blocks of 25 rows; six blocks fit across one portrait page at 11 pt. */
+.paper .p-sheet {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8.6em, 1fr));
+  gap: 0 0.4em;
   margin-top: 1em;
+  font-family: var(--mono);
+  font-size: 0.85em;
 }
 .paper .p-row {
   display: flex;
   align-items: center;
-  gap: 0.35em;
-  break-inside: avoid;
-  height: 1.75em;
-  font-family: var(--mono);
-  font-size: 0.85em;
+  gap: 0.25em;
+  height: 1.6em;
 }
 .paper .p-row > span:first-child {
-  width: 2.2em;
+  width: 2em;
   text-align: right;
-  margin-right: 0.3em;
+  margin-right: 0.2em;
 }
 .paper .p-bubble {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.5em;
-  height: 1.5em;
+  width: 1.3em;
+  height: 1.3em;
   border: 1px solid #000;
   border-radius: 50%;
-  font-size: 0.8em;
+  font-size: 0.75em;
+}
+.paper .p-key {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(4em, 1fr));
+  gap: 0.2em 0.6em;
+  font-family: var(--mono);
+}
+.paper .p-expl {
+  columns: 2;
+  column-gap: 2em;
+  font-size: 0.85em;
+}
+.paper .p-expl p {
+  break-inside: avoid;
+  margin: 0 0 0.5em;
+}
+.entry-pad {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--s2);
+}
+.entry-pad .bubble {
+  width: 100%;
+  height: 3.5rem;
+  margin: 0;
+  border-radius: 2px;
+  font-size: 1rem;
 }
 .paper .marker {
   position: absolute;
@@ -852,7 +880,7 @@ dialog::backdrop {
   .paper .page {
     border: 0;
     margin: 0;
-    padding: 8mm;
+    padding: 11mm;
     break-after: page;
   }
   .paper .page:last-child {
