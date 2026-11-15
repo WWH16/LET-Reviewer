@@ -52,7 +52,7 @@ export function EditQuestion() {
   return (
     <Page title="Edit question">
       <p className="muted">
-        {q.source === 'ai' ? 'AI-generated' : 'Review center'} · {q.sourceRef}
+        {q.source === 'ai' ? 'AI-generated' : 'Review center'}: {q.sourceRef}
       </p>
 
       <form

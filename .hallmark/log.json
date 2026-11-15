@@ -1,0 +1,29 @@
+[
+ {
+  "mode": "redesign",
+  "depth": "full",
+  "scope": "app",
+  "shape": "app screen",
+  "theme": "dose",
+  "axes": "light/grotesk-sans/chromatic-green",
+  "nav": "top bar with inline tabs, bottom tab bar under 60rem",
+  "footer": "none",
+  "hero": "none",
+  "imagery": "none",
+  "photos": [],
+  "entry": "tray",
+  "signature": "answer choices as moulded plastic keys with a green stamp",
+  "sections": [
+   "home tray",
+   "question keys",
+   "bank list",
+   "progress tables",
+   "mock booklet"
+  ],
+  "waived": [
+   "7b"
+  ],
+  "prompt": "study app for teacher licensure exam practice: drills, spaced review, mock exams, progress; smooth, soft, light first",
+  "date": "2026-11-15"
+ }
+]

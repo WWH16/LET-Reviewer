@@ -105,7 +105,7 @@ export const DEFAULT_SETTINGS: Settings = {
   major: '',
   examDate: null,
   timer: 'real',
-  theme: 'system',
+  theme: 'light',
   textSize: 100,
   shortcuts: true,
   strictSheet: false,

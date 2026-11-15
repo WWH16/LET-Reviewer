@@ -1,4 +1,4 @@
-// Writes the app icons: a black square with a white outlined square. No image library needed.
+// Writes the app icons: a Dose-green square with a warm-paper outlined square. No image library needed.
 // Run: node scripts/make-icons.mjs
 import { deflateSync } from 'node:zlib';
 import { writeFileSync } from 'node:fs';
@@ -25,19 +25,23 @@ const chunk = (type, data) => {
 function png(size) {
   const inset = Math.round(size * 0.28);
   const stroke = Math.max(2, Math.round(size * 0.045));
-  const raw = Buffer.alloc((size + 1) * size); // one filter byte per row, then grayscale pixels
+  const raw = Buffer.alloc((size * 3 + 1) * size); // one filter byte per row, then RGB pixels
+  const green = [11, 118, 80];
+  const paper = [250, 247, 239];
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
       const inside = x >= inset && x < size - inset && y >= inset && y < size - inset;
       const hollow =
         x >= inset + stroke && x < size - inset - stroke && y >= inset + stroke && y < size - inset - stroke;
-      raw[y * (size + 1) + 1 + x] = inside && !hollow ? 0xfa : 0x0a;
+      const c = inside && !hollow ? paper : green;
+      raw.set(c, y * (size * 3 + 1) + 1 + x * 3);
     }
   }
   const header = Buffer.alloc(13);
   header.writeUInt32BE(size, 0);
   header.writeUInt32BE(size, 4);
-  header[8] = 8; // bit depth 8, color type 0 (grayscale)
+  header[8] = 8; // bit depth 8
+  header[9] = 2; // color type 2 (RGB)
   return Buffer.concat([
     Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
     chunk('IHDR', header),

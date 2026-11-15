@@ -77,7 +77,7 @@ function Clock({
 
   return (
     <>
-      <span role="timer" aria-live="off" aria-label={limit === null ? 'Time used' : 'Time remaining'} className="num">
+      <span role="timer" aria-live="off" aria-label={limit === null ? 'Time used' : 'Time remaining'} className="timer">
         <Icon name="clock" size={14} /> {formatClock(limit === null ? ms : limit - ms)}
       </span>
       <span className="sr-only" role="status" aria-live="polite">
@@ -238,7 +238,7 @@ export function MockExam() {
   );
 
   return (
-    <Page title={`${exam.label} · ${PARTS[exam.part].name}`} wide>
+    <Page title={`${exam.label}, ${PARTS[exam.part].name}`} wide>
       <div className="exam-bar spread no-print">
         <div className="row">
           <Clock exam={exam} elapsed={elapsed as MutableRefObject<number>} onTimeUp={onTimeUp} />

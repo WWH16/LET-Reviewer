@@ -18,6 +18,7 @@ Update the checkboxes and the "Where we left off" section at the end of every se
 
 ## Where we left off
 
+- **Redesign (2026-11-15):** whole UI moved from the sharp monochrome look to Hallmark Dose, light first, dark kept as a setting. sloplint: 12 FAIL before, 0 after; every link, field, handler, and heading kept.
 - **Done:** F0–F9 and the verify pass. Type-check, 35 tests, and production build pass. Every screen checked at phone width with no errors.
 - **Not done (needs you):** Vercel deploy (sign-in and domain choice). Real print test on paper at Folio size (DX R9). Airplane-mode test on the user's phone. LET sub-area weights are still placeholders (plan §12).
 - **Next action:** deploy to Vercel, or start Phase 2b (Supabase sync) under Later.
@@ -30,6 +31,7 @@ Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-ho
 - Dexie (IndexedDB) is the source of truth. Screens read and write it only.
 - Hash router (`react-router-dom`), so no Vercel rewrite is needed
 - Plain CSS with tokens. No CSS framework, no state library.
+- Look: Hallmark redesign in the Dose theme (light first, warm paper, one green, moulded controls, plastic answer keys). Stylesheets: `src/ui/tokens.css` and `src/ui/base.css` (scaffold), `src/ui/app.css` (the app, stamp at the top). Fonts: Schibsted Grotesk, Instrument Sans, DM Mono, bundled.
 - Vercel static hosting. Supabase (Auth with email code + one `docs` table) is added later as an optional copy.
 - No server code in v1
 
@@ -39,7 +41,7 @@ Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-ho
 2. **Derived, never stored:** whether an attempt was correct, and review cards (Leitner). Both are worked out from attempts and the question's current answer.
 3. **IDs:** the app assigns question IDs at import (`rc-` + slug of `sourceRef`, `ai-` + hash of the stem). Attempts and mock exams use `crypto.randomUUID()`. A mock exam's `GE-1115-A` is a display `label`, not its ID.
 4. **Synced records** (questions, mock exams, settings) carry `updatedAt` and a `deleted` flag. Attempts are append-only.
-5. **Monochrome.** No hue anywhere. State is shown by fill, border, icon, and words (plan §13).
+5. **Dose look.** One green does every signal. Wrong or missed is grey, never red. State is shown by fill, border, icon, and words. No uppercase tracked labels, no middle-dot strings, no dashes in copy. Run Hallmark sloplint after UI changes (see .hallmark/).
 6. **No review-center content in the repo.** Development uses `src/domain/sample-questions.json`, which holds original items only.
 7. **LET sub-area weights in `let-config.ts` are placeholders** until the user confirms their level, major, and the official TOS (plan §12, questions 1–3). Mark them clearly in the file.
 8. **Commit after each completed task.** One commit per finished step (F0, F1, ...), made after the step is verified. No `Co-Authored-By` or "Generated with" lines in the commit message. Tick the step's boxes in this file in the same commit. This folder is its own git repository on branch `main`.

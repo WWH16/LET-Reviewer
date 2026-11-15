@@ -1,42 +1,68 @@
-// Checks every color token pair in tokens.css against WCAG contrast minimums, in both themes.
+// Checks the colour token pairs in tokens.css against WCAG contrast minimums, light and dark.
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 const css = readFileSync(fileURLToPath(new URL('./tokens.css', import.meta.url)), 'utf8');
 
-function tokens(selector: string): Record<string, string> {
+/** Reads `--name: oklch(L% C H)` pairs from the first block that follows `selector`. */
+function block(selector: string): Record<string, [number, number, number]> {
   const start = css.indexOf(selector);
-  const block = css.slice(start, css.indexOf('}', start));
-  return Object.fromEntries([...block.matchAll(/--(\w+):\s*(#[0-9a-fA-F]{6})/g)].map((m) => [m[1], m[2]]));
+  const body = css.slice(start, css.indexOf('}', start));
+  const out: Record<string, [number, number, number]> = {};
+  for (const m of body.matchAll(/--([\w-]+):\s*oklch\(([\d.]+)%\s+([\d.]+)\s+([\d.]+)\)/g)) out[m[1]] = [Number(m[2]) / 100, Number(m[3]), Number(m[4])];
+  return out;
 }
 
-function luminance(hex: string) {
-  const [r, g, b] = [1, 3, 5].map((i) => {
-    const c = parseInt(hex.slice(i, i + 2), 16) / 255;
-    return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-  });
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+/** OKLCH to relative luminance, through OKLab and linear sRGB (clamped to the gamut). */
+function luminance([L, C, h]: [number, number, number]) {
+  const a = C * Math.cos((h * Math.PI) / 180);
+  const b = C * Math.sin((h * Math.PI) / 180);
+  const l = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3;
+  const m = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3;
+  const s = (L - 0.0894841775 * a - 1.291485548 * b) ** 3;
+  const clamp = (x: number) => Math.min(1, Math.max(0, x));
+  const r = clamp(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s);
+  const g = clamp(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s);
+  const bl = clamp(-0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * bl;
 }
 
-function ratio(a: string, b: string) {
-  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+const ratio = (x: [number, number, number], y: [number, number, number]) => {
+  const [hi, lo] = [luminance(x), luminance(y)].sort((p, q) => q - p);
   return (hi + 0.05) / (lo + 0.05);
-}
+};
 
-const themes = { light: tokens(':root {'), dark: tokens(":root[data-theme='dark']") };
+const light = block(':root {');
+const dark = { ...light, ...block(":root[data-theme='dark']") };
 
-describe.each(Object.entries(themes))('%s theme', (_name, t) => {
-  it('has all five tokens', () => {
-    expect(Object.keys(t).sort()).toEqual(['bg', 'control', 'fg', 'line', 'muted']);
+describe.each([
+  ['light', light],
+  ['dark', dark],
+])('%s mode', (_name, t) => {
+  const pairs: [string, string, number][] = [
+    ['color-ink', 'color-paper', 4.5],
+    ['color-ink', 'color-card', 4.5],
+    ['color-ink-2', 'color-paper-2', 4.5],
+    ['color-muted', 'color-paper', 4.5],
+    ['color-muted', 'color-paper-2', 4.5],
+    ['color-accent-ink', 'color-accent', 4.5],
+    ['color-accent-ink', 'color-accent-deep', 4.5],
+    ['color-on-soft', 'color-accent-soft', 4.5],
+    ['color-ink', 'color-paper-3', 4.5],
+    ['color-paper', 'color-ink', 4.5],
+    ['color-accent-deep', 'color-paper', 4.5],
+    ['color-focus', 'color-paper', 3],
+    ['color-muted', 'color-card', 3],
+  ];
+  it.each(pairs)('%s on %s', (fg, bg, min) => {
+    expect(t[fg], fg).toBeDefined();
+    expect(t[bg], bg).toBeDefined();
+    expect(ratio(t[fg], t[bg])).toBeGreaterThanOrEqual(min);
   });
-  it('body text and inverted blocks pass 4.5:1', () => expect(ratio(t.fg, t.bg)).toBeGreaterThanOrEqual(4.5));
-  it('muted text passes 4.5:1', () => expect(ratio(t.muted, t.bg)).toBeGreaterThanOrEqual(4.5));
-  it('control borders pass 3:1', () => expect(ratio(t.control, t.bg)).toBeGreaterThanOrEqual(3));
 });
 
-it('the dark theme is written the same way in both places', () => {
-  const start = css.indexOf('@media (prefers-color-scheme: dark)');
-  const media = css.slice(start, css.indexOf(":root[data-theme='dark']"));
-  for (const [k, v] of Object.entries(themes.dark)) expect(media).toContain(`--${k}: ${v}`);
+it('the system dark block matches the explicit dark block', () => {
+  const sys = block(':root:not([data-theme])');
+  expect(sys).toEqual(block(":root[data-theme='dark']"));
 });

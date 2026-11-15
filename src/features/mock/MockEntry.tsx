@@ -68,7 +68,7 @@ export function MockEntry() {
   };
 
   return (
-    <Page title={`Enter answers · ${exam.label}`}>
+    <Page title={`Enter answers for ${exam.label}`}>
       <p className="muted">Tap what is shaded on the sheet. It moves to the next item by itself.</p>
 
       <section className="stack" aria-labelledby="entry-now">
@@ -77,7 +77,7 @@ export function MockEntry() {
             Item <span className="num">{current}</span> of <span className="num">{total}</span>
           </h2>
           <p ref={counter} className="label" role="status">
-            {entered} entered · {blank} blank
+            {entered} entered, {blank} blank
           </p>
         </div>
         <div className="entry-pad" role="group" aria-label={`Answer for item ${current}`}>
@@ -100,7 +100,9 @@ export function MockEntry() {
           <button type="button" className="btn" disabled={current >= total} onClick={() => setCurrent(current + 1)}>
             Skip
           </button>
-          {settings.shortcuts && <span className="muted">Keys: A–D shade · Space blank · Backspace back</span>}
+          {settings.shortcuts && <span className="muted label">
+              <kbd>A</kbd> to <kbd>D</kbd> shade. <kbd>Space</kbd> marks blank. <kbd>Backspace</kbd> goes back.
+            </span>}
         </div>
       </section>
 

@@ -28,11 +28,11 @@ export function MockPrint() {
 
   return (
     <Page title={`Print ${exam.label}`} wide>
-      <style>{`@page { size: ${size.css}; margin: 10mm; @bottom-center { content: "${exam.label} · page " counter(page) " of " counter(pages); font: 9pt sans-serif; } }`}</style>
+      <style>{`@page { size: ${size.css}; margin: 10mm; @bottom-center { content: "${exam.label}, page " counter(page) " of " counter(pages); font: 9pt sans-serif; } }`}</style>
 
       <div className="stack no-print">
         <p>
-          {PARTS[exam.part].name} · {items.length} items · {minutes} minutes · {size.name}, {paper.columns} column
+          {PARTS[exam.part].name}, {items.length} items, {minutes} minutes. Printed on {size.name}, {paper.columns} column
           {paper.columns > 1 ? 's' : ''}
           {paper.large ? ', large print' : ''}
         </p>
@@ -54,7 +54,7 @@ export function MockPrint() {
             <div className="spread">
               <span className="exam-id">{exam.label}</span>
               <span>
-                {PARTS[exam.part].name} · {items.length} items · {minutes} minutes
+                {PARTS[exam.part].name}, {items.length} items, {minutes} minutes
               </span>
             </div>
             <p style={{ marginTop: '0.5em' }}>
@@ -104,7 +104,7 @@ export function MockPrint() {
             <div style={{ textAlign: 'right' }}>
               <div className="exam-id">{exam.label}</div>
               <div>
-                {PARTS[exam.part].name} · {items.length} items
+                {PARTS[exam.part].name}, {items.length} items
               </div>
             </div>
           </div>
@@ -130,12 +130,12 @@ export function MockPrint() {
         {paper.answerKey && (
           <section className="page" aria-label="Answer key">
             <h2>
-              Answer key · {exam.label} <span style={{ fontWeight: 400 }}>(fold away until you finish)</span>
+              Answer key for {exam.label} <span style={{ fontWeight: 400 }}>(fold away until you finish)</span>
             </h2>
             <div className="p-key" style={{ margin: '1em 0' }}>
               {items.map(({ n, q }) => (
                 <span key={n}>
-                  {n}. {q?.answer ?? '—'}
+                  {n}. {q?.answer ?? 'none'}
                 </span>
               ))}
             </div>

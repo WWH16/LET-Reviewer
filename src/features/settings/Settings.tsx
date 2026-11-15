@@ -127,7 +127,7 @@ export function Settings() {
         </div>
         <label className="check">
           <input type="checkbox" checked={s.shortcuts} onChange={(e) => set({ shortcuts: e.target.checked })} />
-          Single-key shortcuts (A–D, 1–4, Enter, F)
+          Single-key shortcuts (A to D, 1 to 4, Enter, F)
         </label>
       </section>
 
@@ -157,7 +157,7 @@ export function Settings() {
         <div className="spread">
           <span>
             Storage: {protectedStore === null ? 'checking…' : protectedStore ? 'protected' : 'not protected'}
-            <span className="muted"> · the browser {protectedStore ? 'will not' : 'may'} clear it when space runs low</span>
+            <span className="muted">. The browser {protectedStore ? 'will not' : 'may'} clear it when space runs low.</span>
           </span>
           {protectedStore === false && (
             <button type="button" className="btn" onClick={async () => setProtected(await protectStorage())}>
@@ -173,7 +173,7 @@ export function Settings() {
       <section className="stack-sm" aria-labelledby="set-about">
         <h2 id="set-about">About</h2>
         <p className="muted num">
-          Version {version} · data format v{SCHEMA_VERSION}
+          Version {version}, data format v{SCHEMA_VERSION}
         </p>
         <div className="row">
           <button

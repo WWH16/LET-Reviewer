@@ -186,7 +186,7 @@ export function Import() {
             <div className="stack-sm">
               <h3>Check the keys against the paper</h3>
               <p className="muted">
-                {distribution.map(([id, n]) => `${n} ${subareaName(id)}`).join(' · ')}
+                {distribution.map(([id, n]) => `${n} ${subareaName(id)}`).join(', ')}
               </p>
               <table>
                 <thead>
@@ -202,7 +202,7 @@ export function Import() {
                     .map((r) => (
                       <tr key={r.n}>
                         <td className="num">{r.n}</td>
-                        <td className="num">{r.question!.answer ?? '—'}</td>
+                        <td className="num">{r.question!.answer ?? 'None'}</td>
                         <td lang={r.question!.lang}>
                           {r.question!.stem.length > 90 ? `${r.question!.stem.slice(0, 90)}…` : r.question!.stem}
                         </td>

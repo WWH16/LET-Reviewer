@@ -1,3 +1,4 @@
+import { Icon } from '../../ui/Icon';
 import { PARTS, PASSING_AVERAGE, PART_FLOOR } from '../../domain/let-config';
 import type { Rating } from '../../domain/scoring';
 
@@ -24,13 +25,15 @@ export function RatingCard({ rating }: { rating: Rating }) {
         </>
       )}
       {rating.belowFloor.length > 0 && (
-        <p className="notice">
+        <p className="rating-warn">
+          <Icon name="alert" />
           {names(rating.belowFloor)} {rating.belowFloor.length > 1 ? 'are' : 'is'} below {PART_FLOOR}%. Any part under {PART_FLOOR}% fails the
           exam, whatever the average.
         </p>
       )}
       {rating.nearFloor.length > 0 && (
-        <p className="notice">
+        <p className="rating-warn">
+          <Icon name="alert" />
           {names(rating.nearFloor)} {rating.nearFloor.length > 1 ? 'are' : 'is'} close to the {PART_FLOOR}% floor.
         </p>
       )}

@@ -124,7 +124,7 @@ export function Bank() {
               <Link className="list-link stack-sm" to={`/bank/${encodeURIComponent(q.id)}`}>
                 <span className="label">
                   {subareaName(q.subarea)}
-                  {q.topic ? ` · ${q.topic}` : ''}
+                  {q.topic ? `, ${q.topic}` : ''}
                 </span>
                 <span className="clamp-2" lang={q.lang}>
                   {q.stem}
@@ -147,7 +147,7 @@ export function Bank() {
           {batches.map(([id, count]) => (
             <li key={id} className="spread">
               <span>
-                {batchLabel(id)} · <span className="num">{count}</span> items
+                {batchLabel(id)} <span className="muted">({count} items)</span>
               </span>
               <button type="button" className="btn btn-quiet" onClick={() => setRemoving({ id, count })}>
                 Remove

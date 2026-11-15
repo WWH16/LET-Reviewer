@@ -83,10 +83,10 @@ export function MockResults() {
       {timeUp && <p className="notice">Time is up. Your answers were submitted.</p>}
       <section className="stack-sm" aria-labelledby="mr-score">
         <h2 id="mr-score" className="label">
-          {PARTS[exam.part].name} · {exam.form === 'digital' ? 'digital' : 'printed'}
+          {PARTS[exam.part].name}, {exam.form === 'digital' ? 'digital' : 'printed'} exam
         </h2>
         <p ref={scoreRef} tabIndex={-1} className="display num">
-          {s.correct}/{s.total} · {s.pct.toFixed(1)}%
+          {s.correct}/{s.total} <span className="muted">{s.pct.toFixed(1)}%</span>
         </p>
         <p>
           {s.pct >= PART_FLOOR ? `Above the ${PART_FLOOR}% floor for this part.` : `Below the ${PART_FLOOR}% floor. A part under ${PART_FLOOR}% fails the exam.`}
@@ -131,7 +131,7 @@ export function MockResults() {
                   <th scope="row">{c.k} items</th>
                   <td className="num">
                     {formatClock(c.at)}
-                    {c.at > c.target ? ' · behind' : ''}
+                    {c.at > c.target ? ', behind' : ''}
                   </td>
                   <td className="num">{formatClock(c.target)}</td>
                 </tr>
@@ -157,8 +157,8 @@ export function MockResults() {
               <article key={n} className="stack-sm" aria-labelledby={`mr-h-${n}`}>
                 <h3 id={`mr-h-${n}`} className="label">
                   Item {n}
-                  {chosen === null ? ' · unanswered' : chosen === q.answer ? ' · correct' : ' · wrong'}
-                  {exam.flags.includes(n) ? ' · flagged' : ''}
+                  {chosen === null ? ', unanswered' : chosen === q.answer ? ', correct' : ', wrong'}
+                  {exam.flags.includes(n) ? ', flagged' : ''}
                 </h3>
                 <p id={`mr-s-${n}`} lang={q.lang} style={{ whiteSpace: 'pre-wrap' }}>
                   {q.stem}

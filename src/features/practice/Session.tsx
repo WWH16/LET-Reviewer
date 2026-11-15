@@ -135,7 +135,7 @@ export function Session() {
               {correct}/{results.length}
             </span>
             <span className="sr-only"> correct, </span>
-            <span className="muted"> · {results.length ? Math.round((correct / results.length) * 100) : 0}%</span>
+            <span className="muted"> {results.length ? Math.round((correct / results.length) * 100) : 0}%</span>
           </h2>
           {wrong.length > 0 && <p className="muted">Wrong answers were added to Review. They come back tomorrow.</p>}
         </div>
@@ -151,7 +151,7 @@ export function Session() {
                       <summary className="stack-sm">
                         <span>{q.stem}</span>
                         <span className="label">
-                          Your answer {r.chosen} · Correct {q.answer}
+                          You chose {r.chosen}. The answer is {q.answer}.
                         </span>
                       </summary>
                       <p style={{ marginTop: 'var(--s2)' }}>{q.explanation || 'No explanation saved.'}</p>
@@ -238,7 +238,7 @@ export function Session() {
         <div className="row">
           <span className="label">
             {subareaName(q.subarea)}
-            {q.topic ? ` · ${q.topic}` : ''}
+            {q.topic ? `, ${q.topic}` : ''}
           </span>
           {q.status === 'unverified' && <Chip icon="alert">Unverified</Chip>}
         </div>
@@ -277,7 +277,7 @@ export function Session() {
           </div>
         ) : (
           <div className="feedback stack">
-            <h3 ref={fbHeading} tabIndex={-1} className="row">
+            <h3 ref={fbHeading} tabIndex={-1} className={correct ? "stamp" : "stamp is-miss"}>
               <Icon name={correct ? 'check' : 'cross'} size={20} />
               {correct ? 'Correct' : `Incorrect. The answer is ${q.answer}.`}
             </h3>
@@ -298,8 +298,8 @@ export function Session() {
         )}
 
         {settings.shortcuts && (
-          <p className="muted" style={{ fontSize: '0.8125rem' }}>
-            Keys: A–D or 1–4 choose · Enter checks, then goes next · F flags
+          <p className="muted label">
+            <kbd>A</kbd> to <kbd>D</kbd> or <kbd>1</kbd> to <kbd>4</kbd> choose. <kbd>Enter</kbd> checks, then goes next. <kbd>F</kbd> flags.
           </p>
         )}
       </div>

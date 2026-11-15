@@ -1,9 +1,10 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
-import '@fontsource-variable/geist';
-import '@fontsource-variable/geist-mono';
-import '../ui/tokens.css';
+import '@fontsource-variable/schibsted-grotesk/wght.css';
+import '@fontsource-variable/instrument-sans/wght.css';
+import '@fontsource/dm-mono/400.css';
+import '../ui/app.css';
 import { registerSW } from 'virtual:pwa-register';
 import { App } from './App';
 

@@ -101,7 +101,7 @@ export function MockSetup() {
                 <span className="stack-sm">
                   <span className="num">{e.label}</span>
                   <span className="label">
-                    {PARTS[e.part].name} · {e.itemIds.length} items · {STATUS_TEXT[e.status]}
+                    {PARTS[e.part].name}, {e.itemIds.length} items. {STATUS_TEXT[e.status]}
                   </span>
                 </span>
                 <span className="row">

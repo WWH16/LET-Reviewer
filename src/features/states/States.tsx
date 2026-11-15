@@ -48,7 +48,10 @@ export function States() {
           <p className="display num">74.2%</p>
           <p className="stem">Which level of Bloom&rsquo;s taxonomy asks learners to judge the value of an idea?</p>
           <p className="muted">Muted secondary text, 4.5:1 or better.</p>
-          <p className="num">01:59:42 · GE-1115-A</p>
+          <p className="row">
+            <span className="timer">01:59:42</span>
+            <span className="mono">GE-1115-A</span>
+          </p>
         </div>,
       )}
 

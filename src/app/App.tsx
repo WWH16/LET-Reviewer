@@ -1,6 +1,7 @@
 import { Link, Navigate, NavLink, Route, Routes } from 'react-router-dom';
 import { Page } from '../ui/Page';
 import { StatusProvider } from '../ui/Status';
+import { Icon } from '../ui/Icon';
 import { States } from '../features/states/States';
 import { Home } from '../features/home/Home';
 import { Bank } from '../features/bank/Bank';
@@ -19,17 +20,19 @@ import { useSettings } from '../db/hooks';
 import { useEffect } from 'react';
 
 const NAV = [
-  { to: '/', label: 'Home' },
-  { to: '/drill', label: 'Practice' },
-  { to: '/mock', label: 'Mock' },
-  { to: '/progress', label: 'Progress' },
-  { to: '/bank', label: 'Bank' },
-];
+  { to: '/', label: 'Home', icon: 'home' },
+  { to: '/drill', label: 'Practice', icon: 'practice' },
+  { to: '/mock', label: 'Mock', icon: 'mock' },
+  { to: '/progress', label: 'Progress', icon: 'progress' },
+  { to: '/bank', label: 'Bank', icon: 'bank' },
+] as const;
 
-function Todo({ title }: { title: string }) {
+function NotFound() {
   return (
-    <Page title={title}>
-      <p className="muted">This screen is not built yet.</p>
+    <Page title="Not found">
+      <p>
+        This page does not exist. <Link to="/">Go to Home</Link>
+      </p>
     </Page>
   );
 }
@@ -49,13 +52,29 @@ export function App() {
       <a className="skip" href="#main">
         Skip to main content
       </a>
-      <header className="top">
-        <Link className="brand" to="/">
-          LET Reviewer
-        </Link>
-        <Link className="label" to="/settings">
-          Settings
-        </Link>
+      <header className="shell-top">
+        <div className="top">
+          <Link className="brand" to="/" aria-label="LET Reviewer, home">
+            <span className="brand-mark" aria-hidden="true" />
+            LET Reviewer
+          </Link>
+          <nav className="nav" aria-label="Main">
+            <ul>
+              {NAV.map((item) => (
+                <li key={item.to}>
+                  <NavLink to={item.to} end={item.to === '/'}>
+                    <Icon name={item.icon} size={22} />
+                    {item.label}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <NavLink className="top-settings" to="/settings">
+            <Icon name="settings" size={18} />
+            Settings
+          </NavLink>
+        </div>
       </header>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -73,19 +92,8 @@ export function App() {
         <Route path="/bank/:id" element={<EditQuestion />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/states" element={<States />} />
-        <Route path="*" element={<Todo title="Not found" />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
-      <nav className="nav" aria-label="Main">
-        <ul>
-          {NAV.map((item) => (
-            <li key={item.to}>
-              <NavLink to={item.to} end={item.to === '/'}>
-                {item.label}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
-      </nav>
     </StatusProvider>
   );
 }

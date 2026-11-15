@@ -9,7 +9,7 @@ import { templateB } from '../../domain/prompts';
 import { useStats } from './useStats';
 import { RatingCard } from './RatingCard';
 
-const fmt = (p: number | null) => (p === null ? '—' : `${Math.round(p)}%`);
+const fmt = (p: number | null) => (p === null ? 'Not yet' : `${Math.round(p)}%`);
 
 export function Progress() {
   const stats = useStats();
@@ -34,13 +34,13 @@ export function Progress() {
   const weakest = weak[0];
   const summary =
     (rating.rating === null
-      ? 'Not enough answers for a projected rating yet.'
+      ? ''
       : `Projected rating ${rating.rating.toFixed(1)}%, ${rating.passes ? 'passing' : 'not passing yet'}.`) +
     (weakest ? ` Weakest topic: ${weakest.topic || subareaName(weakest.subarea)}, ${fmt(pct(weakest.tally))}.` : '');
 
   return (
     <Page title="Progress">
-      <p>{summary}</p>
+      {summary.trim() && <p>{summary.trim()}</p>}
       <RatingCard rating={rating} />
 
       <section className="stack-sm" aria-labelledby="pr-parts">
@@ -99,7 +99,7 @@ export function Progress() {
                 <span className="stack-sm">
                   <span>{w.topic || subareaName(w.subarea)}</span>
                   <span className="label">
-                    {subareaName(w.subarea)} · {fmt(pct(w.tally))} over {w.tally.total}
+                    {subareaName(w.subarea)}: {fmt(pct(w.tally))} over {w.tally.total} answers
                   </span>
                 </span>
                 <button

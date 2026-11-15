@@ -34,12 +34,12 @@ export function Home() {
 
   return (
     <Page title="Home">
-      <section className="stack-sm" aria-labelledby="home-due">
-        <h2 id="home-due" className="label">
-          Today
-        </h2>
-        <p className="display num">{due.length}</p>
-        <p>{due.length === 1 ? 'review due' : 'reviews due'}</p>
+      <section className="tray" aria-labelledby="home-due">
+        <h2 id="home-due">Today</h2>
+        <p className="tray-figure">
+          <span className="display">{due.length}</span>
+          <span>{due.length === 1 ? 'review due' : 'reviews due'}</span>
+        </p>
         <div className="row">
           {due.length > 0 ? (
             <Link className="btn btn-primary" to="/review">
@@ -73,7 +73,7 @@ export function Home() {
       {remindBackup && (
         <p className="notice spread">
           <span>
-            {sinceBackup} answers since your {lastBackup ? `last backup on ${new Date(lastBackup.at).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}` : 'first session, with no backup yet'}.
+            {sinceBackup} {sinceBackup === 1 ? 'answer' : 'answers'} since your {lastBackup ? `last backup on ${new Date(lastBackup.at).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}` : 'first session, with no backup yet'}.
           </span>
           <Link className="btn" to="/settings">
             Back up now
@@ -83,26 +83,26 @@ export function Home() {
 
       <RatingCard rating={rating} />
 
-      <div className="grid-2">
-        <div className="card stack-sm">
+      <div className="stat-row">
+        <div>
           <span className="label">Exam</span>
           {toExam === null ? (
             <Link to="/settings">Set your exam date</Link>
           ) : toExam >= 0 ? (
             <p>
-              <span className="display num">{toExam}</span> {toExam === 1 ? 'day' : 'days'} left
+              <span className="stat-figure">{toExam}</span> {toExam === 1 ? 'day' : 'days'} left
             </p>
           ) : (
             <p>Exam date has passed. Update it in Settings.</p>
           )}
         </div>
-        <div className="card stack-sm">
+        <div>
           <span className="label">Streak</span>
           <p>
-            <span className="display num">{run}</span> {run === 1 ? 'day' : 'days'}
+            <span className="stat-figure">{run}</span> {run === 1 ? 'day' : 'days'}
           </p>
           <p className="muted">
-            Today: {todayCorrect}/{todayAttempts.length} correct
+            Today: {todayCorrect} of {todayAttempts.length} correct
           </p>
         </div>
       </div>
