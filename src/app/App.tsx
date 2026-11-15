@@ -2,6 +2,10 @@ import { Link, NavLink, Route, Routes } from 'react-router-dom';
 import { Page } from '../ui/Page';
 import { StatusProvider } from '../ui/Status';
 import { States } from '../features/states/States';
+import { Home } from '../features/home/Home';
+import { Bank } from '../features/bank/Bank';
+import { Import } from '../features/bank/Import';
+import { EditQuestion } from '../features/bank/EditQuestion';
 
 const NAV = [
   { to: '/', label: 'Home' },
@@ -34,7 +38,7 @@ export function App() {
         </Link>
       </header>
       <Routes>
-        <Route path="/" element={<Todo title="Home" />} />
+        <Route path="/" element={<Home />} />
         <Route path="/drill" element={<Todo title="Practice" />} />
         <Route path="/session" element={<Todo title="Session" />} />
         <Route path="/review" element={<Todo title="Review" />} />
@@ -44,9 +48,9 @@ export function App() {
         <Route path="/mock/:id/entry" element={<Todo title="Enter answers" />} />
         <Route path="/mock/:id/results" element={<Todo title="Exam results" />} />
         <Route path="/progress" element={<Todo title="Progress" />} />
-        <Route path="/bank" element={<Todo title="Bank" />} />
-        <Route path="/bank/import" element={<Todo title="Import" />} />
-        <Route path="/bank/:id" element={<Todo title="Edit question" />} />
+        <Route path="/bank" element={<Bank />} />
+        <Route path="/bank/import" element={<Import />} />
+        <Route path="/bank/:id" element={<EditQuestion />} />
         <Route path="/settings" element={<Todo title="Settings" />} />
         <Route path="/states" element={<States />} />
         <Route path="*" element={<Todo title="Not found" />} />

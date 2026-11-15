@@ -344,6 +344,18 @@ textarea {
   line-height: 1.5;
   resize: vertical;
 }
+textarea.prose {
+  min-height: 6rem;
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 .check {
   display: flex;
   align-items: center;

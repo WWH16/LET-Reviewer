@@ -18,9 +18,9 @@ Update the checkboxes and the "Where we left off" section at the end of every se
 
 ## Where we left off
 
-- **Done:** F0 scaffold, F1 design system, F2 domain layer (32 tests), F3 Dexie database (`src/db/`: schema, repo, live-query hooks, backup).
-- **Not done:** Vercel deploy (needs your sign-in and domain). Screens other than `/states` are placeholders. F3 is type-checked; its in-browser check happens through the F4 Bank screen.
-- **Next action:** F4, Import, Bank, and first-run Home.
+- **Done:** F0–F4. Bank, Import (paste, tolerant parsing, per-item errors, sub-area fix, key preview), Edit question, and first-run Home work in the browser. Data survives reload.
+- **Not done:** Vercel deploy (needs your sign-in and domain). Practice, Review, Mock, Progress, Settings are placeholders. Home is a minimal version until F7.
+- **Next action:** F5, the Drill loop (setup, session, results).
 
 Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-hooks 4.4, Vite 8.3, TypeScript 7.0, Vitest 5.1, vite-plugin-pwa 2.0, `@fontsource-variable/geist` and `@fontsource-variable/geist-mono` 5.3. Node 26, npm 11.
 
@@ -79,9 +79,9 @@ Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-ho
 - [x] `backup.ts`: versioned envelope export, restore with version check (replace, not merge)
 
 ### F4. Bank and first run
-- [ ] Import screen: paste box, paste-from-clipboard, file picker, preview ("48 new, 2 skipped, 2 errors"), commit
-- [ ] Bank list: search, queues (Needs key, Unverified, Flagged), edit screen
-- [ ] First-run Home: "Add your first questions", Copy Template A, Load sample questions
+- [x] Import screen: paste box, paste-from-clipboard, file picker, preview ("48 new, 2 skipped, 2 errors"), commit
+- [x] Bank list: search, queues (Needs key, Unverified, Flagged), edit screen
+- [x] First-run Home: "Add your first questions", Copy Template A, Load sample questions
 
 ### F5. Drill loop
 - [ ] Drill setup: area, sub-area, topic, count, source filter, Copy prompt
