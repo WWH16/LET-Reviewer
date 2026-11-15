@@ -365,7 +365,7 @@ These are v1 acceptance criteria, not polish. Details are in `reviews/audit-as-a
 
 ## 13. Visual design
 
-**Direction (2026-11-15):** Cloudflare's Kumo components (`@cloudflare/kumo`) in the pre-Kumo Dose palette. White cards on a white and green-grey paper, a hairline ring and a soft green-tinted shadow, and one green that does every signal: the primary button, the current selection, and the right answer. A wrong pick is grey, never red. Type is the pre-Kumo Schibsted Grotesk, Instrument Sans and DM Mono.
+**Direction (2026-11-15):** Cloudflare's Kumo components (`@cloudflare/kumo`) in monochrome: black, white and greys only, no hue anywhere. White cards on a light grey page with a hairline ring and a soft shadow. The primary button and the current selection are near-black (near-white in dark mode). Type is Schibsted Grotesk, Instrument Sans and DM Mono.
 
 **How it is built**
 - Kumo's precompiled stylesheet (`kumo-standalone.css`), so no Tailwind. Role tokens live in `src/ui/tokens.css`; Kumo's own `--color-kumo-*` tokens point at them, so Kumo's buttons, badges and rings follow the palette.
@@ -377,12 +377,12 @@ These are v1 acceptance criteria, not polish. Details are in `reviews/audit-as-a
 | State | Look |
 |---|---|
 | Choice, idle | White card, hairline ring, letter in an outlined square |
-| Choice, selected | Mint card, 2 px deep green ring, letter filled green |
-| Correct answer | Pale green card, 2 px green ring, check icon, the words "Correct answer" |
-| Her wrong pick | Grey card, 2 px grey ring, cross icon, the words "Your answer", text struck through |
+| Choice, selected | Grey card, 2 px dark ring, letter filled dark |
+| Correct answer | Light grey card, 2 px dark ring, dark letter box with a check, the words "Correct answer" |
+| Her wrong pick | Grey card, 2 px mid-grey ring, cross icon, the words "Your answer", text struck through |
 | Eliminated | Muted text, struck through |
-| Unverified / Flagged / Needs key | Neutral Kumo badge with an icon and the word; Verified is the green badge |
-| Primary button | Kumo primary in green with a light label. One per screen. |
+| Unverified / Flagged / Needs key | Neutral Kumo badge with an icon and the word; Verified carries a check icon |
+| Primary button | Near-black with a white label (near-white with a dark label in dark mode). One per screen. |
 | Secondary button | Kumo secondary, white with a ring |
 
 Colour is never the only signal: every state also has an icon, a fill or ring change, and words.
@@ -392,10 +392,10 @@ Colour is never the only signal: every state also has an icon, a fill or ring ch
 - Sizes step with the screen (`--text-h1`, `--text-h2`, `--text-figure`, `--text-stat` in `tokens.css`): page title 22 px on phones, 24 px from 60rem, 28 px from 90rem; section heading 18 then 20 px; the big figure 32, 40, 44 px. Card padding is 16 px on phones and 24 px from 60rem; sections sit 24 px apart on phones and 32 px from 60rem.
 - Question text and choices at 16 px; interface and helper text at 14 px. Everything is in rem, so the Text size setting scales Kumo's components too.
 
-**Depth:** a 1 px subtle border on every raised surface first, then a soft shadow tinted to the green under 0.08 alpha in light mode; in dark mode, a faint top-edge highlight instead of shadow.
+**Depth:** a 1 px subtle border on every raised surface first, then a soft neutral shadow under 0.08 alpha in light mode; in dark mode, a faint top-edge highlight instead of shadow.
 
 **Contrast:** every text pair is 4.5:1 or better in both modes, and selection edges reach 3:1 (`src/ui/contrast.test.ts`).
 
-**Touch and focus:** tap targets stay at 44 px on touch screens (§11). Focus ring: 2 px green.
+**Touch and focus:** tap targets stay at 44 px on touch screens (§11). Focus ring: 2 px near-black (near-white in dark mode).
 
 **Print:** the mock exam booklet and answer sheet keep pure black on white (§8.3).

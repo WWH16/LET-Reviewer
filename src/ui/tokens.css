@@ -1,9 +1,8 @@
-/* Role tokens. The colours are the pre-Kumo Dose palette (white and green-grey paper, one green that
-   does every signal, a wrong pick in grey, never red), worn by Kumo's components: the --color-kumo-* tokens
-   below point at these, so Kumo buttons, badges and rings follow the palette. Shadows follow the
-   colour-palette rules: a 1px subtle border first, then soft green-tinted shadows under 0.08 alpha in
-   light mode, and a top-edge highlight instead of shadow in dark mode. The faces are the pre-Kumo ones too.
-   Every text pair is checked in
+/* Role tokens. Monochrome: black, white and greys only, no hue anywhere. State is carried by fill, ring,
+   icon and words: the primary button and a selection are the darkest things on the screen, a right answer
+   is a dark ring with a check, a wrong pick a mid-grey ring with a cross. Kumo's --color-kumo-* tokens
+   point at these, so its components follow. Shadows: a 1px subtle border first, then soft shadows under
+   0.08 alpha in light mode and a top-edge highlight in dark mode. Every text pair is checked in
    contrast.test.ts. */
 :root {
   color-scheme: light;
@@ -27,25 +26,25 @@
   --radius-control: 8px; --radius-card: 12px; --radius-pill: 999px;
   --measure-app: 48rem; --container-app: 72rem; --sidebar-w: 15rem; --header-h: 56px; --tabbar-h: 64px; --sticky-offset: 0px;
 
-  --color-paper: oklch(96.6% 0.004 165); --color-paper-2: oklch(94.6% 0.016 160); --color-paper-3: oklch(91.8% 0.03 160);
+  --color-paper: oklch(97% 0 0); --color-paper-2: oklch(94.6% 0 0); --color-paper-3: oklch(91.8% 0 0);
   --color-card: oklch(100% 0 0);
-  --color-ink: oklch(21% 0.025 170); --color-ink-2: oklch(31% 0.02 170); --color-muted: oklch(49% 0.024 165);
-  --color-rule: oklch(87% 0.012 160); --color-line: oklch(21% 0.025 170 / 0.1); --color-control: oklch(62% 0.015 165);
-  --color-accent: oklch(50% 0.13 160); --color-accent-deep: oklch(42% 0.11 162); --color-accent-ink: oklch(99% 0.006 160);
-  --color-accent-text: oklch(42% 0.11 162); --color-accent-edge: oklch(42% 0.11 162); --color-accent-soft: oklch(88% 0.08 160); --color-on-soft: oklch(21% 0.025 170);
-  --color-focus: oklch(45% 0.14 160);
-  /* right is the green; wrong is grey, never red */
-  --color-success: oklch(42% 0.11 162); --color-success-fill: oklch(42% 0.11 162); --color-success-tint: oklch(93% 0.05 160);
-  --color-error: oklch(38% 0.02 165); --color-error-fill: oklch(49% 0.024 165); --color-error-tint: oklch(91.8% 0.03 160);
-  --color-warning: oklch(52% 0.13 57.5); --color-warning-tint: oklch(98% 0.03 95); --color-info-tint: oklch(95% 0.03 160);
-  --color-shade: oklch(21% 0.025 170 / 0.42);
-  /* the primary button: the green with a near-white label, the same in both modes */
-  --color-button: oklch(50% 0.13 160); --color-button-deep: oklch(42% 0.11 162); --color-button-ink: oklch(99% 0.006 160);
-  --shadow-card: 0 0 0 1px var(--color-line), 0 1px 3px oklch(30% 0.03 165 / 0.07), 0 6px 16px -6px oklch(30% 0.03 165 / 0.07);
-  --shadow-pop: 0 0 0 1px var(--color-line), 0 12px 32px -8px oklch(30% 0.03 165 / 0.07);
-  --shadow-bar: 0 1px 3px oklch(30% 0.03 165 / 0.06), 0 4px 12px -6px oklch(30% 0.03 165 / 0.06);
-  --shadow-bar-up: 0 -1px 3px oklch(30% 0.03 165 / 0.06), 0 -4px 12px -6px oklch(30% 0.03 165 / 0.06);
-  --shadow-side: 1px 0 3px oklch(30% 0.03 165 / 0.06), 4px 0 12px -6px oklch(30% 0.03 165 / 0.06);
+  --color-ink: oklch(18% 0 0); --color-ink-2: oklch(31% 0 0); --color-muted: oklch(49% 0 0);
+  --color-rule: oklch(87% 0 0); --color-line: oklch(18% 0 0 / 0.1); --color-control: oklch(62% 0 0);
+  --color-accent: oklch(25% 0 0); --color-accent-deep: oklch(15% 0 0); --color-accent-ink: oklch(99% 0 0);
+  --color-accent-text: oklch(25% 0 0); --color-accent-edge: oklch(21% 0 0); --color-accent-soft: oklch(91% 0 0); --color-on-soft: oklch(18% 0 0);
+  --color-focus: oklch(21% 0 0);
+  /* right is the dark ring; wrong is the mid grey, never red */
+  --color-success: oklch(25% 0 0); --color-success-fill: oklch(21% 0 0); --color-success-tint: oklch(94% 0 0);
+  --color-error: oklch(38% 0 0); --color-error-fill: oklch(49% 0 0); --color-error-tint: oklch(91.8% 0 0);
+  --color-warning: oklch(40% 0 0); --color-warning-tint: oklch(96% 0 0); --color-info-tint: oklch(94.6% 0 0);
+  --color-shade: oklch(18% 0 0 / 0.42);
+  /* the primary button: near-black with a white label; in dark mode it flips to near-white with a dark label */
+  --color-button: oklch(25% 0 0); --color-button-deep: oklch(15% 0 0); --color-button-ink: oklch(99% 0 0);
+  --shadow-card: 0 0 0 1px var(--color-line), 0 1px 3px oklch(0% 0 0 / 0.07), 0 6px 16px -6px oklch(0% 0 0 / 0.07);
+  --shadow-pop: 0 0 0 1px var(--color-line), 0 12px 32px -8px oklch(0% 0 0 / 0.07);
+  --shadow-bar: 0 1px 3px oklch(0% 0 0 / 0.06), 0 4px 12px -6px oklch(0% 0 0 / 0.06);
+  --shadow-bar-up: 0 -1px 3px oklch(0% 0 0 / 0.06), 0 -4px 12px -6px oklch(0% 0 0 / 0.06);
+  --shadow-side: 1px 0 3px oklch(0% 0 0 / 0.06), 4px 0 12px -6px oklch(0% 0 0 / 0.06);
 
   /* Kumo's tokens, pointed at the palette so its components match */
   --color-kumo-canvas: var(--color-paper); --color-kumo-base: var(--color-card); --color-kumo-elevated: var(--color-paper);
@@ -63,34 +62,36 @@
 /* Night ground: hue held, elevation by lightness, a faint top edge instead of shadow. */
 :root[data-mode='dark'] {
   color-scheme: dark;
-  --color-paper: oklch(14% 0.01 170); --color-paper-2: oklch(18% 0.014 168); --color-paper-3: oklch(22% 0.02 165);
-  --color-card: oklch(19% 0.014 168);
-  --color-ink: oklch(95% 0.01 160); --color-ink-2: oklch(86% 0.012 165); --color-muted: oklch(72% 0.018 165);
-  --color-rule: oklch(32% 0.02 160); --color-line: oklch(95% 0.01 160 / 0.12); --color-control: oklch(55% 0.015 165);
-  --color-accent: oklch(70% 0.12 160); --color-accent-deep: oklch(60% 0.11 162); --color-accent-ink: oklch(16% 0.02 170);
-  --color-accent-text: oklch(76% 0.13 160); --color-accent-edge: oklch(70% 0.12 160); --color-accent-soft: oklch(32% 0.06 160); --color-on-soft: oklch(95% 0.01 160);
-  --color-focus: oklch(76% 0.13 160);
-  --color-success: oklch(76% 0.13 160); --color-success-fill: oklch(70% 0.12 160); --color-success-tint: oklch(28% 0.06 160);
-  --color-error: oklch(82% 0.015 165); --color-error-fill: oklch(72% 0.018 165); --color-error-tint: oklch(24% 0.015 165);
-  --color-warning: oklch(78% 0.14 57.5); --color-warning-tint: oklch(24% 0.05 65); --color-info-tint: oklch(21% 0.025 165);
-  --color-shade: oklch(5% 0.01 170 / 0.6);
+  --color-paper: oklch(14% 0 0); --color-paper-2: oklch(18% 0 0); --color-paper-3: oklch(22% 0 0);
+  --color-card: oklch(19% 0 0);
+  --color-ink: oklch(95% 0 0); --color-ink-2: oklch(86% 0 0); --color-muted: oklch(72% 0 0);
+  --color-rule: oklch(32% 0 0); --color-line: oklch(95% 0 0 / 0.12); --color-control: oklch(55% 0 0);
+  --color-accent: oklch(90% 0 0); --color-accent-deep: oklch(80% 0 0); --color-accent-ink: oklch(16% 0 0);
+  --color-accent-text: oklch(92% 0 0); --color-accent-edge: oklch(85% 0 0); --color-accent-soft: oklch(32% 0 0); --color-on-soft: oklch(95% 0 0);
+  --color-focus: oklch(90% 0 0);
+  --color-button: oklch(92% 0 0); --color-button-deep: oklch(82% 0 0); --color-button-ink: oklch(16% 0 0);
+  --color-success: oklch(92% 0 0); --color-success-fill: oklch(88% 0 0); --color-success-tint: oklch(28% 0 0);
+  --color-error: oklch(78% 0 0); --color-error-fill: oklch(55% 0 0); --color-error-tint: oklch(24% 0 0);
+  --color-warning: oklch(80% 0 0); --color-warning-tint: oklch(24% 0 0); --color-info-tint: oklch(22% 0 0);
+  --color-shade: oklch(5% 0 0 / 0.6);
   --shadow-card: 0 0 0 1px var(--color-line), inset 0 1px 0 oklch(100% 0 0 / 0.05); --shadow-pop: 0 0 0 1px var(--color-line), 0 12px 32px -8px oklch(0% 0 0 / 0.5);
   --shadow-bar: 0 4px 12px -6px oklch(0% 0 0 / 0.5); --shadow-bar-up: 0 -4px 12px -6px oklch(0% 0 0 / 0.5); --shadow-side: 4px 0 12px -6px oklch(0% 0 0 / 0.5);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-mode]) {
     color-scheme: dark;
-    --color-paper: oklch(14% 0.01 170); --color-paper-2: oklch(18% 0.014 168); --color-paper-3: oklch(22% 0.02 165);
-    --color-card: oklch(19% 0.014 168);
-    --color-ink: oklch(95% 0.01 160); --color-ink-2: oklch(86% 0.012 165); --color-muted: oklch(72% 0.018 165);
-    --color-rule: oklch(32% 0.02 160); --color-line: oklch(95% 0.01 160 / 0.12); --color-control: oklch(55% 0.015 165);
-    --color-accent: oklch(70% 0.12 160); --color-accent-deep: oklch(60% 0.11 162); --color-accent-ink: oklch(16% 0.02 170);
-    --color-accent-text: oklch(76% 0.13 160); --color-accent-edge: oklch(70% 0.12 160); --color-accent-soft: oklch(32% 0.06 160); --color-on-soft: oklch(95% 0.01 160);
-    --color-focus: oklch(76% 0.13 160);
-    --color-success: oklch(76% 0.13 160); --color-success-fill: oklch(70% 0.12 160); --color-success-tint: oklch(28% 0.06 160);
-    --color-error: oklch(82% 0.015 165); --color-error-fill: oklch(72% 0.018 165); --color-error-tint: oklch(24% 0.015 165);
-    --color-warning: oklch(78% 0.14 57.5); --color-warning-tint: oklch(24% 0.05 65); --color-info-tint: oklch(21% 0.025 165);
-    --color-shade: oklch(5% 0.01 170 / 0.6);
+    --color-paper: oklch(14% 0 0); --color-paper-2: oklch(18% 0 0); --color-paper-3: oklch(22% 0 0);
+    --color-card: oklch(19% 0 0);
+    --color-ink: oklch(95% 0 0); --color-ink-2: oklch(86% 0 0); --color-muted: oklch(72% 0 0);
+    --color-rule: oklch(32% 0 0); --color-line: oklch(95% 0 0 / 0.12); --color-control: oklch(55% 0 0);
+    --color-accent: oklch(90% 0 0); --color-accent-deep: oklch(80% 0 0); --color-accent-ink: oklch(16% 0 0);
+    --color-accent-text: oklch(92% 0 0); --color-accent-edge: oklch(85% 0 0); --color-accent-soft: oklch(32% 0 0); --color-on-soft: oklch(95% 0 0);
+    --color-focus: oklch(90% 0 0);
+  --color-button: oklch(92% 0 0); --color-button-deep: oklch(82% 0 0); --color-button-ink: oklch(16% 0 0);
+    --color-success: oklch(92% 0 0); --color-success-fill: oklch(88% 0 0); --color-success-tint: oklch(28% 0 0);
+    --color-error: oklch(78% 0 0); --color-error-fill: oklch(55% 0 0); --color-error-tint: oklch(24% 0 0);
+    --color-warning: oklch(80% 0 0); --color-warning-tint: oklch(24% 0 0); --color-info-tint: oklch(22% 0 0);
+    --color-shade: oklch(5% 0 0 / 0.6);
     --shadow-card: 0 0 0 1px var(--color-line), inset 0 1px 0 oklch(100% 0 0 / 0.05); --shadow-pop: 0 0 0 1px var(--color-line), 0 12px 32px -8px oklch(0% 0 0 / 0.5);
     --shadow-bar: 0 4px 12px -6px oklch(0% 0 0 / 0.5); --shadow-bar-up: 0 -4px 12px -6px oklch(0% 0 0 / 0.5); --shadow-side: 4px 0 12px -6px oklch(0% 0 0 / 0.5);
   }

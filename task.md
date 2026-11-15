@@ -41,7 +41,7 @@ Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-ho
 2. **Derived, never stored:** whether an attempt was correct, and review cards (Leitner). Both are worked out from attempts and the question's current answer.
 3. **IDs:** the app assigns question IDs at import (`rc-` + slug of `sourceRef`, `ai-` + hash of the stem). Attempts and mock exams use `crypto.randomUUID()`. A mock exam's `GE-1115-A` is a display `label`, not its ID.
 4. **Synced records** (questions, mock exams, settings) carry `updatedAt` and a `deleted` flag. Attempts are append-only.
-5. **Kumo components, Dose palette.** Kumo's components wear the pre-Kumo palette: white and green-grey paper, one green that does every signal (primary button, selection, right answer), and a wrong pick in grey, never red. State is also shown by icon, ring and words. Text pairs keep 4.5:1, so Kumo's yellow warning badge is not used. No uppercase tracked labels, no middle-dot strings, no dashes in copy. Run Hallmark sloplint after UI changes (see .hallmark/).
+5. **Kumo components, monochrome.** Black, white and greys only, no hue. The primary button and the current selection are the darkest things on screen (they flip to the lightest in dark mode). A right answer is a dark ring with a check, a wrong pick a mid-grey ring with a cross, never red. State is always also shown by icon and words. Text pairs keep 4.5:1. No uppercase tracked labels, no middle-dot strings, no dashes in copy. Run Hallmark sloplint after UI changes (see .hallmark/).
 6. **No review-center content in the repo.** Development uses `src/domain/sample-questions.json`, which holds original items only.
 7. **LET sub-area weights in `let-config.ts` are placeholders** until the user confirms their level, major, and the official TOS (plan §12, questions 1–3). Mark them clearly in the file.
 8. **Commit after each completed task.** One commit per finished step (F0, F1, ...), made after the step is verified. No `Co-Authored-By` or "Generated with" lines in the commit message. Tick the step's boxes in this file in the same commit. This folder is its own git repository on branch `main`.
@@ -51,7 +51,7 @@ Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-ho
 ### F0. Scaffold
 - [x] `package.json`, install dependencies
 - [x] `tsconfig.json`, `vite.config.ts` (React + PWA plugin, `registerType: 'prompt'` so updates wait for the next launch), `index.html`, `.gitignore`
-- [x] App icons (`public/icon-180.png`, `icon-192.png`, `icon-512.png`), green with a white outlined square
+- [x] App icons (`public/icon-180.png`, `icon-192.png`, `icon-512.png`), black with a white outlined square
 - [x] `.claude/launch.json` for the dev server on port 5173
 - [x] `src/app/main.tsx`, `App.tsx` with hash routes: `/`, `/drill`, `/session`, `/review`, `/mock`, `/mock/:id`, `/mock/:id/print`, `/mock/:id/entry`, `/mock/:id/results`, `/progress`, `/bank`, `/bank/import`, `/bank/:id`, `/settings`, `/states`
 - [x] Shell: skip link, header, bottom navigation, focus moves to each screen's `<h1>` on route change

@@ -14,7 +14,8 @@ export const KUMO = {
 } as const;
 
 export const btn = {
-  primary: `${KUMO.primary} btn btn-primary`,
+  // Kumo's primary forces a white label; the monochrome primary flips in dark mode, so it wears the secondary.
+  primary: `${KUMO.secondary} btn btn-primary`,
   secondary: `${KUMO.secondary} btn`,
   quiet: `${KUMO.ghost} btn`,
 };

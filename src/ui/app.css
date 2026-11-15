@@ -1,7 +1,8 @@
-/* Hallmark · shape: app screen · genre: modern-minimal · theme: Kumo components in the Dose palette and faces (by request; @cloudflare/kumo 2.18.1, its tokens pointed at the pre-Kumo green palette) · redesign: full
- * nav: side menu at 60rem and up (six destinations, the side menu the user chose from the Cloudflare dashboard mockup), a bottom tab bar below it · signature: answer choices as Kumo cards, mint when chosen, the checked answer in green with a check, a wrong pick in grey with a cross · states: loading, empty, full
- * axes: light/grotesk-sans/chromatic-green · posture: quiet · contrast: pass · modes: light+dark · v2.0.0 */
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: Kumo components, monochrome (by request; @cloudflare/kumo 2.18.1, its tokens pointed at a black, white and grey palette), the Dose faces kept · redesign: full
+ * nav: side menu at 60rem and up (six destinations, the side menu the user chose from the Cloudflare dashboard mockup), a bottom tab bar below it · signature: answer choices as Kumo cards, grey with a dark ring when chosen, the checked answer in a dark ring with a check, a wrong pick in a mid-grey ring with a cross · states: loading, empty, full
+ * axes: light/grotesk-sans/monochrome · posture: quiet · contrast: pass · modes: light+dark · v2.0.0 */
 /* Hallmark · waive 7b · surface: absolute on --print-ink and --print-paper only, used inside .paper and @media print · the printed booklet and answer sheet need pure black toner on white bond, and the corner markers must scan */
+/* Hallmark · dismissed 41 · --color-success-fill is close to --color-ink on purpose in a monochrome palette; the check icon on it takes --color-card, not ink */
 /* Hallmark · answered F4 · buttons are Kumo's own classes (src/ui/btn.ts): one primary per screen, secondary for the rest, ghost for quiet links; aria-pressed is a toggle on the secondary */
 /* Hallmark · answered F7 · cards, choices, feedback, the tray and the sheet share Kumo's one layer card recipe on purpose (white, hairline ring, soft drop); inputs share Kumo's one input recipe because they are one role */
 /* Hallmark · pre-emit critique: P4 H3 E4 S3 R4 V4 · weakest: S, Kumo is a shared product chrome by design; the answer cards are the one object the app is known by */
@@ -328,16 +329,21 @@ main.wide {
 .btn {
   text-decoration: none;
 }
-/* The primary is Kumo's own primary button, in the palette's green.
-   Kumo's <Button> sets these inline; links and native buttons get them here. The gradient runs from
-   the green down to its deeper green instead of up toward white, so the light label keeps 4.5:1 throughout. */
+/* The primary is Kumo's secondary button with the darkest fill. Kumo's own primary forces a white label,
+   which the light dark-mode fill cannot carry, so the label colour comes in through Kumo's text token. */
 .btn-primary {
-  --kumo-button-emphasis-ring: color-mix(in oklch, var(--color-button-deep), black 10%);
-  --kumo-button-emphasis-bg: var(--color-button-deep);
-  background-image: linear-gradient(var(--color-button), var(--color-button-deep));
+  --text-color-kumo-default: var(--color-button-ink);
+  background: var(--color-button);
+  box-shadow: inset 0 0 0 1px var(--color-button-deep);
 }
 .btn-primary:hover:not(:disabled) {
-  background-image: none;
+  background: var(--color-button-deep);
+}
+.btn-primary:disabled {
+  --text-color-kumo-default: var(--color-muted);
+  background: var(--color-paper-3);
+  box-shadow: none;
+  cursor: not-allowed;
 }
 .btn[aria-pressed='true'] {
   background: var(--color-accent-soft);
@@ -357,7 +363,7 @@ main.wide {
   }
 }
 
-/* A source chip (Review center) on the mint tint instead of Kumo's blue info badge */
+/* A source chip (Review center) on the grey tint instead of Kumo's blue info badge */
 .chip-accent {
   background: var(--color-accent-soft);
   color: var(--color-on-soft);
@@ -632,7 +638,7 @@ legend {
   background: var(--color-card);
   box-shadow: var(--shadow-card);
 }
-/* The result line after Check answer: a Kumo badge, green when right, grey when not (never red), always with its word. */
+/* The result line after Check answer: a Kumo badge, dark when right, mid grey when not (never red), always with its word. */
 .stamp {
   display: inline-flex;
   align-items: center;
