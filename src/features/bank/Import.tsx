@@ -7,6 +7,7 @@ import { importQuestions, nowIso, protectStorage } from '../../db/repo';
 import { parsePasted, previewImport } from '../../domain/validate';
 import { PARTS, subareaName } from '../../domain/let-config';
 import { btn } from '../../ui/btn';
+import { PromptBuilder } from './PromptBuilder';
 
 /** Paste-first import with a preview. Nothing is written until she confirms (plan §5, DX C1). */
 export function Import() {
@@ -94,6 +95,7 @@ export function Import() {
             }}
           />
         </div>
+        <PromptBuilder />
       </div>
 
       {parsed.kind !== 'empty' && (

@@ -75,9 +75,10 @@ For each item, the explanation must say why the answer is right AND why each
 other choice is wrong, and name the source concept (theorist, law, principle).
 If you are not certain of the correct answer, skip that item.
 
-Output a JSON array in this schema:
+Output a JSON array only, in this schema:
 ${SCHEMA}
 Use "${o.subarea}" exactly as the subarea value. Do not include an "id" field.
+Write math as plain text (e.g. "x^2 + 3x - 4 = 0", "3/4").
 source "ai", status "unverified", sourceRef "AI from: ${topic} notes".`;
 }
 
