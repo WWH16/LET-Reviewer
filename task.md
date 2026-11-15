@@ -18,9 +18,9 @@ Update the checkboxes and the "Where we left off" section at the end of every se
 
 ## Where we left off
 
-- **Done:** F0–F7. Home dashboard (reviews due, continue, backup reminder, rating, countdown, streak) and Progress (rating, parts, weakest topics with Copy prompt, sub-area table). Rating needs 20+ answers per part.
-- **Not done:** Vercel deploy (needs your sign-in and domain). Phone airplane-mode test. Mock exam screens are placeholders.
-- **Next action:** F8, Mock exam, digital.
+- **Done:** F0–F8. Digital mock: setup with availability fixes, booklet, bubble sheet (drawer on phone), timer with milestones, auto-save, restore after reload, submit dialog, results with rating, pacing, and checking the paper. Tested in the browser with a 25-item exam.
+- **Not done:** Vercel deploy (needs your sign-in and domain). Phone airplane-mode test. Printed mock (print and tap entry) is a placeholder.
+- **Next action:** F9, printed mock exam.
 
 Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-hooks 4.4, Vite 8.3, TypeScript 7.0, Vitest 5.1, vite-plugin-pwa 2.0, `@fontsource-variable/geist` and `@fontsource-variable/geist-mono` 5.3. Node 26, npm 11.
 
@@ -101,11 +101,11 @@ Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-ho
 - [x] Progress: accuracy tables, weakest five topics, Copy my weak topics
 
 ### F8. Mock exam, digital
-- [ ] Setup with availability check and the half-length and include-AI fixes
-- [ ] Booklet, answer sheet (side panel on laptop, bottom drawer on phone), strict sheet option
-- [ ] Timer with milestone announcements, auto-save, pause while the app is closed
-- [ ] Submit dialog ("Keep answering" is the default), grading into attempts
-- [ ] Results: score, rule check, checking the paper with filters, pacing checkpoints
+- [x] Setup with availability check and the half-length, 25-item, and include-AI fixes (25-item Short length added for small banks)
+- [x] Booklet, answer sheet (side panel on laptop, bottom drawer on phone), strict sheet option
+- [x] Timer with milestone announcements, auto-save, pause while the app is closed
+- [x] Submit dialog ("Keep answering" is the default), grading into attempts
+- [x] Results: score, rule check, checking the paper with filters, pacing checkpoints
 
 ### F9. Mock exam, printed
 - [ ] Print styles for A4, Letter, Folio; 1 or 2 columns; large print

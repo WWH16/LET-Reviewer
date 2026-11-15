@@ -69,6 +69,8 @@ export interface MockExam {
   /** Item number to the exam time (ms) when it was last answered. Used for pacing. */
   answeredAt: Record<string, number>;
   flags: number[];
+  /** Set when a short sub-area was filled from others at draw time. */
+  drawNote: string | null;
   status: 'in-progress' | 'printed' | 'graded';
   createdAt: string;
   /** Time spent with the exam open. The clock stops while the app is closed. */

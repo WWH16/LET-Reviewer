@@ -92,6 +92,29 @@ export async function updateExam(id: string, patch: Partial<MockExam>) {
   await db.mockExams.update(id, { ...patch, updatedAt: nowIso() });
 }
 
+/** Saves one answer at once, so a dead battery loses nothing (plan §8.2). `undefined` clears it. */
+export async function answerExam(id: string, n: number, key: Key | null | undefined, elapsedMs?: number) {
+  await db.mockExams
+    .where('id')
+    .equals(id)
+    .modify((e) => {
+      if (key === undefined) delete e.answers[String(n)];
+      else e.answers[String(n)] = key;
+      if (elapsedMs !== undefined) e.answeredAt[String(n)] = elapsedMs;
+      e.updatedAt = nowIso();
+    });
+}
+
+export async function toggleExamFlag(id: string, n: number) {
+  await db.mockExams
+    .where('id')
+    .equals(id)
+    .modify((e) => {
+      e.flags = e.flags.includes(n) ? e.flags.filter((x) => x !== n) : [...e.flags, n].sort((a, b) => a - b);
+      e.updatedAt = nowIso();
+    });
+}
+
 /** Writes one attempt per item and marks the exam graded (plan §8.5). */
 export async function gradeExam(exam: MockExam): Promise<{ correct: number; total: number }> {
   const qs = await db.questions.bulkGet(exam.itemIds);

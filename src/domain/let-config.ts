@@ -97,8 +97,12 @@ export function subareaName(id: string): string {
   return id;
 }
 
-export function timeLimit(area: Area, timer: TimerSetting, half: boolean): number | null {
+/** Real LET time per item, in ms (2 h / 150 items = 48 s for GenEd). */
+export const paceMs = (area: Area) => (PARTS[area].minutes * 60000) / PARTS[area].items;
+
+/** Minutes allowed for an n-item exam, scaled from the real LET time and the timer setting. */
+export function timeLimit(area: Area, timer: TimerSetting, n: number): number | null {
   if (timer === 'off') return null;
-  const base = PARTS[area].minutes * (half ? 0.5 : 1);
+  const base = (PARTS[area].minutes * n) / PARTS[area].items;
   return Math.round(base * (timer === 'real' ? 1 : Number(timer)));
 }

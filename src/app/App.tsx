@@ -10,6 +10,9 @@ import { DrillSetup } from '../features/practice/DrillSetup';
 import { Session } from '../features/practice/Session';
 import { Settings } from '../features/settings/Settings';
 import { Progress } from '../features/progress/Progress';
+import { MockSetup } from '../features/mock/MockSetup';
+import { MockExam } from '../features/mock/MockExam';
+import { MockResults } from '../features/mock/MockResults';
 import { useSettings } from '../db/hooks';
 import { useEffect } from 'react';
 
@@ -57,11 +60,11 @@ export function App() {
         <Route path="/drill" element={<DrillSetup />} />
         <Route path="/session" element={<Session />} />
         <Route path="/review" element={<Navigate to="/session?mode=review" replace />} />
-        <Route path="/mock" element={<Todo title="Mock exam" />} />
-        <Route path="/mock/:id" element={<Todo title="Mock exam" />} />
+        <Route path="/mock" element={<MockSetup />} />
+        <Route path="/mock/:id" element={<MockExam />} />
         <Route path="/mock/:id/print" element={<Todo title="Print exam" />} />
         <Route path="/mock/:id/entry" element={<Todo title="Enter answers" />} />
-        <Route path="/mock/:id/results" element={<Todo title="Exam results" />} />
+        <Route path="/mock/:id/results" element={<MockResults />} />
         <Route path="/progress" element={<Progress />} />
         <Route path="/bank" element={<Bank />} />
         <Route path="/bank/import" element={<Import />} />
