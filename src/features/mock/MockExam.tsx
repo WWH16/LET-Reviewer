@@ -159,6 +159,17 @@ export function MockExam() {
   const cursor = useRef(0);
   const [confirm, setConfirm] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const sheetToggle = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!sheetOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape' || document.querySelector('dialog[open]')) return;
+      setSheetOpen(false);
+      sheetToggle.current?.focus();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [sheetOpen]);
   const [restored, setRestored] = useState<string | null>(null);
   const submitting = useRef(false);
 
@@ -237,29 +248,45 @@ export function MockExam() {
     />
   );
 
+  const jumps = (
+    <>
+      <button type="button" className="btn" onClick={() => nextWhere((n) => exam.answers[String(n)] === undefined)} disabled={!unanswered}>
+        Next unanswered
+      </button>
+      <button type="button" className="btn" onClick={() => nextWhere((n) => exam.flags.includes(n))} disabled={!exam.flags.length}>
+        Next flagged
+      </button>
+    </>
+  );
+
   return (
     <Page title={`${exam.label}, ${PARTS[exam.part].name}`} wide>
-      <div className="exam-bar spread no-print">
-        <div className="row">
-          <Clock exam={exam} elapsed={elapsed as MutableRefObject<number>} onTimeUp={onTimeUp} />
-          <span className="label">
-            <span className="num">{answered}</span>/<span className="num">{total}</span> answered
+      {/* One row on a phone: time, the answer sheet (with the count), Submit. Jumps live in the sheet there. */}
+      <div className="exam-bar no-print">
+        <Clock exam={exam} elapsed={elapsed as MutableRefObject<number>} onTimeUp={onTimeUp} />
+        <span className="label only-wide">
+          <span className="num">{answered}</span>/<span className="num">{total}</span> answered
+        </span>
+        <button
+          ref={sheetToggle}
+          type="button"
+          className="btn only-narrow"
+          aria-expanded={sheetOpen}
+          aria-controls="answer-sheet"
+          aria-label={`Answer sheet, ${answered} of ${total} answered`}
+          onClick={() => setSheetOpen((o) => !o)}
+        >
+          <Icon name="mock" />
+          <span className="num">
+            {answered}/{total}
           </span>
-        </div>
-        <div className="row">
-          <button type="button" className="btn" onClick={() => nextWhere((n) => exam.answers[String(n)] === undefined)} disabled={!unanswered}>
-            Next unanswered
-          </button>
-          <button type="button" className="btn" onClick={() => nextWhere((n) => exam.flags.includes(n))} disabled={!exam.flags.length}>
-            Next flagged
-          </button>
-          <button type="button" className="btn only-narrow" aria-expanded={sheetOpen} onClick={() => setSheetOpen((o) => !o)}>
-            Answer sheet ({answered}/{total})
-          </button>
+        </button>
+        <span className="exam-bar-actions">
+          <span className="row only-wide">{jumps}</span>
           <button type="button" className="btn btn-primary" onClick={() => setConfirm(true)}>
             Submit
           </button>
-        </div>
+        </span>
       </div>
 
       {restored && (
@@ -296,7 +323,11 @@ export function MockExam() {
             );
           })}
         </div>
-        <aside className={`sheet stack-sm ${sheetOpen ? 'sheet-drawer' : 'only-wide'}`} aria-label="Answer sheet">
+        <aside
+          id="answer-sheet"
+          className={`sheet stack-sm ${sheetOpen ? 'sheet-drawer' : 'only-wide'}`}
+          aria-label="Answer sheet"
+        >
           <div className="spread">
             <span className="label">Answer sheet</span>
             {sheetOpen && (
@@ -305,6 +336,7 @@ export function MockExam() {
               </button>
             )}
           </div>
+          {sheetOpen && <div className="row only-narrow">{jumps}</div>}
           {sheet}
         </aside>
       </div>

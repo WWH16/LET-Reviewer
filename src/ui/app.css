@@ -4,7 +4,7 @@
 /* Hallmark · waive 7b · surface: absolute on --print-ink and --print-paper only, used inside .paper and @media print · the printed booklet and answer sheet need pure black toner on white bond, and the corner markers must scan */
 /* Hallmark · dismissed 41 · .card fills with --color-card, which reaches L 19 only under the night ground, where --color-ink is L 95; the text swaps through the token */
 /* Hallmark · answered F4 · .btn-primary is the one filled primary; .btn is the clear moulded secondary and aria-pressed is a toggle, mint like a checked key */
-/* Hallmark · answered F7 · inputs share one recipe because they are one role; the pill radius sits on round things by function: letter discs, progress tracks and the toast */
+/* Hallmark · answered F7 · inputs share one recipe because they are one role; the pill radius sits on round things by function: letter discs and progress tracks */
 /* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V4 · weakest: S, a study tool shares its parts with every quiz app; the plastic answer keys and the green stamp on the checked answer are the one object it is known by */
 @import url('./tokens.css');
 @import url('./base.css');
@@ -768,7 +768,7 @@ dialog::backdrop {
   width: max-content;
   max-width: calc(100% - 2 * var(--space-md));
   padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-card);
   background: var(--color-ink);
   color: var(--color-paper);
   font-size: var(--text-sm);
@@ -934,13 +934,29 @@ kbd {
   position: sticky;
   top: var(--sticky-offset);
   z-index: var(--z-sticky);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
   margin-inline: calc(-1 * var(--space-md));
   padding: var(--space-xs) var(--space-md);
   border-bottom: 1px solid var(--color-rule);
   background: color-mix(in oklab, var(--color-paper) 94%, transparent);
   backdrop-filter: blur(10px);
 }
+.exam-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-left: auto;
+}
+/* At 320px the bar keeps one row by dropping the clock icon. */
+@media (max-width: 22rem) {
+  .timer svg {
+    display: none;
+  }
+}
 .timer {
+  flex: none;
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
