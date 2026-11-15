@@ -4,7 +4,7 @@ import { Page } from '../../ui/Page';
 import { Dialog } from '../../ui/Dialog';
 import { useAnnounce } from '../../ui/Status';
 import { db } from '../../db/db';
-import { removeQuestion, saveQuestion } from '../../db/repo';
+import { removeQuestion, restoreQuestions, saveQuestion } from '../../db/repo';
 import { PARTS } from '../../domain/let-config';
 import { KEYS, type Area, type Key, type Question } from '../../domain/types';
 import { btn } from '../../ui/btn';
@@ -189,7 +189,7 @@ export function EditQuestion() {
             className={btn.secondary}
             onClick={async () => {
               await removeQuestion(q.id);
-              announce('Question removed');
+              announce('Question removed', () => restoreQuestions([q.id]));
               navigate('/bank');
             }}
           >

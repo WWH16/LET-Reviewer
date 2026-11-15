@@ -17,6 +17,7 @@ import { MockResults } from '../features/mock/MockResults';
 import { MockPrint } from '../features/mock/MockPrint';
 import { MockEntry } from '../features/mock/MockEntry';
 import { useSettings } from '../db/hooks';
+import { CommandMenu } from './CommandMenu';
 import { useEffect } from 'react';
 
 const NAV = [
@@ -78,6 +79,7 @@ export function App() {
               ))}
             </ul>
           </nav>
+          <CommandMenu />
           <NavLink className="top-settings" to="/settings">
             <Icon name="settings" size={18} />
             Settings

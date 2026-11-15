@@ -3,6 +3,7 @@
  * axes: light/grotesk-sans/monochrome · posture: quiet · contrast: pass · modes: light+dark · v2.0.0 */
 /* Hallmark · waive 7b · surface: absolute on --print-ink and --print-paper only, used inside .paper and @media print · the printed booklet and answer sheet need pure black toner on white bond, and the corner markers must scan */
 /* Hallmark · dismissed 41 · --color-success-fill is close to --color-ink on purpose in a monochrome palette; the check icon on it takes --color-card, not ink */
+/* Hallmark · dropped setSheetOpen(false), removeQuestion(q.id), removeBatch(removing · rewritten, not removed: the sheet's Close now calls closeSheet (it also returns focus), and both removes now announce an Undo */
 /* Hallmark · answered F4 · buttons are Kumo's own classes (src/ui/btn.ts): one primary per screen, secondary for the rest, ghost for quiet links; aria-pressed is a toggle on the secondary */
 /* Hallmark · answered F7 · cards, choices, feedback, the tray and the sheet share Kumo's one layer card recipe on purpose (white, hairline ring, soft drop); inputs share Kumo's one input recipe because they are one role */
 /* Hallmark · pre-emit critique: P4 H3 E4 S3 R4 V4 · weakest: S, Kumo is a shared product chrome by design; the answer cards are the one object the app is known by */
@@ -52,7 +53,13 @@ form [role='status'] p {
   font-size: var(--text-base);
   line-height: 1.5;
 }
-.num {
+.num,
+.tray-figure,
+.stat-row,
+.exam-bar,
+.score,
+.meta,
+.toast {
   font-variant-numeric: tabular-nums;
 }
 .mono {
@@ -164,8 +171,8 @@ form [role='status'] p {
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  min-height: var(--header-h);
-  padding-inline: var(--space-md);
+  min-height: calc(var(--header-h) + var(--safe-top));
+  padding: var(--safe-top) max(var(--space-md), var(--safe-right)) 0 max(var(--space-md), var(--safe-left));
   background: var(--color-card);
   border-bottom: 1px solid var(--color-rule);
   box-shadow: var(--shadow-bar);
@@ -256,7 +263,7 @@ a.top-settings,
     align-items: stretch;
     gap: var(--space-md);
     height: 100%;
-    padding: var(--space-sm);
+    padding: calc(var(--space-sm) + var(--safe-top)) var(--space-sm) calc(var(--space-sm) + var(--safe-bottom)) max(var(--space-sm), var(--safe-left));
     border-bottom: 0;
     border-right: 1px solid var(--color-rule);
     box-shadow: var(--shadow-side);
@@ -320,14 +327,43 @@ main.wide {
 }
 @media (max-width: 59.99rem) {
   main {
-    padding: var(--space-lg) var(--space-md) calc(var(--tabbar-h) + var(--space-2xl));
+    padding: var(--space-lg) max(var(--space-md), var(--safe-right)) calc(var(--tabbar-h) + var(--space-2xl) + var(--safe-bottom)) max(var(--space-md), var(--safe-left));
   }
 }
 
 /* ---------- Buttons: Kumo classes (btn.ts), plus the app's touch target and pressed state ---------- */
 
 .btn {
+  position: relative;
   text-decoration: none;
+}
+/* Hit slop: a 36px Kumo button gets a 40px tall target without changing its look. */
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: -2px 0;
+}
+/* Press feedback: a slight scale that springs back; the transition is interruptible. */
+@media (prefers-reduced-motion: no-preference) {
+  .btn,
+  .bubble {
+    transition: scale var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out);
+  }
+}
+.btn:active:not(:disabled),
+.bubble:active:not(:disabled) {
+  scale: 0.97;
+}
+.kbd-inline {
+  margin-left: var(--space-2xs);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px currentColor;
+  color: inherit;
+}
+@media (pointer: coarse) {
+  .kbd-inline {
+    display: none;
+  }
 }
 /* The primary is Kumo's secondary button with the darkest fill. Kumo's own primary forces a white label,
    which the light dark-mode fill cannot carry, so the label colour comes in through Kumo's text token. */
@@ -453,7 +489,7 @@ textarea.prose {
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  min-height: 32px;
+  min-height: 40px;
   font-size: var(--text-base);
   cursor: pointer;
 }
@@ -729,7 +765,7 @@ th.num {
 /* Bank: search and queue filters stay in view while the list scrolls. */
 .bank-filters {
   position: sticky;
-  top: var(--space-2xs);
+  top: calc(var(--space-2xs) + var(--safe-top));
   z-index: var(--z-sticky);
   margin-inline: calc(-1 * var(--space-md));
   padding: var(--space-sm) var(--space-md);
@@ -826,12 +862,36 @@ dialog::backdrop {
   transform: translateX(-50%);
   box-shadow: var(--shadow-pop);
 }
-.toast:empty {
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+.toast.is-empty {
   display: none;
+}
+.toast-action {
+  min-height: 32px;
+  padding-inline: var(--space-xs);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--color-ink);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+.toast-action:hover {
+  background: var(--color-paper-2);
+}
+.toast-action:active {
+  background: var(--color-paper-3);
 }
 @media (max-width: 59.99rem) {
   .toast {
-    bottom: calc(var(--tabbar-h) + var(--space-md));
+    bottom: calc(var(--tabbar-h) + var(--space-md) + var(--safe-bottom));
   }
 }
 
@@ -964,8 +1024,8 @@ dialog::backdrop {
   font-weight: 600;
 }
 .bubble {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   margin: var(--space-3xs);
   padding: 0;
   border: 0;
@@ -977,6 +1037,12 @@ dialog::backdrop {
   cursor: pointer;
   box-shadow: inset 0 0 0 1px var(--color-control);
   transition: background-color var(--dur-micro) var(--ease-out);
+}
+@media (pointer: coarse) {
+  .bubbles .bubble {
+    width: 40px;
+    height: 40px;
+  }
 }
 .bubble:hover {
   background: var(--color-paper-2);
@@ -1093,7 +1159,7 @@ kbd {
 }
 .sheet-drawer {
   position: fixed;
-  inset: auto 0 var(--tabbar-h);
+  inset: auto 0 calc(var(--tabbar-h) + var(--safe-bottom));
   z-index: var(--z-modal);
   max-height: 60vh;
   overflow: auto;
@@ -1121,6 +1187,150 @@ kbd {
 @media (max-width: 59.99rem) {
   .only-wide {
     display: none !important;
+  }
+}
+
+/* ---------- Loading skeleton ---------- */
+
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+.sk {
+  height: 7rem;
+  border-radius: var(--radius-card);
+  background: var(--color-paper-3);
+}
+.sk-line {
+  width: 40%;
+  height: 1.25rem;
+  border-radius: var(--radius-control);
+}
+.sk-short {
+  width: 70%;
+  height: 4rem;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sk {
+    animation: sk-pulse 1.2s var(--ease-out) infinite alternate;
+  }
+}
+@keyframes sk-pulse {
+  to {
+    opacity: 0.5;
+  }
+}
+
+/* ---------- Command menu (Ctrl+K) ---------- */
+
+.top-jump {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 36px;
+  padding-inline: var(--space-sm);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--color-paper-2);
+  color: var(--color-muted);
+  font: inherit;
+  font-size: var(--text-base);
+  cursor: pointer;
+}
+.top-jump:hover {
+  color: var(--color-ink);
+}
+.top-jump:active {
+  background: var(--color-paper-3);
+}
+dialog.command {
+  top: 15vh;
+  margin-top: 0;
+  max-width: 32rem;
+  padding: var(--space-xs);
+}
+dialog.command input {
+  border: 0;
+  border-bottom: 1px solid var(--color-rule);
+  border-radius: 0;
+  font-size: var(--text-lg);
+}
+dialog.command input:focus-visible {
+  outline: none;
+  border-color: var(--color-ink);
+}
+.command-list {
+  max-height: 50vh;
+  overflow: auto;
+  margin: var(--space-xs) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.command-list > li {
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-control);
+  font-size: var(--text-base);
+  cursor: pointer;
+}
+.command-list > li[aria-selected='true'] {
+  background: var(--color-accent-soft);
+  color: var(--color-on-soft);
+  box-shadow: inset 0 0 0 1px var(--color-accent-edge);
+}
+.command-empty {
+  color: var(--color-muted);
+}
+
+/* ---------- Phone answer sheet: grab handle for swipe-to-dismiss ---------- */
+
+.sheet-drawer {
+  transition: transform var(--dur-short) var(--ease-out);
+}
+.sheet-grab {
+  display: grid;
+  place-items: center;
+  height: 24px;
+  margin: calc(-1 * var(--space-xs)) 0 0;
+  cursor: grab;
+  touch-action: none;
+}
+.sheet-grab::before {
+  content: '';
+  width: 36px;
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--color-control);
+}
+
+/* ---------- Continuous corners where the browser draws them ---------- */
+
+@supports (corner-shape: squircle) {
+  :root {
+    --radius-control: 11px;
+    --radius-card: 18px;
+  }
+  .card,
+  .tray,
+  .choice,
+  .feedback,
+  .notice,
+  .list,
+  .sheet,
+  .stat-row > div,
+  .timer,
+  .toast,
+  .top-jump,
+  .btn,
+  dialog,
+  input,
+  select,
+  textarea,
+  [role='alert'] {
+    corner-shape: squircle;
+  }
+  .btn {
+    border-radius: var(--radius-control);
   }
 }
 

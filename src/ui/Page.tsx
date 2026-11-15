@@ -1,8 +1,10 @@
 import { useEffect, useRef, type ReactNode } from 'react';
+import { Skeleton } from './Skeleton';
 
 /**
  * One screen. Sets the tab title and moves focus to the heading when the screen opens,
  * so keyboard and screen-reader users land at the top of the new content.
+ * A screen still loading passes `null` children and gets a skeleton.
  * `titleHidden` keeps the h1 for screen readers but hides it where the screen's first
  * block already says where you are (Home's tray, a practice question).
  */
@@ -28,7 +30,7 @@ export function Page({
         <h1 ref={heading} tabIndex={-1} className={titleHidden ? 'sr-only' : undefined}>
           {title}
         </h1>
-        {children}
+        {children ?? <Skeleton />}
       </div>
     </main>
   );

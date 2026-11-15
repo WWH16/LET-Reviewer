@@ -65,6 +65,15 @@ export async function removeQuestion(id: string) {
   await db.questions.update(id, { deleted: true, updatedAt: nowIso() });
 }
 
+/** Brings soft-deleted questions back (the Undo on a remove). */
+export async function restoreQuestions(ids: string[]) {
+  const now = nowIso();
+  await db.questions.where('id').anyOf(ids).modify((q) => {
+    q.deleted = false;
+    q.updatedAt = now;
+  });
+}
+
 /** Soft-deletes a whole import batch (DX R4). Attempts stay, so history is not lost. */
 export async function removeBatch(batchId: string): Promise<number> {
   const now = nowIso();
@@ -134,6 +143,8 @@ export async function gradeExam(exam: MockExam): Promise<{ correct: number; tota
     if (isCorrect(a, qs[i])) correct++;
   });
   await db.transaction('rw', db.attempts, db.mockExams, async () => {
+    // Grading is idempotent: a second Submit or Grade (a double tap, a time-up racing a tap) adds nothing.
+    if ((await db.mockExams.get(exam.id))?.status === 'graded') return;
     await db.attempts.bulkAdd(attempts);
     await db.mockExams.update(exam.id, { status: 'graded', submittedAt: at, updatedAt: at });
   });

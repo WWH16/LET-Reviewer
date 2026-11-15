@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useRef, useState, type MutableRefObject } from 'react';
+import { memo, useCallback, useEffect, useRef, useState, type MutableRefObject, type PointerEvent as ReactPointerEvent } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { ChoiceGroup } from '../../ui/ChoiceGroup';
@@ -161,16 +161,57 @@ export function MockExam() {
   const [confirm, setConfirm] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   const sheetToggle = useRef<HTMLButtonElement>(null);
+  const sheetRef = useRef<HTMLElement>(null);
+  const drag = useRef<{ y: number; t: number } | null>(null);
+  const closeSheet = useCallback(() => {
+    setSheetOpen(false);
+    sheetToggle.current?.focus();
+  }, []);
+  // Close the phone sheet with Escape, and with Android's back gesture where CloseWatcher exists,
+  // so back closes the sheet instead of leaving the exam.
   useEffect(() => {
     if (!sheetOpen) return;
+    const CW = (window as unknown as { CloseWatcher?: new () => { onclose: (() => void) | null; destroy(): void } }).CloseWatcher;
+    if (CW) {
+      const w = new CW();
+      w.onclose = closeSheet;
+      return () => w.destroy();
+    }
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'Escape' || document.querySelector('dialog[open]')) return;
-      setSheetOpen(false);
-      sheetToggle.current?.focus();
+      closeSheet();
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [sheetOpen]);
+  }, [sheetOpen, closeSheet]);
+  // Swipe down on the grab handle to dismiss the sheet: it follows the finger, and closes past 80 px or on a quick flick.
+  const grab = {
+    onPointerDown: (e: ReactPointerEvent<HTMLDivElement>) => {
+      drag.current = { y: e.clientY, t: e.timeStamp };
+      e.currentTarget.setPointerCapture(e.pointerId);
+      if (sheetRef.current) sheetRef.current.style.transition = 'none';
+    },
+    onPointerMove: (e: ReactPointerEvent<HTMLDivElement>) => {
+      if (!drag.current || !sheetRef.current) return;
+      sheetRef.current.style.transform = `translateY(${Math.max(0, e.clientY - drag.current.y)}px)`;
+    },
+    onPointerUp: (e: ReactPointerEvent<HTMLDivElement>) => {
+      if (!drag.current || !sheetRef.current) return;
+      const dy = e.clientY - drag.current.y;
+      const speed = dy / Math.max(1, e.timeStamp - drag.current.t);
+      drag.current = null;
+      sheetRef.current.style.transition = '';
+      sheetRef.current.style.transform = '';
+      if (dy > 80 || speed > 0.5) closeSheet();
+    },
+    onPointerCancel: () => {
+      drag.current = null;
+      if (sheetRef.current) {
+        sheetRef.current.style.transition = '';
+        sheetRef.current.style.transform = '';
+      }
+    },
+  };
   const [restored, setRestored] = useState<string | null>(null);
   const submitting = useRef(false);
 
@@ -325,14 +366,16 @@ export function MockExam() {
           })}
         </div>
         <aside
+          ref={sheetRef}
           id="answer-sheet"
           className={`sheet stack-sm ${sheetOpen ? 'sheet-drawer' : 'only-wide'}`}
           aria-label="Answer sheet"
         >
+          {sheetOpen && <div className="sheet-grab" aria-hidden="true" {...grab} />}
           <div className="spread">
             <span className="label">Answer sheet</span>
             {sheetOpen && (
-              <button type="button" className={btn.quiet} onClick={() => setSheetOpen(false)}>
+              <button type="button" className={btn.quiet} onClick={closeSheet}>
                 Close
               </button>
             )}

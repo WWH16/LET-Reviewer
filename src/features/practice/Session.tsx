@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { Chip } from '../../ui/Chip';
@@ -197,10 +198,16 @@ export function Session() {
   };
   const next = () => {
     if (isLast) return setDone(true);
-    setI(i + 1);
-    setChosen(null);
-    setChecked(false);
-    setEliminated(new Set());
+    const advance = () => {
+      setI(i + 1);
+      setChosen(null);
+      setChecked(false);
+      setEliminated(new Set());
+    };
+    // A short crossfade between questions where the browser supports view transitions and motion is welcome.
+    if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches)
+      document.startViewTransition(() => flushSync(advance));
+    else advance();
   };
   const toggleFlag = async () => {
     const on = q.flag?.reason !== FLAGGED;
@@ -213,7 +220,7 @@ export function Session() {
   };
 
   const onKeyDown = (e: KeyboardEvent) => {
-    if (!settings.shortcuts || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (!settings.shortcuts || e.ctrlKey || e.metaKey || e.altKey || document.querySelector('dialog[open]')) return;
     const t = e.target instanceof HTMLElement ? e.target : document.body;
     if (t.matches('textarea, select, [contenteditable], input:not([type=radio])')) return;
     const k = e.key.toUpperCase();
@@ -282,8 +289,9 @@ export function Session() {
 
         {!checked ? (
           <div className="row">
-            <button type="button" className={btn.primary} disabled={!chosen} onClick={check}>
+            <button type="button" className={btn.primary} disabled={!chosen} onClick={check} aria-keyshortcuts={settings.shortcuts ? 'Enter' : undefined}>
               Check answer
+              {settings.shortcuts && <kbd className="kbd-inline" aria-hidden="true">Enter</kbd>}
             </button>
           </div>
         ) : (
@@ -295,11 +303,19 @@ export function Session() {
             <p lang={q.lang}>{q.explanation || 'No explanation saved for this question.'}</p>
             <p className="sr-only">The choices are locked.</p>
             <div className="row">
-              <button type="button" className={btn.primary} onClick={next}>
+              <button type="button" className={btn.primary} onClick={next} aria-keyshortcuts={settings.shortcuts ? 'Enter' : undefined}>
                 {isLast ? 'See results' : 'Next'}
+                {settings.shortcuts && <kbd className="kbd-inline" aria-hidden="true">Enter</kbd>}
               </button>
-              <button type="button" className={btn.secondary} aria-pressed={q.flag?.reason === FLAGGED} onClick={toggleFlag}>
+              <button
+                type="button"
+                className={btn.secondary}
+                aria-pressed={q.flag?.reason === FLAGGED}
+                onClick={toggleFlag}
+                aria-keyshortcuts={settings.shortcuts ? 'F' : undefined}
+              >
                 <Icon name="flag" /> Flag
+                {settings.shortcuts && <kbd className="kbd-inline" aria-hidden="true">F</kbd>}
               </button>
               <button type="button" className={btn.quiet} onClick={reportKey} disabled={q.flag?.reason === KEY_LOOKS_WRONG}>
                 {q.flag?.reason === KEY_LOOKS_WRONG ? 'Key reported' : 'Key looks wrong'}

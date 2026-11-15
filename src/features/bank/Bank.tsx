@@ -6,7 +6,7 @@ import { Dialog } from '../../ui/Dialog';
 import { useAnnounce } from '../../ui/Status';
 import { copyText } from '../../ui/clipboard';
 import { useQuestions } from '../../db/hooks';
-import { loadSampleQuestions, removeBatch } from '../../db/repo';
+import { loadSampleQuestions, removeBatch, restoreQuestions } from '../../db/repo';
 import { subareaName } from '../../domain/let-config';
 import { templateA } from '../../domain/prompts';
 import type { Question } from '../../domain/types';
@@ -172,9 +172,11 @@ export function Bank() {
             type="button"
             className={btn.secondary}
             onClick={async () => {
+              // Undo brings back only the questions this remove took out, not ones removed earlier.
+              const ids = questions.filter((q) => q.importBatchId === removing!.id).map((q) => q.id);
               const n = await removeBatch(removing!.id);
               setRemoving(null);
-              announce(`Removed ${n} questions`);
+              announce(`Removed ${n} questions`, () => restoreQuestions(ids));
             }}
           >
             Remove batch
