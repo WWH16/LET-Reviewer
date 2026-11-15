@@ -18,9 +18,9 @@ Update the checkboxes and the "Where we left off" section at the end of every se
 
 ## Where we left off
 
-- **Done:** F0 scaffold, F1 design system, F2 domain layer (`src/domain/`: types, config, IDs, dates, validator, Leitner, scoring, exam draw, prompts, 16 sample questions, 32 passing tests).
-- **Not done:** Vercel deploy (needs your sign-in and domain). Screens other than `/states` are placeholders.
-- **Next action:** F3, the Dexie database in `src/db/`.
+- **Done:** F0 scaffold, F1 design system, F2 domain layer (32 tests), F3 Dexie database (`src/db/`: schema, repo, live-query hooks, backup).
+- **Not done:** Vercel deploy (needs your sign-in and domain). Screens other than `/states` are placeholders. F3 is type-checked; its in-browser check happens through the F4 Bank screen.
+- **Next action:** F4, Import, Bank, and first-run Home.
 
 Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-hooks 4.4, Vite 8.3, TypeScript 7.0, Vitest 5.1, vite-plugin-pwa 2.0, `@fontsource-variable/geist` and `@fontsource-variable/geist-mono` 5.3. Node 26, npm 11.
 
@@ -74,9 +74,9 @@ Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-ho
 - [x] `domain.test.ts`: validator, IDs, Leitner, draw, scoring, and a check that `domain` imports no other layer
 
 ### F3. Local database (`src/db/`)
-- [ ] `db.ts`: Dexie stores `questions`, `attempts`, `mockExams`, `settings`, `meta`
-- [ ] Repository functions, "Load sample questions"
-- [ ] `backup.ts`: versioned envelope export, restore with version check (replace, not merge)
+- [x] `db.ts`: Dexie stores `questions`, `attempts`, `mockExams`, `settings`, `meta`
+- [x] Repository functions, "Load sample questions"
+- [x] `backup.ts`: versioned envelope export, restore with version check (replace, not merge)
 
 ### F4. Bank and first run
 - [ ] Import screen: paste box, paste-from-clipboard, file picker, preview ("48 new, 2 skipped, 2 errors"), commit
