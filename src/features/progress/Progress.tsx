@@ -60,7 +60,14 @@ export function Progress() {
               <tr key={a}>
                 <th scope="row">{PARTS[a].name}</th>
                 <td className="num">{Math.round(LEVEL_WEIGHTS[settings.level][a]! * 100)}%</td>
-                <td className="num">{fmt(parts[a]?.pct ?? null)}</td>
+                <td className="num">
+                  {parts[a]?.pct != null && (
+                    <span className="meter inline" aria-hidden="true">
+                      <span style={{ width: `${parts[a]!.pct}%` }} />
+                    </span>
+                  )}
+                  {fmt(parts[a]?.pct ?? null)}
+                </td>
                 <td className="num">{parts[a]?.total ?? 0}</td>
               </tr>
             ))}
@@ -98,7 +105,7 @@ export function Progress() {
                 </span>
                 <button
                   type="button"
-                  className={btn.quiet}
+                  className={`${btn.quiet} row-action`}
                   aria-label={`Copy prompt for ${w.topic || subareaName(w.subarea)}`}
                   onClick={async () => {
                     await copyText(

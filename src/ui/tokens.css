@@ -38,6 +38,8 @@
   --color-error: oklch(38% 0 0); --color-error-fill: oklch(49% 0 0); --color-error-tint: oklch(91.8% 0 0);
   --color-warning: oklch(40% 0 0); --color-warning-tint: oklch(96% 0 0); --color-info-tint: oklch(94.6% 0 0);
   --color-shade: oklch(18% 0 0 / 0.42);
+  /* the one inverted surface per screen (Home's Today card): the darkest mass on the page */
+  --color-inverse: oklch(18% 0 0); --color-inverse-ink: oklch(98% 0 0); --color-inverse-muted: oklch(74% 0 0); --color-inverse-tint: oklch(26% 0 0);
   /* the primary button: near-black with a white label; in dark mode it flips to near-white with a dark label */
   --color-button: oklch(25% 0 0); --color-button-deep: oklch(15% 0 0); --color-button-ink: oklch(99% 0 0);
   --shadow-card: 0 0 0 1px var(--color-line), 0 1px 3px oklch(0% 0 0 / 0.07), 0 6px 16px -6px oklch(0% 0 0 / 0.07);
@@ -74,6 +76,7 @@
   --color-error: oklch(78% 0 0); --color-error-fill: oklch(55% 0 0); --color-error-tint: oklch(24% 0 0);
   --color-warning: oklch(80% 0 0); --color-warning-tint: oklch(24% 0 0); --color-info-tint: oklch(22% 0 0);
   --color-shade: oklch(5% 0 0 / 0.6);
+  --color-inverse: oklch(92% 0 0); --color-inverse-ink: oklch(14% 0 0); --color-inverse-muted: oklch(38% 0 0); --color-inverse-tint: oklch(84% 0 0);
   --shadow-card: 0 0 0 1px var(--color-line), inset 0 1px 0 oklch(100% 0 0 / 0.05); --shadow-pop: 0 0 0 1px var(--color-line), 0 12px 32px -8px oklch(0% 0 0 / 0.5);
   --shadow-bar: 0 4px 12px -6px oklch(0% 0 0 / 0.5); --shadow-bar-up: 0 -4px 12px -6px oklch(0% 0 0 / 0.5); --shadow-side: 4px 0 12px -6px oklch(0% 0 0 / 0.5);
 }
@@ -92,6 +95,7 @@
     --color-error: oklch(78% 0 0); --color-error-fill: oklch(55% 0 0); --color-error-tint: oklch(24% 0 0);
     --color-warning: oklch(80% 0 0); --color-warning-tint: oklch(24% 0 0); --color-info-tint: oklch(22% 0 0);
     --color-shade: oklch(5% 0 0 / 0.6);
+  --color-inverse: oklch(92% 0 0); --color-inverse-ink: oklch(14% 0 0); --color-inverse-muted: oklch(38% 0 0); --color-inverse-tint: oklch(84% 0 0);
     --shadow-card: 0 0 0 1px var(--color-line), inset 0 1px 0 oklch(100% 0 0 / 0.05); --shadow-pop: 0 0 0 1px var(--color-line), 0 12px 32px -8px oklch(0% 0 0 / 0.5);
     --shadow-bar: 0 4px 12px -6px oklch(0% 0 0 / 0.5); --shadow-bar-up: 0 -4px 12px -6px oklch(0% 0 0 / 0.5); --shadow-side: 4px 0 12px -6px oklch(0% 0 0 / 0.5);
   }

@@ -33,13 +33,24 @@ export function Home() {
   const remindBackup = sinceBackup >= 50 || (sinceBackup > 0 && (backupDays === null || backupDays >= 7));
 
   return (
-    <Page title="Home" titleHidden>
+    <Page title="Home" titleHidden wide>
+      <div className="home">
       <section className="tray" aria-labelledby="home-due">
         <h2 id="home-due">Today</h2>
-        <p className="tray-figure">
-          <span className="display">{due.length}</span>
-          <span>{due.length === 1 ? 'review due' : 'reviews due'}</span>
-        </p>
+        {due.length > 0 ? (
+          <p className="tray-figure">
+            <span className="display">{due.length}</span>
+            <span>{due.length === 1 ? 'review due' : 'reviews due'}</span>
+          </p>
+        ) : (
+          <p className="tray-figure">
+            <span className="display">{todayAttempts.length}</span>
+            <span>
+              answered today
+              <span className="muted"> (no reviews due)</span>
+            </span>
+          </p>
+        )}
         <div className="row">
           {due.length > 0 ? (
             <Link className={btn.primary} to="/review">
@@ -107,6 +118,7 @@ export function Home() {
             </p>
           )}
         </div>
+      </div>
       </div>
     </Page>
   );

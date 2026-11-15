@@ -101,7 +101,7 @@ export function Bank() {
         <CopyTemplateA />
       </div>
 
-      <div className="stack">
+      <div className="stack bank-filters">
         <div className="field">
           <label htmlFor="bank-search">Search questions</label>
           <input id="bank-search" type="search" value={search} onChange={(e) => setSearch(e.target.value)} />
