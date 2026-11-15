@@ -1,4 +1,4 @@
-// Writes the app icons: a Dose-green square with a warm-paper outlined square. No image library needed.
+// Writes the app icons: a Dose-green square with a near-white outlined square. No image library needed.
 // Run: node scripts/make-icons.mjs
 import { deflateSync } from 'node:zlib';
 import { writeFileSync } from 'node:fs';
@@ -27,7 +27,7 @@ function png(size) {
   const stroke = Math.max(2, Math.round(size * 0.045));
   const raw = Buffer.alloc((size * 3 + 1) * size); // one filter byte per row, then RGB pixels
   const green = [11, 118, 80];
-  const paper = [250, 247, 239];
+  const paper = [241, 245, 243];
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
       const inside = x >= inset && x < size - inset && y >= inset && y < size - inset;
