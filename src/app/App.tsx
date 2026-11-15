@@ -8,6 +8,9 @@ import { Import } from '../features/bank/Import';
 import { EditQuestion } from '../features/bank/EditQuestion';
 import { DrillSetup } from '../features/practice/DrillSetup';
 import { Session } from '../features/practice/Session';
+import { Settings } from '../features/settings/Settings';
+import { useSettings } from '../db/hooks';
+import { useEffect } from 'react';
 
 const NAV = [
   { to: '/', label: 'Home' },
@@ -26,6 +29,15 @@ function Todo({ title }: { title: string }) {
 }
 
 export function App() {
+  const settings = useSettings();
+  useEffect(() => {
+    if (!settings) return;
+    const root = document.documentElement;
+    if (settings.theme === 'system') delete root.dataset.theme;
+    else root.dataset.theme = settings.theme;
+    root.style.fontSize = `${settings.textSize}%`;
+  }, [settings]);
+
   return (
     <StatusProvider>
       <a className="skip" href="#main">
@@ -53,7 +65,7 @@ export function App() {
         <Route path="/bank" element={<Bank />} />
         <Route path="/bank/import" element={<Import />} />
         <Route path="/bank/:id" element={<EditQuestion />} />
-        <Route path="/settings" element={<Todo title="Settings" />} />
+        <Route path="/settings" element={<Settings />} />
         <Route path="/states" element={<States />} />
         <Route path="*" element={<Todo title="Not found" />} />
       </Routes>

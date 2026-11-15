@@ -18,9 +18,9 @@ Update the checkboxes and the "Where we left off" section at the end of every se
 
 ## Where we left off
 
-- **Done:** F0–F5. Drill setup, session (drill, review, Quick 10), results, flag, key-looks-wrong, eliminate, and keyboard shortcuts work. A keyboard-only drill was run end to end in the browser.
-- **Not done:** Vercel deploy (needs your sign-in and domain). Mock, Progress, Settings are placeholders. Home is minimal until F7.
-- **Next action:** F6, Settings, backup and restore, offline PWA.
+- **Done:** F0–F6. Settings (exam, display, keys), backup export (share sheet or download) and restore with preview, storage protection, offline service worker. 35 tests pass.
+- **Not done:** Vercel deploy (needs your sign-in and domain). Phone airplane-mode test. Mock and Progress are placeholders. Home is minimal until F7.
+- **Next action:** F7, Review queue on Home, Progress screen.
 
 Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-hooks 4.4, Vite 8.3, TypeScript 7.0, Vitest 5.1, vite-plugin-pwa 2.0, `@fontsource-variable/geist` and `@fontsource-variable/geist-mono` 5.3. Node 26, npm 11.
 
@@ -90,10 +90,10 @@ Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-ho
 - [x] Results inside the session
 
 ### F6. Settings, backup, offline
-- [ ] Settings: level, major, exam date, timer, theme, text size, shortcuts, strict sheet
-- [ ] Export and restore with a preview dialog
-- [ ] `navigator.storage.persist()` and its status
-- [ ] PWA installs and a drill works in airplane mode
+- [x] Settings: level, major, exam date, timer, theme, text size, shortcuts, strict sheet
+- [x] Export and restore with a preview dialog
+- [x] `navigator.storage.persist()` and its status
+- [x] Service worker precaches the app; a reload with the server stopped loads from cache (tested in preview build). Real-phone airplane-mode test still to do.
 
 ### F7. Review and Progress
 - [ ] Review queue from due cards, Quick 10

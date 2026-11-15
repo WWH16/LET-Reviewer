@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { useAnnounce } from '../../ui/Status';
 import { useQuestions } from '../../db/hooks';
-import { importQuestions, nowIso } from '../../db/repo';
+import { importQuestions, nowIso, protectStorage } from '../../db/repo';
 import { parsePasted, previewImport } from '../../domain/validate';
 import { PARTS, subareaName } from '../../domain/let-config';
 
@@ -54,6 +54,7 @@ export function Import() {
     const now = nowIso();
     const batchId = `batch-${now}`;
     const n = await importQuestions(preview.ready.map((q) => ({ ...q, importBatchId: batchId, updatedAt: now })));
+    protectStorage(); // first real data: ask the browser not to evict it (DX R10)
     announce(`Imported ${n} question${n === 1 ? '' : 's'}`);
     navigate('/bank');
   };
