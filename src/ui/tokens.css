@@ -527,6 +527,13 @@ th {
   text-transform: uppercase;
   color: var(--muted);
 }
+th[scope='row'] {
+  font-size: inherit;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--fg);
+}
 td.num,
 th.num {
   text-align: right;

@@ -18,9 +18,9 @@ Update the checkboxes and the "Where we left off" section at the end of every se
 
 ## Where we left off
 
-- **Done:** F0–F6. Settings (exam, display, keys), backup export (share sheet or download) and restore with preview, storage protection, offline service worker. 35 tests pass.
-- **Not done:** Vercel deploy (needs your sign-in and domain). Phone airplane-mode test. Mock and Progress are placeholders. Home is minimal until F7.
-- **Next action:** F7, Review queue on Home, Progress screen.
+- **Done:** F0–F7. Home dashboard (reviews due, continue, backup reminder, rating, countdown, streak) and Progress (rating, parts, weakest topics with Copy prompt, sub-area table). Rating needs 20+ answers per part.
+- **Not done:** Vercel deploy (needs your sign-in and domain). Phone airplane-mode test. Mock exam screens are placeholders.
+- **Next action:** F8, Mock exam, digital.
 
 Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-hooks 4.4, Vite 8.3, TypeScript 7.0, Vitest 5.1, vite-plugin-pwa 2.0, `@fontsource-variable/geist` and `@fontsource-variable/geist-mono` 5.3. Node 26, npm 11.
 
@@ -96,9 +96,9 @@ Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-ho
 - [x] Service worker precaches the app; a reload with the server stopped loads from cache (tested in preview build). Real-phone airplane-mode test still to do.
 
 ### F7. Review and Progress
-- [ ] Review queue from due cards, Quick 10
-- [ ] Home: reviews due, projected rating, countdown, streak, backup reminder
-- [ ] Progress: accuracy tables, weakest five topics, Copy my weak topics
+- [x] Review queue from due cards, Quick 10
+- [x] Home: reviews due, projected rating, countdown, streak, backup reminder
+- [x] Progress: accuracy tables, weakest five topics, Copy my weak topics
 
 ### F8. Mock exam, digital
 - [ ] Setup with availability check and the half-length and include-AI fixes

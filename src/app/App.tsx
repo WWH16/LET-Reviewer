@@ -9,6 +9,7 @@ import { EditQuestion } from '../features/bank/EditQuestion';
 import { DrillSetup } from '../features/practice/DrillSetup';
 import { Session } from '../features/practice/Session';
 import { Settings } from '../features/settings/Settings';
+import { Progress } from '../features/progress/Progress';
 import { useSettings } from '../db/hooks';
 import { useEffect } from 'react';
 
@@ -61,7 +62,7 @@ export function App() {
         <Route path="/mock/:id/print" element={<Todo title="Print exam" />} />
         <Route path="/mock/:id/entry" element={<Todo title="Enter answers" />} />
         <Route path="/mock/:id/results" element={<Todo title="Exam results" />} />
-        <Route path="/progress" element={<Todo title="Progress" />} />
+        <Route path="/progress" element={<Progress />} />
         <Route path="/bank" element={<Bank />} />
         <Route path="/bank/import" element={<Import />} />
         <Route path="/bank/:id" element={<EditQuestion />} />
