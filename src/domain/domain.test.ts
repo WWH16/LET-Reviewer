@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { parsePasted, previewImport, validateItem } from './validate';
 import { examLabel, questionId } from './ids';
 import { buildCards, dueCards } from './leitner';
-import { dayKey, streak } from './dates';
+import { dayKey, heatWeeks, longestStreak, streak } from './dates';
 import { drawExam, quotas } from './examDraw';
 import { PARTS } from './let-config';
 import { projectedRating } from './scoring';
@@ -112,6 +112,22 @@ describe('Leitner', () => {
   it('counts 00:30 as the night before, and streaks across days', () => {
     expect(dayKey(new Date(2026, 10, 16, 0, 30))).toBe('2026-11-15');
     expect(streak(new Set(['2026-11-13', '2026-11-14', '2026-11-15']), '2026-11-15')).toBe(3);
+  });
+  it('keeps a streak alive until tonight, and finds the longest run across a month end', () => {
+    const days = ['2026-10-30', '2026-10-31', '2026-11-01', '2026-11-02', '2026-11-14', '2026-11-15'];
+    expect(streak(new Set(days), '2026-11-16')).toBe(2);
+    expect(streak(new Set(days), '2026-11-17')).toBe(0);
+    expect(longestStreak(days)).toBe(4);
+    expect(longestStreak([])).toBe(0);
+  });
+  it('lays the activity grid out in Sunday-first weeks that stop at today', () => {
+    // 2026-11-16 is a Monday: this week holds Sunday and Monday only.
+    const weeks = heatWeeks(new Map([['2026-11-16', 12], ['2026-11-08', 150]]), '2026-11-16', 3);
+    expect(weeks.map((w) => w.length)).toEqual([7, 7, 2]);
+    expect(weeks[0][0].day).toBe('2026-11-01');
+    expect(weeks[1][0]).toEqual({ day: '2026-11-08', count: 150, level: 4 });
+    expect(weeks[2][1]).toEqual({ day: '2026-11-16', count: 12, level: 2 });
+    expect(weeks[2][0].level).toBe(0);
   });
 });
 

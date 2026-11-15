@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { useExams, useMeta } from '../../db/hooks';
-import { daysBetween, streak } from '../../domain/dates';
+import { daysBetween, longestStreak } from '../../domain/dates';
+import { StreakCard } from './StreakCard';
 import { useStats } from '../progress/useStats';
 import { RatingCard } from '../progress/RatingCard';
 import { drillUrl, type DrillParams } from '../practice/DrillSetup';
@@ -25,7 +26,7 @@ export function Home() {
   const { due, rating, days, today, settings, attempts, todayAttempts, todayCorrect } = stats;
   const open = exams.find((e) => e.status === 'in-progress' && e.form === 'digital');
   const printed = exams.find((e) => e.status === 'printed');
-  const run = streak(days, today);
+  const longest = longestStreak(days.keys());
   const toExam = settings.examDate ? daysBetween(today, settings.examDate) : null;
   const sinceBackup = attempts.length - (lastBackup?.attempts ?? 0);
   const backupDays = lastBackup ? daysBetween(lastBackup.at.slice(0, 10), today) : null;
@@ -107,17 +108,14 @@ export function Home() {
           )}
         </div>
         <div>
-          <span className="label">Streak</span>
+          <span className="label">Longest streak</span>
           <p>
-            <span className="stat-figure">{run}</span> {run === 1 ? 'day' : 'days'}
+            <span className="stat-figure">{longest}</span> {longest === 1 ? 'day' : 'days'}
           </p>
-          {todayAttempts.length > 0 && (
-            <p className="muted">
-              Today: {todayCorrect} of {todayAttempts.length} correct
-            </p>
-          )}
         </div>
       </div>
+
+      <StreakCard days={days} today={today} todayCount={todayAttempts.length} todayCorrect={todayCorrect} />
       </div>
     </Page>
   );

@@ -8,6 +8,7 @@ import {
   ClockIcon,
   CopyIcon,
   ExamIcon,
+  FireIcon,
   FlagIcon,
   GearSixIcon,
   HouseIcon,
@@ -35,11 +36,13 @@ const ICONS = {
   progress: ChartBarIcon,
   bank: StackIcon,
   settings: GearSixIcon,
+  fire: FireIcon,
 } satisfies Record<string, PhosphorIcon>;
 
 export type IconName = keyof typeof ICONS;
 
-export function Icon({ name, size = 16 }: { name: IconName; size?: number }) {
+/** `filled` draws the solid cut of the icon: a state shown by fill, since the palette has no hue. */
+export function Icon({ name, size = 16, filled }: { name: IconName; size?: number; filled?: boolean }) {
   const Glyph = ICONS[name];
-  return <Glyph aria-hidden="true" focusable="false" size={size} />;
+  return <Glyph aria-hidden="true" focusable="false" size={size} weight={filled ? 'fill' : 'regular'} />;
 }

@@ -24,6 +24,9 @@
   --text-h1: 1.375rem; --text-h2: 1.125rem; --text-figure: 2rem; --text-stat: 1.375rem;
   --pad-card: var(--space-md); --gap-section: var(--space-lg); --pad-page-top: var(--space-lg);
   --radius-control: 8px; --radius-card: 12px; --radius-pill: 999px;
+  /* The activity grid on Home: five greys in even steps from empty (paper-3) to busiest (ink). Dark mode sets its own middle three. */
+  --heat-cell: 0.75rem; --heat-gap: 3px;
+  --heat-0: var(--color-paper-3); --heat-1: oklch(74% 0 0); --heat-2: oklch(56% 0 0); --heat-3: oklch(37% 0 0); --heat-4: var(--color-ink);
   --measure-app: 48rem; --container-app: 72rem; --sidebar-w: 15rem; --header-h: 56px; --tabbar-h: 64px; --sticky-offset: env(safe-area-inset-top, 0px);
   --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px); --safe-left: env(safe-area-inset-left, 0px); --safe-right: env(safe-area-inset-right, 0px);
 
@@ -72,6 +75,7 @@
   --color-accent: oklch(90% 0 0); --color-accent-deep: oklch(80% 0 0); --color-accent-ink: oklch(16% 0 0);
   --color-accent-text: oklch(92% 0 0); --color-accent-edge: oklch(85% 0 0); --color-accent-soft: oklch(32% 0 0); --color-on-soft: oklch(95% 0 0);
   --color-focus: oklch(90% 0 0);
+    --heat-1: oklch(40% 0 0); --heat-2: oklch(58% 0 0); --heat-3: oklch(76% 0 0);
   --color-button: oklch(92% 0 0); --color-button-deep: oklch(82% 0 0); --color-button-ink: oklch(16% 0 0);
   --color-success: oklch(92% 0 0); --color-success-fill: oklch(88% 0 0); --color-success-tint: oklch(28% 0 0);
   --color-error: oklch(78% 0 0); --color-error-fill: oklch(55% 0 0); --color-error-tint: oklch(24% 0 0);
@@ -91,6 +95,7 @@
     --color-accent: oklch(90% 0 0); --color-accent-deep: oklch(80% 0 0); --color-accent-ink: oklch(16% 0 0);
     --color-accent-text: oklch(92% 0 0); --color-accent-edge: oklch(85% 0 0); --color-accent-soft: oklch(32% 0 0); --color-on-soft: oklch(95% 0 0);
     --color-focus: oklch(90% 0 0);
+    --heat-1: oklch(40% 0 0); --heat-2: oklch(58% 0 0); --heat-3: oklch(76% 0 0);
   --color-button: oklch(92% 0 0); --color-button-deep: oklch(82% 0 0); --color-button-ink: oklch(16% 0 0);
     --color-success: oklch(92% 0 0); --color-success-fill: oklch(88% 0 0); --color-success-tint: oklch(28% 0 0);
     --color-error: oklch(78% 0 0); --color-error-fill: oklch(55% 0 0); --color-error-tint: oklch(24% 0 0);

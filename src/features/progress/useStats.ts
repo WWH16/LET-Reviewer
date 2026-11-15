@@ -25,11 +25,12 @@ export function useStats() {
       settings.level,
       Object.fromEntries(Object.entries(parts).map(([a, v]) => [a, v!.total >= MIN_PART_ANSWERS ? v!.pct : null])),
     );
-    const days = new Set<string>();
+    // Answers per study day: the streak reads its keys, the activity grid its counts.
+    const days = new Map<string, number>();
     const todayAttempts: typeof attempts = [];
     for (const a of attempts) {
       const day = dayKey(a.at);
-      days.add(day);
+      days.set(day, (days.get(day) ?? 0) + 1);
       if (day === today) todayAttempts.push(a);
     }
     const todayCorrect = todayAttempts.filter((a) => isCorrect(a, qmap.get(a.questionId))).length;
