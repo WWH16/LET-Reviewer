@@ -110,7 +110,7 @@ export function Settings() {
           <legend className="label">Theme</legend>
           <div className="row">
             {(['system', 'light', 'dark'] as const).map((t) => (
-              <label key={t} className="check" style={{ marginRight: 'var(--s4)' }}>
+              <label key={t} className="check" style={{ marginRight: 'var(--space-md)' }}>
                 <input type="radio" name="theme" checked={s.theme === t} onChange={() => set({ theme: t })} />
                 {t[0].toUpperCase() + t.slice(1)}
               </label>
@@ -165,7 +165,6 @@ export function Settings() {
             </button>
           )}
         </div>
-        <p className="muted">Cloud backup and sync between devices: not set up yet.</p>
       </section>
 
       <hr />

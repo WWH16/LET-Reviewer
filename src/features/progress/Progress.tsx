@@ -31,21 +31,14 @@ export function Progress() {
 
   const bySub = tallyBy(attempts, qmap, (q) => q.subarea);
   const weak = weakestTopics(attempts, qmap);
-  const weakest = weak[0];
-  const summary =
-    (rating.rating === null
-      ? ''
-      : `Projected rating ${rating.rating.toFixed(1)}%, ${rating.passes ? 'passing' : 'not passing yet'}.`) +
-    (weakest ? ` Weakest topic: ${weakest.topic || subareaName(weakest.subarea)}, ${fmt(pct(weakest.tally))}.` : '');
 
   return (
     <Page title="Progress">
-      {summary.trim() && <p>{summary.trim()}</p>}
       <RatingCard rating={rating} />
 
       <section className="stack-sm" aria-labelledby="pr-parts">
         <h2 id="pr-parts">By part</h2>
-        <p className="muted">Each part uses your most recent 150 scored answers.</p>
+        <p className="muted">Based on your last 150 answers in each part.</p>
         <table>
           <thead>
             <tr>
@@ -98,7 +91,7 @@ export function Progress() {
               <li key={`${w.subarea}-${w.topic}`} className="spread">
                 <span className="stack-sm">
                   <span>{w.topic || subareaName(w.subarea)}</span>
-                  <span className="label">
+                  <span className="meta">
                     {subareaName(w.subarea)}: {fmt(pct(w.tally))} over {w.tally.total} answers
                   </span>
                 </span>
@@ -139,7 +132,7 @@ export function Progress() {
             {partsFor(settings.level).map((a) => (
               <Fragment key={a}>
                 <tr>
-                  <th scope="rowgroup" colSpan={3} className="label" style={{ paddingTop: 'var(--s4)' }}>
+                  <th scope="rowgroup" colSpan={3}>
                     {PARTS[a].name}
                   </th>
                 </tr>

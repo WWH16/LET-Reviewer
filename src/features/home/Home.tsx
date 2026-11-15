@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { useExams, useMeta, useQuestions } from '../../db/hooks';
 import { daysBetween, streak } from '../../domain/dates';
-import { PARTS, subareaName } from '../../domain/let-config';
 import { useStats } from '../progress/useStats';
 import { RatingCard } from '../progress/RatingCard';
 import { drillUrl, type DrillParams } from '../practice/DrillSetup';
@@ -33,7 +32,7 @@ export function Home() {
   const remindBackup = sinceBackup >= 50 || (sinceBackup > 0 && (backupDays === null || backupDays >= 7));
 
   return (
-    <Page title="Home">
+    <Page title="Home" titleHidden>
       <section className="tray" aria-labelledby="home-due">
         <h2 id="home-due">Today</h2>
         <p className="tray-figure">
@@ -60,7 +59,7 @@ export function Home() {
             </Link>
           ) : lastDrill ? (
             <Link className="btn" to={drillUrl(lastDrill)}>
-              Repeat: {lastDrill.sub ? subareaName(lastDrill.sub) : PARTS[lastDrill.area].name}, {lastDrill.n}
+              Repeat last drill
             </Link>
           ) : (
             <Link className="btn" to="/drill">
@@ -101,9 +100,11 @@ export function Home() {
           <p>
             <span className="stat-figure">{run}</span> {run === 1 ? 'day' : 'days'}
           </p>
-          <p className="muted">
-            Today: {todayCorrect} of {todayAttempts.length} correct
-          </p>
+          {todayAttempts.length > 0 && (
+            <p className="muted">
+              Today: {todayCorrect} of {todayAttempts.length} correct
+            </p>
+          )}
         </div>
       </div>
     </Page>

@@ -130,13 +130,13 @@ export function Session() {
     return (
       <Page title={`${title} results`}>
         <div className="stack-sm">
-          <h2 ref={resHeading} tabIndex={-1}>
-            <span className="display num">
+          <p ref={resHeading} tabIndex={-1} className="score">
+            <span className="display">
               {correct}/{results.length}
             </span>
             <span className="sr-only"> correct, </span>
-            <span className="muted"> {results.length ? Math.round((correct / results.length) * 100) : 0}%</span>
-          </h2>
+            <span className="display-unit">{results.length ? Math.round((correct / results.length) * 100) : 0}%</span>
+          </p>
           {wrong.length > 0 && <p className="muted">Wrong answers were added to Review. They come back tomorrow.</p>}
         </div>
         {wrong.length > 0 && (
@@ -150,11 +150,11 @@ export function Session() {
                     <details>
                       <summary className="stack-sm">
                         <span>{q.stem}</span>
-                        <span className="label">
+                        <span className="meta">
                           You chose {r.chosen}. The answer is {q.answer}.
                         </span>
                       </summary>
-                      <p style={{ marginTop: 'var(--s2)' }}>{q.explanation || 'No explanation saved.'}</p>
+                      <p style={{ marginTop: 'var(--space-xs)' }}>{q.explanation || 'No explanation saved.'}</p>
                     </details>
                   </li>
                 );
@@ -222,7 +222,7 @@ export function Session() {
   };
 
   return (
-    <Page title={title}>
+    <Page title={title} titleHidden>
       <div className="stack" onKeyDown={onKeyDown}>
         <div className="spread">
           <h2 ref={qHeading} tabIndex={-1} className="label">
@@ -236,7 +236,7 @@ export function Session() {
           <span style={{ width: `${((i + (checked ? 1 : 0)) / items.length) * 100}%` }} />
         </div>
         <div className="row">
-          <span className="label">
+          <span className="meta">
             {subareaName(q.subarea)}
             {q.topic ? `, ${q.topic}` : ''}
           </span>
@@ -273,7 +273,6 @@ export function Session() {
             <button type="button" className="btn btn-primary" disabled={!chosen} onClick={check}>
               Check answer
             </button>
-            {!chosen && <span className="muted">Choose an answer first.</span>}
           </div>
         ) : (
           <div className="feedback stack">
@@ -297,8 +296,8 @@ export function Session() {
           </div>
         )}
 
-        {settings.shortcuts && (
-          <p className="muted label">
+        {settings.shortcuts && i === 0 && !checked && (
+          <p className="kbd-hint label">
             <kbd>A</kbd> to <kbd>D</kbd> or <kbd>1</kbd> to <kbd>4</kbd> choose. <kbd>Enter</kbd> checks, then goes next. <kbd>F</kbd> flags.
           </p>
         )}

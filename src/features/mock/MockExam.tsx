@@ -123,7 +123,7 @@ const Item = memo(function Item({
           <Icon name="flag" /> {flagged ? 'Flagged' : 'Flag'}
         </button>
       </div>
-      <p id={`item-s-${n}`} lang={q.lang} style={{ whiteSpace: 'pre-wrap' }}>
+      <p id={`item-s-${n}`} lang={q.lang} className="stem">
         {q.stem}
       </p>
       {q.media && <p className="notice">Figure: {q.media.alt}</p>}

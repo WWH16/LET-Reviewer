@@ -85,8 +85,11 @@ export function MockResults() {
         <h2 id="mr-score" className="label">
           {PARTS[exam.part].name}, {exam.form === 'digital' ? 'digital' : 'printed'} exam
         </h2>
-        <p ref={scoreRef} tabIndex={-1} className="display num">
-          {s.correct}/{s.total} <span className="muted">{s.pct.toFixed(1)}%</span>
+        <p ref={scoreRef} tabIndex={-1} className="score">
+          <span className="display">
+            {s.correct}/{s.total}
+          </span>{' '}
+          <span className="display-unit">{s.pct.toFixed(1)}%</span>
         </p>
         <p>
           {s.pct >= PART_FLOOR ? `Above the ${PART_FLOOR}% floor for this part.` : `Below the ${PART_FLOOR}% floor. A part under ${PART_FLOOR}% fails the exam.`}
@@ -160,11 +163,11 @@ export function MockResults() {
                   {chosen === null ? ', unanswered' : chosen === q.answer ? ', correct' : ', wrong'}
                   {exam.flags.includes(n) ? ', flagged' : ''}
                 </h3>
-                <p id={`mr-s-${n}`} lang={q.lang} style={{ whiteSpace: 'pre-wrap' }}>
+                <p id={`mr-s-${n}`} lang={q.lang} className="stem">
                   {q.stem}
                 </p>
                 <ChoiceGroup name={`mr-${n}`} labelledBy={`mr-s-${n}`} lang={q.lang} choices={q.choices} value={chosen} locked correct={q.answer} />
-                <p lang={q.lang} className="muted">
+                <p lang={q.lang}>
                   {q.explanation || 'No explanation saved.'}
                 </p>
               </article>

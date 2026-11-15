@@ -108,7 +108,7 @@ export function MockEntry() {
 
       <details>
         <summary className="label">Whole sheet</summary>
-        <div style={{ marginTop: 'var(--s4)' }}>
+        <div style={{ marginTop: 'var(--space-md)' }}>
           <BubbleGrid
             label="Entered answers"
             count={total}

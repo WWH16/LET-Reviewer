@@ -58,7 +58,7 @@ export function ChoiceGroup(p: Props) {
                     <span className="sr-only">{c.key}. </span>
                     {c.text}
                   </span>
-                  {isCorrect && <span className="choice-note">{checked ? 'Your answer is correct' : 'Correct answer'}</span>}
+                  {isCorrect && <span className="choice-note">Correct answer</span>}
                   {isWrong && <span className="choice-note">Your answer</span>}
                   {isEliminated && !isCorrect && <span className="choice-note">Eliminated</span>}
                 </span>

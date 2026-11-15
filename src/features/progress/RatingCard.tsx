@@ -11,7 +11,7 @@ export function RatingCard({ rating }: { rating: Rating }) {
         Projected LET rating
       </h2>
       {rating.rating === null ? (
-        <p>Not enough answers yet. Answer at least 20 questions in {names(rating.missing)} to see a rating.</p>
+        <p>Answer at least 20 questions in {names(rating.missing)} to see it.</p>
       ) : (
         <>
           <p className="display num">{rating.rating.toFixed(1)}%</p>

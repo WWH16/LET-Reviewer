@@ -23,7 +23,8 @@ export default defineConfig({
           { src: 'icon-512.png', sizes: '512x512', type: 'image/png' },
         ],
       },
-      workbox: { globPatterns: ['**/*.{js,css,html,woff2,png,svg}'] },
+      // Latin-ext font files are left out of the offline cache: English and Filipino need only latin.
+      workbox: { globPatterns: ['**/*.{js,css,html,woff2,png,svg}'], globIgnores: ['**/*-ext-*.woff2'] },
     }),
   ],
 });

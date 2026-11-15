@@ -115,14 +115,14 @@ export function Bank() {
       </div>
 
       <section className="stack-sm" aria-labelledby="bank-list">
-        <h2 id="bank-list" className="label">
+        <h2 id="bank-list">
           {filtered.length > SHOW ? `Showing ${SHOW} of ${filtered.length}. Search to narrow.` : `${filtered.length} questions`}
         </h2>
         <ul className="list">
           {filtered.slice(0, SHOW).map((q) => (
             <li key={q.id}>
               <Link className="list-link stack-sm" to={`/bank/${encodeURIComponent(q.id)}`}>
-                <span className="label">
+                <span className="meta">
                   {subareaName(q.subarea)}
                   {q.topic ? `, ${q.topic}` : ''}
                 </span>
@@ -130,7 +130,7 @@ export function Bank() {
                   {q.stem}
                 </span>
                 <span className="row">
-                  <StatusChip status={q.status} />
+                  {q.status !== 'verified' && <StatusChip status={q.status} />}
                   {q.flag && <Chip icon="flag">{q.flag.reason}</Chip>}
                   {q.source === 'ai' && <Chip>AI</Chip>}
                   {q.lang === 'fil' && <Chip>Filipino</Chip>}

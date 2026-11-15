@@ -99,8 +99,8 @@ export function MockSetup() {
             {open.map((e) => (
               <li key={e.id} className="spread">
                 <span className="stack-sm">
-                  <span className="num">{e.label}</span>
-                  <span className="label">
+                  <span className="mono">{e.label}</span>
+                  <span className="meta">
                     {PARTS[e.part].name}, {e.itemIds.length} items. {STATUS_TEXT[e.status]}
                   </span>
                 </span>
@@ -134,7 +134,7 @@ export function MockSetup() {
         }}
       >
         <h2>New exam</h2>
-        <p className="muted">Built like the paper LET. Nothing is graded or shown until you submit.</p>
+        <p className="muted">Answers are graded only after you submit, like the paper LET.</p>
 
         <fieldset className="stack-sm">
           <legend className="label">Form</legend>
@@ -220,7 +220,7 @@ export function MockSetup() {
             <div className="stack-sm">
               <p>
                 {length === 'full' ? 'A full' : length === 'half' ? 'A half-length' : 'A short'} {PARTS[part].name} mock needs {n} questions.
-                You have {rc} from the review center and {ai} AI.
+                You have {rc} from the review center{ai > 0 ? ` and ${ai} AI` : ''}.
               </p>
               <div className="row">
                 {length === 'full' && pool.length >= lengthOf(part, 'half') && (
@@ -262,10 +262,10 @@ export function MockSetup() {
             {done.map((e) => (
               <li key={e.id}>
                 <Link className="list-link spread" to={`/mock/${e.id}/results`}>
-                  <span className="num">{e.label}</span>
+                  <span className="mono">{e.label}</span>
                   <span className="row">
                     <Chip>{e.form === 'digital' ? 'Digital' : 'Printed'}</Chip>
-                    <span className="label">{PARTS[e.part].name}</span>
+                    <span className="meta">{PARTS[e.part].name}</span>
                   </span>
                 </Link>
               </li>
