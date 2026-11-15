@@ -1,4 +1,4 @@
-import { Link, NavLink, Route, Routes } from 'react-router-dom';
+import { Link, Navigate, NavLink, Route, Routes } from 'react-router-dom';
 import { Page } from '../ui/Page';
 import { StatusProvider } from '../ui/Status';
 import { States } from '../features/states/States';
@@ -6,6 +6,8 @@ import { Home } from '../features/home/Home';
 import { Bank } from '../features/bank/Bank';
 import { Import } from '../features/bank/Import';
 import { EditQuestion } from '../features/bank/EditQuestion';
+import { DrillSetup } from '../features/practice/DrillSetup';
+import { Session } from '../features/practice/Session';
 
 const NAV = [
   { to: '/', label: 'Home' },
@@ -39,9 +41,9 @@ export function App() {
       </header>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/drill" element={<Todo title="Practice" />} />
-        <Route path="/session" element={<Todo title="Session" />} />
-        <Route path="/review" element={<Todo title="Review" />} />
+        <Route path="/drill" element={<DrillSetup />} />
+        <Route path="/session" element={<Session />} />
+        <Route path="/review" element={<Navigate to="/session?mode=review" replace />} />
         <Route path="/mock" element={<Todo title="Mock exam" />} />
         <Route path="/mock/:id" element={<Todo title="Mock exam" />} />
         <Route path="/mock/:id/print" element={<Todo title="Print exam" />} />

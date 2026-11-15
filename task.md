@@ -18,9 +18,9 @@ Update the checkboxes and the "Where we left off" section at the end of every se
 
 ## Where we left off
 
-- **Done:** F0–F4. Bank, Import (paste, tolerant parsing, per-item errors, sub-area fix, key preview), Edit question, and first-run Home work in the browser. Data survives reload.
-- **Not done:** Vercel deploy (needs your sign-in and domain). Practice, Review, Mock, Progress, Settings are placeholders. Home is a minimal version until F7.
-- **Next action:** F5, the Drill loop (setup, session, results).
+- **Done:** F0–F5. Drill setup, session (drill, review, Quick 10), results, flag, key-looks-wrong, eliminate, and keyboard shortcuts work. A keyboard-only drill was run end to end in the browser.
+- **Not done:** Vercel deploy (needs your sign-in and domain). Mock, Progress, Settings are placeholders. Home is minimal until F7.
+- **Next action:** F6, Settings, backup and restore, offline PWA.
 
 Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-hooks 4.4, Vite 8.3, TypeScript 7.0, Vitest 5.1, vite-plugin-pwa 2.0, `@fontsource-variable/geist` and `@fontsource-variable/geist-mono` 5.3. Node 26, npm 11.
 
@@ -84,10 +84,10 @@ Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-ho
 - [x] First-run Home: "Add your first questions", Copy Template A, Load sample questions
 
 ### F5. Drill loop
-- [ ] Drill setup: area, sub-area, topic, count, source filter, Copy prompt
-- [ ] Session: question, Check answer, feedback, explanation, Next, Flag, Key looks wrong, eliminate
-- [ ] Keyboard shortcuts (A–D, 1–4, Enter, F), scoped and switchable
-- [ ] Results inside the session
+- [x] Drill setup: area, sub-area, topic, count, source filter, Copy prompt
+- [x] Session: question, Check answer, feedback, explanation, Next, Flag, Key looks wrong, eliminate
+- [x] Keyboard shortcuts (A–D, 1–4, Enter, F), scoped and switchable
+- [x] Results inside the session
 
 ### F6. Settings, backup, offline
 - [ ] Settings: level, major, exam date, timer, theme, text size, shortcuts, strict sheet
