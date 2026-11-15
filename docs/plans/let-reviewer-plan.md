@@ -389,7 +389,8 @@ Colour is never the only signal: every state also has an icon, a fill or ring ch
 
 **Type**
 - The pre-Kumo faces, bundled as `woff2` so they work offline: Schibsted Grotesk (700, tight tracking) for headings, the brand and large figures; Instrument Sans for body and interface text, Kumo's components included; DM Mono for timers, scores, item numbers and Exam IDs.
-- Question text and choices at 16 px; interface text at 14 px. Everything is in rem, so the Text size setting scales Kumo's components too.
+- Sizes step with the screen (`--text-h1`, `--text-h2`, `--text-figure`, `--text-stat` in `tokens.css`): page title 22 px on phones, 24 px from 60rem, 28 px from 90rem; section heading 18 then 20 px; the big figure 32, 40, 44 px. Card padding is 16 px on phones and 24 px from 60rem; sections sit 24 px apart on phones and 32 px from 60rem.
+- Question text and choices at 16 px; interface and helper text at 14 px. Everything is in rem, so the Text size setting scales Kumo's components too.
 
 **Depth:** a 1 px subtle border on every raised surface first, then a soft shadow tinted to the green under 0.08 alpha in light mode; in dark mode, a faint top-edge highlight instead of shadow.
 

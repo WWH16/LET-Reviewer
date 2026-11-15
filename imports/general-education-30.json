@@ -1,0 +1,392 @@
+[
+  {
+    "area": "GenEd", "subarea": "English", "topic": "Vocabulary in Context", "lang": "en",
+    "stem": "The speaker's argument was so cogent that even her critics agreed with her. In this sentence, cogent most nearly means:",
+    "choices": [
+      { "key": "A", "text": "confusing" },
+      { "key": "B", "text": "convincing" },
+      { "key": "C", "text": "lengthy" },
+      { "key": "D", "text": "emotional" }
+    ],
+    "answer": "B",
+    "explanation": "B is correct: a cogent argument is clear and persuasive, which is why even critics agreed. The clue is that the argument won over people who disagreed.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #1", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "English", "topic": "Pronoun Case", "lang": "en",
+    "stem": "Choose the correct sentence.",
+    "choices": [
+      { "key": "A", "text": "Between you and I, the test was easy." },
+      { "key": "B", "text": "Between yourself and I, the test was easy." },
+      { "key": "C", "text": "Between you and myself, the test was easy." },
+      { "key": "D", "text": "Between you and me, the test was easy." }
+    ],
+    "answer": "D",
+    "explanation": "D is correct: between is a preposition, so it takes the object pronoun me. I is a subject pronoun, and yourself and myself are reflexive pronouns that need a matching subject.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #2", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "English", "topic": "Figures of Speech", "lang": "en",
+    "stem": "\"The classroom was a zoo after recess.\" What figure of speech is used?",
+    "choices": [
+      { "key": "A", "text": "Simile" },
+      { "key": "B", "text": "Personification" },
+      { "key": "C", "text": "Metaphor" },
+      { "key": "D", "text": "Onomatopoeia" }
+    ],
+    "answer": "C",
+    "explanation": "C is correct: a metaphor compares two unlike things directly, without like or as. A simile would say the classroom was like a zoo.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #3", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Filipino", "topic": "Kayarian ng Salita", "lang": "fil",
+    "stem": "Anong kayarian ng salita ang \"bahay-kubo\"?",
+    "choices": [
+      { "key": "A", "text": "Payak" },
+      { "key": "B", "text": "Maylapi" },
+      { "key": "C", "text": "Inuulit" },
+      { "key": "D", "text": "Tambalan" }
+    ],
+    "answer": "D",
+    "explanation": "D ang tama: ang tambalan ay binubuo ng dalawang salitang pinagsama, gaya ng bahay at kubo. Ang payak ay salitang-ugat lamang, ang maylapi ay may panlapi, at ang inuulit ay may pag-uulit ng salita o pantig.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #4", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Filipino", "topic": "Kasalungat", "lang": "fil",
+    "stem": "Ano ang kasalungat ng salitang \"mapagbigay\"?",
+    "choices": [
+      { "key": "A", "text": "Matulungin" },
+      { "key": "B", "text": "Maramot" },
+      { "key": "C", "text": "Mabait" },
+      { "key": "D", "text": "Masipag" }
+    ],
+    "answer": "B",
+    "explanation": "B ang tama: ang maramot ay ayaw magbahagi, kabaligtaran ng mapagbigay. Ang matulungin at mabait ay malapit sa kahulugan ng mapagbigay, at ang masipag ay walang kaugnayan.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #5", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Filipino", "topic": "Uri ng Pangungusap", "lang": "fil",
+    "stem": "\"Pakisara ang pinto.\" Anong uri ng pangungusap ito ayon sa gamit?",
+    "choices": [
+      { "key": "A", "text": "Pasalaysay" },
+      { "key": "B", "text": "Patanong" },
+      { "key": "C", "text": "Pakiusap" },
+      { "key": "D", "text": "Padamdam" }
+    ],
+    "answer": "C",
+    "explanation": "C ang tama: ang pangungusap na nagsisimula sa paki ay magalang na paghiling, kaya ito ay pakiusap. Ang pasalaysay ay nagsasabi, ang patanong ay nagtatanong, at ang padamdam ay nagpapahayag ng matinding damdamin.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #6", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Mathematics", "topic": "Ratio and Proportion", "lang": "en",
+    "stem": "If 4 notebooks cost 120 pesos, how much do 7 notebooks cost?",
+    "choices": [
+      { "key": "A", "text": "180 pesos" },
+      { "key": "B", "text": "200 pesos" },
+      { "key": "C", "text": "210 pesos" },
+      { "key": "D", "text": "240 pesos" }
+    ],
+    "answer": "C",
+    "explanation": "C is correct: one notebook costs 120 / 4 = 30 pesos, so 7 notebooks cost 7 × 30 = 210 pesos.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #7", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Mathematics", "topic": "Mean", "lang": "en",
+    "stem": "The scores of five students are 82, 75, 90, 88, and 70. What is the mean score?",
+    "choices": [
+      { "key": "A", "text": "80" },
+      { "key": "B", "text": "81" },
+      { "key": "C", "text": "82" },
+      { "key": "D", "text": "85" }
+    ],
+    "answer": "B",
+    "explanation": "B is correct: the scores add up to 405, and 405 / 5 = 81.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #8", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Mathematics", "topic": "Area", "lang": "en",
+    "stem": "A rectangular garden is 12 meters long and 8 meters wide. What is its area?",
+    "choices": [
+      { "key": "A", "text": "96 square meters" },
+      { "key": "B", "text": "40 square meters" },
+      { "key": "C", "text": "20 square meters" },
+      { "key": "D", "text": "192 square meters" }
+    ],
+    "answer": "A",
+    "explanation": "A is correct: the area of a rectangle is length × width, so 12 × 8 = 96 square meters. 40 meters is the perimeter, not the area.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #9", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Science", "topic": "Photosynthesis", "lang": "en",
+    "stem": "Which gas do plants take in from the air to make food during photosynthesis?",
+    "choices": [
+      { "key": "A", "text": "Carbon dioxide" },
+      { "key": "B", "text": "Oxygen" },
+      { "key": "C", "text": "Nitrogen" },
+      { "key": "D", "text": "Hydrogen" }
+    ],
+    "answer": "A",
+    "explanation": "A is correct: plants combine carbon dioxide and water, using light energy, to make glucose. Oxygen is released as a by-product.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #10", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Science", "topic": "Changes of State", "lang": "en",
+    "stem": "Which process changes water vapor into liquid water?",
+    "choices": [
+      { "key": "A", "text": "Evaporation" },
+      { "key": "B", "text": "Condensation" },
+      { "key": "C", "text": "Sublimation" },
+      { "key": "D", "text": "Melting" }
+    ],
+    "answer": "B",
+    "explanation": "B is correct: condensation turns a gas into a liquid, as when droplets form on a cold glass. Evaporation is the reverse, sublimation turns a solid straight into a gas, and melting turns a solid into a liquid.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #11", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Science", "topic": "Layers of the Earth", "lang": "en",
+    "stem": "Which layer of the Earth lies directly beneath the crust?",
+    "choices": [
+      { "key": "A", "text": "Outer core" },
+      { "key": "B", "text": "Inner core" },
+      { "key": "C", "text": "Atmosphere" },
+      { "key": "D", "text": "Mantle" }
+    ],
+    "answer": "D",
+    "explanation": "D is correct: from the surface inward, the layers are the crust, the mantle, the outer core, and the inner core. The atmosphere is above the crust.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #12", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Social Science", "topic": "Branches of Government", "lang": "en",
+    "stem": "Which branch of the Philippine government interprets the laws?",
+    "choices": [
+      { "key": "A", "text": "Executive" },
+      { "key": "B", "text": "Legislative" },
+      { "key": "C", "text": "Judicial" },
+      { "key": "D", "text": "Electoral" }
+    ],
+    "answer": "C",
+    "explanation": "C is correct: the judiciary, headed by the Supreme Court, interprets laws and settles disputes. The legislative branch makes laws and the executive branch carries them out.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #13", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Social Science", "topic": "Law of Demand", "lang": "en",
+    "stem": "When the price of a good rises and all other factors stay the same, the quantity demanded usually:",
+    "choices": [
+      { "key": "A", "text": "rises" },
+      { "key": "B", "text": "stays the same" },
+      { "key": "C", "text": "doubles" },
+      { "key": "D", "text": "falls" }
+    ],
+    "answer": "D",
+    "explanation": "D is correct: the law of demand says price and quantity demanded move in opposite directions when other factors are held constant.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #14", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Social Science", "topic": "Philippine Geography", "lang": "en",
+    "stem": "Which list correctly names the three major island groups of the Philippines?",
+    "choices": [
+      { "key": "A", "text": "Luzon, Visayas, Mindanao" },
+      { "key": "B", "text": "Luzon, Palawan, Mindanao" },
+      { "key": "C", "text": "Visayas, Samar, Mindanao" },
+      { "key": "D", "text": "Luzon, Visayas, Sulu" }
+    ],
+    "answer": "A",
+    "explanation": "A is correct: the three major island groups are Luzon, Visayas, and Mindanao. Palawan, Samar, and Sulu are islands or provinces within those groups.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #15", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Philippine History", "topic": "Katipunan", "lang": "en",
+    "stem": "Who founded the Katipunan in 1892?",
+    "choices": [
+      { "key": "A", "text": "Jose Rizal" },
+      { "key": "B", "text": "Andres Bonifacio" },
+      { "key": "C", "text": "Emilio Aguinaldo" },
+      { "key": "D", "text": "Apolinario Mabini" }
+    ],
+    "answer": "B",
+    "explanation": "B is correct: Andres Bonifacio and his companions founded the Katipunan in Manila in July 1892. Rizal founded La Liga Filipina, and Aguinaldo later led the revolutionary government.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #16", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Philippine History", "topic": "Philippine Independence", "lang": "en",
+    "stem": "Philippine independence from Spain was proclaimed in Kawit, Cavite on what date?",
+    "choices": [
+      { "key": "A", "text": "June 12, 1898" },
+      { "key": "B", "text": "July 4, 1946" },
+      { "key": "C", "text": "February 25, 1986" },
+      { "key": "D", "text": "December 30, 1896" }
+    ],
+    "answer": "A",
+    "explanation": "A is correct: Emilio Aguinaldo proclaimed independence in Kawit on June 12, 1898. July 4, 1946 is when the United States recognized independence, and December 30, 1896 is the date of Rizal's execution.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #17", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Philippine History", "topic": "Propaganda Movement", "lang": "en",
+    "stem": "Which newspaper was the main organ of the Propaganda Movement in Spain?",
+    "choices": [
+      { "key": "A", "text": "Kalayaan" },
+      { "key": "B", "text": "Diariong Tagalog" },
+      { "key": "C", "text": "La Solidaridad" },
+      { "key": "D", "text": "El Renacimiento" }
+    ],
+    "answer": "C",
+    "explanation": "C is correct: La Solidaridad, published in Spain from 1889, carried the reformists' writing. Kalayaan was the newspaper of the Katipunan.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #18", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Information and Communication Technology", "topic": "Input and Output Devices", "lang": "en",
+    "stem": "Which of these is an input device?",
+    "choices": [
+      { "key": "A", "text": "Keyboard" },
+      { "key": "B", "text": "Monitor" },
+      { "key": "C", "text": "Printer" },
+      { "key": "D", "text": "Speaker" }
+    ],
+    "answer": "A",
+    "explanation": "A is correct: a keyboard sends data into the computer. A monitor, a printer, and a speaker are output devices that present data from the computer.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #19", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Information and Communication Technology", "topic": "Online Safety", "lang": "en",
+    "stem": "An email asks you to confirm your bank password through a link. This is most likely:",
+    "choices": [
+      { "key": "A", "text": "a software update" },
+      { "key": "B", "text": "phishing" },
+      { "key": "C", "text": "a firewall alert" },
+      { "key": "D", "text": "a cloud backup" }
+    ],
+    "answer": "B",
+    "explanation": "B is correct: phishing messages pose as trusted senders to trick people into giving passwords. Banks do not ask for passwords by email.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #20", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Information and Communication Technology", "topic": "Spreadsheets", "lang": "en",
+    "stem": "In a spreadsheet, which formula adds all the values in cells A1 to A5?",
+    "choices": [
+      { "key": "A", "text": "=SUM(A1:A5)" },
+      { "key": "B", "text": "=ADD(A1:A5)" },
+      { "key": "C", "text": "=SUM(A1+A5)" },
+      { "key": "D", "text": "=TOTAL(A1,A5)" }
+    ],
+    "answer": "A",
+    "explanation": "A is correct: SUM with the range A1:A5 adds every cell from A1 to A5. =SUM(A1+A5) adds only A1 and A5, and ADD and TOTAL are not standard spreadsheet functions.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #21", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Literature", "topic": "Philippine Literature", "lang": "en",
+    "stem": "Who wrote the novel Noli Me Tangere?",
+    "choices": [
+      { "key": "A", "text": "Francisco Balagtas" },
+      { "key": "B", "text": "Marcelo H. del Pilar" },
+      { "key": "C", "text": "Jose Rizal" },
+      { "key": "D", "text": "Graciano Lopez Jaena" }
+    ],
+    "answer": "C",
+    "explanation": "C is correct: Jose Rizal published Noli Me Tangere in Berlin in 1887. Its sequel is El Filibusterismo.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #22", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Literature", "topic": "Philippine Literature", "lang": "en",
+    "stem": "The awit Florante at Laura was written by:",
+    "choices": [
+      { "key": "A", "text": "Francisco Balagtas" },
+      { "key": "B", "text": "Jose Corazon de Jesus" },
+      { "key": "C", "text": "Lope K. Santos" },
+      { "key": "D", "text": "Amado V. Hernandez" }
+    ],
+    "answer": "A",
+    "explanation": "A is correct: Francisco Balagtas wrote Florante at Laura, first published in 1838. It is one of the best known works of Tagalog literature.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #23", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Literature", "topic": "Elements of a Story", "lang": "en",
+    "stem": "The turning point of a story, where the tension is highest, is called the:",
+    "choices": [
+      { "key": "A", "text": "exposition" },
+      { "key": "B", "text": "rising action" },
+      { "key": "C", "text": "climax" },
+      { "key": "D", "text": "resolution" }
+    ],
+    "answer": "C",
+    "explanation": "C is correct: the climax is the peak of the conflict. The exposition introduces the setting and characters, the rising action builds tension, and the resolution settles the conflict.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #24", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Ethics", "topic": "Ethical Theories", "lang": "en",
+    "stem": "Which ethical view judges an action right if it brings the greatest happiness to the greatest number of people?",
+    "choices": [
+      { "key": "A", "text": "Deontology" },
+      { "key": "B", "text": "Virtue ethics" },
+      { "key": "C", "text": "Ethical egoism" },
+      { "key": "D", "text": "Utilitarianism" }
+    ],
+    "answer": "D",
+    "explanation": "D is correct: utilitarianism, associated with Bentham and Mill, judges actions by their consequences for overall happiness. Deontology judges actions by duty, and virtue ethics by character.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #25", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Ethics", "topic": "Kantian Ethics", "lang": "en",
+    "stem": "According to Immanuel Kant, an action has moral worth when it is done:",
+    "choices": [
+      { "key": "A", "text": "from duty" },
+      { "key": "B", "text": "for pleasure" },
+      { "key": "C", "text": "to gain praise" },
+      { "key": "D", "text": "out of habit" }
+    ],
+    "answer": "A",
+    "explanation": "A is correct: for Kant, an act has moral worth when it is done from duty, out of respect for the moral law, not for its rewards or out of inclination.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #26", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Ethics", "topic": "Virtue Ethics", "lang": "en",
+    "stem": "Aristotle described virtue as a mean between two extremes. Courage is the mean between:",
+    "choices": [
+      { "key": "A", "text": "pride and humility" },
+      { "key": "B", "text": "cowardice and recklessness" },
+      { "key": "C", "text": "anger and patience" },
+      { "key": "D", "text": "greed and generosity" }
+    ],
+    "answer": "B",
+    "explanation": "B is correct: in Aristotle's account, courage lies between cowardice (too much fear) and recklessness (too little fear).",
+    "source": "ai", "sourceRef": "Claude GenEd set, #27", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Contemporary Issues", "topic": "Climate Change", "lang": "en",
+    "stem": "Which human activity adds the most carbon dioxide to the atmosphere?",
+    "choices": [
+      { "key": "A", "text": "Planting trees" },
+      { "key": "B", "text": "Recycling paper" },
+      { "key": "C", "text": "Using solar panels" },
+      { "key": "D", "text": "Burning fossil fuels" }
+    ],
+    "answer": "D",
+    "explanation": "D is correct: burning coal, oil, and natural gas for power and transport is the largest human source of carbon dioxide. Trees absorb carbon dioxide, and solar panels produce power without burning fuel.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #28", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Contemporary Issues", "topic": "Sustainable Development Goals", "lang": "en",
+    "stem": "The United Nations' 17 Sustainable Development Goals set targets to be met by which year?",
+    "choices": [
+      { "key": "A", "text": "2025" },
+      { "key": "B", "text": "2040" },
+      { "key": "C", "text": "2050" },
+      { "key": "D", "text": "2030" }
+    ],
+    "answer": "D",
+    "explanation": "D is correct: the Sustainable Development Goals, adopted in 2015, form the 2030 Agenda for Sustainable Development.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #29", "status": "unverified", "media": null, "tags": ["claude-set"]
+  },
+  {
+    "area": "GenEd", "subarea": "Contemporary Issues", "topic": "Media Literacy", "lang": "en",
+    "stem": "Before sharing a news post online, the best first step is to:",
+    "choices": [
+      { "key": "A", "text": "share it quickly before it trends" },
+      { "key": "B", "text": "count how many people liked it" },
+      { "key": "C", "text": "check whether trusted news sources report it" },
+      { "key": "D", "text": "read only the headline" }
+    ],
+    "answer": "C",
+    "explanation": "C is correct: confirming a story with trusted sources is the first defense against false news. Likes and headlines say nothing about whether a story is true.",
+    "source": "ai", "sourceRef": "Claude GenEd set, #30", "status": "unverified", "media": null, "tags": ["claude-set"]
+  }
+]

@@ -21,6 +21,9 @@
   --font-num: "DM Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --font-sans: var(--font-body); --font-mono: var(--font-num); --default-font-family: var(--font-body); --default-mono-font-family: var(--font-num);
   --tracking-display: -0.03em;
+  /* Type and spacing roles that change with screen size. Phone values here; wider screens below. */
+  --text-h1: 1.375rem; --text-h2: 1.125rem; --text-figure: 2rem; --text-stat: 1.375rem;
+  --pad-card: var(--space-md); --gap-section: var(--space-lg); --pad-page-top: var(--space-lg);
   --radius-control: 8px; --radius-card: 12px; --radius-pill: 999px;
   --measure-app: 48rem; --container-app: 72rem; --sidebar-w: 15rem; --header-h: 56px; --tabbar-h: 64px; --sticky-offset: 0px;
 
@@ -91,4 +94,16 @@
     --shadow-card: 0 0 0 1px var(--color-line), inset 0 1px 0 oklch(100% 0 0 / 0.05); --shadow-pop: 0 0 0 1px var(--color-line), 0 12px 32px -8px oklch(0% 0 0 / 0.5);
     --shadow-bar: 0 4px 12px -6px oklch(0% 0 0 / 0.5); --shadow-bar-up: 0 -4px 12px -6px oklch(0% 0 0 / 0.5); --shadow-side: 4px 0 12px -6px oklch(0% 0 0 / 0.5);
   }
+}
+
+/* Laptop and up: larger headings and figures, roomier cards, more air between sections. */
+@media (min-width: 60rem) {
+  :root {
+    --text-h1: 1.5rem; --text-h2: 1.25rem; --text-figure: 2.5rem; --text-stat: 1.5rem;
+    --pad-card: var(--space-lg); --gap-section: var(--space-xl); --pad-page-top: var(--space-xl);
+  }
+}
+/* Large desktop: one more step on the page title and the big figure only. */
+@media (min-width: 90rem) {
+  :root { --text-h1: 1.75rem; --text-figure: 2.75rem; --pad-page-top: var(--space-2xl); }
 }
