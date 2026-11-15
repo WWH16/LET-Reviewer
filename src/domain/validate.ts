@@ -1,0 +1,300 @@
+// Turns text pasted from a Claude chat into checked questions (plan §5, Import rules).
+// Chat output arrives wrapped in code fences, with prose around it, and sometimes cut off.
+
+import { PARTS } from './let-config';
+import { questionId } from './ids';
+import { KEYS, type Area, type Choice, type Key, type Question } from './types';
+
+// ---------- Parsing ----------
+
+export type Parsed =
+  | { kind: 'empty' }
+  | { kind: 'not-json' }
+  | { kind: 'questions'; items: unknown[]; truncatedAfter: number | null; unreadable: number[] }
+  | { kind: 'backup'; value: Record<string, unknown> }
+  | { kind: 'answer-sheet'; value: Record<string, unknown> }
+  | { kind: 'unknown' };
+
+const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
+
+function classify(v: unknown): Parsed {
+  if (Array.isArray(v)) return { kind: 'questions', items: v, truncatedAfter: null, unreadable: [] };
+  if (!isObj(v)) return { kind: 'unknown' };
+  if (v.type === 'backup' || ('schemaVersion' in v && Array.isArray(v.questions) && Array.isArray(v.attempts)))
+    return { kind: 'backup', value: v };
+  if ('examId' in v && isObj(v.answers)) return { kind: 'answer-sheet', value: v };
+  for (const k of ['questions', 'items', 'data']) {
+    if (Array.isArray(v[k])) return { kind: 'questions', items: v[k] as unknown[], truncatedAfter: null, unreadable: [] };
+  }
+  if ('stem' in v) return { kind: 'questions', items: [v], truncatedAfter: null, unreadable: [] };
+  return { kind: 'unknown' };
+}
+
+/**
+ * Recovers the complete objects from a JSON array that was cut off or has one broken item.
+ * Walks the text tracking strings and nesting, and cuts out each top-level `{...}`.
+ */
+function recoverArray(s: string): { items: unknown[]; truncated: boolean; unreadable: number[] } {
+  const items: unknown[] = [];
+  const unreadable: number[] = [];
+  let depth = 0;
+  let inStr = false;
+  let esc = false;
+  let start = -1;
+  let closed = false;
+  for (let i = 1; i < s.length; i++) {
+    const ch = s[i];
+    if (inStr) {
+      if (esc) esc = false;
+      else if (ch === '\\') esc = true;
+      else if (ch === '"') inStr = false;
+      continue;
+    }
+    if (ch === '"') inStr = true;
+    else if (ch === '{' || ch === '[') {
+      if (depth === 0) start = i;
+      depth++;
+    } else if (ch === '}' || ch === ']') {
+      if (depth === 0 && ch === ']') {
+        closed = true;
+        break;
+      }
+      depth--;
+      if (depth === 0 && start >= 0) {
+        try {
+          items.push(JSON.parse(s.slice(start, i + 1)));
+        } catch {
+          unreadable.push(items.length + unreadable.length + 1);
+        }
+        start = -1;
+      }
+    }
+  }
+  return { items, truncated: !closed || depth > 0, unreadable };
+}
+
+export function parsePasted(text: string): Parsed {
+  const cleaned = text.replace(/```[a-zA-Z]*/g, '').trim();
+  if (!cleaned) return { kind: 'empty' };
+  const firstArr = cleaned.indexOf('[');
+  const firstObj = cleaned.indexOf('{');
+  const starts = [firstArr, firstObj].filter((i) => i >= 0);
+  if (!starts.length) return { kind: 'not-json' };
+  const start = Math.min(...starts);
+  const closer = cleaned[start] === '[' ? ']' : '}';
+  const end = cleaned.lastIndexOf(closer);
+  if (end > start) {
+    try {
+      return classify(JSON.parse(cleaned.slice(start, end + 1)));
+    } catch {
+      /* fall through to recovery */
+    }
+  }
+  if (cleaned[start] === '[') {
+    const r = recoverArray(cleaned.slice(start));
+    if (r.items.length || r.unreadable.length)
+      return { kind: 'questions', items: r.items, truncatedAfter: r.truncated ? r.items.length : null, unreadable: r.unreadable };
+  }
+  return { kind: 'not-json' };
+}
+
+// ---------- Validation ----------
+
+const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+export function levenshtein(a: string, b: string): number {
+  const row = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    let prev = row[0];
+    row[0] = i;
+    for (let j = 1; j <= b.length; j++) {
+      const tmp = row[j];
+      row[j] = Math.min(row[j] + 1, row[j - 1] + 1, prev + (a[i - 1] === b[j - 1] ? 0 : 1));
+      prev = tmp;
+    }
+  }
+  return row[b.length];
+}
+
+/** Returns the sub-area id for a name or id, or null. */
+export function matchSubarea(area: Area, value: string): string | null {
+  const n = norm(value);
+  const s = PARTS[area].subareas.find((x) => norm(x.id) === n || norm(x.name) === n);
+  return s?.id ?? null;
+}
+
+export function nearestSubarea(area: Area, value: string): string {
+  const n = norm(value);
+  let best = PARTS[area].subareas[0];
+  let bestD = Infinity;
+  for (const s of PARTS[area].subareas) {
+    const d = levenshtein(n, norm(s.name));
+    if (d < bestD) {
+      best = s;
+      bestD = d;
+    }
+  }
+  return best.id;
+}
+
+export interface ItemResult {
+  /** 1-based position in the pasted list. */
+  n: number;
+  label: string;
+  question: Question | null;
+  errors: string[];
+  /** Present when only the sub-area is wrong. The UI offers this as a one-tap fix. */
+  subareaFix: { area: Area; given: string; suggestion: string } | null;
+  duplicate: boolean;
+}
+
+const AREAS: Area[] = ['GenEd', 'ProfEd', 'Major'];
+
+function toChoices(v: unknown): Choice[] | null {
+  let list: { key?: unknown; text?: unknown }[] = [];
+  if (Array.isArray(v)) list = v.map((c, i) => (typeof c === 'string' ? { key: KEYS[i], text: c } : (c as object)));
+  else if (isObj(v)) list = Object.entries(v).map(([key, text]) => ({ key, text }));
+  else return null;
+  const out = list.map((c, i) => ({
+    key: (typeof c.key === 'string' ? c.key.trim().toUpperCase().charAt(0) : KEYS[i]) as Key,
+    text: typeof c.text === 'string' ? c.text.trim() : '',
+  }));
+  return out;
+}
+
+function toAnswer(v: unknown): Key | null | 'bad' {
+  if (v === null || v === undefined || v === '') return null;
+  if (typeof v !== 'string') return 'bad';
+  const k = v.trim().toUpperCase().replace(/[^A-Z]/g, '');
+  return (KEYS as readonly string[]).includes(k) ? (k as Key) : 'bad';
+}
+
+const str = (v: unknown) => (typeof v === 'string' ? v.trim() : '');
+
+/**
+ * Checks one pasted item. Never throws. Every error names the field and what is allowed,
+ * so the import screen can show it as is (DX audit, Error Message Audit).
+ */
+export function validateItem(raw: unknown, n: number, opts: { now: string; batchId: string }): ItemResult {
+  const errors: string[] = [];
+  const o = isObj(raw) ? raw : {};
+  const sourceRef = str(o.sourceRef);
+  const label = sourceRef ? `Item ${n} (${sourceRef})` : `Item ${n}`;
+  const base = { n, label, duplicate: false };
+  if (!isObj(raw)) return { ...base, question: null, errors: ['is not a question object.'], subareaFix: null };
+
+  const areaRaw = str(o.area);
+  const area = AREAS.find((a) => norm(a) === norm(areaRaw));
+  if (!area) errors.push(`area is "${areaRaw}". It must be GenEd, ProfEd, or Major.`);
+
+  let subarea = '';
+  let subareaFix: ItemResult['subareaFix'] = null;
+  const subRaw = str(o.subarea);
+  if (area) {
+    const m = subRaw && norm(subRaw) !== 'unknown' ? matchSubarea(area, subRaw) : null;
+    if (m) subarea = m;
+    else {
+      subareaFix = { area, given: subRaw, suggestion: nearestSubarea(area, subRaw) };
+      errors.push(subRaw && norm(subRaw) !== 'unknown' ? `sub-area "${subRaw}" is not in your list.` : 'has no sub-area.');
+    }
+  }
+
+  const stem = str(o.stem);
+  if (!stem) errors.push('stem (the question text) is empty.');
+
+  const choices = toChoices(o.choices);
+  if (!choices) errors.push('choices is missing. It must be a list of 4 choices, A to D.');
+  else {
+    const keys = choices.map((c) => c.key).join('');
+    if (choices.length !== 4 || keys !== 'ABCD')
+      errors.push(`has ${choices.length} choices (${keys || 'none'}). It must have exactly 4, keyed A, B, C, D.`);
+    const empty = choices.filter((c) => !c.text).map((c) => c.key);
+    if (empty.length) errors.push(`choice ${empty.join(', ')} has no text.`);
+  }
+
+  const answer = toAnswer(o.answer);
+  if (answer === 'bad') errors.push(`answer is "${String(o.answer)}". It must be A, B, C, D, or empty.`);
+
+  const source = str(o.source) === 'review-center' ? 'review-center' : 'ai';
+  if (source === 'review-center' && !sourceRef)
+    errors.push('sourceRef is empty. Review-center items need it, e.g. "Handout 3, p.12, #7".');
+
+  let media: Question['media'] = null;
+  if (isObj(o.media)) {
+    const src = str(o.media.src);
+    const alt = str(o.media.alt);
+    if (src && !alt) errors.push('has a figure with no description. Add a one-sentence media.alt, or remove the figure.');
+    if (src || alt) media = src ? { src, alt } : { alt };
+  }
+
+  const langRaw = norm(str(o.lang));
+  const lang = langRaw === 'fil' || langRaw === 'filipino' || langRaw === 'tl' ? 'fil' : 'en';
+
+  if (errors.length || !area || !choices || answer === 'bad') {
+    // Only the sub-area is wrong: keep the offer of a one-tap fix.
+    return { ...base, question: null, errors, subareaFix: errors.length === 1 ? subareaFix : null };
+  }
+
+  const unreadable = [stem, ...choices.map((c) => c.text)].some((t) => t.includes('[unreadable]'));
+  let status: Question['status'];
+  if (unreadable || str(o.status) === 'flagged') status = 'flagged';
+  else if (answer === null) status = 'needs-key';
+  else if (source === 'ai') status = 'unverified';
+  else status = 'verified';
+
+  const q: Question = {
+    id: questionId({ source, sourceRef, stem }),
+    area,
+    subarea,
+    topic: str(o.topic),
+    lang,
+    stem,
+    choices,
+    answer,
+    explanation: str(o.explanation),
+    source,
+    sourceRef: sourceRef || (source === 'ai' ? 'AI-generated' : ''),
+    status,
+    media,
+    tags: Array.isArray(o.tags) ? o.tags.filter((t): t is string => typeof t === 'string') : [],
+    flag: null,
+    importBatchId: opts.batchId,
+    edited: false,
+    updatedAt: opts.now,
+    deleted: false,
+  };
+  return { ...base, question: q, errors: [], subareaFix: null };
+}
+
+export interface ImportPreview {
+  results: ItemResult[];
+  ready: Question[];
+  duplicates: ItemResult[];
+  invalid: ItemResult[];
+}
+
+/** Checks a pasted list against the bank. IDs already in the bank, or repeated in the list, are skipped. */
+export function previewImport(
+  items: unknown[],
+  existingIds: ReadonlySet<string>,
+  opts: { now: string; batchId: string },
+  overrides: Record<number, { subarea?: string }> = {},
+): ImportPreview {
+  const seen = new Set<string>();
+  const results = items.map((raw, i) => {
+    const n = i + 1;
+    const patched = overrides[n] && isObj(raw) ? { ...raw, ...overrides[n] } : raw;
+    const r = validateItem(patched, n, opts);
+    if (r.question) {
+      if (existingIds.has(r.question.id) || seen.has(r.question.id)) r.duplicate = true;
+      seen.add(r.question.id);
+    }
+    return r;
+  });
+  return {
+    results,
+    ready: results.filter((r) => r.question && !r.duplicate).map((r) => r.question!),
+    duplicates: results.filter((r) => r.duplicate),
+    invalid: results.filter((r) => !r.question),
+  };
+}

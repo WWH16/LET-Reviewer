@@ -1,0 +1,130 @@
+[
+  {
+    "area": "ProfEd", "subarea": "Assessment of Learning", "topic": "Table of Specifications", "lang": "en",
+    "stem": "A teacher wants her test items to match the time she spent on each lesson. Which should she prepare first?",
+    "choices": [{"key":"A","text":"A scoring rubric"},{"key":"B","text":"A table of specifications"},{"key":"C","text":"An item analysis"},{"key":"D","text":"A class record"}],
+    "answer": "B",
+    "explanation": "B is correct: a table of specifications allots items to each objective in proportion to the time spent on it. A rubric scores performance, an item analysis comes after the test is given, and a class record stores grades.",
+    "source": "review-center", "sourceRef": "Sample set, #1", "status": "verified", "media": null, "tags": ["sample"]
+  },
+  {
+    "area": "ProfEd", "subarea": "Assessment of Learning", "topic": "Item Analysis", "lang": "en",
+    "stem": "An item was answered correctly by 90% of the upper group and 85% of the lower group. What does this say about the item?",
+    "choices": [{"key":"A","text":"It discriminates well."},{"key":"B","text":"It is very difficult."},{"key":"C","text":"It discriminates poorly."},{"key":"D","text":"It discriminates negatively."}],
+    "answer": "C",
+    "explanation": "C is correct: the discrimination index is 0.90 - 0.85 = 0.05, which is poor. The item is easy, not difficult (B). A negative index (D) would need the lower group to score higher.",
+    "source": "review-center", "sourceRef": "Sample set, #2", "status": "verified", "media": null, "tags": ["sample"]
+  },
+  {
+    "area": "ProfEd", "subarea": "Facilitating Learning", "topic": "Piaget", "lang": "en",
+    "stem": "A child insists that a tall, thin glass holds more water than a short, wide glass with the same amount. Which ability has the child not yet developed?",
+    "choices": [{"key":"A","text":"Object permanence"},{"key":"B","text":"Conservation"},{"key":"C","text":"Abstract reasoning"},{"key":"D","text":"Symbolic play"}],
+    "answer": "B",
+    "explanation": "B is correct: conservation, the idea that quantity stays the same when shape changes, develops in Piaget's concrete operational stage. Object permanence and symbolic play appear earlier, and abstract reasoning later.",
+    "source": "review-center", "sourceRef": "Sample set, #3", "status": "verified", "media": null, "tags": ["sample"]
+  },
+  {
+    "area": "ProfEd", "subarea": "Facilitating Learning", "topic": "Vygotsky", "lang": "en",
+    "stem": "The gap between what a learner can do alone and what she can do with guidance is called the:",
+    "choices": [{"key":"A","text":"Zone of proximal development"},{"key":"B","text":"Scaffold"},{"key":"C","text":"Schema"},{"key":"D","text":"Hierarchy of needs"}],
+    "answer": "A",
+    "explanation": "A is correct: Vygotsky's zone of proximal development. Scaffolding is the support given inside that zone, a schema is Piaget's mental structure, and the hierarchy of needs is Maslow's.",
+    "source": "review-center", "sourceRef": "Sample set, #4", "status": "verified", "media": null, "tags": ["sample"]
+  },
+  {
+    "area": "ProfEd", "subarea": "Principles of Teaching", "topic": "Bloom's Taxonomy", "lang": "en",
+    "stem": "Which task targets the highest level of Bloom's revised taxonomy?",
+    "choices": [{"key":"A","text":"List the parts of a plant cell."},{"key":"B","text":"Explain how photosynthesis works."},{"key":"C","text":"Design an experiment to test which light color makes plants grow fastest."},{"key":"D","text":"Compare plant and animal cells."}],
+    "answer": "C",
+    "explanation": "C is correct: designing something new is Creating, the top level of the revised taxonomy. Listing is Remembering, explaining is Understanding, and comparing is Analyzing.",
+    "source": "review-center", "sourceRef": "Sample set, #5", "status": "verified", "media": null, "tags": ["sample"]
+  },
+  {
+    "area": "ProfEd", "subarea": "Curriculum Development", "topic": "Types of Curriculum", "lang": "en",
+    "stem": "Lessons that students absorb from school routines and rules, though they appear in no written plan, belong to the:",
+    "choices": [{"key":"A","text":"Written curriculum"},{"key":"B","text":"Hidden curriculum"},{"key":"C","text":"Taught curriculum"},{"key":"D","text":"Assessed curriculum"}],
+    "answer": "B",
+    "explanation": "B is correct: the hidden curriculum is learned without being planned or written. The written, taught, and assessed curricula are all deliberate.",
+    "source": "review-center", "sourceRef": "Sample set, #6", "status": "verified", "media": null, "tags": ["sample"]
+  },
+  {
+    "area": "ProfEd", "subarea": "Educational Technology", "topic": "Dale's Cone of Experience", "lang": "en",
+    "stem": "According to Dale's Cone of Experience, which activity gives the most concrete experience?",
+    "choices": [{"key":"A","text":"Reading a textbook chapter"},{"key":"B","text":"Watching a documentary"},{"key":"C","text":"Going on a field trip"},{"key":"D","text":"Doing a hands-on project with real objects"}],
+    "answer": "D",
+    "explanation": "D is correct: direct, purposeful experience is the base of the cone. Field trips sit in the middle, films higher, and reading (verbal symbols) at the top.",
+    "source": "review-center", "sourceRef": "Sample set, #7", "status": "verified", "media": null, "tags": ["sample"]
+  },
+  {
+    "area": "GenEd", "subarea": "Mathematics", "topic": "Percent", "lang": "en",
+    "stem": "A shirt costs 800 pesos and is sold at 25% off. What is the sale price?",
+    "choices": [{"key":"A","text":"200 pesos"},{"key":"B","text":"575 pesos"},{"key":"C","text":"600 pesos"},{"key":"D","text":"625 pesos"}],
+    "answer": "C",
+    "explanation": "C is correct: 25% of 800 is 200, and 800 - 200 = 600. A is the discount itself.",
+    "source": "review-center", "sourceRef": "Sample set, #8", "status": "verified", "media": null, "tags": ["sample"]
+  },
+  {
+    "area": "GenEd", "subarea": "Mathematics", "topic": "Linear Equations", "lang": "en",
+    "stem": "Solve for x: 3x - 7 = 11",
+    "choices": [{"key":"A","text":"4/3"},{"key":"B","text":"6"},{"key":"C","text":"18"},{"key":"D","text":"3"}],
+    "answer": "B",
+    "explanation": "B is correct: add 7 to both sides to get 3x = 18, then divide by 3. C stops before dividing, and A subtracts 7 instead of adding it.",
+    "source": "review-center", "sourceRef": "Sample set, #9", "status": "verified", "media": null, "tags": ["sample"]
+  },
+  {
+    "area": "GenEd", "subarea": "Science", "topic": "Cell Biology", "lang": "en",
+    "stem": "Which part of the cell holds most of its genetic material?",
+    "choices": [{"key":"A","text":"Nucleus"},{"key":"B","text":"Cell membrane"},{"key":"C","text":"Ribosome"},{"key":"D","text":"Vacuole"}],
+    "answer": "A",
+    "explanation": "A is correct: the nucleus contains the cell's DNA. The membrane controls what enters and leaves, ribosomes make proteins, and vacuoles store materials.",
+    "source": "review-center", "sourceRef": "Sample set, #10", "status": "verified", "media": null, "tags": ["sample"]
+  },
+  {
+    "area": "GenEd", "subarea": "English", "topic": "Subject-Verb Agreement", "lang": "en",
+    "stem": "Choose the correct sentence.",
+    "choices": [{"key":"A","text":"Neither of the students have finished."},{"key":"B","text":"Neither of the students has finished."},{"key":"C","text":"Neither of the student have finished."},{"key":"D","text":"Neither of the students are finished."}],
+    "answer": "B",
+    "explanation": "B is correct: \"neither\" is singular, so it takes the singular verb \"has\". A and D use plural verbs, and C also drops the plural \"students\".",
+    "source": "review-center", "sourceRef": "Sample set, #11", "status": "verified", "media": null, "tags": ["sample"]
+  },
+  {
+    "area": "GenEd", "subarea": "Filipino", "topic": "Bahagi ng Pananalita", "lang": "fil",
+    "stem": "Alin sa mga sumusunod ang pang-uri?",
+    "choices": [{"key":"A","text":"tumakbo"},{"key":"B","text":"maganda"},{"key":"C","text":"bahay"},{"key":"D","text":"sa"}],
+    "answer": "B",
+    "explanation": "Tama ang B: ang \"maganda\" ay pang-uri dahil naglalarawan ito ng pangngalan. Ang \"tumakbo\" ay pandiwa, ang \"bahay\" ay pangngalan, at ang \"sa\" ay pang-ukol.",
+    "source": "review-center", "sourceRef": "Sample set, #12", "status": "verified", "media": null, "tags": ["sample"]
+  },
+  {
+    "area": "GenEd", "subarea": "Filipino", "topic": "Kasingkahulugan", "lang": "fil",
+    "stem": "Ano ang kasingkahulugan ng salitang \"masipag\"?",
+    "choices": [{"key":"A","text":"tamad"},{"key":"B","text":"matiyaga"},{"key":"C","text":"mabagal"},{"key":"D","text":"malungkot"}],
+    "answer": "B",
+    "explanation": "Tama ang B: ang \"matiyaga\" ay malapit ang kahulugan sa \"masipag\". Ang \"tamad\" ay kasalungat nito.",
+    "source": "review-center", "sourceRef": "Sample set, #13", "status": "verified", "media": null, "tags": ["sample"]
+  },
+  {
+    "area": "GenEd", "subarea": "Social Science", "topic": "Philippine Constitution", "lang": "en",
+    "stem": "In what year was the present Philippine Constitution ratified?",
+    "choices": [{"key":"A","text":"1935"},{"key":"B","text":"1973"},{"key":"C","text":"1986"},{"key":"D","text":"1987"}],
+    "answer": "D",
+    "explanation": "D is correct: the 1987 Constitution was ratified by plebiscite on 2 February 1987. 1935 and 1973 are earlier constitutions, and 1986 is the year of the EDSA Revolution.",
+    "source": "review-center", "sourceRef": "Sample set, #14", "status": "verified", "media": null, "tags": ["sample"]
+  },
+  {
+    "area": "ProfEd", "subarea": "Foundations of Education", "topic": "Philosophers", "lang": "en",
+    "stem": "Which philosopher held that people learn best by doing and by reflecting on experience?",
+    "choices": [{"key":"A","text":"John Dewey"},{"key":"B","text":"Plato"},{"key":"C","text":"Confucius"},{"key":"D","text":"Thomas Aquinas"}],
+    "answer": null,
+    "explanation": "",
+    "source": "review-center", "sourceRef": "Sample set, #15 (no key, shows the Needs key queue)", "status": "needs-key", "media": null, "tags": ["sample"]
+  },
+  {
+    "area": "ProfEd", "subarea": "The Teaching Profession", "topic": "Laws on Teaching", "lang": "en",
+    "stem": "Which law is the Philippine Teachers Professionalization Act of 1994?",
+    "choices": [{"key":"A","text":"RA 4670"},{"key":"B","text":"RA 7836"},{"key":"C","text":"RA 9155"},{"key":"D","text":"RA 10533"}],
+    "answer": "B",
+    "explanation": "B is correct: RA 7836 created the LET. RA 4670 is the Magna Carta for Public School Teachers, RA 9155 the Governance of Basic Education Act, and RA 10533 the Enhanced Basic Education Act (K to 12).",
+    "source": "ai", "sourceRef": "AI from: The Teaching Profession notes", "status": "unverified", "media": null, "tags": ["sample"]
+  }
+]
