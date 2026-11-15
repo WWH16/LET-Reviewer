@@ -18,9 +18,9 @@ Update the checkboxes and the "Where we left off" section at the end of every se
 
 ## Where we left off
 
-- **Done:** `package.json` created and dependencies installed (`node_modules` exists).
-- **Not done:** no source files, no config files. The step that would have written `tsconfig.json`, `vite.config.ts`, `index.html`, `.gitignore`, and the icon script was stopped before it ran.
-- **Next action:** F0, starting with the config files listed under F0 below.
+- **Done:** F0 scaffold (config, icons, app shell, all routes as placeholders, full stylesheet in `src/ui/tokens.css`). Type-check and build pass.
+- **Not done:** Vercel deploy (needs your sign-in and domain). Every screen is still a placeholder.
+- **Next action:** F1, the base UI pieces and the `/states` page.
 
 Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-hooks 4.4, Vite 8.3, TypeScript 7.0, Vitest 5.1, vite-plugin-pwa 2.0, `@fontsource-variable/geist` and `@fontsource-variable/geist-mono` 5.3. Node 26, npm 11.
 
@@ -41,18 +41,18 @@ Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-ho
 4. **Synced records** (questions, mock exams, settings) carry `updatedAt` and a `deleted` flag. Attempts are append-only.
 5. **Monochrome.** No hue anywhere. State is shown by fill, border, icon, and words (plan §13).
 6. **No review-center content in the repo.** Development uses `src/domain/sample-questions.json`, which holds original items only.
-8. **Commit after each completed task.** One commit per finished step (F0, F1, ...), made after the step is verified. No `Co-Authored-By` or "Generated with" lines in the commit message. Tick the step's boxes in this file in the same commit. This folder is its own git repository on branch `main`.
 7. **LET sub-area weights in `let-config.ts` are placeholders** until the user confirms their level, major, and the official TOS (plan §12, questions 1–3). Mark them clearly in the file.
+8. **Commit after each completed task.** One commit per finished step (F0, F1, ...), made after the step is verified. No `Co-Authored-By` or "Generated with" lines in the commit message. Tick the step's boxes in this file in the same commit. This folder is its own git repository on branch `main`.
 
 ## Checklist
 
 ### F0. Scaffold
 - [x] `package.json`, install dependencies
-- [ ] `tsconfig.json`, `vite.config.ts` (React + PWA plugin, `registerType: 'prompt'` so updates wait for the next launch), `index.html`, `.gitignore`
-- [ ] App icons (`public/icon-180.png`, `icon-192.png`, `icon-512.png`), black with a white outlined square
-- [ ] `.claude/launch.json` for the dev server on port 5173
-- [ ] `src/app/main.tsx`, `App.tsx` with hash routes: `/`, `/drill`, `/session`, `/review`, `/mock`, `/mock/:id`, `/mock/:id/print`, `/mock/:id/entry`, `/mock/:id/results`, `/progress`, `/bank`, `/bank/import`, `/bank/:id`, `/settings`, `/states`
-- [ ] Shell: skip link, header, bottom navigation, focus moves to each screen's `<h1>` on route change
+- [x] `tsconfig.json`, `vite.config.ts` (React + PWA plugin, `registerType: 'prompt'` so updates wait for the next launch), `index.html`, `.gitignore`
+- [x] App icons (`public/icon-180.png`, `icon-192.png`, `icon-512.png`), black with a white outlined square
+- [x] `.claude/launch.json` for the dev server on port 5173
+- [x] `src/app/main.tsx`, `App.tsx` with hash routes: `/`, `/drill`, `/session`, `/review`, `/mock`, `/mock/:id`, `/mock/:id/print`, `/mock/:id/entry`, `/mock/:id/results`, `/progress`, `/bank`, `/bank/import`, `/bank/:id`, `/settings`, `/states`
+- [x] Shell: skip link, header, bottom navigation, focus moves to each screen's `<h1>` on route change
 - [ ] Deploy to Vercel on the final production domain (**needs you**: Vercel sign-in and the domain choice)
 
 ### F1. Design system
