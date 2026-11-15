@@ -7,6 +7,7 @@ import { db } from '../../db/db';
 import { removeQuestion, saveQuestion } from '../../db/repo';
 import { PARTS } from '../../domain/let-config';
 import { KEYS, type Area, type Key, type Question } from '../../domain/types';
+import { btn } from '../../ui/btn';
 
 export function EditQuestion() {
   const { id = '' } = useParams();
@@ -154,7 +155,7 @@ export function EditQuestion() {
         {q.flag && (
           <div className="notice spread">
             <span>Flagged: {q.flag.reason}</span>
-            <button type="button" className="btn" onClick={() => set({ flag: null })}>
+            <button type="button" className={btn.secondary} onClick={() => set({ flag: null })}>
               Clear flag
             </button>
           </div>
@@ -164,14 +165,14 @@ export function EditQuestion() {
 
         <div className="spread">
           <div className="row">
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className={btn.primary}>
               Save
             </button>
-            <button type="button" className="btn btn-quiet" onClick={() => navigate(-1)}>
+            <button type="button" className={btn.quiet} onClick={() => navigate(-1)}>
               Cancel
             </button>
           </div>
-          <button type="button" className="btn" onClick={() => setConfirm(true)}>
+          <button type="button" className={btn.secondary} onClick={() => setConfirm(true)}>
             Remove
           </button>
         </div>
@@ -180,12 +181,12 @@ export function EditQuestion() {
       <Dialog open={confirm} onClose={() => setConfirm(false)} title="Remove this question?">
         <p>Your past answers to it stay in your history.</p>
         <div className="row">
-          <button type="button" className="btn btn-primary" data-autofocus onClick={() => setConfirm(false)}>
+          <button type="button" className={btn.primary} data-autofocus onClick={() => setConfirm(false)}>
             Keep it
           </button>
           <button
             type="button"
-            className="btn"
+            className={btn.secondary}
             onClick={async () => {
               await removeQuestion(q.id);
               announce('Question removed');

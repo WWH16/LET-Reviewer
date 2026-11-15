@@ -1,24 +1,31 @@
 import type { ReactNode } from 'react';
+import { Badge } from '@cloudflare/kumo/components/badge';
 import { Icon, type IconName } from './Icon';
 
-export function Chip({ icon, solid, children }: { icon?: IconName; solid?: boolean; children: ReactNode }) {
+// Kumo's warning badge text is under 4.5:1, so flags stay on the neutral badge with their icon and word.
+type Tone = 'secondary' | 'success';
+
+export function Chip({ icon, solid, tone, children }: { icon?: IconName; solid?: boolean; tone?: Tone; children: ReactNode }) {
   return (
-    <span className={solid ? 'chip chip-solid' : 'chip'}>
-      {icon && <Icon name={icon} size={12} />}
+    <Badge variant={tone ?? 'secondary'} className={solid && !tone ? 'chip-accent' : undefined} icon={icon && <Icon name={icon} size={12} />}>
       {children}
-    </span>
+    </Badge>
   );
 }
 
-const STATUS: Record<string, { label: string; icon: IconName }> = {
-  verified: { label: 'Verified', icon: 'check' },
-  unverified: { label: 'Unverified', icon: 'alert' },
-  'needs-key': { label: 'Needs key', icon: 'key' },
-  flagged: { label: 'Flagged', icon: 'flag' },
+const STATUS: Record<string, { label: string; icon: IconName; tone: Tone }> = {
+  verified: { label: 'Verified', icon: 'check', tone: 'success' },
+  unverified: { label: 'Unverified', icon: 'alert', tone: 'secondary' },
+  'needs-key': { label: 'Needs key', icon: 'key', tone: 'secondary' },
+  flagged: { label: 'Flagged', icon: 'flag', tone: 'secondary' },
 };
 
-/** Text chip for a question's status. Never a colored dot alone (a11y R10). */
+/** Text badge for a question's status. Never a colored dot alone (a11y R10). */
 export function StatusChip({ status }: { status: string }) {
-  const s = STATUS[status] ?? { label: status, icon: 'alert' as IconName };
-  return <Chip icon={s.icon}>{s.label}</Chip>;
+  const s = STATUS[status] ?? { label: status, icon: 'alert' as IconName, tone: 'secondary' as Tone };
+  return (
+    <Chip icon={s.icon} tone={s.tone}>
+      {s.label}
+    </Chip>
+  );
 }

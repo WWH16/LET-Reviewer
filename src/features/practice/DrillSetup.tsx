@@ -9,6 +9,7 @@ import { PARTS, partsFor, subareaName } from '../../domain/let-config';
 import { gradable } from '../../domain/examDraw';
 import { templateB } from '../../domain/prompts';
 import type { Area, Question } from '../../domain/types';
+import { btn } from '../../ui/btn';
 
 export interface DrillParams {
   area: Area;
@@ -63,10 +64,10 @@ export function DrillSetup() {
   return (
     <Page title="Practice">
       <div className="row">
-        <Link className="btn" to="/session?mode=quick">
+        <Link className={btn.secondary} to="/session?mode=quick">
           Quick 10
         </Link>
-        <Link className="btn" to="/review">
+        <Link className={btn.secondary} to="/review">
           Review mistakes
         </Link>
       </div>
@@ -135,12 +136,12 @@ export function DrillSetup() {
         </p>
 
         <div className="row">
-          <button type="submit" className="btn btn-primary" disabled={!available}>
+          <button type="submit" className={btn.primary} disabled={!available}>
             Start
           </button>
           <button
             type="button"
-            className="btn"
+            className={btn.secondary}
             disabled={!p.sub}
             onClick={async () => {
               await copyText(

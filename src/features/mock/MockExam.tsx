@@ -10,6 +10,7 @@ import { answerExam, gradeExam, toggleExamFlag, updateExam } from '../../db/repo
 import { formatClock } from '../../domain/dates';
 import { PARTS } from '../../domain/let-config';
 import type { Key, MockExam as Exam, Question } from '../../domain/types';
+import { btn } from '../../ui/btn';
 
 const MILESTONES = [30, 10, 5, 1];
 
@@ -114,7 +115,7 @@ const Item = memo(function Item({
         </h2>
         <button
           type="button"
-          className="btn btn-quiet"
+          className={btn.quiet}
           aria-pressed={flagged}
           aria-label={`Flag item ${n}`}
           onClick={() => onFlag(n)}
@@ -250,10 +251,10 @@ export function MockExam() {
 
   const jumps = (
     <>
-      <button type="button" className="btn" onClick={() => nextWhere((n) => exam.answers[String(n)] === undefined)} disabled={!unanswered}>
+      <button type="button" className={btn.secondary} onClick={() => nextWhere((n) => exam.answers[String(n)] === undefined)} disabled={!unanswered}>
         Next unanswered
       </button>
-      <button type="button" className="btn" onClick={() => nextWhere((n) => exam.flags.includes(n))} disabled={!exam.flags.length}>
+      <button type="button" className={btn.secondary} onClick={() => nextWhere((n) => exam.flags.includes(n))} disabled={!exam.flags.length}>
         Next flagged
       </button>
     </>
@@ -270,7 +271,7 @@ export function MockExam() {
         <button
           ref={sheetToggle}
           type="button"
-          className="btn only-narrow"
+          className={`${btn.secondary} only-narrow`}
           aria-expanded={sheetOpen}
           aria-controls="answer-sheet"
           aria-label={`Answer sheet, ${answered} of ${total} answered`}
@@ -283,7 +284,7 @@ export function MockExam() {
         </button>
         <span className="exam-bar-actions">
           <span className="row only-wide">{jumps}</span>
-          <button type="button" className="btn btn-primary" onClick={() => setConfirm(true)}>
+          <button type="button" className={btn.primary} onClick={() => setConfirm(true)}>
             Submit
           </button>
         </span>
@@ -292,7 +293,7 @@ export function MockExam() {
       {restored && (
         <p className="notice spread">
           <span>{restored}</span>
-          <button type="button" className="btn btn-quiet" onClick={() => setRestored(null)}>
+          <button type="button" className={btn.quiet} onClick={() => setRestored(null)}>
             Dismiss
           </button>
         </p>
@@ -331,7 +332,7 @@ export function MockExam() {
           <div className="spread">
             <span className="label">Answer sheet</span>
             {sheetOpen && (
-              <button type="button" className="btn btn-quiet" onClick={() => setSheetOpen(false)}>
+              <button type="button" className={btn.quiet} onClick={() => setSheetOpen(false)}>
                 Close
               </button>
             )}
@@ -344,12 +345,12 @@ export function MockExam() {
       <Dialog open={confirm} onClose={() => setConfirm(false)} title={`Submit exam? ${unanswered} unanswered, ${exam.flags.length} flagged`}>
         <p className="muted">After submitting, answers are graded and can no longer change.</p>
         <div className="row">
-          <button type="button" className="btn btn-primary" data-autofocus onClick={() => setConfirm(false)}>
+          <button type="button" className={btn.primary} data-autofocus onClick={() => setConfirm(false)}>
             Keep answering
           </button>
           <button
             type="button"
-            className="btn"
+            className={btn.secondary}
             onClick={() => {
               setConfirm(false);
               submit(false);

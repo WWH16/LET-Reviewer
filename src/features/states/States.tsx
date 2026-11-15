@@ -5,6 +5,7 @@ import { ChoiceGroup } from '../../ui/ChoiceGroup';
 import { Dialog } from '../../ui/Dialog';
 import { BubbleGrid } from '../../ui/BubbleGrid';
 import { useAnnounce } from '../../ui/Status';
+import { btn } from '../../ui/btn';
 
 const CHOICES = [
   { key: 'A', text: 'Knowledge' },
@@ -21,8 +22,8 @@ export function States() {
   const [elim, setElim] = useState(new Set(['D']));
   const [sheet, setSheet] = useState<Record<string, string | null>>({ '1': 'A', '2': null });
   const setTheme = (t: string) => {
-    if (t === 'system') delete document.documentElement.dataset.theme;
-    else document.documentElement.dataset.theme = t;
+    const dark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    document.documentElement.dataset.mode = dark ? 'dark' : 'light';
   };
 
   const group = (title: string, el: React.ReactNode) => (
@@ -36,7 +37,7 @@ export function States() {
     <Page title="States">
       <div className="row">
         {['system', 'light', 'dark'].map((t) => (
-          <button key={t} className="btn" onClick={() => setTheme(t)}>
+          <button key={t} className={btn.secondary} onClick={() => setTheme(t)}>
             Theme: {t}
           </button>
         ))}
@@ -58,13 +59,13 @@ export function States() {
       {group(
         'Buttons',
         <div className="row">
-          <button className="btn btn-primary">Primary</button>
-          <button className="btn">Secondary</button>
-          <button className="btn btn-quiet">Quiet</button>
-          <button className="btn" aria-pressed="true">
+          <button className={btn.primary}>Primary</button>
+          <button className={btn.secondary}>Secondary</button>
+          <button className={btn.quiet}>Quiet</button>
+          <button className={btn.secondary} aria-pressed="true">
             Pressed
           </button>
-          <button className="btn" disabled>
+          <button className={btn.secondary} disabled>
             Disabled
           </button>
         </div>,
@@ -143,10 +144,10 @@ export function States() {
       {group(
         'Feedback and status',
         <div className="row">
-          <button className="btn" onClick={() => setDialog(true)}>
+          <button className={btn.secondary} onClick={() => setDialog(true)}>
             Open dialog
           </button>
-          <button className="btn" onClick={() => announce('Imported 48 items')}>
+          <button className={btn.secondary} onClick={() => announce('Imported 48 items')}>
             Show status message
           </button>
         </div>,
@@ -155,10 +156,10 @@ export function States() {
       <Dialog open={dialog} onClose={() => setDialog(false)} title="Submit exam? 12 unanswered, 5 flagged">
         <p className="muted">You can still change any answer.</p>
         <div className="row">
-          <button className="btn btn-primary" data-autofocus onClick={() => setDialog(false)}>
+          <button className={btn.primary} data-autofocus onClick={() => setDialog(false)}>
             Keep answering
           </button>
-          <button className="btn" onClick={() => setDialog(false)}>
+          <button className={btn.secondary} onClick={() => setDialog(false)}>
             Submit now
           </button>
         </div>

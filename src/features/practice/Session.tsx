@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { Chip } from '../../ui/Chip';
@@ -14,6 +14,7 @@ import { dayKey } from '../../domain/dates';
 import { subareaName } from '../../domain/let-config';
 import { KEYS, type Area, type Key, type Mode, type Question } from '../../domain/types';
 import { drillMatches } from './DrillSetup';
+import { btn } from '../../ui/btn';
 
 const TITLES: Record<string, string> = { drill: 'Practice', review: 'Review', quick: 'Quick 10' };
 const FLAGGED = 'Flagged during practice';
@@ -95,6 +96,16 @@ export function Session() {
     if (done) resHeading.current?.focus();
   }, [done]);
 
+  // Shortcuts listen on the window, so they work wherever focus is: on the page heading when
+  // question 1 opens, or on the page after a click on empty space. Only a question screen sets a handler.
+  const keyHandler = useRef<((e: KeyboardEvent) => void) | null>(null);
+  keyHandler.current = null;
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => keyHandler.current?.(e);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
   const title = TITLES[mode] ?? 'Practice';
   if (!items || !qmap || !settings) return <Page title={title}>{null}</Page>;
 
@@ -103,10 +114,10 @@ export function Session() {
       <Page title={title}>
         <p>{mode === 'review' ? 'No reviews due. Questions you miss come back here on schedule.' : 'No questions to practice yet.'}</p>
         <div className="row">
-          <Link className="btn btn-primary" to="/drill">
+          <Link className={btn.primary} to="/drill">
             Practice by topic
           </Link>
-          <Link className="btn" to="/">
+          <Link className={btn.secondary} to="/">
             Home
           </Link>
         </div>
@@ -163,10 +174,10 @@ export function Session() {
           </section>
         )}
         <div className="row">
-          <button type="button" className="btn btn-primary" onClick={restart}>
+          <button type="button" className={btn.primary} onClick={restart}>
             {mode === 'review' ? 'Check for more reviews' : 'Practice again'}
           </button>
-          <Link className="btn" to="/">
+          <Link className={btn.secondary} to="/">
             Home
           </Link>
         </div>
@@ -203,8 +214,8 @@ export function Session() {
 
   const onKeyDown = (e: KeyboardEvent) => {
     if (!settings.shortcuts || e.ctrlKey || e.metaKey || e.altKey) return;
-    const t = e.target as HTMLElement;
-    if (t.matches('textarea, [contenteditable], input:not([type=radio])')) return;
+    const t = e.target instanceof HTMLElement ? e.target : document.body;
+    if (t.matches('textarea, select, [contenteditable], input:not([type=radio])')) return;
     const k = e.key.toUpperCase();
     const idx = '1234'.indexOf(k);
     const key = (KEYS as readonly string[]).includes(k) ? (k as Key) : idx >= 0 ? KEYS[idx] : null;
@@ -220,15 +231,16 @@ export function Session() {
       toggleFlag();
     }
   };
+  keyHandler.current = onKeyDown;
 
   return (
     <Page title={title} titleHidden>
-      <div className="stack" onKeyDown={onKeyDown}>
+      <div className="stack">
         <div className="spread">
           <h2 ref={qHeading} tabIndex={-1} className="label">
             Question <span className="num">{i + 1}</span> of <span className="num">{items.length}</span>
           </h2>
-          <button type="button" className="btn btn-quiet" onClick={() => setDone(true)}>
+          <button type="button" className={btn.quiet} onClick={() => setDone(true)}>
             End session
           </button>
         </div>
@@ -270,7 +282,7 @@ export function Session() {
 
         {!checked ? (
           <div className="row">
-            <button type="button" className="btn btn-primary" disabled={!chosen} onClick={check}>
+            <button type="button" className={btn.primary} disabled={!chosen} onClick={check}>
               Check answer
             </button>
           </div>
@@ -283,13 +295,13 @@ export function Session() {
             <p lang={q.lang}>{q.explanation || 'No explanation saved for this question.'}</p>
             <p className="sr-only">The choices are locked.</p>
             <div className="row">
-              <button type="button" className="btn btn-primary" onClick={next}>
+              <button type="button" className={btn.primary} onClick={next}>
                 {isLast ? 'See results' : 'Next'}
               </button>
-              <button type="button" className="btn" aria-pressed={q.flag?.reason === FLAGGED} onClick={toggleFlag}>
+              <button type="button" className={btn.secondary} aria-pressed={q.flag?.reason === FLAGGED} onClick={toggleFlag}>
                 <Icon name="flag" /> Flag
               </button>
-              <button type="button" className="btn btn-quiet" onClick={reportKey} disabled={q.flag?.reason === KEY_LOOKS_WRONG}>
+              <button type="button" className={btn.quiet} onClick={reportKey} disabled={q.flag?.reason === KEY_LOOKS_WRONG}>
                 {q.flag?.reason === KEY_LOOKS_WRONG ? 'Key reported' : 'Key looks wrong'}
               </button>
             </div>

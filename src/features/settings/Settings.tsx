@@ -11,6 +11,7 @@ import { db } from '../../db/db';
 import { parsePasted } from '../../domain/validate';
 import { SCHEMA_VERSION, type Backup, type Settings as S } from '../../domain/types';
 import { version } from '../../../package.json';
+import { btn } from '../../ui/btn';
 
 const fmtDate = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -141,10 +142,10 @@ export function Settings() {
             : 'No backup yet. Your progress lives only on this device.'}
         </p>
         <div className="row">
-          <button type="button" className="btn btn-primary" onClick={doExport}>
+          <button type="button" className={btn.primary} onClick={doExport}>
             Export backup
           </button>
-          <button type="button" className="btn" onClick={() => restoreInput.current?.click()}>
+          <button type="button" className={btn.secondary} onClick={() => restoreInput.current?.click()}>
             Restore backup
           </button>
           <input ref={restoreInput} type="file" accept=".json,application/json" className="sr-only" tabIndex={-1} onChange={pickRestore} aria-label="Backup file" />
@@ -160,7 +161,7 @@ export function Settings() {
             <span className="muted">. The browser {protectedStore ? 'will not' : 'may'} clear it when space runs low.</span>
           </span>
           {protectedStore === false && (
-            <button type="button" className="btn" onClick={async () => setProtected(await protectStorage())}>
+            <button type="button" className={btn.secondary} onClick={async () => setProtected(await protectStorage())}>
               Protect storage
             </button>
           )}
@@ -177,7 +178,7 @@ export function Settings() {
         <div className="row">
           <button
             type="button"
-            className="btn btn-quiet"
+            className={btn.quiet}
             onClick={async () => {
               const c = await deviceCounts();
               await copyText(
@@ -188,7 +189,7 @@ export function Settings() {
           >
             Copy debug info
           </button>
-          <Link className="btn btn-quiet" to="/states">
+          <Link className={btn.quiet} to="/states">
             Visual states
           </Link>
         </div>
@@ -206,12 +207,12 @@ export function Settings() {
               <span className="num">{restore.device.attempts}</span> answers. They will be replaced.
             </p>
             <div className="row">
-              <button type="button" className="btn btn-primary" data-autofocus onClick={() => setRestore(null)}>
+              <button type="button" className={btn.primary} data-autofocus onClick={() => setRestore(null)}>
                 Cancel
               </button>
               <button
                 type="button"
-                className="btn"
+                className={btn.secondary}
                 onClick={async () => {
                   await restoreBackup(restore.backup);
                   setRestore(null);

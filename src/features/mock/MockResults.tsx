@@ -8,6 +8,7 @@ import { LEVEL_WEIGHTS, PARTS, PART_FLOOR, paceMs } from '../../domain/let-confi
 import { projectedRating } from '../../domain/scoring';
 import type { Area, MockExam, Question } from '../../domain/types';
 import { RatingCard } from '../progress/RatingCard';
+import { btn } from '../../ui/btn';
 
 type Filter = 'all' | 'wrong' | 'flagged' | 'unanswered';
 
@@ -148,7 +149,7 @@ export function MockResults() {
         <h2 id="mr-check">Checking the paper</h2>
         <div className="row" role="group" aria-label="Show">
           {(['all', 'wrong', 'flagged', 'unanswered'] as Filter[]).map((f) => (
-            <button key={f} type="button" className="btn" aria-pressed={filter === f} onClick={() => setFilter(f)}>
+            <button key={f} type="button" className={btn.secondary} aria-pressed={filter === f} onClick={() => setFilter(f)}>
               {f === 'all' ? 'All' : f === 'wrong' ? 'Wrong only' : f === 'flagged' ? 'Flagged' : 'Unanswered'}
             </button>
           ))}
@@ -177,10 +178,10 @@ export function MockResults() {
       </section>
 
       <div className="row">
-        <Link className="btn btn-primary" to="/mock">
+        <Link className={btn.primary} to="/mock">
           New exam
         </Link>
-        <Link className="btn" to="/">
+        <Link className={btn.secondary} to="/">
           Home
         </Link>
       </div>

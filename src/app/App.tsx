@@ -42,9 +42,17 @@ export function App() {
   useEffect(() => {
     if (!settings) return;
     const root = document.documentElement;
-    if (settings.theme === 'system') delete root.dataset.theme;
-    else root.dataset.theme = settings.theme;
     root.style.fontSize = `${settings.textSize}%`;
+    // Kumo switches light and dark on data-mode; "system" follows the device and keeps following it.
+    if (settings.theme !== 'system') {
+      root.dataset.mode = settings.theme;
+      return;
+    }
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const sync = () => (root.dataset.mode = media.matches ? 'dark' : 'light');
+    sync();
+    media.addEventListener('change', sync);
+    return () => media.removeEventListener('change', sync);
   }, [settings]);
 
   return (

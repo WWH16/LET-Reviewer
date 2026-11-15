@@ -6,6 +6,7 @@ import { useQuestions } from '../../db/hooks';
 import { importQuestions, nowIso, protectStorage } from '../../db/repo';
 import { parsePasted, previewImport } from '../../domain/validate';
 import { PARTS, subareaName } from '../../domain/let-config';
+import { btn } from '../../ui/btn';
 
 /** Paste-first import with a preview. Nothing is written until she confirms (plan §5, DX C1). */
 export function Import() {
@@ -72,10 +73,10 @@ export function Import() {
           In Claude, tap <strong>Copy</strong> on the code block with the questions, then paste it here. Extra text around it is fine.
         </p>
         <div className="row">
-          <button type="button" className="btn" onClick={pasteClipboard}>
+          <button type="button" className={btn.secondary} onClick={pasteClipboard}>
             Paste from clipboard
           </button>
-          <label className="btn">
+          <label className={btn.secondary}>
             Choose file
             <input type="file" accept=".json,.txt,application/json,text/plain" className="sr-only" onChange={pickFile} />
           </label>
@@ -161,7 +162,7 @@ export function Import() {
                         </select>
                         <button
                           type="button"
-                          className="btn"
+                          className={btn.secondary}
                           onClick={() => setOverrides((o) => ({ ...o, [r.n]: { subarea: fixPick[r.n] ?? r.subareaFix!.suggestion } }))}
                         >
                           Use this sub-area
@@ -215,10 +216,10 @@ export function Import() {
 
           {preview && (
             <div className="row">
-              <button type="button" className="btn btn-primary" disabled={!preview.ready.length || busy} onClick={commit}>
+              <button type="button" className={btn.primary} disabled={!preview.ready.length || busy} onClick={commit}>
                 Import {preview.ready.length} item{preview.ready.length === 1 ? '' : 's'}
               </button>
-              <Link className="btn btn-quiet" to="/bank">
+              <Link className={btn.quiet} to="/bank">
                 Cancel
               </Link>
             </div>

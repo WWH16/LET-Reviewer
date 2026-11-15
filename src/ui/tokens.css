@@ -1,60 +1,94 @@
+/* Role tokens. The colours are the pre-Kumo Dose palette (white and green-grey paper, one green that
+   does every signal, a wrong pick in grey, never red), worn by Kumo's components: the --color-kumo-* tokens
+   below point at these, so Kumo buttons, badges and rings follow the palette. Shadows follow the
+   colour-palette rules: a 1px subtle border first, then soft green-tinted shadows under 0.08 alpha in
+   light mode, and a top-edge highlight instead of shadow in dark mode. The faces are the pre-Kumo ones too.
+   Every text pair is checked in
+   contrast.test.ts. */
 :root {
   color-scheme: light;
-  --space-3xs: 2px; --space-2xs: 4px; --space-xs: 8px; --space-sm: 12px; --space-md: 16px; --space-lg: 24px; --space-xl: 40px; --space-2xl: 64px; --space-3xl: 96px; --space-4xl: 144px;
-  --text-xs: 0.75rem; --text-sm: 0.875rem; --text-md: 1rem; --text-lg: 1.2rem; --text-xl: 1.44rem; --text-2xl: 1.728rem; --text-3xl: 2.074rem;
-  --text-display-s: 1.44rem; --text-display: 1.728rem; --text-section: 1.44rem; --text-title: 1.2rem; --text-lead: 1.2rem;
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); --ease-in: cubic-bezier(0.7, 0, 0.84, 0); --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --dur-micro: 120ms; --dur-short: 220ms; --dur-long: 420ms;
-  --color-error: oklch(52% 0.19 27); --color-success: oklch(50% 0.12 150);
-  --container: 1440px; --gutter: 64px; --gap-columns: 32px; --section-gap-s: 120px; --section-gap: 144px; --section-gap-l: 176px;
-  --z-base: 1; --z-raised: 10; --z-dropdown: 100; --z-sticky: 200; --z-sticky-nav: 300; --z-modal: 400; --z-toast: 500; --z-tooltip: 600;
+  /* Kumo's type steps in rem, so the Text size setting scales Kumo components too */
+  --text-xs: 0.75rem; --text-sm: 0.8125rem; --text-base: 0.875rem; --text-lg: 1rem;
+  --text-xl: 1.25rem; --text-2xl: 1.5rem; --text-3xl: 1.875rem; --text-4xl: 2.25rem;
+  --space-3xs: 2px; --space-2xs: 4px; --space-xs: 8px; --space-sm: 12px; --space-md: 16px; --space-lg: 24px; --space-xl: 32px; --space-2xl: 48px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-micro: 120ms; --dur-short: 200ms;
+  --z-raised: 10; --z-sticky: 200; --z-sticky-nav: 300; --z-modal: 400; --z-toast: 500;
+  /* the pre-Kumo faces, bundled: Schibsted Grotesk for headings and big figures, Instrument Sans for
+     everything else, DM Mono for timers, scores and IDs. Kumo's own font tokens point at them too. */
+  --font-display: "Schibsted Grotesk Variable", "Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Instrument Sans Variable", "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-num: "DM Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-sans: var(--font-body); --font-mono: var(--font-num); --default-font-family: var(--font-body); --default-mono-font-family: var(--font-num);
+  --tracking-display: -0.03em;
+  --radius-control: 8px; --radius-card: 12px; --radius-pill: 999px;
+  --measure-app: 48rem; --container-app: 72rem; --sidebar-w: 15rem; --header-h: 56px; --tabbar-h: 64px; --sticky-offset: 0px;
+
   --color-paper: oklch(96.6% 0.004 165); --color-paper-2: oklch(94.6% 0.016 160); --color-paper-3: oklch(91.8% 0.03 160);
+  --color-card: oklch(100% 0 0);
   --color-ink: oklch(21% 0.025 170); --color-ink-2: oklch(31% 0.02 170); --color-muted: oklch(49% 0.024 165);
-  --color-rule: oklch(87% 0.012 160);
-  --color-accent: oklch(50% 0.13 160); --color-accent-deep: oklch(42% 0.11 162); --color-accent-soft: oklch(88% 0.08 160); --color-accent-ink: oklch(99% 0.006 160);
+  --color-rule: oklch(87% 0.012 160); --color-line: oklch(21% 0.025 170 / 0.1); --color-control: oklch(62% 0.015 165);
+  --color-accent: oklch(50% 0.13 160); --color-accent-deep: oklch(42% 0.11 162); --color-accent-ink: oklch(99% 0.006 160);
+  --color-accent-text: oklch(42% 0.11 162); --color-accent-edge: oklch(42% 0.11 162); --color-accent-soft: oklch(88% 0.08 160); --color-on-soft: oklch(21% 0.025 170);
   --color-focus: oklch(45% 0.14 160);
-  --p-mon: oklch(85% 0.052 22); --p-tue: oklch(87.5% 0.058 64); --p-wed: oklch(91.5% 0.064 98); --p-thu: oklch(86.5% 0.075 160);
-  --p-fri: oklch(87% 0.048 210); --p-sat: oklch(84% 0.045 270); --p-sun: oklch(84% 0.048 322);
-  --light: oklch(99.4% 0.016 84); --glint: oklch(100% 0 0);
-  --font-display: "Schibsted Grotesk Variable", "Schibsted Grotesk", ui-sans-serif, sans-serif; --font-body: "Instrument Sans Variable", "Instrument Sans", ui-sans-serif, sans-serif;
-  --font-outlier: "DM Mono", ui-monospace, monospace;
-  --radius-card: 14px; --radius-input: 10px; --radius-pill: 999px; --rule-hair: 1px;
-  --shadow-card: 0 1px 2px oklch(30% 0.03 165 / 0.08), 0 24px 48px -24px oklch(40% 0.08 165 / 0.35);
-  --shadow-lift: 0 1px 1px oklch(30% 0.03 165 / 0.10), 8px 18px 28px -14px oklch(36% 0.06 165 / 0.32), 18px 40px 60px -30px oklch(40% 0.08 165 / 0.30);
-  --tracking-display: -0.03em; --display-weight: 700;
-  /* app additions */
-  --text-4xl: 2.488rem;
-  --color-card: oklch(100% 0 0); --color-on-soft: oklch(21% 0.025 170); --color-shade: oklch(21% 0.025 170 / 0.42);
-  --radius-key: 12px; --radius-sheet: 18px;
-  --measure-app: 48rem; --container-app: 72rem; --header-h: 64px; --tabbar-h: 64px; --sticky-offset: 0px;
+  /* right is the green; wrong is grey, never red */
+  --color-success: oklch(42% 0.11 162); --color-success-fill: oklch(42% 0.11 162); --color-success-tint: oklch(93% 0.05 160);
+  --color-error: oklch(38% 0.02 165); --color-error-fill: oklch(49% 0.024 165); --color-error-tint: oklch(91.8% 0.03 160);
+  --color-warning: oklch(52% 0.13 57.5); --color-warning-tint: oklch(98% 0.03 95); --color-info-tint: oklch(95% 0.03 160);
+  --color-shade: oklch(21% 0.025 170 / 0.42);
+  /* the primary button: the green with a near-white label, the same in both modes */
+  --color-button: oklch(50% 0.13 160); --color-button-deep: oklch(42% 0.11 162); --color-button-ink: oklch(99% 0.006 160);
+  --shadow-card: 0 0 0 1px var(--color-line), 0 1px 3px oklch(30% 0.03 165 / 0.07), 0 6px 16px -6px oklch(30% 0.03 165 / 0.07);
+  --shadow-pop: 0 0 0 1px var(--color-line), 0 12px 32px -8px oklch(30% 0.03 165 / 0.07);
+  --shadow-bar: 0 1px 3px oklch(30% 0.03 165 / 0.06), 0 4px 12px -6px oklch(30% 0.03 165 / 0.06);
+  --shadow-bar-up: 0 -1px 3px oklch(30% 0.03 165 / 0.06), 0 -4px 12px -6px oklch(30% 0.03 165 / 0.06);
+  --shadow-side: 1px 0 3px oklch(30% 0.03 165 / 0.06), 4px 0 12px -6px oklch(30% 0.03 165 / 0.06);
+
+  /* Kumo's tokens, pointed at the palette so its components match */
+  --color-kumo-canvas: var(--color-paper); --color-kumo-base: var(--color-card); --color-kumo-elevated: var(--color-paper);
+  --color-kumo-recessed: var(--color-paper-2); --color-kumo-tint: var(--color-paper-2); --color-kumo-fill: var(--color-paper-3);
+  --color-kumo-control: var(--color-card); --color-kumo-line: var(--color-line); --color-kumo-hairline: var(--color-rule);
+  --color-kumo-brand: var(--color-accent); --color-kumo-brand-hover: var(--color-accent-deep);
+  --color-kumo-success: var(--color-success-fill); --color-kumo-success-tint: var(--color-success-tint);
+  --text-color-kumo-default: var(--color-ink); --text-color-kumo-strong: var(--color-ink-2); --text-color-kumo-subtle: var(--color-muted);
+  --text-color-kumo-success: var(--color-success); --text-color-kumo-badge-neutral-subtle: var(--color-ink-2);
+
   /* print: pure black toner on white bond (plan section 8.3) */
   --print-ink: #000; --print-paper: #fff; --font-print: var(--font-body);
 }
 
-@media (min-width: 60rem) { :root { --sticky-offset: var(--header-h); } }
-
-/* Night ground, derived from the white one (dark-mode.md): hue held, elevation by lightness, shadows off. */
-:root[data-theme='dark'] {
+/* Night ground: hue held, elevation by lightness, a faint top edge instead of shadow. */
+:root[data-mode='dark'] {
   color-scheme: dark;
   --color-paper: oklch(14% 0.01 170); --color-paper-2: oklch(18% 0.014 168); --color-paper-3: oklch(22% 0.02 165);
+  --color-card: oklch(19% 0.014 168);
   --color-ink: oklch(95% 0.01 160); --color-ink-2: oklch(86% 0.012 165); --color-muted: oklch(72% 0.018 165);
-  --color-rule: oklch(32% 0.02 160);
-  --color-accent: oklch(70% 0.12 160); --color-accent-deep: oklch(60% 0.11 162); --color-accent-soft: oklch(84% 0.08 160); --color-accent-ink: oklch(16% 0.02 170);
+  --color-rule: oklch(32% 0.02 160); --color-line: oklch(95% 0.01 160 / 0.12); --color-control: oklch(55% 0.015 165);
+  --color-accent: oklch(70% 0.12 160); --color-accent-deep: oklch(60% 0.11 162); --color-accent-ink: oklch(16% 0.02 170);
+  --color-accent-text: oklch(76% 0.13 160); --color-accent-edge: oklch(70% 0.12 160); --color-accent-soft: oklch(32% 0.06 160); --color-on-soft: oklch(95% 0.01 160);
   --color-focus: oklch(76% 0.13 160);
-  --color-card: oklch(19% 0.014 168); --color-shade: oklch(5% 0.01 170 / 0.6);
-  --p-thu: oklch(30% 0.05 160); --light: oklch(20% 0.012 170); --glint: oklch(34% 0.02 165);
-  --shadow-card: 0 0 0 1px oklch(32% 0.02 160); --shadow-lift: 0 0 0 1px oklch(32% 0.02 160);
+  --color-success: oklch(76% 0.13 160); --color-success-fill: oklch(70% 0.12 160); --color-success-tint: oklch(28% 0.06 160);
+  --color-error: oklch(82% 0.015 165); --color-error-fill: oklch(72% 0.018 165); --color-error-tint: oklch(24% 0.015 165);
+  --color-warning: oklch(78% 0.14 57.5); --color-warning-tint: oklch(24% 0.05 65); --color-info-tint: oklch(21% 0.025 165);
+  --color-shade: oklch(5% 0.01 170 / 0.6);
+  --shadow-card: 0 0 0 1px var(--color-line), inset 0 1px 0 oklch(100% 0 0 / 0.05); --shadow-pop: 0 0 0 1px var(--color-line), 0 12px 32px -8px oklch(0% 0 0 / 0.5);
+  --shadow-bar: 0 4px 12px -6px oklch(0% 0 0 / 0.5); --shadow-bar-up: 0 -4px 12px -6px oklch(0% 0 0 / 0.5); --shadow-side: 4px 0 12px -6px oklch(0% 0 0 / 0.5);
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
+  :root:not([data-mode]) {
     color-scheme: dark;
     --color-paper: oklch(14% 0.01 170); --color-paper-2: oklch(18% 0.014 168); --color-paper-3: oklch(22% 0.02 165);
+    --color-card: oklch(19% 0.014 168);
     --color-ink: oklch(95% 0.01 160); --color-ink-2: oklch(86% 0.012 165); --color-muted: oklch(72% 0.018 165);
-    --color-rule: oklch(32% 0.02 160);
-    --color-accent: oklch(70% 0.12 160); --color-accent-deep: oklch(60% 0.11 162); --color-accent-soft: oklch(84% 0.08 160); --color-accent-ink: oklch(16% 0.02 170);
+    --color-rule: oklch(32% 0.02 160); --color-line: oklch(95% 0.01 160 / 0.12); --color-control: oklch(55% 0.015 165);
+    --color-accent: oklch(70% 0.12 160); --color-accent-deep: oklch(60% 0.11 162); --color-accent-ink: oklch(16% 0.02 170);
+    --color-accent-text: oklch(76% 0.13 160); --color-accent-edge: oklch(70% 0.12 160); --color-accent-soft: oklch(32% 0.06 160); --color-on-soft: oklch(95% 0.01 160);
     --color-focus: oklch(76% 0.13 160);
-    --color-card: oklch(19% 0.014 168); --color-shade: oklch(5% 0.01 170 / 0.6);
-    --p-thu: oklch(30% 0.05 160); --light: oklch(20% 0.012 170); --glint: oklch(34% 0.02 165);
-    --shadow-card: 0 0 0 1px oklch(32% 0.02 160); --shadow-lift: 0 0 0 1px oklch(32% 0.02 160);
+    --color-success: oklch(76% 0.13 160); --color-success-fill: oklch(70% 0.12 160); --color-success-tint: oklch(28% 0.06 160);
+    --color-error: oklch(82% 0.015 165); --color-error-fill: oklch(72% 0.018 165); --color-error-tint: oklch(24% 0.015 165);
+    --color-warning: oklch(78% 0.14 57.5); --color-warning-tint: oklch(24% 0.05 65); --color-info-tint: oklch(21% 0.025 165);
+    --color-shade: oklch(5% 0.01 170 / 0.6);
+    --shadow-card: 0 0 0 1px var(--color-line), inset 0 1px 0 oklch(100% 0 0 / 0.05); --shadow-pop: 0 0 0 1px var(--color-line), 0 12px 32px -8px oklch(0% 0 0 / 0.5);
+    --shadow-bar: 0 4px 12px -6px oklch(0% 0 0 / 0.5); --shadow-bar-up: 0 -4px 12px -6px oklch(0% 0 0 / 0.5); --shadow-side: 4px 0 12px -6px oklch(0% 0 0 / 0.5);
   }
 }

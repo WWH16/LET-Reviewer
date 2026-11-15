@@ -3,6 +3,7 @@ import { Page } from '../../ui/Page';
 import { useExam, useQuestionMap } from '../../db/hooks';
 import { PARTS } from '../../domain/let-config';
 import { KEYS, type PaperSize } from '../../domain/types';
+import { btn } from '../../ui/btn';
 
 const PAGE_SIZE: Record<PaperSize, { css: string; name: string }> = {
   a4: { css: 'A4', name: 'A4' },
@@ -38,10 +39,10 @@ export function MockPrint() {
         </p>
         <p className="notice">In the print dialog, set the paper size to {size.name} and margins to Default. Choose Save as PDF to print at a shop.</p>
         <div className="row">
-          <button type="button" className="btn btn-primary" onClick={() => window.print()}>
+          <button type="button" className={btn.primary} onClick={() => window.print()}>
             Print
           </button>
-          <Link className="btn" to={`/mock/${exam.id}/entry`}>
+          <Link className={btn.secondary} to={`/mock/${exam.id}/entry`}>
             Enter answers
           </Link>
         </div>

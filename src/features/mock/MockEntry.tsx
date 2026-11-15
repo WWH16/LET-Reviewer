@@ -6,6 +6,7 @@ import { Dialog } from '../../ui/Dialog';
 import { useExam, useSettings } from '../../db/hooks';
 import { answerExam, gradeExam, updateExam } from '../../db/repo';
 import { KEYS, type Key } from '../../domain/types';
+import { btn } from '../../ui/btn';
 
 /**
  * Tap entry for a printed sheet (plan §8.3). Each tap fills the current row and moves on,
@@ -94,10 +95,10 @@ export function MockEntry() {
           ))}
         </div>
         <div className="row">
-          <button type="button" className="btn" disabled={current <= 1} onClick={() => setCurrent(current - 1)}>
+          <button type="button" className={btn.secondary} disabled={current <= 1} onClick={() => setCurrent(current - 1)}>
             Back
           </button>
-          <button type="button" className="btn" disabled={current >= total} onClick={() => setCurrent(current + 1)}>
+          <button type="button" className={btn.secondary} disabled={current >= total} onClick={() => setCurrent(current + 1)}>
             Skip
           </button>
           {settings.shortcuts && <span className="muted label">
@@ -126,10 +127,10 @@ export function MockEntry() {
           <input id="entry-min" type="number" inputMode="numeric" min={1} value={minutes} onChange={(e) => setMinutes(e.target.value)} />
         </div>
         <div className="row">
-          <button type="button" className="btn btn-primary" onClick={() => setConfirm(true)}>
+          <button type="button" className={btn.primary} onClick={() => setConfirm(true)}>
             Grade exam
           </button>
-          <Link className="btn btn-quiet" to={`/mock/${exam.id}/print`}>
+          <Link className={btn.quiet} to={`/mock/${exam.id}/print`}>
             Back to print
           </Link>
         </div>
@@ -143,10 +144,10 @@ export function MockEntry() {
           </p>
         )}
         <div className="row">
-          <button type="button" className="btn btn-primary" data-autofocus onClick={() => setConfirm(false)}>
+          <button type="button" className={btn.primary} data-autofocus onClick={() => setConfirm(false)}>
             Keep entering
           </button>
-          <button type="button" className="btn" onClick={grade}>
+          <button type="button" className={btn.secondary} onClick={grade}>
             Grade now
           </button>
         </div>

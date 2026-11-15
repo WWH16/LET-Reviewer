@@ -9,6 +9,7 @@ import { PARTS, partsFor, timeLimit } from '../../domain/let-config';
 import { SOURCE_LABELS, drawExam, gradable, matchesSource, type SourceFilter } from '../../domain/examDraw';
 import { examLabel } from '../../domain/ids';
 import type { Area, MockExam, PaperSize } from '../../domain/types';
+import { btn } from '../../ui/btn';
 
 type Length = 'full' | 'half' | 'short';
 const SHORT = 25;
@@ -107,15 +108,15 @@ export function MockSetup() {
                 <span className="row">
                   {e.form === 'printed' ? (
                     <>
-                      <Link className="btn" to={`/mock/${e.id}/print`}>
+                      <Link className={btn.secondary} to={`/mock/${e.id}/print`}>
                         Print
                       </Link>
-                      <Link className="btn btn-primary" to={`/mock/${e.id}/entry`}>
+                      <Link className={btn.primary} to={`/mock/${e.id}/entry`}>
                         Enter answers
                       </Link>
                     </>
                   ) : (
-                    <Link className="btn btn-primary" to={`/mock/${e.id}`}>
+                    <Link className={btn.primary} to={`/mock/${e.id}`}>
                       Continue
                     </Link>
                   )}
@@ -224,22 +225,22 @@ export function MockSetup() {
               </p>
               <div className="row">
                 {length === 'full' && pool.length >= lengthOf(part, 'half') && (
-                  <button type="button" className="btn" onClick={() => setLength('half')}>
+                  <button type="button" className={btn.secondary} onClick={() => setLength('half')}>
                     Use half length
                   </button>
                 )}
                 {length !== 'short' && pool.length >= SHORT && (
-                  <button type="button" className="btn" onClick={() => setLength('short')}>
+                  <button type="button" className={btn.secondary} onClick={() => setLength('short')}>
                     Use {SHORT} items
                   </button>
                 )}
                 {source !== 'all' && inPart.length > pool.length && (
-                  <button type="button" className="btn" onClick={() => setSource('all')}>
+                  <button type="button" className={btn.secondary} onClick={() => setSource('all')}>
                     Include AI questions
                   </button>
                 )}
                 {inPart.length < SHORT && (
-                  <Link className="btn" to="/bank/import">
+                  <Link className={btn.secondary} to="/bank/import">
                     Import more questions
                   </Link>
                 )}
@@ -249,7 +250,7 @@ export function MockSetup() {
         </div>
 
         <div>
-          <button type="submit" className="btn btn-primary" disabled={!enough}>
+          <button type="submit" className={btn.primary} disabled={!enough}>
             {form === 'digital' ? 'Start exam' : 'Make printable exam'}
           </button>
         </div>

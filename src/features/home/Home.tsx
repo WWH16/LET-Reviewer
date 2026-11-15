@@ -6,6 +6,7 @@ import { useStats } from '../progress/useStats';
 import { RatingCard } from '../progress/RatingCard';
 import { drillUrl, type DrillParams } from '../practice/DrillSetup';
 import { FirstRun } from './FirstRun';
+import { btn } from '../../ui/btn';
 
 export function Home() {
   const questions = useQuestions();
@@ -41,28 +42,28 @@ export function Home() {
         </p>
         <div className="row">
           {due.length > 0 ? (
-            <Link className="btn btn-primary" to="/review">
+            <Link className={btn.primary} to="/review">
               Start review
             </Link>
           ) : (
-            <Link className="btn btn-primary" to="/session?mode=quick">
+            <Link className={btn.primary} to="/session?mode=quick">
               Quick 10
             </Link>
           )}
           {open ? (
-            <Link className="btn" to={`/mock/${open.id}`}>
+            <Link className={btn.secondary} to={`/mock/${open.id}`}>
               Continue exam {open.label} ({Object.keys(open.answers).length}/{open.itemIds.length})
             </Link>
           ) : printed ? (
-            <Link className="btn" to={`/mock/${printed.id}/entry`}>
+            <Link className={btn.secondary} to={`/mock/${printed.id}/entry`}>
               Grade printed exam {printed.label}
             </Link>
           ) : lastDrill ? (
-            <Link className="btn" to={drillUrl(lastDrill)}>
+            <Link className={btn.secondary} to={drillUrl(lastDrill)}>
               Repeat last drill
             </Link>
           ) : (
-            <Link className="btn" to="/drill">
+            <Link className={btn.secondary} to="/drill">
               Practice by topic
             </Link>
           )}
@@ -74,7 +75,7 @@ export function Home() {
           <span>
             {sinceBackup} {sinceBackup === 1 ? 'answer' : 'answers'} since your {lastBackup ? `last backup on ${new Date(lastBackup.at).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}` : 'first session, with no backup yet'}.
           </span>
-          <Link className="btn" to="/settings">
+          <Link className={btn.secondary} to="/settings">
             Back up now
           </Link>
         </p>

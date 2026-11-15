@@ -10,6 +10,7 @@ import { loadSampleQuestions, removeBatch } from '../../db/repo';
 import { subareaName } from '../../domain/let-config';
 import { templateA } from '../../domain/prompts';
 import type { Question } from '../../domain/types';
+import { btn } from '../../ui/btn';
 
 type Queue = 'all' | 'needs-key' | 'unverified' | 'flagged';
 const QUEUES: { id: Queue; label: string; test: (q: Question) => boolean }[] = [
@@ -33,7 +34,7 @@ export function CopyTemplateA() {
   return (
     <button
       type="button"
-      className="btn"
+      className={btn.secondary}
       onClick={async () => {
         await copyText(templateA());
         announce('Template A copied. Paste it into Claude with your photo.');
@@ -75,13 +76,13 @@ export function Bank() {
         <div className="stack">
           <p>Your bank is empty.</p>
           <div className="row">
-            <Link className="btn btn-primary" to="/bank/import">
+            <Link className={btn.primary} to="/bank/import">
               Import questions
             </Link>
             <CopyTemplateA />
             <button
               type="button"
-              className="btn btn-quiet"
+              className={btn.quiet}
               onClick={async () => announce(`Loaded ${await loadSampleQuestions()} sample questions`)}
             >
               Load sample questions
@@ -94,7 +95,7 @@ export function Bank() {
   return (
     <Page title="Bank">
       <div className="row">
-        <Link className="btn btn-primary" to="/bank/import">
+        <Link className={btn.primary} to="/bank/import">
           Import questions
         </Link>
         <CopyTemplateA />
@@ -107,7 +108,7 @@ export function Bank() {
         </div>
         <div className="row" role="group" aria-label="Queue">
           {QUEUES.map((x) => (
-            <button key={x.id} type="button" className="btn" aria-pressed={queue === x.id} onClick={() => setQueue(x.id)}>
+            <button key={x.id} type="button" className={btn.secondary} aria-pressed={queue === x.id} onClick={() => setQueue(x.id)}>
               {x.label} <span className="num">{questions.filter(x.test).length}</span>
             </button>
           ))}
@@ -149,7 +150,7 @@ export function Bank() {
               <span>
                 {batchLabel(id)} <span className="muted">({count} items)</span>
               </span>
-              <button type="button" className="btn btn-quiet" onClick={() => setRemoving({ id, count })}>
+              <button type="button" className={btn.quiet} onClick={() => setRemoving({ id, count })}>
                 Remove
               </button>
             </li>
@@ -164,12 +165,12 @@ export function Bank() {
       >
         <p>Your past answers to them stay in your history. You can import them again later.</p>
         <div className="row">
-          <button type="button" className="btn btn-primary" data-autofocus onClick={() => setRemoving(null)}>
+          <button type="button" className={btn.primary} data-autofocus onClick={() => setRemoving(null)}>
             Keep them
           </button>
           <button
             type="button"
-            className="btn"
+            className={btn.secondary}
             onClick={async () => {
               const n = await removeBatch(removing!.id);
               setRemoving(null);

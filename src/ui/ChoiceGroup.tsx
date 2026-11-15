@@ -1,4 +1,5 @@
 import { Icon } from './Icon';
+import { btn } from './btn';
 
 export interface ChoiceItem {
   key: string;
@@ -66,7 +67,7 @@ export function ChoiceGroup(p: Props) {
               {p.onToggleEliminate && !p.locked && (
                 <button
                   type="button"
-                  className="btn eliminate"
+                  className={`${btn.secondary} eliminate`}
                   aria-pressed={isEliminated}
                   aria-label={`Eliminate choice ${c.key}`}
                   title={`Eliminate choice ${c.key}`}

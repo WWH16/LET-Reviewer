@@ -34,7 +34,7 @@ const ratio = (x: [number, number, number], y: [number, number, number]) => {
 };
 
 const light = block(':root {');
-const dark = { ...light, ...block(":root[data-theme='dark']") };
+const dark = { ...light, ...block(":root[data-mode='dark']") };
 
 describe.each([
   ['light', light],
@@ -47,13 +47,19 @@ describe.each([
     ['color-muted', 'color-paper', 4.5],
     ['color-muted', 'color-paper-2', 4.5],
     ['color-accent-ink', 'color-accent', 4.5],
+    ['color-button-ink', 'color-button', 4.5],
+    ['color-button-ink', 'color-button-deep', 4.5],
     ['color-accent-ink', 'color-accent-deep', 4.5],
     ['color-on-soft', 'color-accent-soft', 4.5],
     ['color-ink', 'color-paper-3', 4.5],
     ['color-paper', 'color-ink', 4.5],
-    ['color-accent-deep', 'color-paper', 4.5],
+    ['color-accent-text', 'color-paper', 4.5],
+    ['color-accent-text', 'color-card', 4.5],
     ['color-focus', 'color-paper', 3],
     ['color-muted', 'color-card', 3],
+    ['color-accent-edge', 'color-card', 3],
+    ['color-accent-edge', 'color-paper', 3],
+    ['color-accent-edge', 'color-accent-soft', 3],
   ];
   it.each(pairs)('%s on %s', (fg, bg, min) => {
     expect(t[fg], fg).toBeDefined();
@@ -63,6 +69,6 @@ describe.each([
 });
 
 it('the system dark block matches the explicit dark block', () => {
-  const sys = block(':root:not([data-theme])');
-  expect(sys).toEqual(block(":root[data-theme='dark']"));
+  const sys = block(':root:not([data-mode])');
+  expect(sys).toEqual(block(":root[data-mode='dark']"));
 });

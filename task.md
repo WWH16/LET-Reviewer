@@ -18,20 +18,20 @@ Update the checkboxes and the "Where we left off" section at the end of every se
 
 ## Where we left off
 
-- **Redesign (2026-11-15):** whole UI moved from the sharp monochrome look to Hallmark Dose, light first, dark kept as a setting. sloplint: 12 FAIL before, 0 after; every link, field, handler, and heading kept.
-- **Done:** F0–F9 and the verify pass. Type-check, 35 tests, and production build pass. Every screen checked at phone width with no errors.
+- **Redesign (2026-11-15, second):** Dose replaced by Cloudflare's Kumo UI (`@cloudflare/kumo` 2.18.1, its precompiled stylesheet, no Tailwind). Side menu on laptop, bottom tab bar on phone. Colours: the pre-Kumo Dose palette (one green, wrong in grey) on Kumo's components. sloplint 0 FAIL; links 24/24, fields 14/14, handlers 109/109 kept.
+- **Done:** F0–F9 and the verify pass. Type-check, 56 tests, and production build pass. Every main screen checked at 320 px with no sideways overflow. The running mock exam and print pages were not opened after the Kumo redesign.
 - **Not done (needs you):** Vercel deploy (sign-in and domain choice). Real print test on paper at Folio size (DX R9). Airplane-mode test on the user's phone. LET sub-area weights are still placeholders (plan §12).
 - **Next action:** deploy to Vercel, or start Phase 2b (Supabase sync) under Later.
 
-Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-hooks 4.4, Vite 8.3, TypeScript 7.0, Vitest 5.1, vite-plugin-pwa 2.0, `@fontsource-variable/geist` and `@fontsource-variable/geist-mono` 5.3. Node 26, npm 11.
+Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-hooks 4.4, Vite 8.3, TypeScript 7.0, Vitest 5.1, vite-plugin-pwa 2.0, `@cloudflare/kumo` 2.18, `@phosphor-icons/react` 2.1, `@fontsource-variable/schibsted-grotesk`, `@fontsource-variable/instrument-sans` and `@fontsource/dm-mono` 5.3 (bundled). Node 26, npm 11.
 
 ## Stack (decided)
 
 - React + Vite + TypeScript, PWA through `vite-plugin-pwa`
 - Dexie (IndexedDB) is the source of truth. Screens read and write it only.
 - Hash router (`react-router-dom`), so no Vercel rewrite is needed
-- Plain CSS with tokens. No CSS framework, no state library.
-- Look: Hallmark redesign in the Dose theme (light first, warm paper, one green, moulded controls, plastic answer keys). Stylesheets: `src/ui/tokens.css` and `src/ui/base.css` (scaffold), `src/ui/app.css` (the app, stamp at the top). Fonts: Schibsted Grotesk, Instrument Sans, DM Mono, bundled.
+- Kumo's precompiled stylesheet (`kumo-standalone.css`) plus plain CSS with tokens. No Tailwind, no state library.
+- Look: Cloudflare's Kumo design system. Buttons use Kumo's own classes (`src/ui/btn.ts`, checked by `btn.test.ts`), badges are Kumo `Badge`, everything else is plain CSS on Kumo's tokens. Stylesheets: `src/ui/tokens.css` (role tokens copied from Kumo's theme file), `src/ui/base.css`, `src/ui/app.css` (the app, stamp at the top). Dark mode is `data-mode` on `<html>`. Icons: Phosphor. Fonts: Schibsted Grotesk (headings, big figures), Instrument Sans (everything else), DM Mono (timers, scores, IDs), bundled; Kumo's font tokens point at them.
 - Vercel static hosting. Supabase (Auth with email code + one `docs` table) is added later as an optional copy.
 - No server code in v1
 
@@ -41,7 +41,7 @@ Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-ho
 2. **Derived, never stored:** whether an attempt was correct, and review cards (Leitner). Both are worked out from attempts and the question's current answer.
 3. **IDs:** the app assigns question IDs at import (`rc-` + slug of `sourceRef`, `ai-` + hash of the stem). Attempts and mock exams use `crypto.randomUUID()`. A mock exam's `GE-1115-A` is a display `label`, not its ID.
 4. **Synced records** (questions, mock exams, settings) carry `updatedAt` and a `deleted` flag. Attempts are append-only.
-5. **Dose look.** One green does every signal. Wrong or missed is grey, never red. State is shown by fill, border, icon, and words. No uppercase tracked labels, no middle-dot strings, no dashes in copy. Run Hallmark sloplint after UI changes (see .hallmark/).
+5. **Kumo components, Dose palette.** Kumo's components wear the pre-Kumo palette: white and green-grey paper, one green that does every signal (primary button, selection, right answer), and a wrong pick in grey, never red. State is also shown by icon, ring and words. Text pairs keep 4.5:1, so Kumo's yellow warning badge is not used. No uppercase tracked labels, no middle-dot strings, no dashes in copy. Run Hallmark sloplint after UI changes (see .hallmark/).
 6. **No review-center content in the repo.** Development uses `src/domain/sample-questions.json`, which holds original items only.
 7. **LET sub-area weights in `let-config.ts` are placeholders** until the user confirms their level, major, and the official TOS (plan §12, questions 1–3). Mark them clearly in the file.
 8. **Commit after each completed task.** One commit per finished step (F0, F1, ...), made after the step is verified. No `Co-Authored-By` or "Generated with" lines in the commit message. Tick the step's boxes in this file in the same commit. This folder is its own git repository on branch `main`.
@@ -51,7 +51,7 @@ Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-ho
 ### F0. Scaffold
 - [x] `package.json`, install dependencies
 - [x] `tsconfig.json`, `vite.config.ts` (React + PWA plugin, `registerType: 'prompt'` so updates wait for the next launch), `index.html`, `.gitignore`
-- [x] App icons (`public/icon-180.png`, `icon-192.png`, `icon-512.png`), black with a white outlined square
+- [x] App icons (`public/icon-180.png`, `icon-192.png`, `icon-512.png`), green with a white outlined square
 - [x] `.claude/launch.json` for the dev server on port 5173
 - [x] `src/app/main.tsx`, `App.tsx` with hash routes: `/`, `/drill`, `/session`, `/review`, `/mock`, `/mock/:id`, `/mock/:id/print`, `/mock/:id/entry`, `/mock/:id/results`, `/progress`, `/bank`, `/bank/import`, `/bank/:id`, `/settings`, `/states`
 - [x] Shell: skip link, header, bottom navigation, focus moves to each screen's `<h1>` on route change

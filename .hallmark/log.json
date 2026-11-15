@@ -4,6 +4,34 @@
   "depth": "full",
   "scope": "app",
   "shape": "app screen",
+  "theme": "kumo (by request)",
+  "axes": "light/system-sans/chromatic-blue",
+  "nav": "side menu at 60rem and up, bottom tab bar below",
+  "footer": "none",
+  "hero": "none",
+  "imagery": "none",
+  "photos": [],
+  "entry": "today card",
+  "signature": "answer choices as Kumo cards: green with a check when right, red with a cross on a wrong pick",
+  "sections": [
+   "today card",
+   "answer cards",
+   "bank list",
+   "progress tables",
+   "mock booklet"
+  ],
+  "waived": [
+   "7b"
+  ],
+  "fingerprint": "kumo-standalone, system fonts, blue primary, layer cards",
+  "prompt": "study app for teacher licensure exam practice in the Cloudflare dashboard look, using Cloudflare Kumo UI",
+  "date": "2026-11-15"
+ },
+ {
+  "mode": "redesign",
+  "depth": "full",
+  "scope": "app",
+  "shape": "app screen",
   "theme": "dose",
   "axes": "light/grotesk-sans/chromatic-green",
   "nav": "top bar with inline tabs, bottom tab bar under 60rem",

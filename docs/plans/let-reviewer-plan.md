@@ -365,45 +365,36 @@ These are v1 acceptance criteria, not polish. Details are in `reviews/audit-as-a
 
 ## 13. Visual design
 
-**Direction:** monochrome, thin, sleek, professional, with a sharp modern edge. Black, white, and grays only. No accent hue anywhere, including for correct and incorrect.
+**Direction (2026-11-15):** Cloudflare's Kumo components (`@cloudflare/kumo`) in the pre-Kumo Dose palette. White cards on a white and green-grey paper, a hairline ring and a soft green-tinted shadow, and one green that does every signal: the primary button, the current selection, and the right answer. A wrong pick is grey, never red. Type is the pre-Kumo Schibsted Grotesk, Instrument Sans and DM Mono.
 
-**Color tokens** (both themes pass the contrast rules in §11)
+**How it is built**
+- Kumo's precompiled stylesheet (`kumo-standalone.css`), so no Tailwind. Role tokens live in `src/ui/tokens.css`; Kumo's own `--color-kumo-*` tokens point at them, so Kumo's buttons, badges and rings follow the palette.
+- Buttons wear Kumo's own classes (`src/ui/btn.ts`); status chips are Kumo `Badge`. Inputs, radios, the dialog and the answer sheet stay native elements, styled to match, because the accessibility rules depend on them (§11).
+- Dark mode is `data-mode="dark"` on `<html>`. "System" follows the device.
 
-| Token | Light | Dark | Used for |
-|---|---|---|---|
-| `--bg` | `#FFFFFF` | `#0A0A0A` | Page |
-| `--fg` | `#0A0A0A` | `#FAFAFA` | Text, icons, filled buttons |
-| `--muted` | `#6B6B6B` | `#A3A3A3` | Secondary text |
-| `--line` | `#E5E5E5` | `#262626` | Decorative hairlines and dividers |
-| `--control` | `#8A8A8A` | `#737373` | Borders of inputs, choices, and bubbles (needs 3:1) |
-
-**State without color.** Monochrome means every state is shown by fill, weight, icon, and words. That is also what §11 requires.
+**State**
 
 | State | Look |
 |---|---|
-| Choice, idle | 1 px `--control` border |
-| Choice, selected | 2 px `--fg` border, letter in a filled circle |
-| Correct answer | Inverted block (`--fg` background, `--bg` text), check icon, the words "Correct answer" |
-| Her wrong pick | 2 px border, cross icon, the words "Your answer", text struck through |
-| Eliminated | `--muted` text, struck through |
-| Unverified / Flagged / Needs key | Outlined text chip in small capitals with an icon |
-| Primary button | Filled `--fg`. One per screen. |
-| Secondary button | 1 px outline |
+| Choice, idle | White card, hairline ring, letter in an outlined square |
+| Choice, selected | Mint card, 2 px deep green ring, letter filled green |
+| Correct answer | Pale green card, 2 px green ring, check icon, the words "Correct answer" |
+| Her wrong pick | Grey card, 2 px grey ring, cross icon, the words "Your answer", text struck through |
+| Eliminated | Muted text, struck through |
+| Unverified / Flagged / Needs key | Neutral Kumo badge with an icon and the word; Verified is the green badge |
+| Primary button | Kumo primary in green with a light label. One per screen. |
+| Secondary button | Kumo secondary, white with a ring |
+
+Colour is never the only signal: every state also has an icon, a fill or ring change, and words.
 
 **Type**
-- One sans family, **Geist** (fallback: Inter, then system sans). **Geist Mono** for numbers: timers, scores, item numbers, Exam IDs.
-- Weights: 300 for large display figures only (24 px and up, such as the projected rating), 400 for body, 500 for labels and buttons. Thin weights are never used for question text. She reads it for hours.
-- Small labels are uppercase with wide letter spacing. Numbers use tabular figures so timers don't jitter.
-- Fonts are bundled with the app as `woff2` files, not loaded from a font CDN, so they work offline.
-- The mock exam booklet keeps its serif, print-like text (§8.2). It is already black on white.
+- The pre-Kumo faces, bundled as `woff2` so they work offline: Schibsted Grotesk (700, tight tracking) for headings, the brand and large figures; Instrument Sans for body and interface text, Kumo's components included; DM Mono for timers, scores, item numbers and Exam IDs.
+- Question text and choices at 16 px; interface text at 14 px. Everything is in rem, so the Text size setting scales Kumo's components too.
 
-**Shape and space**
-- 1 px hairlines, no shadows, no gradients. Depth comes from borders and inversion.
-- Corners are square or 2 px at most.
-- Icons are line icons with a 1.5 px stroke.
-- Generous white space, a strict 4 px spacing scale, and left-aligned layouts.
-- Thin applies to lines and type, not to touch areas. Tap targets stay at 44 px (§11).
+**Depth:** a 1 px subtle border on every raised surface first, then a soft shadow tinted to the green under 0.08 alpha in light mode; in dark mode, a faint top-edge highlight instead of shadow.
 
-**Focus and motion**
-- Focus ring: 2 px solid `--fg`, 2 px offset.
-- Motion is short and plain: 120–160 ms, opacity and position only. No bounce, no confetti. Off under `prefers-reduced-motion`.
+**Contrast:** every text pair is 4.5:1 or better in both modes, and selection edges reach 3:1 (`src/ui/contrast.test.ts`).
+
+**Touch and focus:** tap targets stay at 44 px on touch screens (§11). Focus ring: 2 px green.
+
+**Print:** the mock exam booklet and answer sheet keep pure black on white (§8.3).

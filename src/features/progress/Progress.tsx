@@ -8,6 +8,7 @@ import { pct, tallyBy, weakestTopics, weakTopicsText } from '../../domain/scorin
 import { templateB } from '../../domain/prompts';
 import { useStats } from './useStats';
 import { RatingCard } from './RatingCard';
+import { btn } from '../../ui/btn';
 
 const fmt = (p: number | null) => (p === null ? 'Not yet' : `${Math.round(p)}%`);
 
@@ -22,7 +23,7 @@ export function Progress() {
       <Page title="Progress">
         <p>Answer some questions to see your progress.</p>
         <div>
-          <Link className="btn btn-primary" to="/drill">
+          <Link className={btn.primary} to="/drill">
             Start practice
           </Link>
         </div>
@@ -73,7 +74,7 @@ export function Progress() {
           {weak.length > 0 && (
             <button
               type="button"
-              className="btn"
+              className={btn.secondary}
               onClick={async () => {
                 await copyText(weakTopicsText(weak));
                 announce('Weak topics copied');
@@ -97,7 +98,7 @@ export function Progress() {
                 </span>
                 <button
                   type="button"
-                  className="btn btn-quiet"
+                  className={btn.quiet}
                   aria-label={`Copy prompt for ${w.topic || subareaName(w.subarea)}`}
                   onClick={async () => {
                     await copyText(
