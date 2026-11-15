@@ -158,7 +158,7 @@ export function MockResults() {
         <div className="stack-lg">
           {rows.map(({ n, q, chosen }) =>
             q ? (
-              <article key={n} className="stack-sm" aria-labelledby={`mr-h-${n}`}>
+              <article key={n} className="stack-sm result-item" aria-labelledby={`mr-h-${n}`}>
                 <h3 id={`mr-h-${n}`} className="label">
                   Item {n}
                   {chosen === null ? ', unanswered' : chosen === q.answer ? ', correct' : ', wrong'}

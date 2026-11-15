@@ -1,13 +1,12 @@
-import { useRef, useState, type KeyboardEvent } from 'react';
-
-const KEYS = ['A', 'B', 'C', 'D'];
+import { memo, useRef, useState, type KeyboardEvent } from 'react';
+import { KEYS, type Key } from '../domain/types';
 
 interface Props {
   label: string;
   count: number;
   /** Item number (1-based, as a string) to the shaded key. `null` = left blank on purpose. */
   answers: Record<string, string | null | undefined>;
-  onSelect: (item: number, key: string | null) => void;
+  onSelect: (item: number, key: Key | null) => void;
   flags?: readonly number[];
   current?: number;
   /** Adds a "Blank" target per row (tap entry). */
@@ -19,8 +18,26 @@ interface Props {
  * The bubble answer sheet. It is one Tab stop: arrow keys move between bubbles,
  * Home and End jump to the first and last item (a11y C7, plan §8.7).
  */
-export function BubbleGrid({ label, count, answers, onSelect, flags, current, withBlank, className }: Props) {
-  const cols = withBlank ? [...KEYS, null] : KEYS;
+// A live query hands over new `answers` and `flags` objects on every save, the clock's 5-second
+// save included, so the sheet compares their contents and re-renders only when a bubble changes.
+function sameProps(a: Props, b: Props) {
+  const keys = Object.keys(a.answers);
+  return (
+    a.label === b.label &&
+    a.count === b.count &&
+    a.current === b.current &&
+    a.withBlank === b.withBlank &&
+    a.className === b.className &&
+    a.onSelect === b.onSelect &&
+    keys.length === Object.keys(b.answers).length &&
+    keys.every((k) => a.answers[k] === b.answers[k]) &&
+    (a.flags?.length ?? 0) === (b.flags?.length ?? 0) &&
+    (a.flags ?? []).every((n, i) => n === b.flags![i])
+  );
+}
+
+export const BubbleGrid = memo(function BubbleGrid({ label, count, answers, onSelect, flags, current, withBlank, className }: Props) {
+  const cols: readonly (Key | null)[] = withBlank ? [...KEYS, null] : KEYS;
   const [pos, setPos] = useState({ row: (current ?? 1) - 1, col: 0 });
   const root = useRef<HTMLDivElement>(null);
   const flagSet = new Set(flags);
@@ -79,4 +96,4 @@ export function BubbleGrid({ label, count, answers, onSelect, flags, current, wi
       })}
     </div>
   );
-}
+}, sameProps);

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { BubbleGrid } from '../../ui/BubbleGrid';
@@ -17,41 +17,40 @@ export function MockEntry() {
   const exam = useExam(id);
   const settings = useSettings();
   const navigate = useNavigate();
-  const [current, setCurrent] = useState<number | null>(null);
-  const [minutes, setMinutes] = useState('');
+  const [picked, setCurrent] = useState<number | null>(null);
+  const [typedMinutes, setMinutes] = useState<string | null>(null);
   const [confirm, setConfirm] = useState(false);
   const counter = useRef<HTMLParagraphElement>(null);
 
-  useEffect(() => {
-    if (!exam || current !== null) return;
-    const firstOpen = exam.itemIds.findIndex((_, i) => !(String(i + 1) in exam.answers));
-    setCurrent(firstOpen === -1 ? exam.itemIds.length : firstOpen + 1);
-    if (exam.totalMin !== null) setMinutes(String(exam.totalMin));
-  }, [exam, current]);
-
   const total = exam?.itemIds.length ?? 0;
+  // Opens on the first item with nothing entered. Every tap sets `picked`, so this only places the start.
+  const firstOpen = exam ? exam.itemIds.findIndex((_, i) => !(String(i + 1) in exam.answers)) : -1;
+  const current = picked ?? (exam ? (firstOpen === -1 ? total : firstOpen + 1) : null);
+  const minutes = typedMinutes ?? (exam && exam.totalMin !== null ? String(exam.totalMin) : '');
   const set = (n: number, key: Key | null) => {
     if (!exam) return;
     answerExam(exam.id, n, key);
     setCurrent(Math.min(total, n + 1));
   };
 
+  // An effect event reads the latest item and exam, so the listener is attached once, not on every render.
+  const onKey = useEffectEvent((e: KeyboardEvent) => {
+    const t = e.target as HTMLElement;
+    if (t.matches('input, textarea, select, [contenteditable]') || e.ctrlKey || e.metaKey || e.altKey || current === null) return;
+    if (document.querySelector('dialog[open]')) return;
+    const k = e.key.toUpperCase();
+    if ((KEYS as readonly string[]).includes(k)) set(current, k as Key);
+    else if (e.key === ' ' && t.tagName !== 'BUTTON') set(current, null);
+    else if (e.key === 'Backspace') setCurrent(Math.max(1, current - 1));
+    else return;
+    e.preventDefault();
+  });
+  const shortcuts = settings?.shortcuts;
   useEffect(() => {
-    if (!settings?.shortcuts) return;
-    const onKey = (e: KeyboardEvent) => {
-      const t = e.target as HTMLElement;
-      if (t.matches('input, textarea, select, [contenteditable]') || e.ctrlKey || e.metaKey || e.altKey || current === null) return;
-      if (document.querySelector('dialog[open]')) return;
-      const k = e.key.toUpperCase();
-      if ((KEYS as readonly string[]).includes(k)) set(current, k as Key);
-      else if (e.key === ' ' && t.tagName !== 'BUTTON') set(current, null);
-      else if (e.key === 'Backspace') setCurrent(Math.max(1, current - 1));
-      else return;
-      e.preventDefault();
-    };
+    if (!shortcuts) return;
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  });
+  }, [shortcuts]);
 
   if (!exam || !settings || current === null) return <Page title="Enter answers">{null}</Page>;
   if (exam.status === 'graded') return <Navigate to={`/mock/${exam.id}/results`} replace />;
@@ -116,7 +115,7 @@ export function MockEntry() {
             answers={exam.answers}
             current={current}
             withBlank
-            onSelect={(n, k) => set(n, k as Key | null)}
+            onSelect={set}
           />
         </div>
       </details>

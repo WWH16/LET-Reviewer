@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Page } from '../../ui/Page';
-import { useExams, useMeta, useQuestions } from '../../db/hooks';
+import { useExams, useMeta } from '../../db/hooks';
 import { daysBetween, streak } from '../../domain/dates';
 import { useStats } from '../progress/useStats';
 import { RatingCard } from '../progress/RatingCard';
@@ -9,14 +9,13 @@ import { FirstRun } from './FirstRun';
 import { btn } from '../../ui/btn';
 
 export function Home() {
-  const questions = useQuestions();
   const stats = useStats();
   const exams = useExams();
   const lastDrill = useMeta<DrillParams | null>('lastDrill', null);
   const lastBackup = useMeta<{ at: string; attempts: number } | null>('lastBackup', null);
 
-  if (!questions || !stats || !exams || lastDrill === undefined || lastBackup === undefined) return <Page title="Home">{null}</Page>;
-  if (!questions.length)
+  if (!stats || !exams || lastDrill === undefined || lastBackup === undefined) return <Page title="Home">{null}</Page>;
+  if (!stats.hasQuestions)
     return (
       <Page title="Home">
         <FirstRun />

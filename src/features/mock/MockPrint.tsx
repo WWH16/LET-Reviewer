@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import { Page } from '../../ui/Page';
-import { useExam, useQuestionMap } from '../../db/hooks';
+import { useExam, useExamQuestions } from '../../db/hooks';
 import { PARTS } from '../../domain/let-config';
 import { KEYS, type PaperSize } from '../../domain/types';
 import { btn } from '../../ui/btn';
@@ -18,7 +18,7 @@ const PAGE_SIZE: Record<PaperSize, { css: string; name: string }> = {
 export function MockPrint() {
   const { id } = useParams();
   const exam = useExam(id);
-  const qmap = useQuestionMap();
+  const qmap = useExamQuestions(exam);
   if (!exam || !qmap) return <Page title="Print exam">{null}</Page>;
 
   const paper = exam.paper ?? { size: 'a4' as const, columns: 2 as const, large: false, answerKey: true };

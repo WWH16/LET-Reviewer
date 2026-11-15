@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { Chip } from '../../ui/Chip';
@@ -29,7 +29,7 @@ export function MockSetup() {
   const exams = useExams();
   const settings = useSettings();
   const [form, setForm] = useState<'digital' | 'printed'>('digital');
-  const [part, setPart] = useState<Area | null>(null);
+  const [picked, setPart] = useState<Area | null>(null);
   const [length, setLength] = useState<Length>('full');
   const [source, setSource] = useState<SourceFilter>('rc');
   const [paper, setPaper] = useState<{ size: PaperSize; columns: 1 | 2; large: boolean; answerKey: boolean }>({
@@ -41,12 +41,9 @@ export function MockSetup() {
   const navigate = useNavigate();
   const announce = useAnnounce();
 
-  useEffect(() => {
-    if (settings && !part) setPart(partsFor(settings.level)[0]);
-  }, [settings, part]);
+  if (!questions || !exams || !settings) return <Page title="Mock exam">{null}</Page>;
 
-  if (!questions || !exams || !settings || !part) return <Page title="Mock exam">{null}</Page>;
-
+  const part = picked ?? partsFor(settings.level)[0];
   const n = lengthOf(part, length);
   const inPart = questions.filter((q) => gradable(q) && q.area === part);
   const pool = inPart.filter((q) => matchesSource(q, source));

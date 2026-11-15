@@ -47,7 +47,8 @@ export function CommandMenu() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  });
+    // `open` touches only refs and state setters, so the first render's copy stays correct.
+  }, []);
 
   const items = COMMANDS.filter((c) => c.label.toLowerCase().includes(query.trim().toLowerCase()));
   const current = Math.min(active, Math.max(0, items.length - 1));

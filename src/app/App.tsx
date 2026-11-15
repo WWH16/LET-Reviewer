@@ -40,13 +40,21 @@ function NotFound() {
 
 export function App() {
   const settings = useSettings();
+  const theme = settings?.theme;
+  const textSize = settings?.textSize;
   useEffect(() => {
-    if (!settings) return;
+    if (!theme || !textSize) return;
     const root = document.documentElement;
-    root.style.fontSize = `${settings.textSize}%`;
+    root.style.fontSize = `${textSize}%`;
+    // Mirrored for the inline script in index.html, which applies both before the first paint.
+    try {
+      localStorage.setItem('let-display', JSON.stringify({ theme, textSize }));
+    } catch {
+      /* storage blocked: the next load just applies them a moment later */
+    }
     // Kumo switches light and dark on data-mode; "system" follows the device and keeps following it.
-    if (settings.theme !== 'system') {
-      root.dataset.mode = settings.theme;
+    if (theme !== 'system') {
+      root.dataset.mode = theme;
       return;
     }
     const media = window.matchMedia('(prefers-color-scheme: dark)');
@@ -54,7 +62,7 @@ export function App() {
     sync();
     media.addEventListener('change', sync);
     return () => media.removeEventListener('change', sync);
-  }, [settings]);
+  }, [theme, textSize]);
 
   return (
     <StatusProvider>

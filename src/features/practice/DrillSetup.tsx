@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { useAnnounce } from '../../ui/Status';
@@ -36,20 +36,21 @@ export function DrillSetup() {
   const questions = useQuestions();
   const settings = useSettings();
   const last = useMeta<DrillParams | null>('lastDrill', null);
-  const [p, setP] = useState<DrillParams | null>(null);
+  const [edited, setP] = useState<DrillParams | null>(null);
   const navigate = useNavigate();
   const announce = useAnnounce();
 
-  useEffect(() => {
-    if (p || last === undefined || !settings) return;
-    setP(last ?? { area: partsFor(settings.level)[0], sub: '', topic: '', n: 20, ai: false });
-  }, [last, settings, p]);
+  // Until she changes a field, the form shows the last drill, or the first part of her level.
+  const p: DrillParams | null =
+    edited ?? (last === undefined || !settings ? null : (last ?? { area: partsFor(settings.level)[0], sub: '', topic: '', n: 20, ai: false }));
+  const area = p?.area;
+  const sub = p?.sub;
 
   const topics = useMemo(() => {
-    if (!p) return [];
-    const s = new Set((questions ?? []).filter((q) => q.area === p.area && (!p.sub || q.subarea === p.sub) && q.topic).map((q) => q.topic));
+    if (!area) return [];
+    const s = new Set((questions ?? []).filter((q) => q.area === area && (!sub || q.subarea === sub) && q.topic).map((q) => q.topic));
     return [...s].sort();
-  }, [questions, p]);
+  }, [questions, area, sub]);
 
   if (!p || !questions || !settings) return <Page title="Practice">{null}</Page>;
 

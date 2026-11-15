@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useDeferredValue, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { Chip, StatusChip } from '../../ui/Chip';
@@ -52,15 +52,19 @@ export function Bank() {
   const [removing, setRemoving] = useState<{ id: string; count: number } | null>(null);
   const announce = useAnnounce();
 
+  // The box updates at once; the list filters at lower priority, so typing stays smooth on a big bank.
+  const deferredSearch = useDeferredValue(search);
+  const counts = useMemo(() => QUEUES.map((x) => (questions ?? []).filter(x.test).length), [questions]);
+
   const filtered = useMemo(() => {
-    const s = search.trim().toLowerCase();
+    const s = deferredSearch.trim().toLowerCase();
     const test = QUEUES.find((x) => x.id === queue)!.test;
     return (questions ?? []).filter(
       (q) =>
         test(q) &&
         (!s || [q.stem, q.topic, q.sourceRef, subareaName(q.subarea)].some((f) => f.toLowerCase().includes(s))),
     );
-  }, [questions, queue, search]);
+  }, [questions, queue, deferredSearch]);
 
   const batches = useMemo(() => {
     const m = new Map<string, number>();
@@ -107,9 +111,9 @@ export function Bank() {
           <input id="bank-search" type="search" value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
         <div className="row" role="group" aria-label="Queue">
-          {QUEUES.map((x) => (
+          {QUEUES.map((x, i) => (
             <button key={x.id} type="button" className={btn.secondary} aria-pressed={queue === x.id} onClick={() => setQueue(x.id)}>
-              {x.label} <span className="num">{questions.filter(x.test).length}</span>
+              {x.label} <span className="num">{counts[i]}</span>
             </button>
           ))}
         </div>

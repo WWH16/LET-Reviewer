@@ -41,7 +41,7 @@ async function pickItems(mode: string, params: URLSearchParams, qmap: Map<string
     };
     return shuffle(live.filter((q) => drillMatches(q, p))).slice(0, Number(params.get('n')) || 20).map((q) => q.id);
   }
-  const due = dueCards(buildCards(await db.attempts.toArray(), qmap), dayKey(new Date()))
+  const due = dueCards(buildCards(await db.attempts.orderBy('at').toArray(), qmap), dayKey(new Date()))
     .map((c) => c.questionId)
     .filter((id) => {
       const q = qmap.get(id);

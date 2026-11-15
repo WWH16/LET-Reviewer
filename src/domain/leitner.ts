@@ -21,7 +21,8 @@ export function isCorrect(a: Attempt, q: Question | undefined): boolean | null {
 
 export function buildCards(attempts: readonly Attempt[], questions: ReadonlyMap<string, Question>): Map<string, Card> {
   const cards = new Map<string, Card>();
-  const sorted = [...attempts].sort((a, b) => a.at.localeCompare(b.at));
+  // ISO timestamps order the same by code unit, and a plain compare is far cheaper than localeCompare.
+  const sorted = [...attempts].sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : 0));
   for (const a of sorted) {
     const ok = isCorrect(a, questions.get(a.questionId));
     if (ok === null) continue;

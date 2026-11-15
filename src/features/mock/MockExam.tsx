@@ -5,7 +5,7 @@ import { ChoiceGroup } from '../../ui/ChoiceGroup';
 import { BubbleGrid } from '../../ui/BubbleGrid';
 import { Dialog } from '../../ui/Dialog';
 import { Icon } from '../../ui/Icon';
-import { useExam, useQuestionMap, useSettings } from '../../db/hooks';
+import { useExam, useExamQuestions, useSettings } from '../../db/hooks';
 import { answerExam, gradeExam, toggleExamFlag, updateExam } from '../../db/repo';
 import { formatClock } from '../../domain/dates';
 import { PARTS } from '../../domain/let-config';
@@ -153,7 +153,7 @@ const Item = memo(function Item({
 export function MockExam() {
   const { id } = useParams();
   const exam = useExam(id);
-  const qmap = useQuestionMap();
+  const qmap = useExamQuestions(exam);
   const settings = useSettings();
   const navigate = useNavigate();
   const elapsed = useRef<number | null>(null);
@@ -215,14 +215,16 @@ export function MockExam() {
   const [restored, setRestored] = useState<string | null>(null);
   const submitting = useRef(false);
 
-  if (exam && elapsed.current === null) {
-    elapsed.current = exam.elapsedMs;
+  // The clock reads this on its first render, so it is set here and not in an effect.
+  if (exam && elapsed.current === null) elapsed.current = exam.elapsedMs;
+
+  // Runs once, when the exam first loads: later saves keep the same id.
+  useEffect(() => {
+    if (!exam) return;
     const answered = Object.keys(exam.answers).length;
     if (exam.elapsedMs > 0 || answered > 0)
-      setTimeout(() =>
-        setRestored(`Exam ${exam.label} restored: ${answered} of ${exam.itemIds.length} answered. The timer was paused while the app was closed.`),
-      );
-  }
+      setRestored(`Exam ${exam.label} restored: ${answered} of ${exam.itemIds.length} answered. The timer was paused while the app was closed.`);
+  }, [exam?.id]);
 
   const onAnswer = useCallback(
     (n: number, k: Key | null) => {
@@ -286,7 +288,7 @@ export function MockExam() {
       count={total}
       answers={exam.answers}
       flags={exam.flags}
-      onSelect={(n, k) => onAnswer(n, k as Key | null)}
+      onSelect={onAnswer}
     />
   );
 

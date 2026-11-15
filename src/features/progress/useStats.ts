@@ -25,9 +25,21 @@ export function useStats() {
       settings.level,
       Object.fromEntries(Object.entries(parts).map(([a, v]) => [a, v!.total >= MIN_PART_ANSWERS ? v!.pct : null])),
     );
-    const days = new Set(attempts.map((a) => dayKey(a.at)));
-    const todayAttempts = attempts.filter((a) => dayKey(a.at) === today);
+    const days = new Set<string>();
+    const todayAttempts: typeof attempts = [];
+    for (const a of attempts) {
+      const day = dayKey(a.at);
+      days.add(day);
+      if (day === today) todayAttempts.push(a);
+    }
     const todayCorrect = todayAttempts.filter((a) => isCorrect(a, qmap.get(a.questionId))).length;
-    return { qmap, attempts, settings, today, cards, due, parts, rating, days, todayAttempts, todayCorrect };
+    let hasQuestions = false;
+    for (const q of qmap.values()) {
+      if (!q.deleted) {
+        hasQuestions = true;
+        break;
+      }
+    }
+    return { qmap, attempts, settings, today, cards, due, parts, rating, days, todayAttempts, todayCorrect, hasQuestions };
   }, [qmap, attempts, settings]);
 }

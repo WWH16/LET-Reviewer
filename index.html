@@ -6,6 +6,17 @@
     <meta name="theme-color" content="#F6F6F6" />
     <link rel="apple-touch-icon" href="/icon-180.png" />
     <title>LET Reviewer</title>
+    <script>
+      // Theme and text size, saved by App.tsx, applied before the first paint so neither flashes.
+      try {
+        var d = JSON.parse(localStorage.getItem('let-display'));
+        if (d) {
+          var dark = d.theme === 'system' ? matchMedia('(prefers-color-scheme: dark)').matches : d.theme === 'dark';
+          document.documentElement.dataset.mode = dark ? 'dark' : 'light';
+          if (+d.textSize) document.documentElement.style.fontSize = +d.textSize + '%';
+        }
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root" class="isolate"></div>

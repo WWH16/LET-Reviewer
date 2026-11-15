@@ -36,7 +36,7 @@ const RECENT = 150;
 
 export function recentPartScores(attempts: readonly Attempt[], questions: ReadonlyMap<string, Question>) {
   const byArea = new Map<Area, Attempt[]>();
-  const sorted = [...attempts].sort((a, b) => b.at.localeCompare(a.at));
+  const sorted = [...attempts].sort((a, b) => (a.at < b.at ? 1 : a.at > b.at ? -1 : 0));
   for (const a of sorted) {
     const q = questions.get(a.questionId);
     if (!q || isCorrect(a, q) === null) continue;
