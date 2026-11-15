@@ -1,5 +1,7 @@
 import { Link, NavLink, Route, Routes } from 'react-router-dom';
 import { Page } from '../ui/Page';
+import { StatusProvider } from '../ui/Status';
+import { States } from '../features/states/States';
 
 const NAV = [
   { to: '/', label: 'Home' },
@@ -19,7 +21,7 @@ function Todo({ title }: { title: string }) {
 
 export function App() {
   return (
-    <>
+    <StatusProvider>
       <a className="skip" href="#main">
         Skip to main content
       </a>
@@ -46,7 +48,7 @@ export function App() {
         <Route path="/bank/import" element={<Todo title="Import" />} />
         <Route path="/bank/:id" element={<Todo title="Edit question" />} />
         <Route path="/settings" element={<Todo title="Settings" />} />
-        <Route path="/states" element={<Todo title="States" />} />
+        <Route path="/states" element={<States />} />
         <Route path="*" element={<Todo title="Not found" />} />
       </Routes>
       <nav className="nav" aria-label="Main">
@@ -60,6 +62,6 @@ export function App() {
           ))}
         </ul>
       </nav>
-    </>
+    </StatusProvider>
   );
 }

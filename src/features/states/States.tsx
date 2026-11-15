@@ -1,0 +1,165 @@
+import { useState } from 'react';
+import { Page } from '../../ui/Page';
+import { Chip, StatusChip } from '../../ui/Chip';
+import { ChoiceGroup } from '../../ui/ChoiceGroup';
+import { Dialog } from '../../ui/Dialog';
+import { BubbleGrid } from '../../ui/BubbleGrid';
+import { useAnnounce } from '../../ui/Status';
+
+const CHOICES = [
+  { key: 'A', text: 'Knowledge' },
+  { key: 'B', text: 'Comprehension' },
+  { key: 'C', text: 'Application' },
+  { key: 'D', text: 'Evaluation' },
+];
+
+/** Every visual state on one page, for contrast and screen-reader checks (a11y N5). */
+export function States() {
+  const announce = useAnnounce();
+  const [dialog, setDialog] = useState(false);
+  const [value, setValue] = useState<string | null>('B');
+  const [elim, setElim] = useState(new Set(['D']));
+  const [sheet, setSheet] = useState<Record<string, string | null>>({ '1': 'A', '2': null });
+  const setTheme = (t: string) => {
+    if (t === 'system') delete document.documentElement.dataset.theme;
+    else document.documentElement.dataset.theme = t;
+  };
+
+  const group = (title: string, el: React.ReactNode) => (
+    <section className="stack-sm">
+      <h2 className="label">{title}</h2>
+      {el}
+    </section>
+  );
+
+  return (
+    <Page title="States">
+      <div className="row">
+        {['system', 'light', 'dark'].map((t) => (
+          <button key={t} className="btn" onClick={() => setTheme(t)}>
+            Theme: {t}
+          </button>
+        ))}
+      </div>
+
+      {group(
+        'Type',
+        <div className="stack-sm">
+          <p className="display num">74.2%</p>
+          <p className="stem">Which level of Bloom&rsquo;s taxonomy asks learners to judge the value of an idea?</p>
+          <p className="muted">Muted secondary text, 4.5:1 or better.</p>
+          <p className="num">01:59:42 · GE-1115-A</p>
+        </div>,
+      )}
+
+      {group(
+        'Buttons',
+        <div className="row">
+          <button className="btn btn-primary">Primary</button>
+          <button className="btn">Secondary</button>
+          <button className="btn btn-quiet">Quiet</button>
+          <button className="btn" aria-pressed="true">
+            Pressed
+          </button>
+          <button className="btn" disabled>
+            Disabled
+          </button>
+        </div>,
+      )}
+
+      {group(
+        'Chips',
+        <div className="row">
+          {['verified', 'unverified', 'needs-key', 'flagged'].map((s) => (
+            <StatusChip key={s} status={s} />
+          ))}
+          <Chip solid>Review center</Chip>
+        </div>,
+      )}
+
+      {group(
+        'Choice: interactive (selected, eliminated)',
+        <>
+          <p id="st-q1">Interactive group. Use the arrow keys.</p>
+          <ChoiceGroup
+            name="st-q1"
+            labelledBy="st-q1"
+            choices={CHOICES}
+            value={value}
+            onChange={setValue}
+            eliminated={elim}
+            onToggleEliminate={(k) =>
+              setElim((s) => {
+                const n = new Set(s);
+                if (n.has(k)) n.delete(k);
+                else n.add(k);
+                return n;
+              })
+            }
+          />
+        </>,
+      )}
+
+      {group(
+        'Choice: checked, wrong pick',
+        <>
+          <p id="st-q2">Her pick was B, the answer is D.</p>
+          <ChoiceGroup name="st-q2" labelledBy="st-q2" choices={CHOICES} value="B" locked correct="D" />
+        </>,
+      )}
+
+      {group(
+        'Choice: checked, correct pick',
+        <>
+          <p id="st-q3">Her pick was D, the answer is D.</p>
+          <ChoiceGroup name="st-q3" labelledBy="st-q3" choices={CHOICES} value="D" locked correct="D" />
+        </>,
+      )}
+
+      {group(
+        'Choice: disabled',
+        <>
+          <p id="st-q4">Disabled group.</p>
+          <ChoiceGroup name="st-q4" labelledBy="st-q4" choices={CHOICES} value={null} disabled />
+        </>,
+      )}
+
+      {group(
+        'Answer sheet',
+        <BubbleGrid
+          label="Sample answer sheet"
+          count={4}
+          answers={sheet}
+          flags={[3]}
+          current={2}
+          withBlank
+          onSelect={(n, k) => setSheet((s) => ({ ...s, [n]: k }))}
+        />,
+      )}
+
+      {group(
+        'Feedback and status',
+        <div className="row">
+          <button className="btn" onClick={() => setDialog(true)}>
+            Open dialog
+          </button>
+          <button className="btn" onClick={() => announce('Imported 48 items')}>
+            Show status message
+          </button>
+        </div>,
+      )}
+
+      <Dialog open={dialog} onClose={() => setDialog(false)} title="Submit exam? 12 unanswered, 5 flagged">
+        <p className="muted">You can still change any answer.</p>
+        <div className="row">
+          <button className="btn btn-primary" data-autofocus onClick={() => setDialog(false)}>
+            Keep answering
+          </button>
+          <button className="btn" onClick={() => setDialog(false)}>
+            Submit now
+          </button>
+        </div>
+      </Dialog>
+    </Page>
+  );
+}

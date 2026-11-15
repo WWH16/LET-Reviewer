@@ -18,9 +18,9 @@ Update the checkboxes and the "Where we left off" section at the end of every se
 
 ## Where we left off
 
-- **Done:** F0 scaffold (config, icons, app shell, all routes as placeholders, full stylesheet in `src/ui/tokens.css`). Type-check and build pass.
-- **Not done:** Vercel deploy (needs your sign-in and domain). Every screen is still a placeholder.
-- **Next action:** F1, the base UI pieces and the `/states` page.
+- **Done:** F0 scaffold, F1 design system (base pieces in `src/ui/`, `/states` page, contrast test). Type-check and tests pass.
+- **Not done:** Vercel deploy (needs your sign-in and domain). Screens other than `/states` are placeholders.
+- **Next action:** F2, the domain layer in `src/domain/`.
 
 Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-hooks 4.4, Vite 8.3, TypeScript 7.0, Vitest 5.1, vite-plugin-pwa 2.0, `@fontsource-variable/geist` and `@fontsource-variable/geist-mono` 5.3. Node 26, npm 11.
 
@@ -35,7 +35,7 @@ Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-ho
 
 ## Rules to keep
 
-1. **Import directions.** `src/domain/` imports nothing. `src/db/` imports `domain`. `src/features/` imports `domain`, `db`, `ui`. Later, `@supabase/supabase-js` is imported only in `src/sync/`.
+1. **Import directions.** `src/domain/` imports nothing. `src/db/` imports `domain`. `src/ui/` imports only `domain` types. `src/features/` imports `domain`, `db`, `ui`. Later, `@supabase/supabase-js` is imported only in `src/sync/`.
 2. **Derived, never stored:** whether an attempt was correct, and review cards (Leitner). Both are worked out from attempts and the question's current answer.
 3. **IDs:** the app assigns question IDs at import (`rc-` + slug of `sourceRef`, `ai-` + hash of the stem). Attempts and mock exams use `crypto.randomUUID()`. A mock exam's `GE-1115-A` is a display `label`, not its ID.
 4. **Synced records** (questions, mock exams, settings) carry `updatedAt` and a `deleted` flag. Attempts are append-only.
@@ -56,10 +56,10 @@ Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-ho
 - [ ] Deploy to Vercel on the final production domain (**needs you**: Vercel sign-in and the domain choice)
 
 ### F1. Design system
-- [ ] `src/ui/tokens.css`: five color tokens for light and dark, spacing scale, Geist fonts, focus ring, 44 px tap targets
-- [ ] Base pieces: buttons, Chip, ChoiceGroup (real radio group in a `fieldset`), Dialog (native `<dialog>`), StatusRegion (`role="status"`)
-- [ ] `/states` page showing every state in both themes
-- [ ] Check every token pair with a contrast tool
+- [x] `src/ui/tokens.css`: five color tokens for light and dark, spacing scale, Geist fonts, focus ring, 44 px tap targets
+- [x] Base pieces: buttons, Chip, ChoiceGroup (real radio group in a `fieldset`), Dialog (native `<dialog>`), StatusRegion (`role="status"`)
+- [x] `/states` page showing every state in both themes
+- [x] Check every token pair with a contrast tool (`src/ui/contrast.test.ts`)
 
 ### F2. Domain (`src/domain/`)
 - [ ] `types.ts`: Question, Attempt, MockExam, Settings

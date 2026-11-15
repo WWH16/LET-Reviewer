@@ -464,7 +464,8 @@ legend {
   color: var(--bg);
   box-shadow: none;
 }
-.choice.is-correct .choice-letter {
+.choice.is-correct .choice-letter,
+.choice.is-correct:has(input:checked) .choice-letter {
   background: var(--bg);
   border-color: var(--bg);
   color: var(--fg);
