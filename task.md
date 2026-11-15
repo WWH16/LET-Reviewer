@@ -18,9 +18,9 @@ Update the checkboxes and the "Where we left off" section at the end of every se
 
 ## Where we left off
 
-- **Done:** F0–F9, all frontend steps. Printed mock: print layout (booklet, answer sheet with corner markers, optional key) for A4, Letter, Folio, and tap entry with Blank, Back, Skip, keyboard keys, and a missing-items check before grading. Tested in the browser.
-- **Not done:** Vercel deploy (needs your sign-in and domain). Real print test on paper (plan DX R9). Phone airplane-mode test.
-- **Next action:** final verify pass, then Vercel deploy when you are ready.
+- **Done:** F0–F9 and the verify pass. Type-check, 35 tests, and production build pass. Every screen checked at phone width with no errors.
+- **Not done (needs you):** Vercel deploy (sign-in and domain choice). Real print test on paper at Folio size (DX R9). Airplane-mode test on the user's phone. LET sub-area weights are still placeholders (plan §12).
+- **Next action:** deploy to Vercel, or start Phase 2b (Supabase sync) under Later.
 
 Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-hooks 4.4, Vite 8.3, TypeScript 7.0, Vitest 5.1, vite-plugin-pwa 2.0, `@fontsource-variable/geist` and `@fontsource-variable/geist-mono` 5.3. Node 26, npm 11.
 
@@ -114,10 +114,10 @@ Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-ho
 - [x] Tap-entry grading with Blank, Back, and a count before grading
 
 ### Verify
-- [ ] `npx tsc --noEmit` passes
-- [ ] `npx vitest run` passes
-- [ ] `npx vite build` passes
-- [ ] Click through every screen in the browser at phone width, light and dark
+- [x] `npx tsc --noEmit` passes
+- [x] `npx vitest run` passes
+- [x] `npx vite build` passes
+- [x] Click through every screen in the browser at phone width (375 px): no overflow, no console errors. Light and dark checked.
 
 ### Later (not started, separate from the frontend)
 - [ ] Phase 2b: Supabase table and policies, email-code sign-in, `src/sync/` push and pull
