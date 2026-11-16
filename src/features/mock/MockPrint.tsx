@@ -1,9 +1,13 @@
+import { Fragment } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { useExam, useExamQuestions } from '../../db/hooks';
 import { PARTS } from '../../domain/let-config';
 import { KEYS, type PaperSize } from '../../domain/types';
+import { CORNERS, SHEET, TOP_MARK, bubbleAt, numberAt } from '../../domain/sheet';
 import { btn } from '../../ui/btn';
+
+const at = (x: number, y: number) => ({ left: `${x}mm`, top: `${y}mm` });
 
 const PAGE_SIZE: Record<PaperSize, { css: string; name: string }> = {
   a4: { css: 'A4', name: 'A4' },
@@ -24,7 +28,6 @@ export function MockPrint() {
   const paper = exam.paper ?? { size: 'a4' as const, columns: 2 as const, large: false, answerKey: true };
   const size = PAGE_SIZE[paper.size];
   const items = exam.itemIds.map((qid, i) => ({ n: i + 1, q: qmap.get(qid) }));
-  const blocks = Array.from({ length: Math.ceil(items.length / 25) }, (_, b) => items.slice(b * 25, b * 25 + 25));
   const minutes = Math.round(exam.timeLimitMin ?? PARTS[exam.part].minutes);
 
   return (
@@ -88,10 +91,6 @@ export function MockPrint() {
         </section>
 
         <section className="page" aria-label="Answer sheet">
-          <span className="marker tl" />
-          <span className="marker tr" />
-          <span className="marker bl" />
-          <span className="marker br" />
           <div className="spread" style={{ alignItems: 'flex-start' }}>
             <div>
               <h2>Answer sheet</h2>
@@ -109,21 +108,22 @@ export function MockPrint() {
               </div>
             </div>
           </div>
-          <p style={{ marginTop: '0.75em' }}>Shade one bubble per item, completely. Erase cleanly to change an answer.</p>
-          <div className="p-sheet">
-            {blocks.map((block, b) => (
-              <div key={b}>
-                {block.map(({ n }) => (
-                  <div className="p-row" key={n}>
-                    <span>{n}</span>
-                    {KEYS.map((k) => (
-                      <span className="p-bubble" key={k}>
-                        {k}
-                      </span>
-                    ))}
-                  </div>
+          <p style={{ marginTop: '0.75em' }}>Shade one bubble per item, completely. Erase cleanly to change an answer. Keep the black squares clean: the app reads the sheet from them.</p>
+          <div className="p-sheet" style={{ width: `${SHEET.w}mm`, height: `${SHEET.h}mm` }}>
+            {[...CORNERS, TOP_MARK].map(([x, y]) => (
+              <span className="p-mark" key={`${x},${y}`} style={at(x, y)} />
+            ))}
+            {items.map(({ n }) => (
+              <Fragment key={n}>
+                <span className="p-num" style={at(numberAt(n).x, numberAt(n).y)}>
+                  {n}
+                </span>
+                {KEYS.map((k, i) => (
+                  <span className="p-bubble" key={k} style={at(bubbleAt(n, i).x, bubbleAt(n, i).y)}>
+                    {k}
+                  </span>
                 ))}
-              </div>
+              </Fragment>
             ))}
           </div>
         </section>

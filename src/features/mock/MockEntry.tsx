@@ -5,6 +5,7 @@ import { BubbleGrid } from '../../ui/BubbleGrid';
 import { Dialog } from '../../ui/Dialog';
 import { useExam, useSettings } from '../../db/hooks';
 import { answerExam, gradeExam, updateExam } from '../../db/repo';
+import { MAX_SCAN_ITEMS, readSheet } from '../../domain/sheet';
 import { KEYS, type Key } from '../../domain/types';
 import { btn } from '../../ui/btn';
 
@@ -21,6 +22,8 @@ export function MockEntry() {
   const [typedMinutes, setMinutes] = useState<string | null>(null);
   const [confirm, setConfirm] = useState(false);
   const counter = useRef<HTMLParagraphElement>(null);
+  const file = useRef<HTMLInputElement>(null);
+  const [scanMsg, setScanMsg] = useState<string | null>(null);
 
   const total = exam?.itemIds.length ?? 0;
   // Opens on the first item with nothing entered. Every tap sets `picked`, so this only places the start.
@@ -67,9 +70,59 @@ export function MockEntry() {
     navigate(`/mock/${exam.id}/results`);
   };
 
+  /** Reads a photo of the answer sheet into the entry grid. She still checks it and presses Grade. */
+  const scan = async (photo: File) => {
+    let read: ReturnType<typeof readSheet> = { ok: false };
+    try {
+      const bmp = await createImageBitmap(photo);
+      const scale = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(bmp.width * scale);
+      canvas.height = Math.round(bmp.height * scale);
+      const ctx = canvas.getContext('2d')!;
+      ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
+      read = readSheet(ctx.getImageData(0, 0, canvas.width, canvas.height), total);
+    } catch {
+      // Not an image the browser can open: same message as an unreadable photo.
+    }
+    if (!read.ok) return setScanMsg('Could not read the sheet. Retake the photo with all five black squares in view, the paper flat, and no shadow across it.');
+    await updateExam(exam.id, { answers: read.answers });
+    setCurrent(read.unclear[0] ?? total);
+    const marked = Object.values(read.answers).filter((v) => v !== null).length;
+    setScanMsg(
+      `Read ${marked} answers. ` +
+        (read.unclear.length
+          ? `Could not tell ${read.unclear.length === 1 ? 'item' : 'items'} ${read.unclear.join(', ')}: enter ${read.unclear.length === 1 ? 'it' : 'them'} by hand.`
+          : 'Check a few against the paper, then grade.'),
+    );
+  };
+
   return (
     <Page title={`Enter answers for ${exam.label}`}>
-      <p className="muted">Tap what is shaded on the sheet. It moves to the next item by itself.</p>
+      <p className="muted">Scan the sheet, or tap what is shaded on it. Tapping moves to the next item by itself.</p>
+      {total <= MAX_SCAN_ITEMS && (
+        <div className="stack-sm">
+          <div>
+            <button type="button" className={btn.secondary} onClick={() => file.current?.click()}>
+              Scan answer sheet
+            </button>
+            <input
+              ref={file}
+              type="file"
+              accept="image/*"
+              hidden
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                e.target.value = '';
+                if (f) scan(f);
+              }}
+            />
+          </div>
+          <p role="status" className={scanMsg ? 'notice' : undefined}>
+            {scanMsg}
+          </p>
+        </div>
+      )}
 
       <section className="stack" aria-labelledby="entry-now">
         <div className="spread">

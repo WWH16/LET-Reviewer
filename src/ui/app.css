@@ -1472,35 +1472,38 @@ dialog.command input:focus-visible {
   min-width: 12em;
   border-bottom: 1px solid var(--print-ink);
 }
-/* Blocks of 25 rows; six blocks fit across one portrait page at 11 pt. */
+/* Answer sheet: every mark sits at a millimetre position from domain/sheet.ts, which the scanner reads back. */
 .paper .p-sheet {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(8.6em, 1fr));
-  gap: 0 0.4em;
-  margin-top: 1em;
+  position: relative;
+  margin: 8mm auto 4mm;
   font-family: var(--font-num);
-  font-size: 0.85em;
 }
-.paper .p-row {
-  display: flex;
-  align-items: center;
-  gap: 0.25em;
-  height: 1.6em;
+.paper .p-sheet > * {
+  position: absolute;
+  transform: translate(-50%, -50%);
 }
-.paper .p-row > span:first-child {
-  width: 2em;
-  margin-right: 0.2em;
-  text-align: right;
+.paper .p-num {
+  font-size: 2.6mm;
 }
 .paper .p-bubble {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.3em;
-  height: 1.3em;
-  border: 1px solid var(--print-ink);
+  width: 3.6mm;
+  height: 3.6mm;
+  border: 0.25mm solid var(--print-ink);
   border-radius: 50%;
-  font-size: 0.75em;
+  /* Grey letter: readable, but far lighter than a pencil mark. */
+  color: color-mix(in srgb, var(--print-ink) 40%, var(--print-paper));
+  font-size: 2mm;
+  line-height: 1;
+}
+.paper .p-mark {
+  width: 5mm;
+  height: 5mm;
+  background: var(--print-ink);
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
 }
 .paper .p-key {
   display: grid;
@@ -1516,30 +1519,6 @@ dialog.command input:focus-visible {
 .paper .p-expl p {
   break-inside: avoid;
   margin: 0 0 0.5em;
-}
-.paper .marker {
-  position: absolute;
-  width: 5mm;
-  height: 5mm;
-  background: var(--print-ink);
-  print-color-adjust: exact;
-  -webkit-print-color-adjust: exact;
-}
-.paper .marker.tl {
-  top: 3mm;
-  left: 3mm;
-}
-.paper .marker.tr {
-  top: 3mm;
-  right: 3mm;
-}
-.paper .marker.bl {
-  bottom: 3mm;
-  left: 3mm;
-}
-.paper .marker.br {
-  bottom: 3mm;
-  right: 3mm;
 }
 
 @media print {

@@ -120,7 +120,7 @@ export function Import() {
             </p>
           )}
           {parsed.kind === 'answer-sheet' && (
-            <p>Photo grading is not built yet. Open the printed exam in Mock and use Enter answers.</p>
+            <p>To grade a printed exam from a photo, open it in Mock and use Scan answer sheet.</p>
           )}
           {parsed.kind === 'unknown' && <p>A question list starts with [ and holds one object per question.</p>}
 
