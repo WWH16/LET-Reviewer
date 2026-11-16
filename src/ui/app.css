@@ -436,6 +436,10 @@ textarea {
   font-size: var(--text-lg);
   transition: border-color var(--dur-micro) var(--ease-out);
 }
+.select {
+  width: 100%;
+  font-size: var(--text-lg);
+}
 select {
   appearance: auto;
 }
@@ -481,7 +485,8 @@ textarea.prose {
   input[type='date'],
   input[type='search'],
   input[type='email'],
-  select {
+  select,
+  .select {
     min-height: 44px;
   }
 }

@@ -10,6 +10,7 @@ import { SOURCE_LABELS, drawExam, gradable, matchesSource, type SourceFilter } f
 import { examLabel } from '../../domain/ids';
 import type { Area, MockExam, PaperSize } from '../../domain/types';
 import { btn } from '../../ui/btn';
+import { Select } from '../../ui/Select';
 
 type Length = 'full' | 'half' | 'short';
 const SHORT = 25;
@@ -149,31 +150,31 @@ export function MockSetup() {
         <div className="grid-2">
           <div className="field">
             <label htmlFor="mk-part">Part</label>
-            <select id="mk-part" value={part} onChange={(e) => setPart(e.target.value as Area)}>
+            <Select id="mk-part" value={part} onChange={(v) => setPart(v as Area)}>
               {partsFor(settings.level).map((a) => (
                 <option key={a} value={a}>
                   {PARTS[a].name}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
           <div className="field">
             <label htmlFor="mk-len">Length</label>
-            <select id="mk-len" value={length} onChange={(e) => setLength(e.target.value as Length)}>
+            <Select id="mk-len" value={length} onChange={(v) => setLength(v as Length)}>
               <option value="full">Full: {PARTS[part].items} items</option>
               <option value="half">Half: {Math.round(PARTS[part].items / 2)} items</option>
               <option value="short">Short: {SHORT} items</option>
-            </select>
+            </Select>
           </div>
           <div className="field">
             <label htmlFor="mk-src">Questions</label>
-            <select id="mk-src" value={source} onChange={(e) => setSource(e.target.value as SourceFilter)}>
+            <Select id="mk-src" value={source} onChange={(v) => setSource(v as SourceFilter)}>
               {(Object.keys(SOURCE_LABELS) as SourceFilter[]).map((s) => (
                 <option key={s} value={s}>
                   {SOURCE_LABELS[s]}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
         </div>
 
@@ -183,18 +184,18 @@ export function MockSetup() {
             <div className="grid-2">
               <div className="field">
                 <label htmlFor="mk-size">Paper size</label>
-                <select id="mk-size" value={paper.size} onChange={(e) => setPaper({ ...paper, size: e.target.value as PaperSize })}>
+                <Select id="mk-size" value={paper.size} onChange={(v) => setPaper({ ...paper, size: v as PaperSize })}>
                   <option value="folio">Folio 8.5×13 (long bond)</option>
                   <option value="letter">Letter (short bond)</option>
                   <option value="a4">A4</option>
-                </select>
+                </Select>
               </div>
               <div className="field">
                 <label htmlFor="mk-cols">Booklet columns</label>
-                <select id="mk-cols" value={paper.columns} onChange={(e) => setPaper({ ...paper, columns: Number(e.target.value) as 1 | 2 })}>
+                <Select id="mk-cols" value={paper.columns} onChange={(v) => setPaper({ ...paper, columns: Number(v) as 1 | 2 })}>
                   <option value={2}>2 columns (saves paper)</option>
                   <option value={1}>1 column</option>
-                </select>
+                </Select>
               </div>
             </div>
             <label className="check">

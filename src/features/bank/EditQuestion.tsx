@@ -8,6 +8,7 @@ import { removeQuestion, restoreQuestions, saveQuestion } from '../../db/repo';
 import { PARTS } from '../../domain/let-config';
 import { KEYS, type Area, type Key, type Question } from '../../domain/types';
 import { btn } from '../../ui/btn';
+import { Select } from '../../ui/Select';
 
 export function EditQuestion() {
   const { id = '' } = useParams();
@@ -82,23 +83,23 @@ export function EditQuestion() {
         <div className="grid-2">
           <div className="field">
             <label htmlFor="eq-answer">Answer key</label>
-            <select id="eq-answer" value={q.answer ?? ''} onChange={(e) => setAnswer(e.target.value)}>
+            <Select id="eq-answer" value={q.answer ?? ''} onChange={(v) => setAnswer(v)}>
               <option value="">No key yet</option>
               {KEYS.map((k) => (
                 <option key={k} value={k}>
                   {k}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
           <div className="field">
             <label htmlFor="eq-status">Status</label>
-            <select id="eq-status" value={q.status} onChange={(e) => set({ status: e.target.value as Question['status'] })}>
+            <Select id="eq-status" value={q.status} onChange={(v) => set({ status: v as Question['status'] })}>
               <option value="verified">Verified</option>
               <option value="unverified">Unverified</option>
               <option value="needs-key">Needs key</option>
               <option value="flagged">Flagged</option>
-            </select>
+            </Select>
           </div>
         </div>
         <div className="field">
@@ -114,11 +115,11 @@ export function EditQuestion() {
         <div className="grid-2">
           <div className="field">
             <label htmlFor="eq-area">Part</label>
-            <select
+            <Select
               id="eq-area"
               value={q.area}
-              onChange={(e) => {
-                const area = e.target.value as Area;
+              onChange={(v) => {
+                const area = v as Area;
                 set({ area, subarea: PARTS[area].subareas[0].id });
               }}
             >
@@ -127,17 +128,17 @@ export function EditQuestion() {
                   {p.name}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
           <div className="field">
             <label htmlFor="eq-sub">Sub-area</label>
-            <select id="eq-sub" value={q.subarea} onChange={(e) => set({ subarea: e.target.value })}>
+            <Select id="eq-sub" value={q.subarea} onChange={(v) => set({ subarea: v })}>
               {PARTS[q.area].subareas.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
           <div className="field">
             <label htmlFor="eq-topic">Topic</label>
@@ -145,10 +146,10 @@ export function EditQuestion() {
           </div>
           <div className="field">
             <label htmlFor="eq-lang">Language</label>
-            <select id="eq-lang" value={q.lang} onChange={(e) => set({ lang: e.target.value as Question['lang'] })}>
+            <Select id="eq-lang" value={q.lang} onChange={(v) => set({ lang: v as Question['lang'] })}>
               <option value="en">English</option>
               <option value="fil">Filipino</option>
-            </select>
+            </Select>
           </div>
         </div>
 

@@ -12,6 +12,7 @@ import { parsePasted } from '../../domain/validate';
 import { SCHEMA_VERSION, type Backup, type Settings as S } from '../../domain/types';
 import { version } from '../../../package.json';
 import { btn } from '../../ui/btn';
+import { Select } from '../../ui/Select';
 
 const fmtDate = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -72,10 +73,10 @@ export function Settings() {
         <div className="grid-2">
           <div className="field">
             <label htmlFor="s-level">Level</label>
-            <select id="s-level" value={s.level} onChange={(e) => set({ level: e.target.value as S['level'] })}>
+            <Select id="s-level" value={s.level} onChange={(v) => set({ level: v as S['level'] })}>
               <option value="elementary">Elementary</option>
               <option value="secondary">Secondary</option>
-            </select>
+            </Select>
           </div>
           {s.level === 'secondary' && (
             <div className="field">
@@ -89,12 +90,12 @@ export function Settings() {
           </div>
           <div className="field">
             <label htmlFor="s-timer">Mock exam timer</label>
-            <select id="s-timer" value={s.timer} onChange={(e) => set({ timer: e.target.value as S['timer'] })}>
+            <Select id="s-timer" value={s.timer} onChange={(v) => set({ timer: v as S['timer'] })}>
               <option value="real">Real LET time</option>
               <option value="1.5">1.5× time</option>
               <option value="2">2× time</option>
               <option value="off">Off</option>
-            </select>
+            </Select>
           </div>
         </div>
         <label className="check">
@@ -120,11 +121,11 @@ export function Settings() {
         </fieldset>
         <div className="field">
           <label htmlFor="s-size">Text size</label>
-          <select id="s-size" value={s.textSize} onChange={(e) => set({ textSize: Number(e.target.value) as S['textSize'] })}>
+          <Select id="s-size" value={s.textSize} onChange={(v) => set({ textSize: Number(v) as S['textSize'] })}>
             <option value={100}>100%</option>
             <option value={115}>115%</option>
             <option value={130}>130%</option>
-          </select>
+          </Select>
         </div>
         <label className="check">
           <input type="checkbox" checked={s.shortcuts} onChange={(e) => set({ shortcuts: e.target.checked })} />

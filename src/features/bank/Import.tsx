@@ -7,6 +7,7 @@ import { importQuestions, nowIso, protectStorage } from '../../db/repo';
 import { parsePasted, previewImport } from '../../domain/validate';
 import { PARTS, subareaName } from '../../domain/let-config';
 import { btn } from '../../ui/btn';
+import { Select } from '../../ui/Select';
 import { PromptBuilder } from './PromptBuilder';
 
 /** Paste-first import with a preview. Nothing is written until she confirms (plan §5, DX C1). */
@@ -150,18 +151,17 @@ export function Import() {
                         <label className="sr-only" htmlFor={`fix-${r.n}`}>
                           Sub-area for item {r.n}
                         </label>
-                        <select
+                        <Select
                           id={`fix-${r.n}`}
-                          style={{ width: 'auto', flex: 1 }}
                           value={fixPick[r.n] ?? r.subareaFix.suggestion}
-                          onChange={(e) => setFixPick((p) => ({ ...p, [r.n]: e.target.value }))}
+                          onChange={(v) => setFixPick((p) => ({ ...p, [r.n]: v }))}
                         >
                           {PARTS[r.subareaFix.area].subareas.map((s) => (
                             <option key={s.id} value={s.id}>
                               {s.name}
                             </option>
                           ))}
-                        </select>
+                        </Select>
                         <button
                           type="button"
                           className={btn.secondary}

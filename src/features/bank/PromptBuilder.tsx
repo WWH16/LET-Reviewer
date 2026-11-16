@@ -6,6 +6,7 @@ import { PARTS, partsFor } from '../../domain/let-config';
 import { templateB } from '../../domain/prompts';
 import type { Area } from '../../domain/types';
 import { btn } from '../../ui/btn';
+import { Select } from '../../ui/Select';
 
 /**
  * Builds the prompt that asks Claude for new questions (Template B) and shows it before it is copied.
@@ -31,23 +32,23 @@ export function PromptBuilder() {
         <div className="grid-2">
           <div className="field">
             <label htmlFor="pb-area">Part</label>
-            <select id="pb-area" value={area} onChange={(e) => setPicked({ area: e.target.value as Area, sub: '' })}>
+            <Select id="pb-area" value={area} onChange={(v) => setPicked({ area: v as Area, sub: '' })}>
               {partsFor(settings.level).map((a) => (
                 <option key={a} value={a}>
                   {PARTS[a].name}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
           <div className="field">
             <label htmlFor="pb-sub">Sub-area</label>
-            <select id="pb-sub" value={sub.id} onChange={(e) => setPicked({ area, sub: e.target.value })}>
+            <Select id="pb-sub" value={sub.id} onChange={(v) => setPicked({ area, sub: v })}>
               {subareas.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
           <div className="field">
             <label htmlFor="pb-topic">Topic (optional)</label>
@@ -55,13 +56,13 @@ export function PromptBuilder() {
           </div>
           <div className="field">
             <label htmlFor="pb-n">Number of questions</label>
-            <select id="pb-n" value={n} onChange={(e) => setN(Number(e.target.value))}>
+            <Select id="pb-n" value={n} onChange={(v) => setN(Number(v))}>
               {[5, 10, 20, 30].map((x) => (
                 <option key={x} value={x}>
                   {x}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
         </div>
         <div className="field">

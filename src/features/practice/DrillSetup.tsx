@@ -10,6 +10,7 @@ import { gradable } from '../../domain/examDraw';
 import { templateB } from '../../domain/prompts';
 import type { Area, Question } from '../../domain/types';
 import { btn } from '../../ui/btn';
+import { Select } from '../../ui/Select';
 
 export interface DrillParams {
   area: Area;
@@ -83,45 +84,45 @@ export function DrillSetup() {
         <h2>Drill by topic</h2>
         <div className="field">
           <label htmlFor="d-area">Part</label>
-          <select id="d-area" value={p.area} onChange={(e) => set({ area: e.target.value as Area, sub: '', topic: '' })}>
+          <Select id="d-area" value={p.area} onChange={(v) => set({ area: v as Area, sub: '', topic: '' })}>
             {partsFor(settings.level).map((a) => (
               <option key={a} value={a}>
                 {PARTS[a].name}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
         <div className="field">
           <label htmlFor="d-sub">Sub-area</label>
-          <select id="d-sub" value={p.sub} onChange={(e) => set({ sub: e.target.value, topic: '' })}>
+          <Select id="d-sub" value={p.sub} onChange={(v) => set({ sub: v, topic: '' })}>
             <option value="">All sub-areas</option>
             {PARTS[p.area].subareas.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.name}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
         <div className="field">
           <label htmlFor="d-topic">Topic</label>
-          <select id="d-topic" value={p.topic} onChange={(e) => set({ topic: e.target.value })}>
+          <Select id="d-topic" value={p.topic} onChange={(v) => set({ topic: v })}>
             <option value="">All topics</option>
             {topics.map((t) => (
               <option key={t} value={t}>
                 {t}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
         <div className="field">
           <label htmlFor="d-n">Number of questions</label>
-          <select id="d-n" value={p.n} onChange={(e) => set({ n: Number(e.target.value) })}>
+          <Select id="d-n" value={p.n} onChange={(v) => set({ n: Number(v) })}>
             {[10, 20, 30, 50].map((n) => (
               <option key={n} value={n}>
                 {n}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
         <label className="check">
           <input type="checkbox" checked={p.ai} onChange={(e) => set({ ai: e.target.checked })} />
