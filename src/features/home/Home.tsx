@@ -8,6 +8,7 @@ import { RatingCard } from '../progress/RatingCard';
 import { drillUrl, type DrillParams } from '../practice/DrillSetup';
 import { FirstRun } from './FirstRun';
 import { btn } from '../../ui/btn';
+import { Avatar } from '../../ui/Avatar';
 
 export function Home() {
   const stats = useStats();
@@ -36,7 +37,10 @@ export function Home() {
     <Page title="Home" titleHidden wide>
       <div className="home">
       <section className="tray" aria-labelledby="home-due">
-        <h2 id="home-due">Today</h2>
+        <div className="spread">
+          <h2 id="home-due">{settings.name.trim() ? `Today, ${settings.name.trim()}` : 'Today'}</h2>
+          <Avatar who={settings} size={40} />
+        </div>
         {due.length > 0 ? (
           <p className="tray-figure">
             <span className="display">{due.length}</span>

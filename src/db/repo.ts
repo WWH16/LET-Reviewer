@@ -20,7 +20,9 @@ export const setMeta = (key: string, value: unknown) => db.meta.put({ key, value
 // ---------- Settings ----------
 
 export async function getSettings(): Promise<Settings> {
-  return { ...DEFAULT_SETTINGS, ...(await db.settings.get('settings')) };
+  const stored = await db.settings.get('settings');
+  // Settings saved before the welcome screen existed belong to someone already using the app: skip it for them.
+  return { ...DEFAULT_SETTINGS, ...(stored && { onboarded: true }), ...stored };
 }
 export async function saveSettings(patch: Partial<Settings>) {
   const current = await getSettings();

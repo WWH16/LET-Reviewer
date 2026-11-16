@@ -87,6 +87,14 @@ export type TimerSetting = 'real' | '1.5' | '2' | 'off';
 
 export interface Settings {
   id: 'settings';
+  /** Her name, shown beside her avatar. May be empty. */
+  name: string;
+  /** The starting face (shown as Woman or Man) her avatar is drawn from. */
+  avatarBase: 'girl' | 'boy';
+  /** Avataaars parts and colours she chose herself, by the style's own names. 'none' leaves a part out. The rest follow the starting face. */
+  avatarParts: Record<string, string>;
+  /** False until she finishes the welcome screen. */
+  onboarded: boolean;
   level: Level;
   major: string;
   examDate: string | null;
@@ -103,6 +111,10 @@ export interface Settings {
 
 export const DEFAULT_SETTINGS: Settings = {
   id: 'settings',
+  name: '',
+  avatarBase: 'girl',
+  avatarParts: {},
+  onboarded: false,
   level: 'elementary',
   major: '',
   examDate: null,

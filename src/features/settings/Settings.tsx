@@ -14,6 +14,7 @@ import { version } from '../../../package.json';
 import { btn } from '../../ui/btn';
 import { Select } from '../../ui/Select';
 import { DateField } from '../../ui/DateField';
+import { ProfileEditor } from './ProfileEditor';
 
 const fmtDate = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -34,6 +35,7 @@ export function Settings() {
 
   if (!s) return <Page title="Settings">{null}</Page>;
   const set = (patch: Partial<S>) => saveSettings(patch);
+
 
   const doExport = async () => {
     const { filename, text } = await exportBackup();
@@ -69,6 +71,13 @@ export function Settings() {
 
   return (
     <Page title="Settings">
+      <section className="stack" aria-labelledby="set-profile">
+        <h2 id="set-profile">Profile</h2>
+        <ProfileEditor s={s} />
+      </section>
+
+      <hr />
+
       <section className="stack" aria-labelledby="set-exam">
         <h2 id="set-exam">Exam</h2>
         <div className="grid-2">

@@ -2,6 +2,7 @@ import { Link, Navigate, NavLink, Route, Routes } from 'react-router-dom';
 import { Page } from '../ui/Page';
 import { StatusProvider } from '../ui/Status';
 import { Icon } from '../ui/Icon';
+import { Avatar } from '../ui/Avatar';
 import { States } from '../features/states/States';
 import { Home } from '../features/home/Home';
 import { Bank } from '../features/bank/Bank';
@@ -18,6 +19,7 @@ import { MockPrint } from '../features/mock/MockPrint';
 import { MockEntry } from '../features/mock/MockEntry';
 import { useSettings } from '../db/hooks';
 import { CommandMenu } from './CommandMenu';
+import { Welcome } from '../features/home/Welcome';
 import { useEffect } from 'react';
 
 const NAV = [
@@ -64,6 +66,14 @@ export function App() {
     return () => media.removeEventListener('change', sync);
   }, [theme, textSize]);
 
+  // First launch: name and avatar before the app itself. The shell stays out of the way until she is done.
+  if (settings && !settings.onboarded)
+    return (
+      <StatusProvider>
+        <Welcome settings={settings} />
+      </StatusProvider>
+    );
+
   return (
     <StatusProvider>
       <a className="skip" href="#main">
@@ -89,8 +99,15 @@ export function App() {
           </nav>
           <CommandMenu />
           <NavLink className="top-settings" to="/settings">
-            <Icon name="settings" size={18} />
-            Settings
+            {settings ? <Avatar who={settings} size={24} /> : <Icon name="settings" size={18} />}
+            {settings?.name.trim() ? (
+              <>
+                <span className="top-name">{settings.name.trim()}</span>
+                <span className="sr-only">, Settings</span>
+              </>
+            ) : (
+              'Settings'
+            )}
           </NavLink>
         </div>
       </header>
