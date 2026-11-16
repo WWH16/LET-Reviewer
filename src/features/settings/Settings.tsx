@@ -13,6 +13,7 @@ import { SCHEMA_VERSION, type Backup, type Settings as S } from '../../domain/ty
 import { version } from '../../../package.json';
 import { btn } from '../../ui/btn';
 import { Select } from '../../ui/Select';
+import { DateField } from '../../ui/DateField';
 
 const fmtDate = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -86,7 +87,7 @@ export function Settings() {
           )}
           <div className="field">
             <label htmlFor="s-date">Target exam date</label>
-            <input id="s-date" type="date" value={s.examDate ?? ''} onChange={(e) => set({ examDate: e.target.value || null })} />
+            <DateField id="s-date" value={s.examDate} onChange={(examDate) => set({ examDate })} />
           </div>
           <div className="field">
             <label htmlFor="s-timer">Mock exam timer</label>

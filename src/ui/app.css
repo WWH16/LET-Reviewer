@@ -436,6 +436,10 @@ textarea {
   font-size: var(--text-lg);
   transition: border-color var(--dur-micro) var(--ease-out);
 }
+.date-trigger {
+  justify-content: space-between;
+  font-weight: 400;
+}
 .select {
   width: 100%;
   font-size: var(--text-lg);

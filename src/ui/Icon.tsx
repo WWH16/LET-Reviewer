@@ -3,6 +3,7 @@
 import {
   ArrowRightIcon,
   BookOpenTextIcon,
+  CalendarBlankIcon,
   ChartBarIcon,
   CheckIcon,
   ClockIcon,
@@ -37,6 +38,7 @@ const ICONS = {
   bank: StackIcon,
   settings: GearSixIcon,
   fire: FireIcon,
+  calendar: CalendarBlankIcon,
 } satisfies Record<string, PhosphorIcon>;
 
 export type IconName = keyof typeof ICONS;
