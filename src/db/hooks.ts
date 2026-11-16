@@ -3,7 +3,8 @@
 
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from './db';
-import { DEFAULT_SETTINGS, type MockExam, type Question } from '../domain/types';
+import { getMeta, getSettings } from './repo';
+import type { MockExam, Question } from '../domain/types';
 
 export const useQuestions = () => useLiveQuery(async () => (await db.questions.toArray()).filter((q) => !q.deleted));
 
@@ -25,15 +26,11 @@ export const useExamQuestions = (exam: MockExam | undefined) =>
 /** Oldest first, straight off the `at` index, so nothing downstream has to sort. */
 export const useAttempts = () => useLiveQuery(() => db.attempts.orderBy('at').toArray());
 
-export const useSettings = () => useLiveQuery(async () => ({ ...DEFAULT_SETTINGS, ...(await db.settings.get('settings')) }));
+export const useSettings = () => useLiveQuery(getSettings);
 
 export const useExams = () =>
   useLiveQuery(async () => (await db.mockExams.orderBy('createdAt').reverse().toArray()).filter((e) => !e.deleted));
 
 export const useExam = (id: string | undefined) => useLiveQuery(() => (id ? db.mockExams.get(id) : undefined), [id]);
 
-export const useMeta = <T>(key: string, fallback: T) =>
-  useLiveQuery(async () => {
-    const row = await db.meta.get(key);
-    return row ? (row.value as T) : fallback;
-  }, [key]);
+export const useMeta = <T>(key: string, fallback: T) => useLiveQuery(() => getMeta(key, fallback), [key]);

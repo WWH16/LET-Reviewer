@@ -3,16 +3,24 @@
 
 const ROLLOVER_H = 3;
 
+/** A Date as its local 'YYYY-MM-DD'. */
+export const isoDay = (t: Date) => `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+/** 'YYYY-MM-DD' as local noon. `new Date(day)` reads it as UTC midnight, which can land a day off. */
+export const parseDay = (day: string) => {
+  const [y, m, d] = day.split('-').map(Number);
+  return new Date(y, m - 1, d, 12);
+};
+
 export function dayKey(d: Date | string): string {
-  const t = new Date(typeof d === 'string' ? d : d.getTime());
+  const t = new Date(d);
   t.setHours(t.getHours() - ROLLOVER_H);
-  return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+  return isoDay(t);
 }
 
 export function addDays(day: string, n: number): string {
-  const [y, m, d] = day.split('-').map(Number);
-  const t = new Date(y, m - 1, d + n, 12);
-  return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+  const t = parseDay(day);
+  t.setDate(t.getDate() + n);
+  return isoDay(t);
 }
 
 export function daysBetween(from: string, to: string): number {
@@ -63,8 +71,7 @@ export interface HeatDay {
  * The last column is this week and stops at today, so it can be shorter than seven.
  */
 export function heatWeeks(counts: { get(day: string): number | undefined }, today: string, weeks: number): HeatDay[][] {
-  const [y, m, d] = today.split('-').map(Number);
-  const weekday = new Date(y, m - 1, d, 12).getDay();
+  const weekday = parseDay(today).getDay();
   const out: HeatDay[][] = [];
   let day = addDays(today, -(weekday + 7 * (weeks - 1)));
   while (day <= today) {

@@ -5,6 +5,7 @@
 // (BPT Res. No. 11, s. 2025) once the user confirms her level and major (plan §12, q. 1–3).
 // Changing a display `name` is safe. Never change an `id` once questions use it.
 
+import { slug } from './ids';
 import type { Area, Level, TimerSetting } from './types';
 
 export interface SubArea {
@@ -24,14 +25,7 @@ export interface PartConfig {
   subareas: SubArea[];
 }
 
-const sub = (name: string, weight = 1): SubArea => ({
-  id: name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, ''),
-  name,
-  weight,
-});
+const sub = (name: string, weight = 1): SubArea => ({ id: slug(name), name, weight });
 
 export const PARTS: Record<Area, PartConfig> = {
   GenEd: {

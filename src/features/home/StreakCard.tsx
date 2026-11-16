@@ -1,17 +1,13 @@
 import { useMemo } from 'react';
 import { Icon } from '../../ui/Icon';
-import { heatWeeks, streak, type HeatDay } from '../../domain/dates';
+import { heatWeeks, parseDay, streak, type HeatDay } from '../../domain/dates';
 
 // More weeks than any screen fits: the grid is pinned to today and the oldest weeks run off its left edge.
 const WEEKS = 60;
 const LEVELS = [0, 1, 2, 3, 4] as const;
 
-const dateOf = (day: string) => {
-  const [y, m, d] = day.split('-').map(Number);
-  return new Date(y, m - 1, d);
-};
 const dayTitle = ({ day, count }: HeatDay) =>
-  `${count === 0 ? 'No answers' : count === 1 ? '1 answer' : `${count} answers`} on ${dateOf(day).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}`;
+  `${count === 0 ? 'No answers' : count === 1 ? '1 answer' : `${count} answers`} on ${parseDay(day).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}`;
 
 /**
  * The streak and a GitHub-style activity grid: one square per study day, darker with more answers.
@@ -60,7 +56,7 @@ export function StreakCard({
             <div className="heat-week" key={week[0].day}>
               {/* A month's name sits over the week that holds its 1st. The last weeks skip it: it would run off the card. */}
               <span className="heat-month">
-                {first && i < weeks.length - 2 ? dateOf(first.day).toLocaleDateString(undefined, { month: 'short' }) : ''}
+                {first && i < weeks.length - 2 ? parseDay(first.day).toLocaleDateString(undefined, { month: 'short' }) : ''}
               </span>
               {week.map((d) => (
                 <span key={d.day} className="heat-day" data-level={d.level} title={dayTitle(d)} />

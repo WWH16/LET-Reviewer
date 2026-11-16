@@ -1,10 +1,27 @@
 import { Link } from 'react-router-dom';
 import { useAnnounce } from '../../ui/Status';
 import { loadSampleQuestions } from '../../db/repo';
-import { CopyTemplateA } from '../bank/Bank';
+import { copyText } from '../../ui/clipboard';
+import { templateA } from '../../domain/prompts';
 import { btn } from '../../ui/btn';
 
-/** Home when the bank is empty (DX R11): one job, add questions. */
+export function CopyTemplateA() {
+  const announce = useAnnounce();
+  return (
+    <button
+      type="button"
+      className={btn.secondary}
+      onClick={async () => {
+        await copyText(templateA());
+        announce('Template A copied. Paste it into Claude with your photo.');
+      }}
+    >
+      Copy Template A
+    </button>
+  );
+}
+
+/** Home and Bank when the bank is empty (DX R11): one job, add questions. */
 export function FirstRun() {
   const announce = useAnnounce();
   return (

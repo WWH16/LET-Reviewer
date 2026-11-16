@@ -14,7 +14,7 @@ const COMMANDS = [
 ];
 
 const mac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
-export const JUMP_KEYS = mac ? 'Meta+K' : 'Control+K';
+const JUMP_KEYS = mac ? 'Meta+K' : 'Control+K';
 
 /**
  * Jump list: Ctrl+K (Cmd+K on a Mac) or the "Go to" button opens it. A native modal dialog

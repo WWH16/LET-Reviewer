@@ -34,13 +34,7 @@ export function useStats() {
       if (day === today) todayAttempts.push(a);
     }
     const todayCorrect = todayAttempts.filter((a) => isCorrect(a, qmap.get(a.questionId))).length;
-    let hasQuestions = false;
-    for (const q of qmap.values()) {
-      if (!q.deleted) {
-        hasQuestions = true;
-        break;
-      }
-    }
+    const hasQuestions = [...qmap.values()].some((q) => !q.deleted);
     return { qmap, attempts, settings, today, cards, due, parts, rating, days, todayAttempts, todayCorrect, hasQuestions };
   }, [qmap, attempts, settings]);
 }

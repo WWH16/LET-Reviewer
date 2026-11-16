@@ -10,7 +10,7 @@ import { db } from '../../db/db';
 import { useQuestionMap, useSettings } from '../../db/hooks';
 import { recordAttempt, setFlag } from '../../db/repo';
 import { buildCards, dueCards } from '../../domain/leitner';
-import { KEY_LOOKS_WRONG, gradable } from '../../domain/examDraw';
+import { KEY_LOOKS_WRONG, gradable, shuffle } from '../../domain/examDraw';
 import { dayKey } from '../../domain/dates';
 import { subareaName } from '../../domain/let-config';
 import { KEYS, type Area, type Key, type Mode, type Question } from '../../domain/types';
@@ -19,15 +19,6 @@ import { btn } from '../../ui/btn';
 
 const TITLES: Record<string, string> = { drill: 'Practice', review: 'Review', quick: 'Quick 10' };
 const FLAGGED = 'Flagged during practice';
-
-function shuffle<T>(a: T[]): T[] {
-  const b = [...a];
-  for (let i = b.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [b[i], b[j]] = [b[j], b[i]];
-  }
-  return b;
-}
 
 /** Picks the session's items once, when it opens. */
 async function pickItems(mode: string, params: URLSearchParams, qmap: Map<string, Question>): Promise<string[]> {

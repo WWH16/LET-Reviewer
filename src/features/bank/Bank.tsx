@@ -4,13 +4,12 @@ import { Page } from '../../ui/Page';
 import { Chip, StatusChip } from '../../ui/Chip';
 import { Dialog } from '../../ui/Dialog';
 import { useAnnounce } from '../../ui/Status';
-import { copyText } from '../../ui/clipboard';
 import { useQuestions } from '../../db/hooks';
-import { loadSampleQuestions, removeBatch, restoreQuestions } from '../../db/repo';
+import { removeBatch, restoreQuestions } from '../../db/repo';
 import { subareaName } from '../../domain/let-config';
-import { templateA } from '../../domain/prompts';
 import type { Question } from '../../domain/types';
 import { btn } from '../../ui/btn';
+import { CopyTemplateA, FirstRun } from '../home/FirstRun';
 
 type Queue = 'all' | 'needs-key' | 'unverified' | 'flagged';
 const QUEUES: { id: Queue; label: string; test: (q: Question) => boolean }[] = [
@@ -27,22 +26,6 @@ export function batchLabel(id: string): string {
   return at && !isNaN(at.getTime())
     ? `Imported ${at.toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}, ${at.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}`
     : 'Earlier import';
-}
-
-export function CopyTemplateA() {
-  const announce = useAnnounce();
-  return (
-    <button
-      type="button"
-      className={btn.secondary}
-      onClick={async () => {
-        await copyText(templateA());
-        announce('Template A copied. Paste it into Claude with your photo.');
-      }}
-    >
-      Copy Template A
-    </button>
-  );
 }
 
 export function Bank() {
@@ -77,22 +60,7 @@ export function Bank() {
   if (!questions.length)
     return (
       <Page title="Bank">
-        <div className="stack">
-          <p>Your bank is empty.</p>
-          <div className="row">
-            <Link className={btn.primary} to="/bank/import">
-              Import questions
-            </Link>
-            <CopyTemplateA />
-            <button
-              type="button"
-              className={btn.quiet}
-              onClick={async () => announce(`Loaded ${await loadSampleQuestions()} sample questions`)}
-            >
-              Load sample questions
-            </button>
-          </div>
-        </div>
+        <FirstRun />
       </Page>
     );
 

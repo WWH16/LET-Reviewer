@@ -12,7 +12,6 @@ export type Parsed =
   | { kind: 'not-json' }
   | { kind: 'questions'; items: unknown[]; truncatedAfter: number | null; unreadable: number[] }
   | { kind: 'backup'; value: Record<string, unknown> }
-  | { kind: 'answer-sheet'; value: Record<string, unknown> }
   | { kind: 'unknown' };
 
 const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
@@ -22,7 +21,6 @@ function classify(v: unknown): Parsed {
   if (!isObj(v)) return { kind: 'unknown' };
   if (v.type === 'backup' || ('schemaVersion' in v && Array.isArray(v.questions) && Array.isArray(v.attempts)))
     return { kind: 'backup', value: v };
-  if ('examId' in v && isObj(v.answers)) return { kind: 'answer-sheet', value: v };
   for (const k of ['questions', 'items', 'data']) {
     if (Array.isArray(v[k])) return { kind: 'questions', items: v[k] as unknown[], truncatedAfter: null, unreadable: [] };
   }
@@ -155,11 +153,10 @@ function toChoices(v: unknown): Choice[] | null {
   if (Array.isArray(v)) list = v.map((c, i) => (typeof c === 'string' ? { key: KEYS[i], text: c } : (c as object)));
   else if (isObj(v)) list = Object.entries(v).map(([key, text]) => ({ key, text }));
   else return null;
-  const out = list.map((c, i) => ({
+  return list.map((c, i) => ({
     key: (typeof c.key === 'string' ? c.key.trim().toUpperCase().charAt(0) : KEYS[i]) as Key,
     text: typeof c.text === 'string' ? c.text.trim() : '',
   }));
-  return out;
 }
 
 function toAnswer(v: unknown): Key | null | 'bad' {

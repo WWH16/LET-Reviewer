@@ -33,12 +33,7 @@ export function MockSetup() {
   const [picked, setPart] = useState<Area | null>(null);
   const [length, setLength] = useState<Length>('full');
   const [source, setSource] = useState<SourceFilter>('rc');
-  const [paper, setPaper] = useState<{ size: PaperSize; columns: 1 | 2; large: boolean; answerKey: boolean }>({
-    size: 'folio',
-    columns: 2,
-    large: false,
-    answerKey: true,
-  });
+  const [paper, setPaper] = useState<NonNullable<MockExam['paper']>>({ size: 'folio', columns: 2, large: false, answerKey: true });
   const navigate = useNavigate();
   const announce = useAnnounce();
 
@@ -59,11 +54,7 @@ export function MockSetup() {
     const now = new Date();
     const exam: MockExam = {
       id: uuid(),
-      label: examLabel(
-        part,
-        now,
-        exams.map((e) => e.label),
-      ),
+      label: examLabel(part, now, exams.map((e) => e.label)),
       form,
       part,
       itemIds: r.itemIds,

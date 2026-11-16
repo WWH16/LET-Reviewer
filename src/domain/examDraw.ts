@@ -23,7 +23,7 @@ export function matchesSource(q: Question, f: SourceFilter): boolean {
   return true;
 }
 
-function shuffle<T>(list: T[], rng: () => number): T[] {
+export function shuffle<T>(list: T[], rng: () => number = Math.random): T[] {
   const a = [...list];
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(rng() * (i + 1));
@@ -50,25 +50,16 @@ export function drawExam(pool: readonly Question[], part: PartConfig, n: number,
   const items = pool.filter((q) => q.area === part.area);
   if (items.length < n) return { ok: false, needed: n, available: items.length };
 
-  const q = quotas(
-    part.subareas.map((s) => s.weight),
-    n,
-  );
+  const q = quotas(part.subareas.map((s) => s.weight), n);
   const picked: Question[] = [];
   const short: string[] = [];
   part.subareas.forEach((s, i) => {
-    const group = shuffle(
-      items.filter((x) => x.subarea === s.id),
-      rng,
-    );
+    const group = shuffle(items.filter((x) => x.subarea === s.id), rng);
     picked.push(...group.slice(0, q[i]));
     if (group.length < q[i]) short.push(`${s.name} had ${group.length} of ${q[i]}`);
   });
   const taken = new Set(picked.map((x) => x.id));
-  const rest = shuffle(
-    items.filter((x) => !taken.has(x.id)),
-    rng,
-  );
+  const rest = shuffle(items.filter((x) => !taken.has(x.id)), rng);
   const fill = n - picked.length;
   picked.push(...rest.slice(0, fill));
 

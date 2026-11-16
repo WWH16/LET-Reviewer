@@ -46,8 +46,8 @@ export function recentPartScores(attempts: readonly Attempt[], questions: Readon
   }
   const out: Partial<Record<Area, { pct: number; total: number }>> = {};
   for (const [area, list] of byArea) {
-    const t = tallyBy(list, questions, () => area).get(area)!;
-    out[area] = { pct: pct(t)!, total: t.total };
+    const correct = list.filter((a) => isCorrect(a, questions.get(a.questionId))).length;
+    out[area] = { pct: (correct / list.length) * 100, total: list.length };
   }
   return out;
 }

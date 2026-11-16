@@ -389,10 +389,6 @@ main.wide {
 .btn[aria-busy='true'] {
   cursor: progress;
 }
-.btn-block {
-  width: 100%;
-  justify-content: center;
-}
 @media (pointer: coarse) {
   .btn {
     min-height: 44px;
@@ -981,10 +977,6 @@ dialog::backdrop {
   align-items: baseline;
   gap: var(--space-sm);
 }
-.home-grid {
-  display: grid;
-  gap: var(--space-lg);
-}
 .stat-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1425,9 +1417,6 @@ dialog.command input:focus-visible {
 
 /* ---------- Print (mock exam booklet and answer sheet) ---------- */
 
-.print-only {
-  display: none;
-}
 .paper {
   color: var(--print-ink);
   background: var(--print-paper);
@@ -1528,9 +1517,6 @@ dialog.command input:focus-visible {
   .toast,
   .no-print {
     display: none !important;
-  }
-  .print-only {
-    display: block;
   }
   html {
     font-size: 100% !important;

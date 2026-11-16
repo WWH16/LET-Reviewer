@@ -36,10 +36,8 @@ describe('parsePasted', () => {
     expect(p).toMatchObject({ kind: 'questions', truncatedAfter: 2 });
   });
   it('reports text with no JSON', () => expect(parsePasted('Sorry, I cannot read this page.').kind).toBe('not-json'));
-  it('detects a backup and an answer sheet', () => {
-    expect(parsePasted('{"type":"backup","schemaVersion":1,"questions":[],"attempts":[]}').kind).toBe('backup');
-    expect(parsePasted('{"examId":"GE-1115-A","answers":{"1":"B"},"unsure":[]}').kind).toBe('answer-sheet');
-  });
+  it('detects a backup', () =>
+    expect(parsePasted('{"type":"backup","schemaVersion":1,"questions":[],"attempts":[]}').kind).toBe('backup'));
 });
 
 describe('validateItem', () => {

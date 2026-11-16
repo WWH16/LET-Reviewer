@@ -138,10 +138,7 @@ export async function gradeExam(exam: MockExam): Promise<{ correct: number; tota
     at,
     examId: exam.id,
   }));
-  let correct = 0;
-  attempts.forEach((a, i) => {
-    if (isCorrect(a, qs[i])) correct++;
-  });
+  const correct = attempts.filter((a, i) => isCorrect(a, qs[i])).length;
   await db.transaction('rw', db.attempts, db.mockExams, async () => {
     // Grading is idempotent: a second Submit or Grade (a double tap, a time-up racing a tap) adds nothing.
     if ((await db.mockExams.get(exam.id))?.status === 'graded') return;

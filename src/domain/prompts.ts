@@ -81,14 +81,3 @@ Use "${o.subarea}" exactly as the subarea value. Do not include an "id" field.
 Write math as plain text (e.g. "x^2 + 3x - 4 = 0", "3/4").
 source "ai", status "unverified", sourceRef "AI from: ${topic} notes".`;
 }
-
-export function templateC(n: number, label: string): string {
-  return `This is a photo of a multiple-choice answer sheet with bubbles A–D.
-Exam ID is printed at the top: ${label}. Items: ${n}.
-For each item number 1..${n}, report which single bubble is shaded.
-- If no bubble is shaded: null.
-- If two or more are shaded, or a bubble looks erased or faint: give your best
-  guess AND add the item number to "unsure".
-Do not guess the correct answers. Only report what is shaded.
-Return JSON only: { "examId": "${label}", "answers": { "1": "A", ... }, "unsure": [ ... ] }`;
-}

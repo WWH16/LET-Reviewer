@@ -108,9 +108,7 @@ export function Import() {
                 ? 'No question list found in what you pasted.'
                 : parsed.kind === 'backup'
                   ? 'This is a backup file, not a question list.'
-                  : parsed.kind === 'answer-sheet'
-                    ? 'This is an answer sheet, not a question list.'
-                    : 'This is not a question list.'}
+                  : 'This is not a question list.'}
           </h2>
 
           {parsed.kind === 'not-json' && <p>In Claude, tap Copy on the code block, then paste here.</p>}
@@ -118,9 +116,6 @@ export function Import() {
             <p>
               To restore it, go to <Link to="/settings">Settings</Link> and choose Restore backup.
             </p>
-          )}
-          {parsed.kind === 'answer-sheet' && (
-            <p>To grade a printed exam from a photo, open it in Mock and use Scan answer sheet.</p>
           )}
           {parsed.kind === 'unknown' && <p>A question list starts with [ and holds one object per question.</p>}
 
