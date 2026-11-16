@@ -80,74 +80,78 @@ export function MockResults() {
 
   const wrongCount = exam.itemIds.filter((qid, i) => qmap.get(qid)?.answer !== (exam.answers[String(i + 1)] ?? null)).length;
 
-  return (
-    <Page title={`${exam.label} results`}>
-      {timeUp && <p className="notice">Time is up. Your answers were submitted.</p>}
-      <section className="stack-sm" aria-labelledby="mr-score">
-        <h2 id="mr-score" className="label">
-          {PARTS[exam.part].name}, {exam.form === 'digital' ? 'digital' : 'printed'} exam
-        </h2>
-        <p ref={scoreRef} tabIndex={-1} className="score">
-          <span className="display">
-            {s.correct}/{s.total}
-          </span>{' '}
-          <span className="display-unit">{s.pct.toFixed(1)}%</span>
-        </p>
-        <p>
-          {s.pct >= PART_FLOOR ? `Above the ${PART_FLOOR}% floor for this part.` : `Below the ${PART_FLOOR}% floor. A part under ${PART_FLOOR}% fails the exam.`}
-          {weight ? ` This part is ${Math.round(weight * 100)}% of your rating.` : ''}
-        </p>
-        <p className="muted">
-          Time: {exam.form === 'digital' ? formatClock(exam.elapsedMs) : exam.totalMin !== null ? `${exam.totalMin} min (entered)` : 'not entered'}
-          {exam.timeLimitMin !== null && ` of ${exam.timeLimitMin} min`}
-        </p>
-        {wrongCount > 0 && <p className="muted">Wrong and blank items were added to Review.</p>}
-      </section>
+  const hasPacing = exam.form === 'digital' && checkpoints.length > 0;
 
-      <div className="stack-sm">
-        <RatingCard rating={rating} warned={s.pct < PART_FLOOR ? exam.part : undefined} />
-        <p className="muted">
-          Projected from your latest mock in each part:{' '}
-          {Object.entries(latestByPart)
-            .map(([a, v]) => `${PARTS[a as Area].name} ${v!.pct.toFixed(0)}% (${v!.label})`)
-            .join(', ')}
-          .
-        </p>
+  return (
+    <Page title={`${exam.label} results`} wide>
+      {timeUp && <p className="notice">Time is up. Your answers were submitted.</p>}
+      {/* The score is the screen's dark mass; the rating and the pacing sit beside it. */}
+      <div className="bento">
+        <section className={`tile tile-inverse score-tile span-3 ${hasPacing ? 'rows-2' : ''}`} aria-labelledby="mr-score">
+          <h2 id="mr-score" className="label">
+            {PARTS[exam.part].name}, {exam.form === 'digital' ? 'digital' : 'printed'} exam
+          </h2>
+          <p ref={scoreRef} tabIndex={-1} className="score">
+            <span className="display">
+              {s.correct}/{s.total}
+            </span>{' '}
+            <span className="display-unit">{s.pct.toFixed(1)}%</span>
+          </p>
+          <p>
+            {s.pct >= PART_FLOOR ? `Above the ${PART_FLOOR}% floor for this part.` : `Below the ${PART_FLOOR}% floor. A part under ${PART_FLOOR}% fails the exam.`}
+            {weight ? ` This part is ${Math.round(weight * 100)}% of your rating.` : ''}
+          </p>
+          <p className="well">
+            Time: {exam.form === 'digital' ? formatClock(exam.elapsedMs) : exam.totalMin !== null ? `${exam.totalMin} min (entered)` : 'not entered'}
+            {exam.timeLimitMin !== null && ` of ${exam.timeLimitMin} min`}
+          </p>
+          {wrongCount > 0 && <p className="muted">Wrong and blank items were added to Review.</p>}
+        </section>
+
+        <RatingCard rating={rating} warned={s.pct < PART_FLOOR ? exam.part : undefined} className="span-3">
+          <p className="meta">
+            Projected from your latest mock in each part:{' '}
+            {Object.entries(latestByPart)
+              .map(([a, v]) => `${PARTS[a as Area].name} ${v!.pct.toFixed(0)}% (${v!.label})`)
+              .join(', ')}
+            .
+          </p>
+        </RatingCard>
+
+        {hasPacing && (
+          <section className="tile span-3" aria-labelledby="mr-pace">
+            <h2 id="mr-pace">Pacing</h2>
+            <p className="muted">LET pace is where you would be at the real exam’s speed.</p>
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Answered</th>
+                  <th scope="col" className="num">
+                    Time
+                  </th>
+                  <th scope="col" className="num">
+                    LET pace
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {checkpoints.map((c) => (
+                  <tr key={c.k}>
+                    <th scope="row">{c.k} items</th>
+                    <td className="num">
+                      {formatClock(c.at)}
+                      {c.at > c.target ? ', behind' : ''}
+                    </td>
+                    <td className="num">{formatClock(c.target)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+        )}
       </div>
 
-      {exam.form === 'digital' && checkpoints.length > 0 && (
-        <section className="stack-sm" aria-labelledby="mr-pace">
-          <h2 id="mr-pace">Pacing</h2>
-          <p className="muted">LET pace is where you would be at the real exam’s speed.</p>
-          <table>
-            <thead>
-              <tr>
-                <th scope="col">Answered</th>
-                <th scope="col" className="num">
-                  Time
-                </th>
-                <th scope="col" className="num">
-                  LET pace
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {checkpoints.map((c) => (
-                <tr key={c.k}>
-                  <th scope="row">{c.k} items</th>
-                  <td className="num">
-                    {formatClock(c.at)}
-                    {c.at > c.target ? ', behind' : ''}
-                  </td>
-                  <td className="num">{formatClock(c.target)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </section>
-      )}
-
-      <section className="stack" aria-labelledby="mr-check">
+      <section className="stack reading" aria-labelledby="mr-check">
         <h2 id="mr-check">Checking the paper</h2>
         <div className="row" role="group" aria-label="Show">
           {(['all', 'wrong', 'flagged', 'unanswered'] as Filter[]).map((f) => (

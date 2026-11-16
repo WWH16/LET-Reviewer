@@ -35,7 +35,7 @@ export function Home() {
 
   return (
     <Page title="Home" titleHidden wide>
-      <div className="home">
+      <div className="bento home">
       <section className="tray" aria-labelledby="home-due">
         <div className="spread">
           <h2 id="home-due">{settings.name.trim() ? `Today, ${settings.name.trim()}` : 'Today'}</h2>
@@ -98,8 +98,7 @@ export function Home() {
 
       <RatingCard rating={rating} />
 
-      <div className="stat-row">
-        <div>
+      <div className="tile stat-tile pair home-exam">
           <span className="label">Exam</span>
           {toExam === null ? (
             <Link className="stat-link" to="/settings" state={{ focus: 's-date' }}>
@@ -117,13 +116,12 @@ export function Home() {
               </Link>
             </p>
           )}
-        </div>
-        <div>
-          <span className="label">Longest streak</span>
-          <p>
-            <span className="stat-figure">{longest}</span> {longest === 1 ? 'day' : 'days'}
-          </p>
-        </div>
+      </div>
+      <div className="tile stat-tile pair home-long">
+        <span className="label">Longest streak</span>
+        <p>
+          <span className="stat-figure">{longest}</span> {longest === 1 ? 'day' : 'days'}
+        </p>
       </div>
 
       <StreakCard days={days} today={today} todayCount={todayAttempts.length} todayCorrect={todayCorrect} />

@@ -83,7 +83,7 @@ export function Settings() {
 
   return (
     <Page title="Settings">
-      <section className="stack" aria-labelledby="set-profile">
+      <section className="tile" aria-labelledby="set-profile">
         <h2 id="set-profile">Profile</h2>
         {/* Folded to one row: people come to Settings for the exam date, display and backup. */}
         <details className="profile-summary">
@@ -98,9 +98,7 @@ export function Settings() {
         </details>
       </section>
 
-      <hr />
-
-      <section className="stack" aria-labelledby="set-exam">
+      <section className="tile" aria-labelledby="set-exam">
         <h2 id="set-exam">Exam</h2>
         <div className="grid-2">
           <div className="field">
@@ -140,9 +138,7 @@ export function Settings() {
         </label>
       </section>
 
-      <hr />
-
-      <section className="stack" aria-labelledby="set-display">
+      <section className="tile" aria-labelledby="set-display">
         <h2 id="set-display">Display and keys</h2>
         <fieldset className="stack-sm">
           <legend className="label">Theme</legend>
@@ -169,9 +165,7 @@ export function Settings() {
         </label>
       </section>
 
-      <hr />
-
-      <section className="stack" aria-labelledby="set-backup">
+      <section className="tile" aria-labelledby="set-backup">
         <h2 id="set-backup">Backup</h2>
         <p className="muted">
           {lastBackup
@@ -205,9 +199,7 @@ export function Settings() {
         </div>
       </section>
 
-      <hr />
-
-      <section className="stack-sm" aria-labelledby="set-about">
+      <section className="tile" aria-labelledby="set-about">
         <h2 id="set-about">About</h2>
         <p className="muted num">
           Version {version}, data format v{SCHEMA_VERSION}

@@ -1,11 +1,11 @@
 /* Hallmark · shape: app screen · genre: modern-minimal · theme: Kumo components, monochrome (by request; @cloudflare/kumo 2.18.1, its tokens pointed at a black, white and grey palette), the Dose faces kept · redesign: full
- * nav: side menu at 60rem and up (six destinations, the side menu the user chose from the Cloudflare dashboard mockup), a bottom tab bar below it · signature: the Today card inverted, the darkest mass on Home; answer choices as Kumo cards, grey with a dark ring when chosen, the checked answer in a dark ring with a check, a wrong pick in a mid-grey ring with a cross · states: loading, empty, full
+ * nav: side menu at 60rem and up (six destinations, the side menu the user chose from the Cloudflare dashboard mockup), a bottom tab bar below it · signature: one inverse tile per screen holding the figure it exists for, Today on Home, the projected rating on Progress, the score on Mock results; answer choices as Kumo cards, grey with a dark ring when chosen, the checked answer in a dark ring with a check, a wrong pick in a mid-grey ring with a cross · states: loading, empty, full
  * axes: light/grotesk-sans/monochrome · posture: quiet · contrast: pass · modes: light+dark · v2.0.0 */
 /* Hallmark · waive 7b · surface: absolute on --print-ink and --print-paper only, used inside .paper and @media print · the printed booklet and answer sheet need pure black toner on white bond, and the corner markers must scan */
 /* Hallmark · dismissed 41 · --color-success-fill is close to --color-ink on purpose in a monochrome palette; the check icon on it takes --color-card, not ink */
 /* Hallmark · dropped setSheetOpen(false), removeQuestion(q.id), removeBatch(removing · rewritten, not removed: the sheet's Close now calls closeSheet (it also returns focus), and both removes now announce an Undo */
 /* Hallmark · answered F4 · buttons are Kumo's own classes (src/ui/btn.ts): one primary per screen, secondary for the rest, ghost for quiet links; aria-pressed is a toggle on the secondary */
-/* Hallmark · answered F7 · cards, choices, feedback, the tray and the sheet share Kumo's one layer card recipe on purpose (white, hairline ring, soft drop); inputs share Kumo's one input recipe because they are one role */
+/* Hallmark · answered F7 · surfaces follow one ladder, not one recipe: tiles at 16px with the card shadow, action tiles one shadow higher, wells flat inside tiles, one inverse tile per screen; choices and feedback keep Kumo's 12px card; inputs share Kumo's one input recipe because they are one role */
 /* Hallmark · pre-emit critique: P4 H3 E4 S3 R4 V4 · weakest: S, Kumo is a shared product chrome by design; the answer cards are the one object the app is known by */
 @import '@cloudflare/kumo/styles/kumo-standalone';
 @import url('./tokens.css');
@@ -55,7 +55,7 @@ form [role='status'] p {
 }
 .num,
 .tray-figure,
-.stat-row,
+.stat-tile,
 .exam-bar,
 .score,
 .meta,
@@ -135,14 +135,222 @@ form [role='status'] p {
   color: var(--color-ink);
   box-shadow: var(--shadow-card);
 }
+/* ---------- Surfaces: ground, tile, action tile, well, inverse ----------
+   A tile is one bento block: one topic under its own heading. An action tile is a whole-tile choice and
+   sits one shadow step higher. A well is a flat grey inset for secondary facts inside a tile, never a
+   card in a card. The inverse tile is the one dark mass on a screen and holds the figure it exists for. */
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  min-width: 0;
+  padding: var(--pad-card);
+  border-radius: var(--radius-tile);
+  background: var(--color-card);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-card);
+}
+.tile > h2 {
+  margin-bottom: calc(-1 * var(--space-2xs));
+}
+.well {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-control);
+  background: var(--color-paper-2);
+  font-size: var(--text-base);
+}
+.tray,
+.tile-inverse {
+  background: var(--color-inverse);
+  color: var(--color-inverse-ink);
+  /* the buttons, wells and Kumo parts inside flip with the surface */
+  --color-button: var(--color-inverse-ink);
+  --color-button-deep: var(--color-inverse-muted);
+  --color-button-ink: var(--color-inverse);
+  --color-paper-2: var(--color-inverse-tint);
+  --color-rule: var(--color-inverse-tint);
+  --color-muted: var(--color-inverse-muted);
+  --color-kumo-base: transparent;
+  --color-kumo-tint: var(--color-inverse-tint);
+  --color-kumo-line: color-mix(in oklab, var(--color-inverse-ink) 35%, transparent);
+  --text-color-kumo-default: var(--color-inverse-ink);
+}
+:is(.tray, .tile-inverse) :is(.muted, .meta, .display-unit, .label) {
+  color: var(--color-inverse-muted);
+}
+:is(.tray, .tile-inverse) :focus-visible {
+  outline-color: var(--color-inverse-ink);
+}
+a.tile-action {
+  text-decoration: none;
+  box-shadow: var(--shadow-raised);
+}
+a.tile-action:hover {
+  background: var(--color-paper-2);
+}
+a.tile-action:active {
+  scale: 0.98;
+}
+@media (prefers-reduced-motion: no-preference) {
+  a.tile-action {
+    transition: scale var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out);
+  }
+}
+/* A choice that is not available now: flat and grey, sunk below the raised action beside it. */
+.tile-quiet {
+  background: var(--color-paper-2);
+  box-shadow: none;
+  color: var(--color-muted);
+}
+.tile-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: var(--tracking-display);
+  line-height: 1.15;
+}
+/* A list inside a tile gives up its own surface: the tile is the card. */
+.tile .list {
+  padding-inline: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+/* Long reading (the checked paper) keeps the reading measure on a wide screen. */
+.reading {
+  max-width: var(--measure-app);
+}
+
+/* ---------- Bento: blocks of different weight on one grid ----------
+   Phones: two columns, each block full width unless it is half of a pair.
+   60rem and up: six columns; a block takes the span its content needs. */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-md);
+}
+.bento > * {
+  grid-column: 1 / -1;
+}
+.bento > .pair {
+  grid-column: span 1;
+}
+@media (min-width: 60rem) {
+  .bento {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .bento > .span-2 {
+    grid-column: span 2;
+  }
+  .bento > .span-3 {
+    grid-column: span 3;
+  }
+  .bento > .span-4 {
+    grid-column: span 4;
+  }
+  .bento > .rows-2 {
+    grid-row: span 2;
+  }
+}
+
+/* Progress: the projected rating is the screen's dark banner. On a wide screen the figure and its
+   sentence sit on the left and the floor warnings on the right, instead of one long column. */
+@media (min-width: 60rem) {
+  .progress-rating {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--space-xl);
+    align-items: start;
+  }
+}
+/* Option cards: a radio choice that needs a sentence to explain each side (the mock's form). Flat grey
+   at rest, a white face with an ink ring when chosen. */
+.options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: var(--space-xs);
+}
+.option {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3xs);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-control);
+  background: var(--color-paper-2);
+  cursor: pointer;
+}
+.option:hover {
+  background: var(--color-paper-3);
+}
+.option:active {
+  scale: 0.99;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .option {
+    transition: scale var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out);
+  }
+}
+.option:has(input:checked) {
+  background: var(--color-card);
+  box-shadow: inset 0 0 0 2px var(--color-ink);
+}
+.option:has(input:focus-visible) {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.option-title {
+  font-weight: 600;
+}
+/* Mock results: the score figure is the largest number on the screen. */
+@media (min-width: 60rem) {
+  .score-tile .display {
+    font-size: calc(var(--text-figure) * 1.6);
+  }
+}
+/* A weak topic: its name and figures, then its two actions; side by side once there is room. */
+.weak-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+@media (min-width: 48rem) {
+  .weak-item {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+/* On a wide screen the list runs in two columns, so a row's actions stay within reach of its name. */
+@media (min-width: 60rem) {
+  .tile .list:has(> .weak-item) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-xl);
+  }
+  .tile .list > .weak-item:nth-last-child(2):nth-child(odd) {
+    border-bottom: 0;
+  }
+}
+
+/* A note set in a bento takes the tiles' corners and padding, so the grid's edges line up. */
+.bento > .notice {
+  padding: var(--pad-card);
+}
 /* Kumo's info banner */
 .notice {
   padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-control);
+  border-radius: var(--radius-tile);
   background: var(--color-info-tint);
   box-shadow: inset 0 0 0 1px var(--color-line);
   color: var(--color-ink);
   font-size: var(--text-base);
+}
+/* Page-level notices share the tiles' corners. Inside a tile a notice becomes a well: no ring, so it is
+   never a box drawn inside a card. */
+.tile .notice {
+  border-radius: var(--radius-control);
+  background: var(--color-paper-2);
+  box-shadow: none;
 }
 .clamp-2 {
   display: -webkit-box;
@@ -269,6 +477,14 @@ a.top-settings,
   background: var(--color-card);
   box-shadow: var(--shadow-card);
   font-weight: 500;
+}
+/* In Settings the editor sits in a tile: the choice is marked with a ring, not a second card. */
+.tile .avatar-pick {
+  box-shadow: inset 0 0 0 1px var(--color-line);
+}
+.tile .avatar-pick:has(input:checked) {
+  background: var(--color-paper-2);
+  box-shadow: inset 0 0 0 2px var(--color-ink);
 }
 /* Profile: the avatar is the large thing, the fields sit beside it (below it on a phone). */
 .profile {
@@ -970,7 +1186,7 @@ th.num {
 }
 .list {
   padding-inline: var(--space-md);
-  border-radius: var(--radius-card);
+  border-radius: var(--radius-tile);
   background: var(--color-card);
   box-shadow: var(--shadow-card);
 }
@@ -1114,8 +1330,9 @@ dialog::backdrop {
   display: flex;
   align-items: flex-start;
   gap: var(--space-xs);
-  padding-top: var(--space-sm);
-  border-top: 1px solid var(--color-rule);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-control);
+  background: var(--color-paper-2);
   font-size: var(--text-base);
 }
 .rating-warn svg {
@@ -1130,44 +1347,58 @@ dialog::backdrop {
   align-content: start;
   gap: var(--space-md);
   padding: var(--pad-card);
-  border-radius: var(--radius-card);
-  background: var(--color-inverse);
-  color: var(--color-inverse-ink);
+  border-radius: var(--radius-tile);
   box-shadow: var(--shadow-card);
-  /* the buttons inside flip with the card */
-  --color-button: var(--color-inverse-ink);
-  --color-button-deep: var(--color-inverse-muted);
-  --color-button-ink: var(--color-inverse);
-  --color-kumo-base: transparent;
-  --color-kumo-tint: var(--color-inverse-tint);
-  --color-kumo-line: color-mix(in oklab, var(--color-inverse-ink) 35%, transparent);
-  --text-color-kumo-default: var(--color-inverse-ink);
 }
-.tray .muted {
-  color: var(--color-inverse-muted);
-}
-.tray :focus-visible {
-  outline-color: var(--color-inverse-ink);
-}
-/* Home: one column on phones; on laptops the Today card leads on the left and the rest sit beside it. */
-.home {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-}
+/* Home: phones read it top to bottom, with the two small figures side by side. On laptops the Today card
+   is the four-column mass on the left; beside it the two small figures pair up over the rating and any
+   backup note; the activity grid, a timeline, runs the full width under them. */
 @media (min-width: 60rem) {
   .home {
-    display: grid;
-    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    grid-template-areas:
+      'today today today today exam  long'
+      'today today today today rate  rate'
+      'today today today today note  note'
+      'heat  heat  heat  heat  heat  heat';
     align-items: start;
   }
+  .home > * {
+    grid-column: auto;
+  }
+  /* With a backup note, the note takes a full-width row of its own, so the Today card ends at the
+     rating instead of stretching a dark band down beside the note. */
+  .home:has(> .notice) {
+    grid-template-areas:
+      'today today today today exam  long'
+      'today today today today rate  rate'
+      'note  note  note  note  note  note'
+      'heat  heat  heat  heat  heat  heat';
+  }
   .home > .tray {
-    grid-row: span 3;
+    grid-area: today;
     align-self: stretch;
     align-content: space-between;
   }
   .home > .tray .display {
     font-size: calc(var(--text-figure) * 1.6);
+  }
+  .home > .home-exam {
+    grid-area: exam;
+  }
+  .home > .rating {
+    grid-area: rate;
+  }
+  .home > .notice {
+    grid-area: note;
+  }
+  .home > .streak {
+    grid-area: heat;
+  }
+  .home > .home-long {
+    grid-area: long;
+  }
+  .home > :is(.home-exam, .home-long) {
+    align-self: stretch;
   }
 }
 .tray h2 {
@@ -1178,22 +1409,12 @@ dialog::backdrop {
   align-items: baseline;
   gap: var(--space-sm);
 }
-.stat-row {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-md);
-}
-.stat-row > div {
-  display: flex;
-  flex-direction: column;
+/* A small figure tile: its label, then the figure. */
+.stat-tile {
   gap: var(--space-2xs);
-  padding: var(--space-md) var(--pad-card);
-  border-radius: var(--radius-card);
-  background: var(--color-card);
-  box-shadow: var(--shadow-card);
   font-size: var(--text-base);
 }
-.stat-row .label {
+.stat-tile .label {
   color: var(--color-muted);
   font-weight: 400;
 }
@@ -1208,9 +1429,6 @@ dialog::backdrop {
 
 /* ---------- Streak card: the flame, the count and the activity grid ---------- */
 
-.home > .streak {
-  grid-column: 1 / -1;
-}
 .streak-figure {
   display: flex;
   align-items: center;
@@ -1592,6 +1810,7 @@ dialog.command input:focus-visible {
   :root {
     --radius-control: 11px;
     --radius-card: 18px;
+    --radius-tile: 22px;
   }
   .card,
   .tray,
@@ -1600,7 +1819,7 @@ dialog.command input:focus-visible {
   .notice,
   .list,
   .sheet,
-  .stat-row > div,
+  .tile,
   .timer,
   .toast,
   .top-jump,

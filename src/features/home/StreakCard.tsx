@@ -38,7 +38,7 @@ export function StreakCard({
         : 'Answer one question to start a streak.';
 
   return (
-    <section className="card streak stack-sm" aria-labelledby="streak-title">
+    <section className="tile streak" aria-labelledby="streak-title">
       <h2 id="streak-title" className="label">
         Streak
       </h2>

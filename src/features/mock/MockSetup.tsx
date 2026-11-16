@@ -102,12 +102,12 @@ export function MockSetup() {
                       <Link className={btn.secondary} to={`/mock/${e.id}/print`}>
                         Print
                       </Link>
-                      <Link className={btn.primary} to={`/mock/${e.id}/entry`}>
+                      <Link className={btn.secondary} to={`/mock/${e.id}/entry`}>
                         Enter answers
                       </Link>
                     </>
                   ) : (
-                    <Link className={btn.primary} to={`/mock/${e.id}`}>
+                    <Link className={btn.secondary} to={`/mock/${e.id}`}>
                       Continue
                     </Link>
                   )}
@@ -119,7 +119,7 @@ export function MockSetup() {
       )}
 
       <form
-        className="stack"
+        className="tile"
         onSubmit={(e) => {
           e.preventDefault();
           if (enough) start();
@@ -130,14 +130,19 @@ export function MockSetup() {
 
         <fieldset className="stack-sm">
           <legend className="label">Form</legend>
-          <label className="check">
-            <input type="radio" name="form" checked={form === 'digital'} onChange={() => setForm('digital')} />
-            Digital paper: booklet and bubble sheet on screen
-          </label>
-          <label className="check">
-            <input type="radio" name="form" checked={form === 'printed'} onChange={() => setForm('printed')} />
-            Printed paper: print it, answer with a pencil, enter answers after
-          </label>
+          {/* The one choice that changes the whole exam, so each option says what it means. */}
+          <div className="options">
+            <label className="option">
+              <input type="radio" name="form" className="sr-only" checked={form === 'digital'} onChange={() => setForm('digital')} />
+              <span className="option-title">Digital paper</span>
+              <span className="meta">Booklet and bubble sheet on screen, with the timer.</span>
+            </label>
+            <label className="option">
+              <input type="radio" name="form" className="sr-only" checked={form === 'printed'} onChange={() => setForm('printed')} />
+              <span className="option-title">Printed paper</span>
+              <span className="meta">Print it, answer with a pencil, then enter the answers.</span>
+            </label>
+          </div>
         </fieldset>
 
         <div className="grid-2">
@@ -202,7 +207,7 @@ export function MockSetup() {
           </fieldset>
         )}
 
-        <div role="status" className={enough ? undefined : 'notice'}>
+        <div role="status" className={enough ? undefined : 'well'}>
           {enough ? (
             <p>
               {n} items from {pool.length} available.{' '}

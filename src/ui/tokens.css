@@ -23,7 +23,7 @@
   /* Type and spacing roles that change with screen size. Phone values here; wider screens below. */
   --text-h1: 1.375rem; --text-h2: 1.125rem; --text-figure: 2rem; --text-stat: 1.375rem;
   --pad-card: var(--space-md); --gap-section: var(--space-lg); --pad-page-top: var(--space-lg);
-  --radius-control: 8px; --radius-card: 12px; --radius-pill: 999px;
+  --radius-control: 8px; --radius-card: 12px; --radius-tile: 16px; --radius-pill: 999px;
   /* The activity grid on Home: five greys in even steps from empty (paper-3) to busiest (ink). Dark mode sets its own middle three. */
   --heat-cell: 0.75rem; --heat-gap: 3px;
   --heat-0: var(--color-paper-3); --heat-1: oklch(74% 0 0); --heat-2: oklch(56% 0 0); --heat-3: oklch(37% 0 0); --heat-4: var(--color-ink);
@@ -42,11 +42,13 @@
   --color-error: oklch(38% 0 0); --color-error-fill: oklch(49% 0 0); --color-error-tint: oklch(91.8% 0 0);
   --color-warning: oklch(40% 0 0); --color-warning-tint: oklch(96% 0 0); --color-info-tint: oklch(94.6% 0 0);
   --color-shade: oklch(18% 0 0 / 0.42);
-  /* the one inverted surface per screen (Home's Today card): the darkest mass on the page */
+  /* the one inverted surface per screen, holding its figure (Today, the projected rating, the mock score) */
   --color-inverse: oklch(18% 0 0); --color-inverse-ink: oklch(98% 0 0); --color-inverse-muted: oklch(74% 0 0); --color-inverse-tint: oklch(26% 0 0);
   /* the primary button: near-black with a white label; in dark mode it flips to near-white with a dark label */
   --color-button: oklch(25% 0 0); --color-button-deep: oklch(15% 0 0); --color-button-ink: oklch(99% 0 0);
   --shadow-card: 0 0 0 1px var(--color-line), 0 1px 3px oklch(0% 0 0 / 0.07), 0 6px 16px -6px oklch(0% 0 0 / 0.07);
+  /* an action tile sits one step higher than a tile: you press it */
+  --shadow-raised: 0 0 0 1px var(--color-line), 0 2px 4px oklch(0% 0 0 / 0.06), 0 14px 28px -12px oklch(0% 0 0 / 0.08);
   --shadow-pop: 0 0 0 1px var(--color-line), 0 12px 32px -8px oklch(0% 0 0 / 0.07);
   --shadow-bar: 0 1px 3px oklch(0% 0 0 / 0.06), 0 4px 12px -6px oklch(0% 0 0 / 0.06);
   --shadow-bar-up: 0 -1px 3px oklch(0% 0 0 / 0.06), 0 -4px 12px -6px oklch(0% 0 0 / 0.06);
@@ -82,7 +84,7 @@
   --color-warning: oklch(80% 0 0); --color-warning-tint: oklch(24% 0 0); --color-info-tint: oklch(22% 0 0);
   --color-shade: oklch(5% 0 0 / 0.6);
   --color-inverse: oklch(92% 0 0); --color-inverse-ink: oklch(14% 0 0); --color-inverse-muted: oklch(38% 0 0); --color-inverse-tint: oklch(84% 0 0);
-  --shadow-card: 0 0 0 1px var(--color-line), inset 0 1px 0 oklch(100% 0 0 / 0.05); --shadow-pop: 0 0 0 1px var(--color-line), 0 12px 32px -8px oklch(0% 0 0 / 0.5);
+  --shadow-card: 0 0 0 1px var(--color-line), inset 0 1px 0 oklch(100% 0 0 / 0.05); --shadow-raised: 0 0 0 1px var(--color-line), inset 0 1px 0 oklch(100% 0 0 / 0.1), 0 12px 24px -12px oklch(0% 0 0 / 0.6); --shadow-pop: 0 0 0 1px var(--color-line), 0 12px 32px -8px oklch(0% 0 0 / 0.5);
   --shadow-bar: 0 4px 12px -6px oklch(0% 0 0 / 0.5); --shadow-bar-up: 0 -4px 12px -6px oklch(0% 0 0 / 0.5); --shadow-side: 4px 0 12px -6px oklch(0% 0 0 / 0.5);
 }
 @media (prefers-color-scheme: dark) {
@@ -102,7 +104,7 @@
     --color-warning: oklch(80% 0 0); --color-warning-tint: oklch(24% 0 0); --color-info-tint: oklch(22% 0 0);
     --color-shade: oklch(5% 0 0 / 0.6);
   --color-inverse: oklch(92% 0 0); --color-inverse-ink: oklch(14% 0 0); --color-inverse-muted: oklch(38% 0 0); --color-inverse-tint: oklch(84% 0 0);
-    --shadow-card: 0 0 0 1px var(--color-line), inset 0 1px 0 oklch(100% 0 0 / 0.05); --shadow-pop: 0 0 0 1px var(--color-line), 0 12px 32px -8px oklch(0% 0 0 / 0.5);
+    --shadow-card: 0 0 0 1px var(--color-line), inset 0 1px 0 oklch(100% 0 0 / 0.05); --shadow-raised: 0 0 0 1px var(--color-line), inset 0 1px 0 oklch(100% 0 0 / 0.1), 0 12px 24px -12px oklch(0% 0 0 / 0.6); --shadow-pop: 0 0 0 1px var(--color-line), 0 12px 32px -8px oklch(0% 0 0 / 0.5);
     --shadow-bar: 0 4px 12px -6px oklch(0% 0 0 / 0.5); --shadow-bar-up: 0 -4px 12px -6px oklch(0% 0 0 / 0.5); --shadow-side: 4px 0 12px -6px oklch(0% 0 0 / 0.5);
   }
 }

@@ -7,7 +7,7 @@ import { buildCards, dueCards } from './leitner';
 import { dayKey, heatWeeks, longestStreak, streak } from './dates';
 import { drawExam, quotas } from './examDraw';
 import { PARTS } from './let-config';
-import { projectedRating } from './scoring';
+import { projectedRating, recentByArea, recentPartScores, tallyBy } from './scoring';
 import type { Attempt, Question } from './types';
 import sample from './sample-questions.json';
 
@@ -171,5 +171,33 @@ describe('layers', () => {
   });
   it('ui never imports db or features', () => {
     for (const src of read('../ui/')) for (const i of imports(src)) expect(/\.\.\/(db|features)\//.test(i)).toBe(false);
+  });
+});
+
+describe('Progress window', () => {
+  it("a part's sub-area rows add up to its figure, over the same recent 150 answers", () => {
+    const [s0, s1] = PARTS.ProfEd.subareas;
+    const old = q({ subarea: s0.name, stem: 'An older question?' });
+    const recent = q({ subarea: s1.name, stem: 'A recent question?' });
+    const qs = new Map([
+      [old.id, old],
+      [recent.id, recent],
+    ]);
+    const att = (i: number, questionId: string): Attempt => ({
+      id: `a${i}`,
+      questionId,
+      chosen: 'B',
+      ms: 1000,
+      mode: 'drill',
+      at: new Date(Date.UTC(2026, 0, 1, 0, i)).toISOString(),
+    });
+    // The oldest answer falls outside the window once 150 newer ones exist.
+    const attempts = [att(0, old.id), ...Array.from({ length: 150 }, (_, i) => att(i + 1, recent.id))];
+    const part = recentPartScores(attempts, qs).ProfEd!;
+    const bySub = tallyBy([...recentByArea(attempts, qs).values()].flat(), qs, (x) => x.subarea);
+    const rows = [...bySub.values()].reduce((n, tally) => n + tally.total, 0);
+    expect(part.total).toBe(150);
+    expect(rows).toBe(part.total);
+    expect(bySub.has(old.subarea)).toBe(false);
   });
 });

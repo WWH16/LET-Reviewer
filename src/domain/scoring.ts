@@ -34,7 +34,8 @@ export function tallyBy(
 // so it tracks current ability. Weight mock answers more if practice scores run high.
 const RECENT = 150;
 
-export function recentPartScores(attempts: readonly Attempt[], questions: ReadonlyMap<string, Question>) {
+/** Each part's most recent 150 scored answers, newest first: the window the rating and Progress use. */
+export function recentByArea(attempts: readonly Attempt[], questions: ReadonlyMap<string, Question>) {
   const byArea = new Map<Area, Attempt[]>();
   const sorted = [...attempts].sort((a, b) => (a.at < b.at ? 1 : a.at > b.at ? -1 : 0));
   for (const a of sorted) {
@@ -44,6 +45,11 @@ export function recentPartScores(attempts: readonly Attempt[], questions: Readon
     if (list.length < RECENT) list.push(a);
     byArea.set(q.area, list);
   }
+  return byArea;
+}
+
+export function recentPartScores(attempts: readonly Attempt[], questions: ReadonlyMap<string, Question>) {
+  const byArea = recentByArea(attempts, questions);
   const out: Partial<Record<Area, { pct: number; total: number }>> = {};
   for (const [area, list] of byArea) {
     const correct = list.filter((a) => isCorrect(a, questions.get(a.questionId))).length;
