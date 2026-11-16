@@ -52,7 +52,7 @@ export function EditQuestion() {
   };
 
   return (
-    <Page title="Edit question">
+    <Page title="Edit question" back={{ to: '/bank', label: 'Review' }}>
       <p className="muted">
         {q.source === 'ai' ? `AI-generated from ${q.sourceRef.replace(/^AI from:\s*/i, '')}` : `Review center: ${q.sourceRef}`}
       </p>

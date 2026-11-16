@@ -38,7 +38,7 @@ export function MockSetup() {
   const navigate = useNavigate();
   const announce = useAnnounce();
 
-  if (!questions || !exams || !settings) return <Page title="Mock exam">{null}</Page>;
+  if (!questions || !exams || !settings) return <Page title="Mock exam" back={{ to: '/', label: 'Study' }}>{null}</Page>;
 
   const part = picked ?? partsFor(settings.level)[0];
   const inPart = questions.filter((q) => gradable(q) && q.area === part);
@@ -83,7 +83,7 @@ export function MockSetup() {
   const done = exams.filter((e) => e.status === 'graded').slice(0, 10);
 
   return (
-    <Page title="Mock exam">
+    <Page title="Mock exam" back={{ to: '/', label: 'Study' }}>
       {open.length > 0 && (
         <section className="stack-sm" aria-labelledby="mk-open">
           <h2 id="mk-open">Not finished</h2>

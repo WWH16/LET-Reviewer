@@ -69,7 +69,7 @@ export function Import() {
   }, [preview]);
 
   return (
-    <Page title="Import questions">
+    <Page title="Import questions" back={{ to: '/bank', label: 'Review' }}>
       <div className="stack">
         <p className="muted">
           In Claude, tap <strong>Copy</strong> on the code block with the questions, then paste it here. Extra text around it is fine.

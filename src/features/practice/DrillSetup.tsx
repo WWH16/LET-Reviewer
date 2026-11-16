@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { useAnnounce } from '../../ui/Status';
 import { copyText } from '../../ui/clipboard';
@@ -11,7 +11,8 @@ import { templateB } from '../../domain/prompts';
 import type { Area, Question } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { Select } from '../../ui/Select';
-import { useStats } from '../progress/useStats';
+
+const STUDY = { to: '/', label: 'Study' };
 
 export interface DrillParams {
   area: Area;
@@ -37,8 +38,6 @@ export function drillMatches(q: Question, p: Pick<DrillParams, 'area' | 'sub' | 
 export function DrillSetup() {
   const questions = useQuestions();
   const settings = useSettings();
-  const stats = useStats();
-  const due = stats?.due.length;
   const last = useMeta<DrillParams | null>('lastDrill', null);
   const [edited, setP] = useState<DrillParams | null>(null);
   const navigate = useNavigate();
@@ -56,8 +55,7 @@ export function DrillSetup() {
     return [...s].sort();
   }, [questions, area, sub]);
 
-  // Waits for the due count too, so Review mistakes never flashes its empty state first.
-  if (!p || !questions || !settings || !stats) return <Page title="Practice">{null}</Page>;
+  if (!p || !questions || !settings) return <Page title="Build your own" back={STUDY}>{null}</Page>;
 
   const available = questions.filter((q) => drillMatches(q, p)).length;
   const set = (patch: Partial<DrillParams>) => setP({ ...p, ...patch });
@@ -68,26 +66,7 @@ export function DrillSetup() {
   };
 
   return (
-    <Page title="Practice">
-      {/* The two one-tap sessions are whole tiles; the drill below is the one that needs choices. */}
-      <div className="bento">
-        <Link className="tile tile-action pair span-3" to="/session?mode=quick">
-          <span className="tile-title">Quick 10</span>
-          <span className="meta">Due reviews first, then a random mix.</span>
-        </Link>
-        {due ? (
-          <Link className="tile tile-action pair span-3" to="/review">
-            <span className="tile-title">Review mistakes</span>
-            <span className="meta">{due} due today.</span>
-          </Link>
-        ) : (
-          <div className="tile tile-quiet pair span-3">
-            <span className="tile-title">Review mistakes</span>
-            <span className="meta">{due === 0 ? 'Nothing due today. Missed questions come back the next day.' : ''}</span>
-          </div>
-        )}
-      </div>
-
+    <Page title="Build your own" back={STUDY}>
       <form
         className="tile"
         onSubmit={(e) => {
@@ -95,7 +74,6 @@ export function DrillSetup() {
           if (available) start();
         }}
       >
-        <h2>Drill by topic</h2>
         <div className="field">
           <label htmlFor="d-area">Part</label>
           <Select id="d-area" value={p.area} onChange={(v) => set({ area: v as Area, sub: '', topic: '' })}>

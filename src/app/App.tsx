@@ -1,8 +1,7 @@
-import { Link, Navigate, NavLink, Route, Routes, useMatch } from 'react-router-dom';
+import { Link, Navigate, Route, Routes, useLocation, useMatch } from 'react-router-dom';
 import { Page } from '../ui/Page';
 import { StatusProvider } from '../ui/Status';
 import { Icon } from '../ui/Icon';
-import { Avatar } from '../ui/Avatar';
 import { States } from '../features/states/States';
 import { Home } from '../features/home/Home';
 import { Bank } from '../features/bank/Bank';
@@ -22,19 +21,20 @@ import { CommandMenu } from './CommandMenu';
 import { Welcome } from '../features/home/Welcome';
 import { useEffect } from 'react';
 
+// Four places, as in a phone exam-prep app: study (every quiz mode starts here), how it is going, what
+// you have answered, and settings. Practice and Mock are modes on Study, not tabs of their own.
 const NAV = [
-  { to: '/', label: 'Home', icon: 'home' },
-  { to: '/drill', label: 'Practice', icon: 'practice' },
-  { to: '/mock', label: 'Mock', icon: 'mock' },
-  { to: '/progress', label: 'Progress', icon: 'progress' },
-  { to: '/bank', label: 'Bank', icon: 'bank' },
+  { to: '/', label: 'Study', icon: 'study', also: ['/drill', '/mock', '/session', '/review'] },
+  { to: '/progress', label: 'Stats', icon: 'stats', also: [] },
+  { to: '/bank', label: 'Review', icon: 'review', also: [] },
+  { to: '/settings', label: 'Settings', icon: 'settings', also: [] },
 ] as const;
 
 function NotFound() {
   return (
     <Page title="Not found">
       <p>
-        This page does not exist. <Link to="/">Go to Home</Link>
+        This page does not exist. <Link to="/">Back to Study</Link>
       </p>
     </Page>
   );
@@ -44,6 +44,10 @@ export function App() {
   const settings = useSettings();
   // A running mock exam (finished and printed ones redirect away from this route).
   const inExam = useMatch('/mock/:id') !== null;
+  // A tab stays lit on the screens it leads to (Study on a quiz or the mock setup, Review on an edit).
+  const { pathname } = useLocation();
+  const here = (item: (typeof NAV)[number]) =>
+    item.to === '/' ? pathname === '/' || item.also.some((p) => pathname.startsWith(p)) : pathname.startsWith(item.to);
   const theme = settings?.theme;
   const textSize = settings?.textSize;
   useEffect(() => {
@@ -91,26 +95,15 @@ export function App() {
             <ul>
               {NAV.map((item) => (
                 <li key={item.to}>
-                  <NavLink to={item.to} end={item.to === '/'}>
-                    <Icon name={item.icon} size={22} />
+                  <Link to={item.to} aria-current={here(item) ? 'page' : undefined}>
+                    <Icon name={item.icon} size={22} filled={here(item)} />
                     {item.label}
-                  </NavLink>
+                  </Link>
                 </li>
               ))}
             </ul>
           </nav>
           <CommandMenu />
-          <NavLink className="top-settings" to="/settings">
-            {settings ? <Avatar who={settings} size={24} /> : <Icon name="settings" size={18} />}
-            {settings?.name.trim() ? (
-              <>
-                <span className="top-name">{settings.name.trim()}</span>
-                <span className="sr-only">, Settings</span>
-              </>
-            ) : (
-              'Settings'
-            )}
-          </NavLink>
         </div>
       </header>
       <Routes>

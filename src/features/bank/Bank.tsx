@@ -4,20 +4,33 @@ import { Page } from '../../ui/Page';
 import { Chip, StatusChip } from '../../ui/Chip';
 import { Dialog } from '../../ui/Dialog';
 import { useAnnounce } from '../../ui/Status';
-import { useQuestions } from '../../db/hooks';
+import { useAttempts, useQuestions } from '../../db/hooks';
 import { removeBatch, restoreQuestions } from '../../db/repo';
 import { subareaName } from '../../domain/let-config';
+import { lastResults } from '../../domain/scoring';
+import { Icon } from '../../ui/Icon';
 import type { Question } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { CopyPhotoPrompt, FirstRun } from '../home/FirstRun';
 
-type Queue = 'all' | 'needs-key' | 'unverified' | 'flagged';
-const QUEUES: { id: Queue; label: string; test: (q: Question) => boolean }[] = [
+type Queue = 'all' | 'incorrect' | 'correct' | 'flagged' | 'unanswered' | 'check';
+type Last = ReadonlyMap<string, boolean>;
+const isFlagged = (q: Question) => q.status === 'flagged' || !!q.flag;
+/** The tabs: what you got wrong or right last time, what you flagged, what you have not tried, what needs fixing. */
+const QUEUES: { id: Queue; label: string; test: (q: Question, last: Last) => boolean }[] = [
   { id: 'all', label: 'All', test: () => true },
-  { id: 'needs-key', label: 'Needs key', test: (q) => q.status === 'needs-key' },
-  { id: 'unverified', label: 'Unverified', test: (q) => q.status === 'unverified' },
-  { id: 'flagged', label: 'Flagged', test: (q) => q.status === 'flagged' || !!q.flag },
+  { id: 'incorrect', label: 'Incorrect', test: (q, last) => last.get(q.id) === false },
+  { id: 'correct', label: 'Correct', test: (q, last) => last.get(q.id) === true },
+  { id: 'flagged', label: 'Flagged', test: isFlagged },
+  { id: 'unanswered', label: 'Not answered', test: (q, last) => !last.has(q.id) },
+  { id: 'check', label: 'To check', test: (q) => q.status === 'needs-key' || q.status === 'unverified' },
 ];
+const STATUS = {
+  right: { cls: 'is-right', icon: 'check', text: 'Last answer right' },
+  wrong: { cls: 'is-wrong', icon: 'cross', text: 'Last answer wrong' },
+  flag: { cls: 'is-flag', icon: 'flag', text: 'Flagged' },
+  new: { cls: 'is-new', icon: 'study', text: 'Not answered yet' },
+} as const;
 const SHOW = 100;
 
 export function batchLabel(id: string): string {
@@ -30,6 +43,7 @@ export function batchLabel(id: string): string {
 
 export function Bank() {
   const questions = useQuestions();
+  const attempts = useAttempts();
   const [queue, setQueue] = useState<Queue>('all');
   const [search, setSearch] = useState('');
   const [limit, setLimit] = useState(SHOW);
@@ -38,17 +52,21 @@ export function Bank() {
 
   // The box updates at once; the list filters at lower priority, so typing stays smooth on a big bank.
   const deferredSearch = useDeferredValue(search);
-  const counts = useMemo(() => QUEUES.map((x) => (questions ?? []).filter(x.test).length), [questions]);
+  const last = useMemo(
+    () => lastResults(attempts ?? [], new Map((questions ?? []).map((q) => [q.id, q]))),
+    [attempts, questions],
+  );
+  const counts = useMemo(() => QUEUES.map((x) => (questions ?? []).filter((q) => x.test(q, last)).length), [questions, last]);
 
   const filtered = useMemo(() => {
     const s = deferredSearch.trim().toLowerCase();
     const test = QUEUES.find((x) => x.id === queue)!.test;
     return (questions ?? []).filter(
       (q) =>
-        test(q) &&
+        test(q, last) &&
         (!s || [q.stem, q.topic, q.sourceRef, subareaName(q.subarea)].some((f) => f.toLowerCase().includes(s))),
     );
-  }, [questions, queue, deferredSearch]);
+  }, [questions, queue, deferredSearch, last]);
 
   const batches = useMemo(() => {
     const m = new Map<string, number>();
@@ -56,17 +74,17 @@ export function Bank() {
     return [...m].sort((a, b) => b[0].localeCompare(a[0]));
   }, [questions]);
 
-  if (!questions) return <Page title="Bank">{null}</Page>;
+  if (!questions || !attempts) return <Page title="Review">{null}</Page>;
 
   if (!questions.length)
     return (
-      <Page title="Bank">
+      <Page title="Review">
         <FirstRun />
       </Page>
     );
 
   return (
-    <Page title="Bank">
+    <Page title="Review">
       <div className="row">
         <Link className={btn.primary} to="/bank/import">
           Import questions
@@ -87,19 +105,19 @@ export function Bank() {
             }}
           />
         </div>
-        <div className="row" role="group" aria-label="Queue">
+        <div className="review-tabs" role="group" aria-label="Show">
           {QUEUES.map((x, i) => (
             <button
               key={x.id}
               type="button"
-              className={btn.secondary}
               aria-pressed={queue === x.id}
               onClick={() => {
                 setQueue(x.id);
                 setLimit(SHOW);
               }}
             >
-              {x.label} <span className="num">{counts[i]}</span>
+              <span>{x.label}</span>
+              <span className="num">{counts[i]}</span>
             </button>
           ))}
         </div>
@@ -110,25 +128,34 @@ export function Bank() {
           {filtered.length > limit ? `Showing ${limit} of ${filtered.length}` : `${filtered.length} questions`}
         </h2>
         <ul className="list">
-          {filtered.slice(0, limit).map((q) => (
-            <li key={q.id}>
-              <Link className="list-link stack-sm" to={`/bank/${encodeURIComponent(q.id)}`}>
-                <span className="meta">
-                  {subareaName(q.subarea)}
-                  {q.topic ? `, ${q.topic}` : ''}
-                </span>
-                <span className="clamp-2" lang={q.lang}>
-                  {q.stem}
-                </span>
-                <span className="row">
-                  {q.status !== 'verified' && <StatusChip status={q.status} />}
-                  {q.flag && <Chip icon="flag">{q.flag.reason}</Chip>}
-                  {q.source === 'ai' && <Chip>AI</Chip>}
-                  {q.lang === 'fil' && <Chip>Filipino</Chip>}
-                </span>
-              </Link>
-            </li>
-          ))}
+          {filtered.slice(0, limit).map((q) => {
+            const s = STATUS[isFlagged(q) ? 'flag' : last.get(q.id) === true ? 'right' : last.get(q.id) === false ? 'wrong' : 'new'];
+            return (
+              <li key={q.id}>
+                <Link className="list-link review-row" to={`/bank/${encodeURIComponent(q.id)}`}>
+                  <span className={`review-status ${s.cls}`}>
+                    <Icon name={s.icon} size={14} />
+                    <span className="sr-only">{s.text}: </span>
+                  </span>
+                  <span className="meta">
+                    {subareaName(q.subarea)}
+                    {q.topic ? `, ${q.topic}` : ''}
+                  </span>
+                  <span className="clamp-2" lang={q.lang}>
+                    {q.stem}
+                  </span>
+                  {(q.status !== 'verified' || q.source === 'ai' || q.lang === 'fil') && (
+                    <span className="row">
+                      {q.status !== 'verified' && <StatusChip status={q.status} />}
+                      {q.flag && <Chip icon="flag">{q.flag.reason}</Chip>}
+                      {q.source === 'ai' && <Chip>AI</Chip>}
+                      {q.lang === 'fil' && <Chip>Filipino</Chip>}
+                    </span>
+                  )}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
         {filtered.length > limit && (
           <div>

@@ -38,7 +38,7 @@ export interface Question {
   deleted: boolean;
 }
 
-export type Mode = 'drill' | 'review' | 'quick' | 'mock-digital' | 'mock-printed';
+export type Mode = 'drill' | 'review' | 'quick' | 'qotd' | 'timed' | 'mock-digital' | 'mock-printed';
 
 /** One answer. Append-only. Whether it was correct is worked out, never stored (plan §4). */
 export interface Attempt {

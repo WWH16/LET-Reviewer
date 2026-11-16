@@ -11,19 +11,29 @@ import { db } from '../../db/db';
 import { useQuestionMap, useSettings } from '../../db/hooks';
 import { recordAttempt, setFlag } from '../../db/repo';
 import { buildCards, dueCards } from '../../domain/leitner';
-import { KEY_LOOKS_WRONG, gradable, shuffle } from '../../domain/examDraw';
+import { KEY_LOOKS_WRONG, gradable, questionOfTheDay, shuffle } from '../../domain/examDraw';
 import { dayKey } from '../../domain/dates';
-import { subareaName } from '../../domain/let-config';
+import { paceMs, subareaName } from '../../domain/let-config';
 import { KEYS, type Area, type Key, type Mode, type Question } from '../../domain/types';
 import { drillMatches } from './DrillSetup';
 import { btn } from '../../ui/btn';
 
-const TITLES: Record<string, string> = { drill: 'Practice', review: 'Review', quick: 'Quick 10' };
+const TITLES: Record<string, string> = { drill: 'Practice', review: 'Missed questions', quick: 'Quick 10', qotd: 'Question of the Day', timed: 'Timed quiz' };
+/** mm:ss for the timed quiz's clock. */
+const mmss = (ms: number) => {
+  const s = Math.max(0, Math.ceil(ms / 1000));
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+};
 const FLAGGED = 'Flagged during practice';
 
 /** Picks the session's items once, when it opens. */
 async function pickItems(mode: string, params: URLSearchParams, qmap: Map<string, Question>): Promise<string[]> {
   const live = [...qmap.values()].filter(gradable);
+  if (mode === 'qotd') {
+    const id = questionOfTheDay(dayKey(new Date()), qmap.values());
+    return id ? [id] : [];
+  }
+  if (mode === 'timed') return shuffle(live).slice(0, 10).map((q) => q.id);
   if (mode === 'drill') {
     const p = {
       area: params.get('area') as Area,
@@ -65,6 +75,10 @@ export function Session() {
   const [results, setResults] = useState<Result[]>([]);
   const [done, setDone] = useState(false);
   const [run, setRun] = useState(0);
+  // Timed quiz: the clock starts when the questions are picked and runs at the LET's own pace per item.
+  const [startedAt, setStartedAt] = useState(0);
+  const [now, setNow] = useState(() => Date.now());
+  const [timeUp, setTimeUp] = useState(false);
   const shownAt = useRef(Date.now());
   const qHeading = useRef<HTMLHeadingElement>(null);
   const fbHeading = useRef<HTMLHeadingElement>(null);
@@ -73,8 +87,27 @@ export function Session() {
 
   useEffect(() => {
     if (!qmap || items) return;
-    pickItems(mode, params, qmap).then(setItems);
+    pickItems(mode, params, qmap).then((picked) => {
+      setItems(picked);
+      setStartedAt(Date.now());
+      setNow(Date.now());
+    });
   }, [qmap, items, mode, params, run]);
+
+  const timed = mode === 'timed';
+  const limitMs = timed && items && qmap ? items.reduce((s, id) => s + paceMs(qmap.get(id)!.area), 0) : 0;
+  const leftMs = limitMs - (now - startedAt);
+  useEffect(() => {
+    if (!timed || !items?.length || done) return;
+    const t = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(t);
+  }, [timed, items, done]);
+  useEffect(() => {
+    if (timed && items?.length && !done && leftMs <= 0) {
+      setTimeUp(true);
+      setDone(true);
+    }
+  }, [timed, items, done, leftMs]);
 
   useEffect(() => {
     shownAt.current = Date.now();
@@ -105,13 +138,10 @@ export function Session() {
   if (!items.length)
     return (
       <Page title={title}>
-        <p>{mode === 'review' ? 'No reviews due. Questions you miss come back here on schedule.' : 'No questions to practice yet.'}</p>
+        <p>{mode === 'review' ? 'Nothing due. Questions you miss come back here the next day.' : 'No questions to practice yet. Import some, or load the samples from Study.'}</p>
         <div className="row">
-          <Link className={btn.primary} to="/drill">
-            Practice by topic
-          </Link>
-          <Link className={btn.secondary} to="/">
-            Home
+          <Link className={btn.primary} to="/">
+            Back to Study
           </Link>
         </div>
       </Page>
@@ -125,6 +155,7 @@ export function Session() {
     setEliminated(new Set());
     setResults([]);
     setDone(false);
+    setTimeUp(false);
     setRun((r) => r + 1);
   };
 
@@ -133,26 +164,34 @@ export function Session() {
     const wrong = results.filter((r) => !r.correct);
     return (
       <Page title={`${title} results`}>
-        <div className="stack-sm">
+        {/* The score is the screen's navy block, as on a quiz app's results screen. */}
+        <section className="tile tile-inverse quiz-score" aria-labelledby="res-score">
+          <h2 id="res-score" className="label">
+            {timeUp ? 'Time is up' : `${title} done`}
+          </h2>
           <p ref={resHeading} tabIndex={-1} className="score">
-            <span className="display">
-              {correct}/{results.length}
+            <span className="display">{results.length ? Math.round((correct / results.length) * 100) : 0}%</span>
+            <span className="display-unit">
+              {correct} of {results.length} correct
+              {timeUp && results.length < items.length ? `, ${items.length - results.length} not reached` : ''}
             </span>
-            <span className="sr-only"> correct, </span>
-            <span className="display-unit">{results.length ? Math.round((correct / results.length) * 100) : 0}%</span>
           </p>
-          {wrong.length > 0 && <p className="muted">Wrong answers were added to Review. They come back tomorrow.</p>}
-        </div>
+          {wrong.length > 0 && <p className="well">Missed questions come back in Missed questions tomorrow.</p>}
+        </section>
         {wrong.length > 0 && (
           <section className="stack-sm" aria-labelledby="res-wrong">
             <h2 id="res-wrong">To review</h2>
-            <ul className="list">
+            <ul className="list review-list">
               {wrong.map((r) => {
                 const q = qmap.get(r.id)!;
                 return (
                   <li key={r.id} lang={q.lang}>
                     <details>
-                      <summary className="stack-sm">
+                      <summary className="review-row">
+                        <span className="review-status is-wrong">
+                          <Icon name="cross" size={14} />
+                          <span className="sr-only">Incorrect: </span>
+                        </span>
                         <span>{q.stem}</span>
                         <span className="meta">
                           You chose {r.chosen}. The answer is {q.answer}.
@@ -171,7 +210,7 @@ export function Session() {
             {mode === 'review' ? 'Check for more reviews' : 'Practice again'}
           </button>
           <Link className={btn.secondary} to="/">
-            Home
+            Back to Study
           </Link>
         </div>
       </Page>
@@ -204,11 +243,11 @@ export function Session() {
   const toggleFlag = async () => {
     const on = q.flag?.reason !== FLAGGED;
     await setFlag(q.id, on ? FLAGGED : null);
-    announce(on ? 'Flagged. Find it in Bank under Flagged.' : 'Flag removed');
+    announce(on ? 'Flagged. Find it in Review under Flagged.' : 'Flag removed');
   };
   const reportKey = async () => {
     await setFlag(q.id, KEY_LOOKS_WRONG);
-    announce('Reported. It is in Bank under Flagged and left out of mock exams until you fix it.');
+    announce('Reported. It is in Review under Flagged and left out of mock exams until you fix it.');
   };
 
   const onKeyDown = (e: KeyboardEvent) => {
@@ -235,16 +274,37 @@ export function Session() {
   return (
     <Page title={title} titleHidden>
       <div className="stack">
-        <div className="spread">
-          <h2 ref={qHeading} tabIndex={-1} className="label">
-            Question <span className="num">{i + 1}</span> of <span className="num">{items.length}</span>
-          </h2>
-          <button type="button" className={btn.quiet} onClick={() => setDone(true)}>
-            End session
-          </button>
-        </div>
-        <div className="meter" aria-hidden="true">
-          <span style={{ width: `${((i + (checked ? 1 : 0)) / items.length) * 100}%` }} />
+        {/* The quiz bar: one segment per question (green right, red wrong, white the current one), the close
+            button, the count and, on a timed quiz, the clock. */}
+        <div className="quiz-bar">
+          {items.length > 1 && (
+            <ol className="quiz-steps" aria-hidden="true">
+              {items.map((id, k) => (
+                <li key={id} className={k < results.length ? (results[k].correct ? 'is-right' : 'is-wrong') : k === i ? 'is-now' : undefined} />
+              ))}
+            </ol>
+          )}
+          <div className="quiz-row">
+            <button type="button" className="quiz-close" aria-label="End session" title="End session" onClick={() => setDone(true)}>
+              <Icon name="cross" size={20} />
+            </button>
+            <h2 ref={qHeading} tabIndex={-1} className="quiz-count">
+              {items.length > 1 ? (
+                <>
+                  Question <span className="num">{i + 1}</span> / <span className="num">{items.length}</span>
+                </>
+              ) : (
+                title
+              )}
+            </h2>
+            {timed ? (
+              <span className={`quiz-timer num ${leftMs < 60000 ? 'is-low' : ''}`} role="timer" aria-label={`Time left ${mmss(leftMs)}`}>
+                <Icon name="timer" size={16} /> {mmss(leftMs)}
+              </span>
+            ) : (
+              <span className="quiz-timer" />
+            )}
+          </div>
         </div>
         <div className="row">
           <span className="meta">

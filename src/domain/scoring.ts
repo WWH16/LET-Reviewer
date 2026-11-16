@@ -34,6 +34,22 @@ export function tallyBy(
 // so it tracks current ability. Weight mock answers more if practice scores run high.
 const RECENT = 150;
 
+/** Each question's latest graded answer: true if right, false if wrong. Unanswered questions are absent. */
+export function lastResults(attempts: readonly Attempt[], questions: ReadonlyMap<string, Question>): Map<string, boolean> {
+  const out = new Map<string, boolean>();
+  const at = new Map<string, string>();
+  for (const a of attempts) {
+    const ok = isCorrect(a, questions.get(a.questionId));
+    if (ok === null) continue;
+    const prev = at.get(a.questionId);
+    if (prev === undefined || a.at >= prev) {
+      at.set(a.questionId, a.at);
+      out.set(a.questionId, ok);
+    }
+  }
+  return out;
+}
+
 /** Each part's most recent 150 scored answers, newest first: the window the rating and Progress use. */
 export function recentByArea(attempts: readonly Attempt[], questions: ReadonlyMap<string, Question>) {
   const byArea = new Map<Area, Attempt[]>();

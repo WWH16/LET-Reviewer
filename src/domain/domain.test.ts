@@ -5,9 +5,9 @@ import { parsePasted, previewImport, validateItem } from './validate';
 import { examLabel, questionId } from './ids';
 import { buildCards, dueCards } from './leitner';
 import { dayKey, heatWeeks, longestStreak, streak } from './dates';
-import { drawExam, quotas } from './examDraw';
+import { drawExam, questionOfTheDay, quotas } from './examDraw';
 import { PARTS } from './let-config';
-import { projectedRating, recentByArea, recentPartScores, tallyBy } from './scoring';
+import { lastResults, projectedRating, recentByArea, recentPartScores, tallyBy } from './scoring';
 import type { Attempt, Question } from './types';
 import sample from './sample-questions.json';
 
@@ -199,5 +199,33 @@ describe('Progress window', () => {
     expect(part.total).toBe(150);
     expect(rows).toBe(part.total);
     expect(bySub.has(old.subarea)).toBe(false);
+  });
+});
+
+describe('questionOfTheDay', () => {
+  const qs = [1, 2, 3, 4].map((n) => q({ stem: `Question ${n}?`, sourceRef: `Handout 1, p.${n}` }));
+  it('keeps one question all day, whatever order the bank comes in', () => {
+    expect(questionOfTheDay('2026-11-16', qs)).toBe(questionOfTheDay('2026-11-16', [...qs].reverse()));
+  });
+  it('moves on across days, and skips questions that cannot be graded', () => {
+    const week = ['2026-11-16', '2026-11-17', '2026-11-18', '2026-11-19', '2026-11-20'].map((d) => questionOfTheDay(d, qs));
+    expect(new Set(week).size).toBeGreaterThan(1);
+    expect(questionOfTheDay('2026-11-16', [q({ answer: null })])).toBeNull();
+  });
+});
+
+describe('lastResults', () => {
+  it("keeps each question's latest answer, whatever order the attempts come in", () => {
+    const one = q({ stem: 'One?', sourceRef: 'Handout 9, p.1' });
+    const two = q({ stem: 'Two?', sourceRef: 'Handout 9, p.2' });
+    const qs = new Map([
+      [one.id, one],
+      [two.id, two],
+    ]);
+    const att = (id: string, at: string, chosen: string): Attempt => ({ id: at + id, questionId: id, chosen: chosen as Attempt['chosen'], ms: 1, mode: 'drill', at });
+    const r = lastResults([att(one.id, '2026-11-02T00:00:00Z', 'B'), att(one.id, '2026-11-01T00:00:00Z', 'A'), att(two.id, '2026-11-01T00:00:00Z', 'C')], qs);
+    expect(r.get(one.id)).toBe(true);
+    expect(r.get(two.id)).toBe(false);
+    expect(r.size).toBe(2);
   });
 });

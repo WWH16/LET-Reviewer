@@ -1,12 +1,12 @@
-/* Hallmark · shape: app screen · genre: modern-minimal · theme: Kumo components, monochrome (by request; @cloudflare/kumo 2.18.1, its tokens pointed at a black, white and grey palette), the Dose faces kept · redesign: full
- * nav: side menu at 60rem and up (six destinations, the side menu the user chose from the Cloudflare dashboard mockup), a bottom tab bar below it · signature: one inverse tile per screen holding the figure it exists for, Today on Home, the projected rating on Progress, the score on Mock results; answer choices as Kumo cards, grey with a dark ring when chosen, the checked answer in a dark ring with a check, a wrong pick in a mid-grey ring with a cross · states: loading, empty, full
- * axes: light/grotesk-sans/monochrome · posture: quiet · contrast: pass · modes: light+dark · v2.0.0 */
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: exam-prep light, after the Pocket Prep apps (by request: their structure, flows and look; our own name, mark and palette) on Kumo components 2.18.1, the Dose faces kept · redesign: full
+ * nav: four tabs (Study, Stats, Review, Settings), a bottom bar on phones and the side menu at 60rem and up · signature: Study's list of quiz modes, each a tinted icon tile, a name and a line; one navy block per screen holding its figure (the quiz bar, the Stats ring, the score) · answers: a blue ring when chosen, green with a check when right, red with a cross when wrong · states: loading, empty, full
+ * axes: light/grotesk-sans/navy-blue with green, red and amber for state · posture: friendly-quiet · contrast: pass · modes: light+dark · v2.0.0 */
 /* Hallmark · waive 7b · surface: absolute on --print-ink and --print-paper only, used inside .paper and @media print · the printed booklet and answer sheet need pure black toner on white bond, and the corner markers must scan */
-/* Hallmark · dismissed 41 · --color-success-fill is close to --color-ink on purpose in a monochrome palette; the check icon on it takes --color-card, not ink */
+/* Hallmark · dismissed 41 · the state fills (green, red, amber) carry icons in --color-card, never text in ink; every text pair is in contrast.test.ts */
 /* Hallmark · dropped setSheetOpen(false), removeQuestion(q.id), removeBatch(removing · rewritten, not removed: the sheet's Close now calls closeSheet (it also returns focus), and both removes now announce an Undo */
 /* Hallmark · answered F4 · buttons are Kumo's own classes (src/ui/btn.ts): one primary per screen, secondary for the rest, ghost for quiet links; aria-pressed is a toggle on the secondary */
-/* Hallmark · answered F7 · surfaces follow one ladder, not one recipe: tiles at 16px with the card shadow, action tiles one shadow higher, wells flat inside tiles, one inverse tile per screen; choices and feedback keep Kumo's 12px card; inputs share Kumo's one input recipe because they are one role */
-/* Hallmark · pre-emit critique: P4 H3 E4 S3 R4 V4 · weakest: S, Kumo is a shared product chrome by design; the answer cards are the one object the app is known by */
+/* Hallmark · answered F7 · surfaces follow one ladder: white cards at 16px with the card shadow on a cool grey ground, flat wells inside them, one navy block per screen; choices and feedback keep Kumo's 12px card; inputs share Kumo's one input recipe because they are one role */
+/* Hallmark · pre-emit critique: P4 H4 E4 S3 R4 V4 · weakest: S, the look follows a named reference by request; the quiz-mode list and the navy quiz bar are the objects the app is known by */
 @import '@cloudflare/kumo/styles/kumo-standalone';
 @import url('./tokens.css');
 @import url('./base.css');
@@ -54,8 +54,6 @@ form [role='status'] p {
   line-height: 1.5;
 }
 .num,
-.tray-figure,
-.stat-tile,
 .exam-bar,
 .score,
 .meta,
@@ -159,7 +157,6 @@ form [role='status'] p {
   background: var(--color-paper-2);
   font-size: var(--text-base);
 }
-.tray,
 .tile-inverse {
   background: var(--color-inverse);
   color: var(--color-inverse-ink);
@@ -175,39 +172,11 @@ form [role='status'] p {
   --color-kumo-line: color-mix(in oklab, var(--color-inverse-ink) 35%, transparent);
   --text-color-kumo-default: var(--color-inverse-ink);
 }
-:is(.tray, .tile-inverse) :is(.muted, .meta, .display-unit, .label) {
+.tile-inverse :is(.muted, .meta, .display-unit, .label) {
   color: var(--color-inverse-muted);
 }
-:is(.tray, .tile-inverse) :focus-visible {
+.tile-inverse :focus-visible {
   outline-color: var(--color-inverse-ink);
-}
-a.tile-action {
-  text-decoration: none;
-  box-shadow: var(--shadow-raised);
-}
-a.tile-action:hover {
-  background: var(--color-paper-2);
-}
-a.tile-action:active {
-  scale: 0.98;
-}
-@media (prefers-reduced-motion: no-preference) {
-  a.tile-action {
-    transition: scale var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out);
-  }
-}
-/* A choice that is not available now: flat and grey, sunk below the raised action beside it. */
-.tile-quiet {
-  background: var(--color-paper-2);
-  box-shadow: none;
-  color: var(--color-muted);
-}
-.tile-title {
-  font-family: var(--font-display);
-  font-size: var(--text-xl);
-  font-weight: 700;
-  letter-spacing: var(--tracking-display);
-  line-height: 1.15;
 }
 /* A list inside a tile gives up its own surface: the tile is the card. */
 .tile .list {
@@ -221,9 +190,8 @@ a.tile-action:active {
   max-width: var(--measure-app);
 }
 
-/* ---------- Bento: blocks of different weight on one grid ----------
-   Phones: two columns, each block full width unless it is half of a pair.
-   60rem and up: six columns; a block takes the span its content needs. */
+/* ---------- Bento: Mock results only, the score beside the rating and pacing ----------
+   Phones: one column. 60rem and up: six columns, each block three wide. */
 .bento {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -232,39 +200,20 @@ a.tile-action:active {
 .bento > * {
   grid-column: 1 / -1;
 }
-.bento > .pair {
-  grid-column: span 1;
-}
 @media (min-width: 60rem) {
   .bento {
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
-  .bento > .span-2 {
-    grid-column: span 2;
-  }
   .bento > .span-3 {
     grid-column: span 3;
-  }
-  .bento > .span-4 {
-    grid-column: span 4;
   }
   .bento > .rows-2 {
     grid-row: span 2;
   }
 }
 
-/* Progress: the projected rating is the screen's dark banner. On a wide screen the figure and its
-   sentence sit on the left and the floor warnings on the right, instead of one long column. */
-@media (min-width: 60rem) {
-  .progress-rating {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    column-gap: var(--space-xl);
-    align-items: start;
-  }
-}
 /* Option cards: a radio choice that needs a sentence to explain each side (the mock's form). Flat grey
-   at rest, a white face with an ink ring when chosen. */
+   at rest, a blue tint with a blue ring when chosen. */
 .options {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
@@ -291,8 +240,8 @@ a.tile-action:active {
   }
 }
 .option:has(input:checked) {
-  background: var(--color-card);
-  box-shadow: inset 0 0 0 2px var(--color-ink);
+  background: var(--color-accent-soft);
+  box-shadow: inset 0 0 0 2px var(--color-accent);
 }
 .option:has(input:focus-visible) {
   outline: 2px solid var(--color-focus);
@@ -407,7 +356,6 @@ a.brand {
   border-radius: 6px;
   background: var(--color-accent);
 }
-.top-settings,
 .nav a {
   display: flex;
   align-items: center;
@@ -419,33 +367,24 @@ a.brand {
   white-space: nowrap;
   transition: background-color var(--dur-micro) var(--ease-out);
 }
-a.top-settings,
 .nav a {
   text-decoration: none;
 }
-.top-settings {
-  min-height: 44px;
-  margin-left: auto;
-  padding-inline: var(--space-sm);
-}
-.top-settings svg,
 .nav a svg {
   color: var(--color-muted);
 }
-.top-settings:hover,
 .nav a:hover {
   background: var(--color-paper-2);
 }
-.top-settings:active,
 .nav a:active {
   background: var(--color-paper-3);
 }
-.top-settings[aria-current='page'],
+/* The current tab is the blue one, label and icon both, as in a phone exam-prep app. */
 .nav a[aria-current='page'] {
-  background: var(--color-paper-2);
-  font-weight: 500;
+  background: var(--color-accent-soft);
+  color: var(--color-accent-text);
+  font-weight: 600;
 }
-.top-settings[aria-current='page'] svg,
 .nav a[aria-current='page'] svg {
   color: var(--color-accent-text);
 }
@@ -456,12 +395,6 @@ a.top-settings,
   border-radius: 50%;
   background: var(--print-paper);
   box-shadow: 0 0 0 1px var(--color-line);
-}
-/* A long name stops short of the menu instead of pushing the top bar sideways. */
-.top-name {
-  max-inline-size: 10rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 .avatar-pick {
   display: grid;
@@ -483,8 +416,8 @@ a.top-settings,
   box-shadow: inset 0 0 0 1px var(--color-line);
 }
 .tile .avatar-pick:has(input:checked) {
-  background: var(--color-paper-2);
-  box-shadow: inset 0 0 0 2px var(--color-ink);
+  background: var(--color-accent-soft);
+  box-shadow: inset 0 0 0 2px var(--color-accent);
 }
 /* Profile: the avatar is the large thing, the fields sit beside it (below it on a phone). */
 .profile {
@@ -517,12 +450,6 @@ a.top-settings,
 }
 .profile-summary[open] > summary {
   margin-block-end: var(--space-lg);
-}
-/* Home's stat-tile link: a full touch target, not a 22px line of text. */
-.stat-link {
-  display: inline-flex;
-  align-items: center;
-  min-block-size: 44px;
 }
 .part-strips {
   padding-block-start: var(--space-sm);
@@ -585,7 +512,7 @@ a.top-settings,
   transform-origin: 50% 46%;
 }
 .part-option:has(input:checked) .part-thumb {
-  outline: 2px solid var(--color-ink);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 /* Swatches: a 32px disc in a 40px target, the same reach as the app's buttons. */
@@ -764,8 +691,8 @@ main.wide {
     display: none;
   }
 }
-/* The primary is Kumo's secondary button with the darkest fill. Kumo's own primary forces a white label,
-   which the light dark-mode fill cannot carry, so the label colour comes in through Kumo's text token. */
+/* The primary is Kumo's secondary button in the action blue. Kumo's own primary forces a white label,
+   which the light blue of dark mode cannot carry, so the label colour comes in through Kumo's text token. */
 .btn-primary {
   --text-color-kumo-default: var(--color-button-ink);
   background: var(--color-button);
@@ -1099,7 +1026,7 @@ legend {
   background: var(--color-card);
   box-shadow: var(--shadow-card);
 }
-/* The result line after Check answer: a Kumo badge, dark when right, mid grey when not (never red), always with its word. */
+/* The result line after Check answer: green with a check when right, red with a cross when not, always with its word. */
 .stamp {
   display: inline-flex;
   align-items: center;
@@ -1255,6 +1182,22 @@ summary.label {
   align-items: center;
   gap: var(--space-xs);
 }
+/* A flex summary loses the browser's triangle, so it draws its own chevron, turned when open. */
+summary.label::after {
+  content: '';
+  width: 0.45em;
+  height: 0.45em;
+  margin-inline-start: var(--space-2xs);
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-0.15em) rotate(45deg);
+}
+details[open] > summary.label::after {
+  transform: translateY(0.1em) rotate(225deg);
+}
+summary.label::-webkit-details-marker {
+  display: none;
+}
 details > summary:hover {
   color: var(--color-accent-text);
 }
@@ -1340,92 +1283,481 @@ dialog::backdrop {
   color: var(--color-muted);
 }
 
-/* ---------- Home: today's card ---------- */
+/* The way up from a screen reached through a tab: a chevron pointing back and the tab's name. */
+.back {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: var(--space-2xs);
+  min-height: 44px;
+  margin-block: calc(-1 * var(--space-sm)) calc(-1 * var(--space-md));
+  color: var(--color-accent-text);
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+a.back {
+  text-decoration: none;
+}
+.back svg {
+  transform: scaleX(-1);
+}
 
-.tray {
+/* ---------- Study: the greeting, this week, the quiz modes ---------- */
+
+.greet {
   display: grid;
-  align-content: start;
   gap: var(--space-md);
   padding: var(--pad-card);
   border-radius: var(--radius-tile);
+  background: var(--color-card);
   box-shadow: var(--shadow-card);
 }
-/* Home: phones read it top to bottom, with the two small figures side by side. On laptops the Today card
-   is the four-column mass on the left; beside it the two small figures pair up over the rating and any
-   backup note; the activity grid, a timeline, runs the full width under them. */
-@media (min-width: 60rem) {
-  .home {
-    grid-template-areas:
-      'today today today today exam  long'
-      'today today today today rate  rate'
-      'today today today today note  note'
-      'heat  heat  heat  heat  heat  heat';
-    align-items: start;
-  }
-  .home > * {
-    grid-column: auto;
-  }
-  /* With a backup note, the note takes a full-width row of its own, so the Today card ends at the
-     rating instead of stretching a dark band down beside the note. */
-  .home:has(> .notice) {
-    grid-template-areas:
-      'today today today today exam  long'
-      'today today today today rate  rate'
-      'note  note  note  note  note  note'
-      'heat  heat  heat  heat  heat  heat';
-  }
-  .home > .tray {
-    grid-area: today;
-    align-self: stretch;
-    align-content: space-between;
-  }
-  .home > .tray .display {
-    font-size: calc(var(--text-figure) * 1.6);
-  }
-  .home > .home-exam {
-    grid-area: exam;
-  }
-  .home > .rating {
-    grid-area: rate;
-  }
-  .home > .notice {
-    grid-area: note;
-  }
-  .home > .streak {
-    grid-area: heat;
-  }
-  .home > .home-long {
-    grid-area: long;
-  }
-  .home > :is(.home-exam, .home-long) {
-    align-self: stretch;
-  }
-}
-.tray h2 {
-  font-size: var(--text-lg);
-}
-.tray-figure {
+.greet-head {
   display: flex;
-  align-items: baseline;
-  gap: var(--space-sm);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
 }
-/* A small figure tile: its label, then the figure. */
-.stat-tile {
+.greet-title {
+  font-size: var(--text-h1);
+  letter-spacing: var(--tracking-display);
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+.greet-avatar {
+  flex: none;
+  border-radius: 50%;
+}
+.week {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm) var(--space-md);
+}
+.week-days {
+  display: grid;
+  grid-template-columns: repeat(7, 2.25rem);
   gap: var(--space-2xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.week-day {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3xs);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+}
+.week-dot {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: var(--color-paper-2);
+  color: var(--color-muted);
+}
+.week-day.is-done .week-dot {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+}
+.week-day[aria-current] .week-dot {
+  box-shadow: 0 0 0 2px var(--color-card), 0 0 0 4px var(--color-accent);
+}
+.week-day[aria-current] .week-name {
+  color: var(--color-accent-text);
+  font-weight: 600;
+}
+.week-streak {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
   font-size: var(--text-base);
 }
-.stat-tile .label {
-  color: var(--color-muted);
-  font-weight: 400;
+.week-streak svg {
+  color: var(--tone-amber);
 }
-.stat-figure {
+/* An exam left open: the one navy block on Study, so the way back in is the first thing seen. */
+.resume {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--pad-card);
+  border-radius: var(--radius-tile);
+  background: var(--color-inverse);
+  color: var(--color-inverse-ink);
+  box-shadow: var(--shadow-raised);
+  text-decoration: none;
+}
+.resume .meta {
+  color: var(--color-inverse-muted);
+}
+a.resume,
+a.mode {
+  text-decoration: none;
+}
+.resume-title {
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+.resume:focus-visible {
+  outline-color: var(--color-accent);
+}
+/* The quiz modes: one list, one row each, an icon tile, a name, a line and a chevron. */
+.modes {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  list-style: none;
+  border-radius: var(--radius-tile);
+  background: var(--color-card);
+  box-shadow: var(--shadow-card);
+}
+.modes > li + li {
+  border-top: 1px solid var(--color-rule);
+}
+.mode {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  min-height: 4.25rem;
+  padding: var(--space-sm) var(--space-md);
+  color: var(--color-ink);
+  text-decoration: none;
+}
+a.mode:hover {
+  background: var(--color-paper);
+}
+a.mode:active {
+  background: var(--color-paper-2);
+}
+a.mode:focus-visible {
+  outline-offset: -2px;
+}
+.mode > svg:last-child {
+  flex: none;
+  color: var(--color-muted);
+}
+.mode-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-control);
+}
+.mode-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-3xs);
+  min-width: 0;
+}
+.mode-name {
+  font-weight: 600;
+}
+.mode-count {
+  flex: none;
+  min-width: 1.75rem;
+  padding: var(--space-3xs) var(--space-xs);
+  border-radius: var(--radius-pill);
+  background: var(--color-error-tint);
+  color: var(--color-error);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-align: center;
+}
+.mode.is-idle {
+  color: var(--color-muted);
+}
+.mode.is-idle .mode-icon {
+  opacity: 0.55;
+}
+.tone-amber {
+  background: var(--tone-amber-bg);
+  color: var(--tone-amber);
+}
+.tone-blue {
+  background: var(--tone-blue-bg);
+  color: var(--tone-blue);
+}
+.tone-red {
+  background: var(--tone-red-bg);
+  color: var(--tone-red);
+}
+.tone-violet {
+  background: var(--tone-violet-bg);
+  color: var(--tone-violet);
+}
+.tone-teal {
+  background: var(--tone-teal-bg);
+  color: var(--tone-teal);
+}
+.tone-slate {
+  background: var(--tone-slate-bg);
+  color: var(--tone-slate);
+}
+.tone-navy {
+  background: var(--tone-navy-bg);
+  color: var(--tone-navy);
+}
+/* ---------- Review: the tabs with counts ---------- */
+
+/* Each tab is its name over its count; the chosen one is blue with a bar under it. The row scrolls
+   sideways on a phone rather than wrapping into a second row of tabs. */
+.review-tabs {
+  display: flex;
+  gap: var(--space-2xs);
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--color-rule);
+}
+.review-tabs button {
+  display: grid;
+  justify-items: center;
+  flex: none;
+  min-height: 44px;
+  padding: var(--space-xs) var(--space-sm);
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: none;
+  color: var(--color-muted);
+  font: inherit;
+  font-size: var(--text-sm);
+  line-height: 1.3;
+  cursor: pointer;
+}
+.review-tabs button .num {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-ink);
+}
+.review-tabs button:hover {
+  color: var(--color-ink);
+}
+.review-tabs button[aria-pressed='true'] {
+  border-bottom-color: var(--color-accent);
+  color: var(--color-accent-text);
+  font-weight: 600;
+}
+.review-tabs button[aria-pressed='true'] .num {
+  color: var(--color-accent-text);
+}
+.review-tabs button:focus-visible {
+  outline-offset: -2px;
+}
+
+/* ---------- Stats: the ring, the subject scores ---------- */
+
+.stats-hero {
+  justify-items: center;
+  align-items: center;
+  text-align: center;
+}
+.gauge {
+  position: relative;
+  width: min(12rem, 60vw);
+  aspect-ratio: 1;
+}
+.gauge svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(135deg);
+}
+.gauge circle {
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+}
+.gauge-track {
+  stroke: var(--color-inverse-tint);
+}
+.gauge-fill {
+  stroke: var(--color-inverse-ink);
+}
+.gauge.is-pass .gauge-fill {
+  stroke: var(--color-success-fill);
+}
+.gauge.is-mid .gauge-fill {
+  stroke: var(--color-warning-fill);
+}
+.gauge.is-low .gauge-fill {
+  stroke: var(--color-error-fill);
+}
+.gauge-text {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--space-3xs);
+}
+.gauge-figure {
   font-family: var(--font-display);
-  font-size: var(--text-stat);
-  line-height: 1.1;
+  font-size: calc(var(--text-figure) * 1.25);
   font-weight: 700;
   letter-spacing: var(--tracking-display);
+  line-height: 1;
   font-variant-numeric: tabular-nums;
 }
+.gauge-label {
+  font-size: var(--text-sm);
+  color: var(--color-inverse-muted);
+}
+.stats-count {
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+/* Subject scores: a name and its figure, a bar coloured by the LET's own lines, a line of detail. */
+.subjects {
+  display: grid;
+  gap: var(--space-lg);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.subject {
+  display: grid;
+  gap: var(--space-xs);
+}
+.subject-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+.subject-name {
+  font-weight: 600;
+}
+.subject-pct {
+  font-weight: 700;
+}
+.meter.is-pass > span {
+  background: var(--color-success-fill);
+}
+.meter.is-mid > span {
+  background: var(--color-warning-fill);
+}
+.meter.is-low > span {
+  background: var(--color-error-fill);
+}
+
+/* ---------- Quiz: the navy bar, its segments, the close button, the count and the clock ---------- */
+
+.quiz-bar {
+  display: grid;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md) var(--space-xs);
+  border-radius: var(--radius-tile);
+  background: var(--color-inverse);
+  color: var(--color-inverse-ink);
+}
+.quiz-steps {
+  display: flex;
+  gap: var(--space-2xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.quiz-steps > li {
+  flex: 1;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--color-inverse-tint);
+}
+.quiz-steps > .is-now {
+  background: var(--color-inverse-ink);
+}
+.quiz-steps > .is-right {
+  background: var(--color-success-fill);
+}
+.quiz-steps > .is-wrong {
+  background: var(--color-error-fill);
+}
+.quiz-row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-xs);
+}
+.quiz-close {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-inline-start: calc(-1 * var(--space-xs));
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  color: var(--color-inverse-ink);
+  cursor: pointer;
+}
+.quiz-close:hover {
+  background: var(--color-inverse-tint);
+}
+.quiz-close:focus-visible,
+.quiz-count:focus-visible {
+  outline-color: var(--color-inverse-ink);
+}
+.quiz-count {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 600;
+  text-align: center;
+}
+.quiz-timer {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  min-width: 44px;
+  justify-content: flex-end;
+  font-weight: 600;
+}
+.quiz-timer.is-low {
+  color: var(--color-warning-fill);
+}
+/* Results: the score in the navy block. */
+.quiz-score .display {
+  font-size: calc(var(--text-figure) * 1.4);
+}
+/* A reviewed question: its status icon (green check, red cross, amber flag), then the question. */
+.review-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--space-sm);
+  row-gap: var(--space-2xs);
+  align-items: start;
+}
+.review-row > :not(.review-status) {
+  grid-column: 2;
+}
+.review-status {
+  display: grid;
+  place-items: center;
+  grid-row: span 3;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-top: var(--space-3xs);
+  border-radius: 50%;
+  color: var(--color-card);
+}
+.review-status.is-right {
+  background: var(--color-success-fill);
+}
+.review-status.is-wrong {
+  background: var(--color-error-fill);
+}
+.review-status.is-flag {
+  background: var(--color-warning-fill);
+}
+.review-status.is-new {
+  background: var(--color-paper-3);
+  color: var(--color-muted);
+}
+
 
 /* ---------- Streak card: the flame, the count and the activity grid ---------- */
 
@@ -1813,7 +2145,9 @@ dialog.command input:focus-visible {
     --radius-tile: 22px;
   }
   .card,
-  .tray,
+  .greet,
+  .modes,
+  .resume,
   .choice,
   .feedback,
   .notice,

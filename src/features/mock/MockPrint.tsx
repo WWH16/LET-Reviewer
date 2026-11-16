@@ -31,7 +31,7 @@ export function MockPrint() {
   const minutes = Math.round(exam.timeLimitMin ?? PARTS[exam.part].minutes);
 
   return (
-    <Page title={`Print ${exam.label}`} wide>
+    <Page title={`Print ${exam.label}`} wide back={{ to: '/mock', label: 'Mock exam' }}>
       <style>{`@page { size: ${size.css}; margin: 10mm; @bottom-center { content: "${exam.label}, page " counter(page) " of " counter(pages); font: 9pt sans-serif; } }`}</style>
 
       <div className="stack no-print">

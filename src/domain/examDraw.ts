@@ -32,6 +32,18 @@ export function shuffle<T>(list: T[], rng: () => number = Math.random): T[] {
   return a;
 }
 
+/**
+ * Question of the Day: one gradable question, the same all day and different the next. A small string
+ * hash of the day picks from the question ids in a fixed order, so it needs no saved state.
+ */
+export function questionOfTheDay(day: string, questions: Iterable<Question>): string | null {
+  const ids = [...questions].filter(gradable).map((q) => q.id).sort();
+  if (!ids.length) return null;
+  let h = 0;
+  for (const c of day) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return ids[h % ids.length];
+}
+
 /** Largest-remainder split of n items by weight. */
 export function quotas(weights: readonly number[], n: number): number[] {
   const total = weights.reduce((s, w) => s + w, 0) || 1;

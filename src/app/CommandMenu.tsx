@@ -2,13 +2,15 @@ import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const COMMANDS = [
-  { label: 'Home', to: '/' },
-  { label: 'Practice by topic', to: '/drill' },
+  { label: 'Study', to: '/' },
+  { label: 'Question of the Day', to: '/session?mode=qotd' },
   { label: 'Quick 10', to: '/session?mode=quick' },
-  { label: 'Review mistakes', to: '/review' },
+  { label: 'Missed questions', to: '/review' },
+  { label: 'Timed quiz', to: '/session?mode=timed' },
+  { label: 'Build your own', to: '/drill' },
   { label: 'Mock exam', to: '/mock' },
-  { label: 'Progress', to: '/progress' },
-  { label: 'Bank', to: '/bank' },
+  { label: 'Stats', to: '/progress' },
+  { label: 'Review', to: '/bank' },
   { label: 'Import questions', to: '/bank/import' },
   { label: 'Settings', to: '/settings' },
 ];
