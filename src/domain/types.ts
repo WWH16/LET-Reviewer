@@ -95,6 +95,8 @@ export interface Settings {
   textSize: 100 | 115 | 130;
   shortcuts: boolean;
   strictSheet: boolean;
+  /** Digital mocks: show one item per screen instead of the whole booklet. */
+  oneAtATime: boolean;
   updatedAt: string;
   deleted: false;
 }
@@ -109,6 +111,7 @@ export const DEFAULT_SETTINGS: Settings = {
   textSize: 100,
   shortcuts: true,
   strictSheet: false,
+  oneAtATime: false,
   updatedAt: '1970-01-01T00:00:00.000Z',
   deleted: false,
 };

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { ChoiceGroup } from '../../ui/ChoiceGroup';
+import { Stem } from '../../ui/Stem';
 import { useExam, useExams, useQuestionMap, useSettings } from '../../db/hooks';
 import { formatClock } from '../../domain/dates';
 import { LEVEL_WEIGHTS, PARTS, PART_FLOOR, paceMs } from '../../domain/let-config';
@@ -164,9 +165,7 @@ export function MockResults() {
                   {chosen === null ? ', unanswered' : chosen === q.answer ? ', correct' : ', wrong'}
                   {exam.flags.includes(n) ? ', flagged' : ''}
                 </h3>
-                <p id={`mr-s-${n}`} lang={q.lang} className="stem">
-                  {q.stem}
-                </p>
+                <Stem id={`mr-s-${n}`} lang={q.lang} text={q.stem} />
                 <ChoiceGroup name={`mr-${n}`} labelledBy={`mr-s-${n}`} lang={q.lang} choices={q.choices} value={chosen} locked correct={q.answer} />
                 <p lang={q.lang}>
                   {q.explanation || 'No explanation saved.'}

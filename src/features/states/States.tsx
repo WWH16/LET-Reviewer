@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Page } from '../../ui/Page';
 import { Chip, StatusChip } from '../../ui/Chip';
 import { ChoiceGroup } from '../../ui/ChoiceGroup';
+import { Stem } from '../../ui/Stem';
 import { Dialog } from '../../ui/Dialog';
 import { BubbleGrid } from '../../ui/BubbleGrid';
 import { useAnnounce } from '../../ui/Status';
@@ -47,7 +48,11 @@ export function States() {
         'Type',
         <div className="stack-sm">
           <p className="display num">74.2%</p>
-          <p className="stem">Which level of Bloom&rsquo;s taxonomy asks learners to judge the value of an idea?</p>
+          <Stem
+            text={
+              'Teacher Ana ends each unit by asking her Grade 6 class to compare two solutions to the same problem and defend the better one in writing. She grades the defence, not the choice.\n\nWhich level of Bloom\u2019s taxonomy is she assessing?'
+            }
+          />
           <p className="muted">Muted secondary text, 4.5:1 or better.</p>
           <p className="row">
             <span className="timer">01:59:42</span>

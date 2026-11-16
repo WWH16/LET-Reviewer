@@ -1,12 +1,14 @@
 import { memo, useCallback, useEffect, useRef, useState, type MutableRefObject, type PointerEvent as ReactPointerEvent } from 'react';
+import { flushSync } from 'react-dom';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { ChoiceGroup } from '../../ui/ChoiceGroup';
+import { Stem } from '../../ui/Stem';
 import { BubbleGrid } from '../../ui/BubbleGrid';
 import { Dialog } from '../../ui/Dialog';
 import { Icon } from '../../ui/Icon';
 import { useExam, useExamQuestions, useSettings } from '../../db/hooks';
-import { answerExam, gradeExam, toggleExamFlag, updateExam } from '../../db/repo';
+import { answerExam, gradeExam, saveSettings, toggleExamFlag, updateExam } from '../../db/repo';
 import { formatClock } from '../../domain/dates';
 import { PARTS } from '../../domain/let-config';
 import type { Key, MockExam as Exam, Question } from '../../domain/types';
@@ -124,9 +126,7 @@ const Item = memo(function Item({
           <Icon name="flag" /> {flagged ? 'Flagged' : 'Flag'}
         </button>
       </div>
-      <p id={`item-s-${n}`} lang={q.lang} className="stem">
-        {q.stem}
-      </p>
+      <Stem id={`item-s-${n}`} lang={q.lang} text={q.stem} />
       {q.media && <p className="notice">Figure: {q.media.alt}</p>}
       {strict ? (
         <ol className="plain-choices" lang={q.lang}>
@@ -213,6 +213,8 @@ export function MockExam() {
     },
   };
   const [restored, setRestored] = useState<string | null>(null);
+  // One-at-a-time view: the item on screen. Until she moves, it is the first item with no answer.
+  const [picked, setAt] = useState<number | null>(null);
   const submitting = useRef(false);
 
   // The clock reads this on its first render, so it is set here and not in an effect.
@@ -268,9 +270,14 @@ export function MockExam() {
   const answered = Object.keys(exam.answers).length;
   const unanswered = total - answered;
 
+  const one = settings.oneAtATime;
+  const firstOpen = exam.itemIds.findIndex((_, i) => !(String(i + 1) in exam.answers));
+  const at = Math.min(total, picked ?? (firstOpen === -1 ? total : firstOpen + 1));
   const goTo = (n: number) => {
     setSheetOpen(false);
     cursor.current = n;
+    // The item must be on the page before it can take focus.
+    if (one) flushSync(() => setAt(n));
     const h = document.getElementById(`item-h-${n}`);
     h?.scrollIntoView({ block: 'start' });
     h?.focus({ preventScroll: true });
@@ -288,6 +295,7 @@ export function MockExam() {
       count={total}
       answers={exam.answers}
       flags={exam.flags}
+      current={one ? at : undefined}
       onSelect={onAnswer}
     />
   );
@@ -299,6 +307,9 @@ export function MockExam() {
       </button>
       <button type="button" className={btn.secondary} onClick={() => nextWhere((n) => exam.flags.includes(n))} disabled={!exam.flags.length}>
         Next flagged
+      </button>
+      <button type="button" className={btn.secondary} aria-pressed={one} onClick={() => saveSettings({ oneAtATime: !one })}>
+        One at a time
       </button>
     </>
   );
@@ -345,9 +356,9 @@ export function MockExam() {
 
       <div className="exam">
         <div className="booklet">
-          {exam.itemIds.map((qid, i) => {
+          {(one ? [exam.itemIds[at - 1]] : exam.itemIds).map((qid, i) => {
             const q = qmap.get(qid);
-            const n = i + 1;
+            const n = one ? at : i + 1;
             return q ? (
               <Item
                 key={qid}
@@ -366,6 +377,19 @@ export function MockExam() {
               </section>
             );
           })}
+          {one && (
+            <div className="spread item-nav">
+              <button type="button" className={btn.secondary} disabled={at <= 1} onClick={() => goTo(at - 1)}>
+                Previous
+              </button>
+              <span className="label">
+                Item <span className="num">{at}</span> of <span className="num">{total}</span>
+              </span>
+              <button type="button" className={btn.primary} disabled={at >= total} onClick={() => goTo(at + 1)}>
+                Next
+              </button>
+            </div>
+          )}
         </div>
         <aside
           ref={sheetRef}

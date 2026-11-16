@@ -1,23 +1,23 @@
 [
   {
     "area": "ProfEd", "subarea": "Assessment of Learning", "topic": "Table of Specifications", "lang": "en",
-    "stem": "A teacher wants her test items to match the time she spent on each lesson. Which should she prepare first?",
-    "choices": [{"key":"A","text":"A scoring rubric"},{"key":"B","text":"A table of specifications"},{"key":"C","text":"An item analysis"},{"key":"D","text":"A class record"}],
+    "stem": "Ms. Santos is writing the second quarter examination for her Grade 8 Science class. She spent twelve days on heredity, six days on biodiversity, and only two days on ecosystems. She wants the number of items on each topic to reflect the time she spent teaching it, and she also wants a spread of easy, average, and difficult items.\n\nWhich should she prepare first, before writing any test item?",
+    "choices": [{"key":"A","text":"A scoring rubric that describes each level of performance"},{"key":"B","text":"A table of specifications that allots items to each topic and skill level"},{"key":"C","text":"An item analysis that shows the difficulty of each question"},{"key":"D","text":"A class record that lists each learner's scores for the quarter"}],
     "answer": "B",
-    "explanation": "B is correct: a table of specifications allots items to each objective in proportion to the time spent on it. A rubric scores performance, an item analysis comes after the test is given, and a class record stores grades.",
+    "explanation": "B is correct: a table of specifications allots items to each objective in proportion to the time spent on it, and across levels of difficulty. A rubric scores performance, an item analysis comes after the test is given, and a class record stores grades.",
     "source": "review-center", "sourceRef": "Sample set, #1", "status": "verified", "media": null, "tags": ["sample"]
   },
   {
     "area": "ProfEd", "subarea": "Assessment of Learning", "topic": "Item Analysis", "lang": "en",
-    "stem": "An item was answered correctly by 90% of the upper group and 85% of the lower group. What does this say about the item?",
-    "choices": [{"key":"A","text":"It discriminates well."},{"key":"B","text":"It is very difficult."},{"key":"C","text":"It discriminates poorly."},{"key":"D","text":"It discriminates negatively."}],
+    "stem": "After a periodical test, Mr. Cruz ranked his 60 learners by total score and compared the top 27% with the bottom 27%. On item 14, 90% of the upper group and 85% of the lower group chose the correct answer. He is deciding whether to keep the item in his test bank for next year.\n\nWhat does the result say about item 14?",
+    "choices": [{"key":"A","text":"It discriminates well between high and low scorers, so it should be kept as it is."},{"key":"B","text":"It is very difficult, so it should be given only to advanced sections."},{"key":"C","text":"It discriminates poorly between high and low scorers, so it should be revised."},{"key":"D","text":"It discriminates negatively, so its answer key is probably wrong."}],
     "answer": "C",
     "explanation": "C is correct: the discrimination index is 0.90 - 0.85 = 0.05, which is poor. The item is easy, not difficult (B). A negative index (D) would need the lower group to score higher.",
     "source": "review-center", "sourceRef": "Sample set, #2", "status": "verified", "media": null, "tags": ["sample"]
   },
   {
     "area": "ProfEd", "subarea": "Facilitating Learning", "topic": "Piaget", "lang": "en",
-    "stem": "A child insists that a tall, thin glass holds more water than a short, wide glass with the same amount. Which ability has the child not yet developed?",
+    "stem": "During a Kindergarten activity, Teacher Liza pours the same amount of water into two identical glasses, and five-year-old Paolo agrees that they hold the same amount. She then pours the water from one glass into a taller, thinner glass while Paolo watches. Paolo now insists that the tall glass has more water, even after she pours it back and repeats the demonstration.\n\nAccording to Piaget, which ability has Paolo not yet developed?",
     "choices": [{"key":"A","text":"Object permanence"},{"key":"B","text":"Conservation"},{"key":"C","text":"Abstract reasoning"},{"key":"D","text":"Symbolic play"}],
     "answer": "B",
     "explanation": "B is correct: conservation, the idea that quantity stays the same when shape changes, develops in Piaget's concrete operational stage. Object permanence and symbolic play appear earlier, and abstract reasoning later.",
@@ -25,39 +25,39 @@
   },
   {
     "area": "ProfEd", "subarea": "Facilitating Learning", "topic": "Vygotsky", "lang": "en",
-    "stem": "The gap between what a learner can do alone and what she can do with guidance is called the:",
-    "choices": [{"key":"A","text":"Zone of proximal development"},{"key":"B","text":"Scaffold"},{"key":"C","text":"Schema"},{"key":"D","text":"Hierarchy of needs"}],
+    "stem": "Grade 3 pupil Mika cannot yet solve two-step word problems when she works alone. When her teacher sits beside her, asks guiding questions, and has her underline the given numbers, she solves them correctly. Her teacher plans tomorrow's seatwork so that it falls between what Mika can do alone and what she can do with this kind of help.\n\nWhich concept is the teacher applying when she targets that gap?",
+    "choices": [{"key":"A","text":"Zone of proximal development"},{"key":"B","text":"Scaffolding"},{"key":"C","text":"Schema"},{"key":"D","text":"Hierarchy of needs"}],
     "answer": "A",
-    "explanation": "A is correct: Vygotsky's zone of proximal development. Scaffolding is the support given inside that zone, a schema is Piaget's mental structure, and the hierarchy of needs is Maslow's.",
+    "explanation": "A is correct: the gap between what a learner can do alone and with guidance is Vygotsky's zone of proximal development. Scaffolding is the support given inside that zone, a schema is Piaget's mental structure, and the hierarchy of needs is Maslow's.",
     "source": "review-center", "sourceRef": "Sample set, #4", "status": "verified", "media": null, "tags": ["sample"]
   },
   {
     "area": "ProfEd", "subarea": "Principles of Teaching", "topic": "Bloom's Taxonomy", "lang": "en",
-    "stem": "Which task targets the highest level of Bloom's revised taxonomy?",
-    "choices": [{"key":"A","text":"List the parts of a plant cell."},{"key":"B","text":"Explain how photosynthesis works."},{"key":"C","text":"Design an experiment to test which light color makes plants grow fastest."},{"key":"D","text":"Compare plant and animal cells."}],
+    "stem": "Mr. Dela Cruz is planning a Grade 7 unit on plants. His department head reminds him that most of his past objectives stopped at recall, and asks him to include at least one task at the highest level of Bloom's revised taxonomy. He drafts four tasks for the unit.\n\nWhich task targets the highest level of the revised taxonomy?",
+    "choices": [{"key":"A","text":"List the parts of a plant cell and give the function of each."},{"key":"B","text":"Explain in your own words how photosynthesis works."},{"key":"C","text":"Design an experiment to test which light color makes plants grow fastest."},{"key":"D","text":"Compare plant and animal cells using a Venn diagram."}],
     "answer": "C",
     "explanation": "C is correct: designing something new is Creating, the top level of the revised taxonomy. Listing is Remembering, explaining is Understanding, and comparing is Analyzing.",
     "source": "review-center", "sourceRef": "Sample set, #5", "status": "verified", "media": null, "tags": ["sample"]
   },
   {
     "area": "ProfEd", "subarea": "Curriculum Development", "topic": "Types of Curriculum", "lang": "en",
-    "stem": "Lessons that students absorb from school routines and rules, though they appear in no written plan, belong to the:",
+    "stem": "In one public high school, learners line up quietly before entering the room, greet every teacher they pass, and are praised when they finish seatwork ahead of time. None of these appears in the curriculum guide or in any lesson plan. After a few months, the learners have come to value punctuality, obedience, and speed, although no teacher ever taught these as lessons.\n\nTo which type of curriculum do these learnings belong?",
     "choices": [{"key":"A","text":"Written curriculum"},{"key":"B","text":"Hidden curriculum"},{"key":"C","text":"Taught curriculum"},{"key":"D","text":"Assessed curriculum"}],
     "answer": "B",
-    "explanation": "B is correct: the hidden curriculum is learned without being planned or written. The written, taught, and assessed curricula are all deliberate.",
+    "explanation": "B is correct: the hidden curriculum is learned from routines and rules without being planned or written. The written, taught, and assessed curricula are all deliberate.",
     "source": "review-center", "sourceRef": "Sample set, #6", "status": "verified", "media": null, "tags": ["sample"]
   },
   {
     "area": "ProfEd", "subarea": "Educational Technology", "topic": "Dale's Cone of Experience", "lang": "en",
-    "stem": "According to Dale's Cone of Experience, which activity gives the most concrete experience?",
-    "choices": [{"key":"A","text":"Reading a textbook chapter"},{"key":"B","text":"Watching a documentary"},{"key":"C","text":"Going on a field trip"},{"key":"D","text":"Doing a hands-on project with real objects"}],
+    "stem": "Mrs. Garcia is preparing a Grade 5 lesson on how simple machines make work easier. She has a textbook chapter, a short documentary, a possible visit to a nearby construction site, and a box of pulleys, levers, and inclined planes that the learners can assemble themselves. She wants to begin with the activity that gives the most concrete experience.\n\nAccording to Dale's Cone of Experience, which activity should she choose?",
+    "choices": [{"key":"A","text":"Having the learners read the textbook chapter on simple machines"},{"key":"B","text":"Showing the documentary on how machines are used in factories"},{"key":"C","text":"Bringing the class to the construction site to watch machines at work"},{"key":"D","text":"Letting the learners build and use the pulleys, levers, and inclined planes"}],
     "answer": "D",
     "explanation": "D is correct: direct, purposeful experience is the base of the cone. Field trips sit in the middle, films higher, and reading (verbal symbols) at the top.",
     "source": "review-center", "sourceRef": "Sample set, #7", "status": "verified", "media": null, "tags": ["sample"]
   },
   {
     "area": "GenEd", "subarea": "Mathematics", "topic": "Percent", "lang": "en",
-    "stem": "A shirt costs 800 pesos and is sold at 25% off. What is the sale price?",
+    "stem": "A department store is holding a three-day sale before the opening of classes. A school uniform polo shirt that is regularly priced at 800 pesos carries a tag that says \"25% off\". Aling Nena wants to know how much she will pay at the counter for one shirt, before any other charges.\n\nWhat is the sale price of the shirt?",
     "choices": [{"key":"A","text":"200 pesos"},{"key":"B","text":"575 pesos"},{"key":"C","text":"600 pesos"},{"key":"D","text":"625 pesos"}],
     "answer": "C",
     "explanation": "C is correct: 25% of 800 is 200, and 800 - 200 = 600. A is the discount itself.",
@@ -65,23 +65,23 @@
   },
   {
     "area": "GenEd", "subarea": "Mathematics", "topic": "Linear Equations", "lang": "en",
-    "stem": "Solve for x: 3x - 7 = 11",
-    "choices": [{"key":"A","text":"4/3"},{"key":"B","text":"6"},{"key":"C","text":"18"},{"key":"D","text":"3"}],
+    "stem": "At the school canteen, Ben buys three ballpens of the same kind. He hands over a coupon that takes 7 pesos off his total, and he pays the remaining 11 pesos in cash. If x stands for the price of one ballpen in pesos, the situation is described by the equation 3x - 7 = 11.\n\nWhat is the price of one ballpen?",
+    "choices": [{"key":"A","text":"4/3 pesos"},{"key":"B","text":"6 pesos"},{"key":"C","text":"18 pesos"},{"key":"D","text":"3 pesos"}],
     "answer": "B",
     "explanation": "B is correct: add 7 to both sides to get 3x = 18, then divide by 3. C stops before dividing, and A subtracts 7 instead of adding it.",
     "source": "review-center", "sourceRef": "Sample set, #9", "status": "verified", "media": null, "tags": ["sample"]
   },
   {
     "area": "GenEd", "subarea": "Science", "topic": "Cell Biology", "lang": "en",
-    "stem": "Which part of the cell holds most of its genetic material?",
+    "stem": "In a laboratory activity, Grade 7 learners stain onion skin cells and view them under a compound microscope. In each cell they notice a dense, rounded structure that takes up the stain more darkly than the rest. Their teacher explains that this structure directs the cell's activities and passes instructions on to new cells when the cell divides.\n\nWhich part of the cell are the learners looking at?",
     "choices": [{"key":"A","text":"Nucleus"},{"key":"B","text":"Cell membrane"},{"key":"C","text":"Ribosome"},{"key":"D","text":"Vacuole"}],
     "answer": "A",
-    "explanation": "A is correct: the nucleus contains the cell's DNA. The membrane controls what enters and leaves, ribosomes make proteins, and vacuoles store materials.",
+    "explanation": "A is correct: the nucleus contains the cell's DNA and directs its activities. The membrane controls what enters and leaves, ribosomes make proteins, and vacuoles store materials.",
     "source": "review-center", "sourceRef": "Sample set, #10", "status": "verified", "media": null, "tags": ["sample"]
   },
   {
     "area": "GenEd", "subarea": "English", "topic": "Subject-Verb Agreement", "lang": "en",
-    "stem": "Choose the correct sentence.",
+    "stem": "A teacher is editing the class newsletter before it is printed. One article reports on two learners who were given an extra week to complete their science investigatory project. The writer submitted four versions of the same sentence and asked the teacher to keep the one that follows the rules of subject-verb agreement.\n\nWhich sentence should the teacher keep?",
     "choices": [{"key":"A","text":"Neither of the students have finished."},{"key":"B","text":"Neither of the students has finished."},{"key":"C","text":"Neither of the student have finished."},{"key":"D","text":"Neither of the students are finished."}],
     "answer": "B",
     "explanation": "B is correct: \"neither\" is singular, so it takes the singular verb \"has\". A and D use plural verbs, and C also drops the plural \"students\".",
@@ -89,15 +89,15 @@
   },
   {
     "area": "GenEd", "subarea": "Filipino", "topic": "Bahagi ng Pananalita", "lang": "fil",
-    "stem": "Alin sa mga sumusunod ang pang-uri?",
-    "choices": [{"key":"A","text":"tumakbo"},{"key":"B","text":"maganda"},{"key":"C","text":"bahay"},{"key":"D","text":"sa"}],
+    "stem": "Basahin ang pangungusap na isinulat ng isang mag-aaral sa kaniyang sanaysay tungkol sa kanilang pamilya:\n\n\"Maganda ang bahay na itinayo ng mga magulang ni Ana sa tabi ng ilog.\"\n\nAlin sa mga salita sa pangungusap ang pang-uri?",
+    "choices": [{"key":"A","text":"itinayo"},{"key":"B","text":"maganda"},{"key":"C","text":"bahay"},{"key":"D","text":"sa"}],
     "answer": "B",
-    "explanation": "Tama ang B: ang \"maganda\" ay pang-uri dahil naglalarawan ito ng pangngalan. Ang \"tumakbo\" ay pandiwa, ang \"bahay\" ay pangngalan, at ang \"sa\" ay pang-ukol.",
+    "explanation": "Tama ang B: ang \"maganda\" ay pang-uri dahil naglalarawan ito ng pangngalang \"bahay\". Ang \"itinayo\" ay pandiwa, ang \"bahay\" ay pangngalan, at ang \"sa\" ay pang-ukol.",
     "source": "review-center", "sourceRef": "Sample set, #12", "status": "verified", "media": null, "tags": ["sample"]
   },
   {
     "area": "GenEd", "subarea": "Filipino", "topic": "Kasingkahulugan", "lang": "fil",
-    "stem": "Ano ang kasingkahulugan ng salitang \"masipag\"?",
+    "stem": "Si Aling Rosa ay gumigising nang alas-kuwatro ng umaga araw-araw upang magluto ng paninda bago pumasok sa trabaho. Pag-uwi niya sa hapon, tinutulungan pa niya ang kaniyang mga anak sa kanilang takdang-aralin. Dahil dito, kilala siya sa kanilang barangay bilang isang masipag na ina.\n\nAno ang kasingkahulugan ng salitang \"masipag\" ayon sa pagkakagamit nito sa talata?",
     "choices": [{"key":"A","text":"tamad"},{"key":"B","text":"matiyaga"},{"key":"C","text":"mabagal"},{"key":"D","text":"malungkot"}],
     "answer": "B",
     "explanation": "Tama ang B: ang \"matiyaga\" ay malapit ang kahulugan sa \"masipag\". Ang \"tamad\" ay kasalungat nito.",
@@ -105,7 +105,7 @@
   },
   {
     "area": "GenEd", "subarea": "Social Science", "topic": "Philippine Constitution", "lang": "en",
-    "stem": "In what year was the present Philippine Constitution ratified?",
+    "stem": "After the EDSA People Power Revolution, President Corazon Aquino set aside the constitution then in force and governed under a provisional charter. A Constitutional Commission of appointed members drafted a new constitution, which was then submitted to the Filipino people in a nationwide plebiscite. That constitution remains in force today.\n\nIn what year was it ratified?",
     "choices": [{"key":"A","text":"1935"},{"key":"B","text":"1973"},{"key":"C","text":"1986"},{"key":"D","text":"1987"}],
     "answer": "D",
     "explanation": "D is correct: the 1987 Constitution was ratified by plebiscite on 2 February 1987. 1935 and 1973 are earlier constitutions, and 1986 is the year of the EDSA Revolution.",
@@ -113,7 +113,7 @@
   },
   {
     "area": "ProfEd", "subarea": "Foundations of Education", "topic": "Philosophers", "lang": "en",
-    "stem": "Which philosopher held that people learn best by doing and by reflecting on experience?",
+    "stem": "Teacher Mario rarely lectures. In his Grade 9 Technology and Livelihood Education class, learners plan a small vegetable garden, plant it, record what happens each week, and then discuss what they would change next time. He believes that learners understand an idea only when they have worked through it themselves and thought about the result.\n\nWhich philosopher held that people learn best by doing and by reflecting on experience?",
     "choices": [{"key":"A","text":"John Dewey"},{"key":"B","text":"Plato"},{"key":"C","text":"Confucius"},{"key":"D","text":"Thomas Aquinas"}],
     "answer": null,
     "explanation": "",
@@ -121,8 +121,8 @@
   },
   {
     "area": "ProfEd", "subarea": "The Teaching Profession", "topic": "Laws on Teaching", "lang": "en",
-    "stem": "Which law is the Philippine Teachers Professionalization Act of 1994?",
-    "choices": [{"key":"A","text":"RA 4670"},{"key":"B","text":"RA 7836"},{"key":"C","text":"RA 9155"},{"key":"D","text":"RA 10533"}],
+    "stem": "A newly graduated education student asks her former professor why she must pass a licensure examination before she can be hired as a teacher. The professor explains that a law passed in 1994 placed the teaching profession under the Professional Regulation Commission, created the Board for Professional Teachers, and required a licensure examination for teachers.\n\nWhich law is the professor referring to?",
+    "choices": [{"key":"A","text":"RA 4670, the Magna Carta for Public School Teachers"},{"key":"B","text":"RA 7836, the Philippine Teachers Professionalization Act"},{"key":"C","text":"RA 9155, the Governance of Basic Education Act"},{"key":"D","text":"RA 10533, the Enhanced Basic Education Act"}],
     "answer": "B",
     "explanation": "B is correct: RA 7836 created the LET. RA 4670 is the Magna Carta for Public School Teachers, RA 9155 the Governance of Basic Education Act, and RA 10533 the Enhanced Basic Education Act (K to 12).",
     "source": "ai", "sourceRef": "AI from: The Teaching Profession notes", "status": "unverified", "media": null, "tags": ["sample"]

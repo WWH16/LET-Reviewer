@@ -103,6 +103,10 @@ export function Settings() {
           <input type="checkbox" checked={s.strictSheet} onChange={(e) => set({ strictSheet: e.target.checked })} />
           Strict answer sheet: in digital mocks, answer on the bubble sheet only
         </label>
+        <label className="check">
+          <input type="checkbox" checked={s.oneAtATime} onChange={(e) => set({ oneAtATime: e.target.checked })} />
+          One question at a time: in digital mocks, show one item per screen
+        </label>
       </section>
 
       <hr />

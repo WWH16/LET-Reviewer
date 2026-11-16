@@ -5,6 +5,7 @@ import { Page } from '../../ui/Page';
 import { Chip } from '../../ui/Chip';
 import { Icon } from '../../ui/Icon';
 import { ChoiceGroup } from '../../ui/ChoiceGroup';
+import { Stem } from '../../ui/Stem';
 import { useAnnounce } from '../../ui/Status';
 import { db } from '../../db/db';
 import { useQuestionMap, useSettings } from '../../db/hooks';
@@ -253,9 +254,7 @@ export function Session() {
           {q.status === 'unverified' && <Chip icon="alert">Unverified</Chip>}
         </div>
 
-        <p id={`stem-${q.id}`} className="stem" lang={q.lang}>
-          {q.stem}
-        </p>
+        <Stem id={`stem-${q.id}`} lang={q.lang} text={q.stem} />
         {q.media && <p className="notice">Figure: {q.media.alt}</p>}
 
         <ChoiceGroup
