@@ -314,6 +314,12 @@ export function Session() {
           </div>
         )}
 
+        {i === 0 && !checked && (
+          <p className="muted">
+            The <Icon name="strike" size={16} />
+            <span className="sr-only">Eliminate</span> button beside a choice crosses it out while you think.
+          </p>
+        )}
         {settings.shortcuts && i === 0 && !checked && (
           <p className="kbd-hint label">
             <kbd>A</kbd> to <kbd>D</kbd> or <kbd>1</kbd> to <kbd>4</kbd> choose. <kbd>Enter</kbd> checks, then goes next. <kbd>F</kbd> flags.

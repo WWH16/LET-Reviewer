@@ -31,7 +31,8 @@ export function MockSetup() {
   const settings = useSettings();
   const [form, setForm] = useState<'digital' | 'printed'>('digital');
   const [picked, setPart] = useState<Area | null>(null);
-  const [length, setLength] = useState<Length>('full');
+  // Null until she picks: then the length is the longest one her questions can fill.
+  const [pickedLength, setLength] = useState<Length | null>(null);
   const [source, setSource] = useState<SourceFilter>('rc');
   const [paper, setPaper] = useState<NonNullable<MockExam['paper']>>({ size: 'folio', columns: 2, large: false, answerKey: true });
   const navigate = useNavigate();
@@ -40,9 +41,10 @@ export function MockSetup() {
   if (!questions || !exams || !settings) return <Page title="Mock exam">{null}</Page>;
 
   const part = picked ?? partsFor(settings.level)[0];
-  const n = lengthOf(part, length);
   const inPart = questions.filter((q) => gradable(q) && q.area === part);
   const pool = inPart.filter((q) => matchesSource(q, source));
+  const length = pickedLength ?? (['full', 'half', 'short'] as const).find((l) => pool.length >= lengthOf(part, l)) ?? 'full';
+  const n = lengthOf(part, length);
   const rc = inPart.filter((q) => q.source === 'review-center').length;
   const ai = inPart.length - rc;
   const enough = pool.length >= n;

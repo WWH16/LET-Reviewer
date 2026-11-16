@@ -292,12 +292,21 @@ a.top-settings,
   min-width: min(100%, 18rem);
   max-width: 26rem;
 }
-.profile summary {
+/* Settings: the profile folds to the avatar and name; the editor opens in place. */
+.profile-summary > summary {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: var(--space-md);
+  padding-block: var(--space-2xs);
+}
+.profile-summary[open] > summary {
+  margin-block-end: var(--space-lg);
+}
+/* Home's stat-tile link: a full touch target, not a 22px line of text. */
+.stat-link {
+  display: inline-flex;
+  align-items: center;
   min-block-size: 44px;
-  cursor: pointer;
 }
 .part-strips {
   padding-block-start: var(--space-sm);
@@ -483,6 +492,14 @@ a.top-settings,
   }
 }
 
+/* During a timed mock the phone's tab bar goes, so one stray tap cannot leave the exam. The top bar keeps
+   the brand link, and the exam's own bar keeps Submit. */
+@media (max-width: 59.99rem) {
+  .in-exam .nav {
+    display: none;
+  }
+}
+
 main {
   max-width: var(--measure-app);
   margin-inline: auto;
@@ -639,6 +656,18 @@ textarea {
   line-height: 1.5;
   resize: vertical;
 }
+/* Editing fields grow with their text, so a long stem or choice is read whole, not scrolled in a slot. */
+textarea.prose,
+textarea.choice-edit {
+  field-sizing: content;
+}
+textarea.choice-edit {
+  min-height: 36px;
+  resize: none;
+  font-family: var(--font-body);
+  font-size: var(--text-lg);
+  line-height: 1.45;
+}
 textarea.prose {
   min-height: 6rem;
   font-family: var(--font-body);
@@ -652,7 +681,8 @@ textarea.prose {
   input[type='search'],
   input[type='email'],
   select,
-  .select {
+  .select,
+  textarea.choice-edit {
     min-height: 44px;
   }
 }
@@ -925,8 +955,12 @@ th.num {
   th.num {
     padding-left: var(--space-xs);
   }
-  table {
+  /* Long cell text may break anywhere on a phone; a column head never splits a word. */
+  td {
     overflow-wrap: anywhere;
+  }
+  th[scope='col'] {
+    white-space: nowrap;
   }
 }
 .list {
@@ -976,17 +1010,6 @@ a.list-link {
 .list-link:active {
   background: var(--color-paper-3);
 }
-/* Repeated row actions stay out of the way until the row is pointed at or focused; always shown on touch. */
-@media (hover: hover) and (pointer: fine) {
-  .row-action {
-    opacity: 0;
-    transition: opacity var(--dur-micro) var(--ease-out);
-  }
-  li:hover > .row-action,
-  li:focus-within > .row-action {
-    opacity: 1;
-  }
-}
 .meter.inline {
   display: inline-block;
   width: 4rem;
@@ -1005,9 +1028,16 @@ a.list-link {
   border-radius: var(--radius-pill);
   background: var(--color-accent-deep);
 }
+/* Every disclosure is a full 44px target, not just its line of text. */
 details > summary {
+  min-block-size: 44px;
   cursor: pointer;
   border-radius: var(--radius-control);
+}
+summary.label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
 }
 details > summary:hover {
   color: var(--color-accent-text);

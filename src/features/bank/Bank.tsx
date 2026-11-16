@@ -9,7 +9,7 @@ import { removeBatch, restoreQuestions } from '../../db/repo';
 import { subareaName } from '../../domain/let-config';
 import type { Question } from '../../domain/types';
 import { btn } from '../../ui/btn';
-import { CopyTemplateA, FirstRun } from '../home/FirstRun';
+import { CopyPhotoPrompt, FirstRun } from '../home/FirstRun';
 
 type Queue = 'all' | 'needs-key' | 'unverified' | 'flagged';
 const QUEUES: { id: Queue; label: string; test: (q: Question) => boolean }[] = [
@@ -32,6 +32,7 @@ export function Bank() {
   const questions = useQuestions();
   const [queue, setQueue] = useState<Queue>('all');
   const [search, setSearch] = useState('');
+  const [limit, setLimit] = useState(SHOW);
   const [removing, setRemoving] = useState<{ id: string; count: number } | null>(null);
   const announce = useAnnounce();
 
@@ -70,17 +71,34 @@ export function Bank() {
         <Link className={btn.primary} to="/bank/import">
           Import questions
         </Link>
-        <CopyTemplateA />
+        <CopyPhotoPrompt />
       </div>
 
       <div className="stack bank-filters">
         <div className="field">
           <label htmlFor="bank-search">Search questions</label>
-          <input id="bank-search" type="search" value={search} onChange={(e) => setSearch(e.target.value)} />
+          <input
+            id="bank-search"
+            type="search"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setLimit(SHOW);
+            }}
+          />
         </div>
         <div className="row" role="group" aria-label="Queue">
           {QUEUES.map((x, i) => (
-            <button key={x.id} type="button" className={btn.secondary} aria-pressed={queue === x.id} onClick={() => setQueue(x.id)}>
+            <button
+              key={x.id}
+              type="button"
+              className={btn.secondary}
+              aria-pressed={queue === x.id}
+              onClick={() => {
+                setQueue(x.id);
+                setLimit(SHOW);
+              }}
+            >
               {x.label} <span className="num">{counts[i]}</span>
             </button>
           ))}
@@ -89,10 +107,10 @@ export function Bank() {
 
       <section className="stack-sm" aria-labelledby="bank-list">
         <h2 id="bank-list">
-          {filtered.length > SHOW ? `Showing ${SHOW} of ${filtered.length}. Search to narrow.` : `${filtered.length} questions`}
+          {filtered.length > limit ? `Showing ${limit} of ${filtered.length}` : `${filtered.length} questions`}
         </h2>
         <ul className="list">
-          {filtered.slice(0, SHOW).map((q) => (
+          {filtered.slice(0, limit).map((q) => (
             <li key={q.id}>
               <Link className="list-link stack-sm" to={`/bank/${encodeURIComponent(q.id)}`}>
                 <span className="meta">
@@ -112,6 +130,13 @@ export function Bank() {
             </li>
           ))}
         </ul>
+        {filtered.length > limit && (
+          <div>
+            <button type="button" className={btn.secondary} onClick={() => setLimit(limit + SHOW)}>
+              Show {Math.min(SHOW, filtered.length - limit)} more
+            </button>
+          </div>
+        )}
       </section>
 
       <section className="stack-sm" aria-labelledby="bank-batches">

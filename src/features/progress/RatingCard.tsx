@@ -2,8 +2,12 @@ import { Icon } from '../../ui/Icon';
 import { PARTS, PASSING_AVERAGE, PART_FLOOR } from '../../domain/let-config';
 import type { Rating } from '../../domain/scoring';
 
-/** Projected rating with both passing rules spelled out in words (plan §2 goal 3). */
-export function RatingCard({ rating }: { rating: Rating }) {
+/**
+ * Projected rating with both passing rules spelled out in words (plan §2 goal 3).
+ * `warned` is a part the screen has already said is under the floor (a mock's own result), so it is not said twice.
+ */
+export function RatingCard({ rating, warned }: { rating: Rating; warned?: string }) {
+  const belowFloor = rating.belowFloor.filter((a) => a !== warned);
   const names = (list: string[]) => list.map((a) => PARTS[a as keyof typeof PARTS].name).join(' and ');
   return (
     <section className="card stack-sm" aria-labelledby="rating-title">
@@ -24,10 +28,10 @@ export function RatingCard({ rating }: { rating: Rating }) {
           </p>
         </>
       )}
-      {rating.belowFloor.length > 0 && (
+      {belowFloor.length > 0 && (
         <p className="rating-warn">
           <Icon name="alert" />
-          {names(rating.belowFloor)} {rating.belowFloor.length > 1 ? 'are' : 'is'} below {PART_FLOOR}%. Any part under {PART_FLOOR}% fails the
+          {names(belowFloor)} {belowFloor.length > 1 ? 'are' : 'is'} below {PART_FLOOR}%. Any part under {PART_FLOOR}% fails the
           exam, whatever the average.
         </p>
       )}

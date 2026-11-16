@@ -54,7 +54,7 @@ export function EditQuestion() {
   return (
     <Page title="Edit question">
       <p className="muted">
-        {q.source === 'ai' ? 'AI-generated' : 'Review center'}: {q.sourceRef}
+        {q.source === 'ai' ? `AI-generated from ${q.sourceRef.replace(/^AI from:\s*/i, '')}` : `Review center: ${q.sourceRef}`}
       </p>
 
       <form
@@ -71,12 +71,20 @@ export function EditQuestion() {
         {q.choices.map((c, i) => (
           <div className="field" key={c.key}>
             <label htmlFor={`eq-c${c.key}`}>Choice {c.key}</label>
-            <input
+            <textarea
               id={`eq-c${c.key}`}
-              type="text"
+              className="choice-edit"
+              rows={1}
               lang={q.lang}
               value={c.text}
               onChange={(e) => set({ choices: q.choices.map((x, j) => (j === i ? { ...x, text: e.target.value } : x)) })}
+              onKeyDown={(e) => {
+                // A choice is one line of text: Enter still saves, as it did when this was a text input.
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  e.currentTarget.form?.requestSubmit();
+                }
+              }}
             />
           </div>
         ))}

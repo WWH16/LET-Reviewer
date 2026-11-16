@@ -90,7 +90,7 @@ export function Home() {
           <span>
             {sinceBackup} {sinceBackup === 1 ? 'answer' : 'answers'} since your {lastBackup ? `last backup on ${new Date(lastBackup.at).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}` : 'first session, with no backup yet'}.
           </span>
-          <Link className={btn.secondary} to="/settings">
+          <Link className={btn.secondary} to="/settings" state={{ focus: 's-export' }}>
             Back up now
           </Link>
         </p>
@@ -102,13 +102,20 @@ export function Home() {
         <div>
           <span className="label">Exam</span>
           {toExam === null ? (
-            <Link to="/settings">Set your exam date</Link>
+            <Link className="stat-link" to="/settings" state={{ focus: 's-date' }}>
+              Set your exam date
+            </Link>
           ) : toExam >= 0 ? (
             <p>
               <span className="stat-figure">{toExam}</span> {toExam === 1 ? 'day' : 'days'} left
             </p>
           ) : (
-            <p>Exam date has passed. Update it in Settings.</p>
+            <p>
+              Exam date has passed.{' '}
+              <Link className="stat-link" to="/settings" state={{ focus: 's-date' }}>
+                Update it
+              </Link>
+            </p>
           )}
         </div>
         <div>

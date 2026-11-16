@@ -11,6 +11,7 @@ import { templateB } from '../../domain/prompts';
 import type { Area, Question } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { Select } from '../../ui/Select';
+import { useStats } from '../progress/useStats';
 
 export interface DrillParams {
   area: Area;
@@ -36,6 +37,7 @@ export function drillMatches(q: Question, p: Pick<DrillParams, 'area' | 'sub' | 
 export function DrillSetup() {
   const questions = useQuestions();
   const settings = useSettings();
+  const due = useStats()?.due.length;
   const last = useMeta<DrillParams | null>('lastDrill', null);
   const [edited, setP] = useState<DrillParams | null>(null);
   const navigate = useNavigate();
@@ -69,9 +71,13 @@ export function DrillSetup() {
         <Link className={btn.secondary} to="/session?mode=quick">
           Quick 10
         </Link>
-        <Link className={btn.secondary} to="/review">
-          Review mistakes
-        </Link>
+        {due ? (
+          <Link className={btn.secondary} to="/review">
+            Review mistakes, {due} due
+          </Link>
+        ) : (
+          due === 0 && <span className="muted">No mistakes due for review.</span>
+        )}
       </div>
 
       <form
@@ -137,25 +143,29 @@ export function DrillSetup() {
               : 'No review-center questions match. Include AI questions or choose another sub-area.'}
         </p>
 
-        <div className="row">
+        <div>
           <button type="submit" className={btn.primary} disabled={!available}>
             Start
           </button>
-          <button
-            type="button"
-            className={btn.secondary}
-            disabled={!p.sub}
-            onClick={async () => {
-              await copyText(
-                templateB({ area: p.area, subarea: subareaName(p.sub), topic: p.topic, level: settings.level, major: settings.major }),
-              );
-              announce('Prompt copied. Paste it into Claude with your notes.');
-            }}
-          >
-            Copy prompt
-          </button>
         </div>
-        {!p.sub && <p className="muted">Choose a sub-area to copy a prompt for new questions.</p>}
+        {/* Making new questions is the bank's job; it is offered here only once a sub-area names what to ask for. */}
+        {p.sub && (
+          <div className="row">
+            <span className="muted">Need more questions here?</span>
+            <button
+              type="button"
+              className={btn.quiet}
+              onClick={async () => {
+                await copyText(
+                  templateB({ area: p.area, subarea: subareaName(p.sub), topic: p.topic, level: settings.level, major: settings.major }),
+                );
+                announce('Prompt copied. Paste it into Claude with your notes.');
+              }}
+            >
+              Copy a prompt for Claude
+            </button>
+          </div>
+        )}
       </form>
     </Page>
   );

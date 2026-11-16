@@ -105,7 +105,7 @@ export function MockResults() {
       </section>
 
       <div className="stack-sm">
-        <RatingCard rating={rating} />
+        <RatingCard rating={rating} warned={s.pct < PART_FLOOR ? exam.part : undefined} />
         <p className="muted">
           Projected from your latest mock in each part:{' '}
           {Object.entries(latestByPart)
@@ -118,6 +118,7 @@ export function MockResults() {
       {exam.form === 'digital' && checkpoints.length > 0 && (
         <section className="stack-sm" aria-labelledby="mr-pace">
           <h2 id="mr-pace">Pacing</h2>
+          <p className="muted">LET pace is where you would be at the real exam’s speed.</p>
           <table>
             <thead>
               <tr>

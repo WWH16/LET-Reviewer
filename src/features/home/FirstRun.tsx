@@ -5,7 +5,8 @@ import { copyText } from '../../ui/clipboard';
 import { templateA } from '../../domain/prompts';
 import { btn } from '../../ui/btn';
 
-export function CopyTemplateA() {
+/** Copies Template A, the prompt that turns a handout photo into questions. Named for what it does, not its number. */
+export function CopyPhotoPrompt() {
   const announce = useAnnounce();
   return (
     <button
@@ -13,10 +14,10 @@ export function CopyTemplateA() {
       className={btn.secondary}
       onClick={async () => {
         await copyText(templateA());
-        announce('Template A copied. Paste it into Claude with your photo.');
+        announce('Photo prompt copied. Paste it into Claude with your photo.');
       }}
     >
-      Copy Template A
+      Copy photo prompt
     </button>
   );
 }
@@ -30,11 +31,11 @@ export function FirstRun() {
         <h2 id="fr-title">Add your first questions</h2>
         <ol className="stack-sm" style={{ paddingLeft: '1.25rem', margin: 0 }}>
           <li>Photograph one page of a review-center handout.</li>
-          <li>Copy Template A, and send it to Claude with the photo. Fill in the handout name and page.</li>
+          <li>Copy the photo prompt, and send it to Claude with the photo. Fill in the handout name and page.</li>
           <li>Copy Claude&rsquo;s reply and paste it on the Import screen.</li>
         </ol>
         <div className="row">
-          <CopyTemplateA />
+          <CopyPhotoPrompt />
           <Link className={btn.primary} to="/bank/import">
             Import questions
           </Link>

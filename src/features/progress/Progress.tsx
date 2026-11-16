@@ -9,6 +9,7 @@ import { templateB } from '../../domain/prompts';
 import { useStats } from './useStats';
 import { RatingCard } from './RatingCard';
 import { btn } from '../../ui/btn';
+import { drillMatches, drillUrl } from '../practice/DrillSetup';
 
 const fmt = (p: number | null) => (p === null ? 'Not yet' : `${Math.round(p)}%`);
 
@@ -95,29 +96,40 @@ export function Progress() {
           <p className="muted">Topics appear here after 3 or more answers each.</p>
         ) : (
           <ul className="list">
-            {weak.map((w) => (
-              <li key={`${w.subarea}-${w.topic}`} className="spread">
-                <span className="stack-sm">
-                  <span>{w.topic || subareaName(w.subarea)}</span>
-                  <span className="meta">
-                    {subareaName(w.subarea)}: {fmt(pct(w.tally))} over {w.tally.total} answers
+            {weak.map((w) => {
+              const name = w.topic || subareaName(w.subarea);
+              const where = { area: w.area, sub: w.subarea, topic: w.topic };
+              // Drill from review-center questions when the topic has any, else from the AI ones she answered.
+              const ai = ![...qmap.values()].some((q) => drillMatches(q, { ...where, ai: false }));
+              return (
+                <li key={`${w.subarea}-${w.topic}`} className="stack-sm">
+                  <span className="stack-sm">
+                    <span>{name}</span>
+                    <span className="meta">
+                      {subareaName(w.subarea)}: {fmt(pct(w.tally))} over {w.tally.total} answers
+                    </span>
                   </span>
-                </span>
-                <button
-                  type="button"
-                  className={`${btn.quiet} row-action`}
-                  aria-label={`Copy prompt for ${w.topic || subareaName(w.subarea)}`}
-                  onClick={async () => {
-                    await copyText(
-                      templateB({ area: w.area, subarea: subareaName(w.subarea), topic: w.topic, level: settings.level, major: settings.major }),
-                    );
-                    announce('Prompt copied. Paste it into Claude with your notes.');
-                  }}
-                >
-                  Copy prompt
-                </button>
-              </li>
-            ))}
+                  <span className="row">
+                    <Link className={btn.secondary} to={drillUrl({ ...where, n: 10, ai })} aria-label={`Practice ${name}`}>
+                      Practice
+                    </Link>
+                    <button
+                      type="button"
+                      className={btn.quiet}
+                      aria-label={`Copy prompt for ${name}`}
+                      onClick={async () => {
+                        await copyText(
+                          templateB({ area: w.area, subarea: subareaName(w.subarea), topic: w.topic, level: settings.level, major: settings.major }),
+                        );
+                        announce('Prompt copied. Paste it into Claude with your notes.');
+                      }}
+                    >
+                      Copy prompt
+                    </button>
+                  </span>
+                </li>
+              );
+            })}
           </ul>
         )}
       </section>

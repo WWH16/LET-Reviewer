@@ -1,4 +1,4 @@
-import { Link, Navigate, NavLink, Route, Routes } from 'react-router-dom';
+import { Link, Navigate, NavLink, Route, Routes, useMatch } from 'react-router-dom';
 import { Page } from '../ui/Page';
 import { StatusProvider } from '../ui/Status';
 import { Icon } from '../ui/Icon';
@@ -42,6 +42,8 @@ function NotFound() {
 
 export function App() {
   const settings = useSettings();
+  // A running mock exam (finished and printed ones redirect away from this route).
+  const inExam = useMatch('/mock/:id') !== null;
   const theme = settings?.theme;
   const textSize = settings?.textSize;
   useEffect(() => {
@@ -79,7 +81,7 @@ export function App() {
       <a className="skip" href="#main">
         Skip to main content
       </a>
-      <header className="shell-top">
+      <header className={inExam ? 'shell-top in-exam' : 'shell-top'}>
         <div className="top">
           <Link className="brand" to="/" aria-label="LET Reviewer, home">
             <span className="brand-mark" aria-hidden="true" />

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { Dialog } from '../../ui/Dialog';
 import { useAnnounce } from '../../ui/Status';
@@ -15,6 +15,7 @@ import { btn } from '../../ui/btn';
 import { Select } from '../../ui/Select';
 import { DateField } from '../../ui/DateField';
 import { ProfileEditor } from './ProfileEditor';
+import { Avatar } from '../../ui/Avatar';
 
 const fmtDate = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -27,11 +28,22 @@ export function Settings() {
   const [attempts, setAttempts] = useState(0);
   const restoreInput = useRef<HTMLInputElement>(null);
   const announce = useAnnounce();
+  // A link elsewhere ("Set your exam date", "Back up now") names the control it came for.
+  const focus = (useLocation().state as { focus?: string } | null)?.focus;
+  const loaded = !!s;
 
   useEffect(() => {
     navigator.storage?.persisted?.().then(setProtected);
     db.attempts.count().then(setAttempts);
   }, []);
+
+  // Runs after Page has focused the heading, so the named control wins.
+  useEffect(() => {
+    if (!loaded || !focus) return;
+    const el = document.getElementById(focus);
+    el?.scrollIntoView({ block: 'center' });
+    el?.focus();
+  }, [loaded, focus]);
 
   if (!s) return <Page title="Settings">{null}</Page>;
   const set = (patch: Partial<S>) => saveSettings(patch);
@@ -73,7 +85,17 @@ export function Settings() {
     <Page title="Settings">
       <section className="stack" aria-labelledby="set-profile">
         <h2 id="set-profile">Profile</h2>
-        <ProfileEditor s={s} />
+        {/* Folded to one row: people come to Settings for the exam date, display and backup. */}
+        <details className="profile-summary">
+          <summary>
+            <Avatar who={s} size={56} />
+            <span className="stack-sm">
+              <span>{s.name.trim() || 'No name yet'}</span>
+              <span className="meta">Edit name and avatar</span>
+            </span>
+          </summary>
+          <ProfileEditor s={s} />
+        </details>
       </section>
 
       <hr />
@@ -157,7 +179,7 @@ export function Settings() {
             : 'No backup yet. Your progress lives only on this device.'}
         </p>
         <div className="row">
-          <button type="button" className={btn.primary} onClick={doExport}>
+          <button id="s-export" type="button" className={btn.primary} onClick={doExport}>
             Export backup
           </button>
           <button type="button" className={btn.secondary} onClick={() => restoreInput.current?.click()}>
@@ -204,9 +226,11 @@ export function Settings() {
           >
             Copy debug info
           </button>
-          <Link className={btn.quiet} to="/states">
-            Visual states
-          </Link>
+          {import.meta.env.DEV && (
+            <Link className={btn.quiet} to="/states">
+              Visual states
+            </Link>
+          )}
         </div>
       </section>
 
