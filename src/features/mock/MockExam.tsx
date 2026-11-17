@@ -14,6 +14,7 @@ import { PARTS } from '../../domain/let-config';
 import type { Key, MockExam as Exam, Question } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { Empty } from '../../ui/Empty';
+import { requestSync } from '../../sync/trigger';
 
 const MILESTONES = [30, 10, 5, 1];
 
@@ -251,6 +252,7 @@ export function MockExam() {
       await updateExam(exam.id, { elapsedMs: Math.round(elapsed.current ?? 0) });
       const fresh = { ...exam, elapsedMs: Math.round(elapsed.current ?? 0) };
       await gradeExam(fresh);
+      requestSync();
       navigate(`/mock/${exam.id}/results`, { state: { timeUp } });
     },
     [exam, navigate],

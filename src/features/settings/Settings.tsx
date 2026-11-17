@@ -16,6 +16,8 @@ import { Select } from '../../ui/Select';
 import { DateField } from '../../ui/DateField';
 import { ProfileEditor } from './ProfileEditor';
 import { Avatar } from '../../ui/Avatar';
+import { AccountSection } from './AccountSection';
+import { EMPTY_STATE, requestSync, syncAvailable, type SyncState } from '../../sync/trigger';
 
 const fmtDate = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -27,6 +29,7 @@ export function Settings() {
   const [restoreMsg, setRestoreMsg] = useState<{ text: string; questions?: boolean } | null>(null);
   const [attempts, setAttempts] = useState(0);
   const demo = useDemoCount();
+  const sync = useMeta<SyncState>('sync', EMPTY_STATE);
   const restoreInput = useRef<HTMLInputElement>(null);
   const announce = useAnnounce();
   // A link elsewhere ("Set your exam date", "Back up now") names the control it came for.
@@ -166,12 +169,16 @@ export function Settings() {
         </label>
       </section>
 
+      {syncAvailable && <AccountSection />}
+
       <section className="tile" aria-labelledby="set-backup">
         <h2 id="set-backup">Backup</h2>
         <p className="muted">
           {lastBackup
             ? `Last backup ${fmtDate(lastBackup.at)}. ${since} answer${since === 1 ? '' : 's'} since then.`
-            : 'No backup yet. Your progress lives only on this device.'}
+            : sync?.signedIn
+              ? 'No backup file yet. Your account keeps a copy online; a file is a second one.'
+              : 'No backup yet. Your progress lives only on this device.'}
         </p>
         <div className="row">
           <button id="s-export" type="button" className={btn.primary} onClick={doExport}>
@@ -276,6 +283,8 @@ export function Settings() {
                 className={btn.secondary}
                 onClick={async () => {
                   await restoreBackup(restore.backup);
+                  // The restored records are old by date but may be new to the account: sync from the start.
+                  requestSync({ full: true });
                   setRestore(null);
                   announce('Backup restored');
                 }}

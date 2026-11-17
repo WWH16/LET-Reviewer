@@ -18,6 +18,7 @@ import { KEYS, type Area, type Key, type Mode, type Question } from '../../domai
 import { drillMatches } from './DrillSetup';
 import { btn } from '../../ui/btn';
 import { Empty } from '../../ui/Empty';
+import { requestSync } from '../../sync/trigger';
 
 const TITLES: Record<string, string> = { drill: 'Practice', review: 'Missed questions', quick: 'Quick 10', qotd: 'Question of the Day', timed: 'Timed quiz' };
 /** mm:ss for the timed quiz's clock. */
@@ -120,7 +121,10 @@ export function Session() {
   }, [checked]);
 
   useEffect(() => {
-    if (done) resHeading.current?.focus();
+    if (!done) return;
+    resHeading.current?.focus();
+    // A finished session is one of the moments answers go to the account. Never on each answer.
+    requestSync();
   }, [done]);
 
   // Shortcuts listen on the window, so they work wherever focus is: on the page heading when

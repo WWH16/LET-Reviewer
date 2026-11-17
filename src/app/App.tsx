@@ -22,6 +22,7 @@ import { Welcome } from '../features/home/Welcome';
 import { useEffect } from 'react';
 import { Empty } from '../ui/Empty';
 import { btn } from '../ui/btn';
+import { requestSync } from '../sync/trigger';
 
 // Four places, as in a phone exam-prep app: study (every quiz mode starts here), how it is going, what
 // you have answered, and settings. Practice and Mock are modes on Study, not tabs of their own.
@@ -75,6 +76,14 @@ export function App() {
     media.addEventListener('change', sync);
     return () => media.removeEventListener('change', sync);
   }, [theme, textSize]);
+
+  // Signed in: bring this device up to date when the app opens and whenever the network comes back.
+  useEffect(() => {
+    const sync = () => requestSync();
+    sync();
+    window.addEventListener('online', sync);
+    return () => window.removeEventListener('online', sync);
+  }, []);
 
   // First launch: name and avatar before the app itself. The shell stays out of the way until she is done.
   if (settings && !settings.onboarded)

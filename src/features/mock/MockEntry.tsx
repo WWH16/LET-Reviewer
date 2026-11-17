@@ -8,6 +8,7 @@ import { answerExam, gradeExam, updateExam } from '../../db/repo';
 import { MAX_SCAN_ITEMS, readSheet } from '../../domain/sheet';
 import { KEYS, type Key } from '../../domain/types';
 import { btn } from '../../ui/btn';
+import { requestSync } from '../../sync/trigger';
 
 /**
  * Tap entry for a printed sheet (plan §8.3). Each tap fills the current row and moves on,
@@ -67,6 +68,7 @@ export function MockEntry() {
     const m = Number(minutes);
     await updateExam(exam.id, { totalMin: minutes && m > 0 ? Math.round(m) : null });
     await gradeExam({ ...exam, answers: Object.fromEntries(exam.itemIds.map((_, i) => [String(i + 1), exam.answers[String(i + 1)] ?? null])) });
+    requestSync();
     navigate(`/mock/${exam.id}/results`);
   };
 

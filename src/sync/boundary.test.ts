@@ -27,9 +27,9 @@ it('is off when the env is missing', async () => {
   expect((await import('./trigger')).syncAvailable).toBe(false);
 });
 
-it.skip('every sync trigger site calls requestSync', () => {
+it('every sync trigger site calls requestSync', () => {
   for (const f of ['app/App.tsx', 'features/practice/Session.tsx', 'features/mock/MockExam.tsx', 'features/mock/MockEntry.tsx', 'features/settings/Settings.tsx'])
-    expect(read(f), f).toMatch(/requestSync\(\)/);
+    expect(read(f), f).toContain('requestSync(');
 });
 
 it('does not sync on each answer', () => {
