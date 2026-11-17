@@ -8,6 +8,7 @@ import { removeQuestion, restoreQuestions, saveQuestion } from '../../db/repo';
 import { PARTS } from '../../domain/let-config';
 import { KEYS, type Area, type Key, type Question } from '../../domain/types';
 import { btn } from '../../ui/btn';
+import { Empty } from '../../ui/Empty';
 import { Select } from '../../ui/Select';
 
 export function EditQuestion() {
@@ -26,9 +27,11 @@ export function EditQuestion() {
   if (q === null)
     return (
       <Page title="Question not found">
-        <p>
-          This question is not saved on this device. <Link to="/bank">Back to Review</Link>
-        </p>
+        <Empty icon="review" title="This question is not on this device" text="It may have been removed with its import.">
+          <Link className={btn.primary} to="/bank">
+            Back to Review
+          </Link>
+        </Empty>
       </Page>
     );
 

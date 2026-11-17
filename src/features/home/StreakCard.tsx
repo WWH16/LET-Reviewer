@@ -43,7 +43,7 @@ export function StreakCard({
         Streak
       </h2>
       <p className="streak-figure">
-        <Icon name="fire" size={32} filled={doneToday} />
+        <Icon name="fire" size={24} filled={doneToday} />
         <span className="display">{run}</span>
         <span>{run === 1 ? 'day' : 'days'}</span>
       </p>

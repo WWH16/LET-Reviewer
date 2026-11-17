@@ -2,6 +2,7 @@
   "version": "0.0.1",
   "configurations": [
     { "name": "let-reviewer", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev"], "port": 5173 },
+    { "name": "let-reviewer-lan", "runtimeExecutable": "npx", "runtimeArgs": ["vite", "--host", "0.0.0.0", "--port", "5173"], "port": 5173 },
     { "name": "let-reviewer-preview", "runtimeExecutable": "npx", "runtimeArgs": ["vite", "preview", "--port", "4173"], "port": 4173 }
   ]
 }

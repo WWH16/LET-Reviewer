@@ -12,6 +12,7 @@ import { Icon } from '../../ui/Icon';
 import type { Question } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { CopyPhotoPrompt, FirstRun } from '../home/FirstRun';
+import { Empty } from '../../ui/Empty';
 
 type Queue = 'all' | 'incorrect' | 'correct' | 'flagged' | 'unanswered' | 'check';
 type Last = ReadonlyMap<string, boolean>;
@@ -31,6 +32,15 @@ const STATUS = {
   flag: { cls: 'is-flag', icon: 'flag', text: 'Flagged' },
   new: { cls: 'is-new', icon: 'study', text: 'Not answered yet' },
 } as const;
+/** Why a tab is empty, in the tab's own terms. */
+const NONE: Record<Queue, [title: string, text: string]> = {
+  all: ['No questions', 'Import some to start.'],
+  incorrect: ['No wrong answers', 'A question lands here when your latest answer to it is wrong.'],
+  correct: ['No right answers yet', 'A question lands here when your latest answer to it is right.'],
+  flagged: ['Nothing flagged', 'Flag a question during practice to come back to it here.'],
+  unanswered: ['You have answered every question', 'Import more to keep going.'],
+  check: ['Nothing to check', 'Questions with no answer key, or not yet verified, wait here.'],
+};
 const SHOW = 100;
 
 export function batchLabel(id: string): string {
@@ -127,7 +137,23 @@ export function Bank() {
         <h2 id="bank-list">
           {filtered.length > limit ? `Showing ${limit} of ${filtered.length}` : `${filtered.length} questions`}
         </h2>
-        <ul className="list">
+        {filtered.length === 0 &&
+          (search.trim() ? (
+            <Empty icon="review" title="No questions match" text={`Nothing under ${QUEUES.find((x) => x.id === queue)!.label} matches “${search.trim()}”.`}>
+              <button type="button" className={btn.secondary} onClick={() => setSearch('')}>
+                Clear search
+              </button>
+            </Empty>
+          ) : (
+            <Empty icon="review" title={NONE[queue][0]} text={NONE[queue][1]}>
+              {queue !== 'all' && (
+                <button type="button" className={btn.secondary} onClick={() => setQueue('all')}>
+                  Show all questions
+                </button>
+              )}
+            </Empty>
+          ))}
+        <ul className="list" hidden={filtered.length === 0}>
           {filtered.slice(0, limit).map((q) => {
             const s = STATUS[isFlagged(q) ? 'flag' : last.get(q.id) === true ? 'right' : last.get(q.id) === false ? 'wrong' : 'new'];
             return (

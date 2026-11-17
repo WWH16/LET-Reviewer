@@ -5,6 +5,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from './db';
 import { getMeta, getSettings } from './repo';
 import type { MockExam, Question } from '../domain/types';
+import { DEMO_PREFIX } from '../domain/demo';
 
 export const useQuestions = () => useLiveQuery(async () => (await db.questions.toArray()).filter((q) => !q.deleted));
 
@@ -34,3 +35,6 @@ export const useExams = () =>
 export const useExam = (id: string | undefined) => useLiveQuery(() => (id ? db.mockExams.get(id) : undefined), [id]);
 
 export const useMeta = <T>(key: string, fallback: T) => useLiveQuery(() => getMeta(key, fallback), [key]);
+
+/** How many sample answers (Settings, Sample data) are on this device. */
+export const useDemoCount = () => useLiveQuery(() => db.attempts.where('id').startsWith(DEMO_PREFIX).count());

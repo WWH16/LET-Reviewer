@@ -20,13 +20,15 @@
   --font-sans: var(--font-body); --font-mono: var(--font-num); --default-font-family: var(--font-body); --default-mono-font-family: var(--font-num);
   --tracking-display: -0.03em;
   /* Type and spacing roles that change with screen size. Phone values here; wider screens below. */
-  --text-h1: 1.375rem; --text-h2: 1.125rem; --text-figure: 2rem; --text-stat: 1.375rem;
-  --pad-card: var(--space-md); --gap-section: var(--space-lg); --pad-page-top: var(--space-lg);
-  --radius-control: 8px; --radius-card: 12px; --radius-tile: 16px; --radius-pill: 999px;
+  /* Compact scale: reading text at 15px, labels and secondary lines at 13px, section headings one step
+     above the text. Only the figures stay large, so a number is what the eye lands on. */
+  --text-body: 0.9375rem; --text-h1: 1.25rem; --text-h2: 1rem; --text-figure: 2rem; --text-stat: 1.125rem;
+  --pad-card: 14px; --gap-tile: var(--space-sm); --gap-section: var(--space-md); --pad-page-top: var(--space-md);
+  --radius-control: 8px; --radius-card: 12px; --radius-tile: 14px; --radius-pill: 999px;
   /* The activity grid: five steps from empty (paper-3) to busiest, in the action blue. Dark mode sets its own four. */
-  --heat-cell: 0.75rem; --heat-gap: 3px;
+  --heat-cell: 0.6875rem; --heat-gap: 3px;
   --heat-0: var(--color-paper-3); --heat-1: oklch(89.6% 0.044 265.6); --heat-2: oklch(77% 0.099 263.2); --heat-3: oklch(62.2% 0.164 262.6); --heat-4: oklch(46.9% 0.17 262.5);
-  --measure-app: 48rem; --container-app: 72rem; --sidebar-w: 15rem; --header-h: 56px; --tabbar-h: 64px; --sticky-offset: env(safe-area-inset-top, 0px);
+  --measure-app: 48rem; --container-app: 72rem; --sidebar-w: 15rem; --header-h: 48px; --tabbar-h: 56px; --sticky-offset: env(safe-area-inset-top, 0px);
   --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px); --safe-left: env(safe-area-inset-left, 0px); --safe-right: env(safe-area-inset-right, 0px);
 
   --color-paper: oklch(97% 0.006 264.5); --color-paper-2: oklch(94.5% 0.009 258.3); --color-paper-3: oklch(91.7% 0.013 255.5);
@@ -131,14 +133,14 @@
   }
 }
 
-/* Laptop and up: larger headings and figures, roomier cards, more air between sections. */
+/* Laptop and up: one step up on headings and figures, a little more room in cards and between sections. */
 @media (min-width: 60rem) {
   :root {
-    --text-h1: 1.5rem; --text-h2: 1.25rem; --text-figure: 2.5rem; --text-stat: 1.5rem;
-    --pad-card: var(--space-lg); --gap-section: var(--space-xl); --pad-page-top: var(--space-xl);
+    --text-h1: 1.375rem; --text-h2: 1.0625rem; --text-figure: 2.25rem; --text-stat: 1.25rem;
+    --pad-card: 20px; --gap-tile: var(--space-md); --gap-section: 20px; --pad-page-top: var(--space-lg);
   }
 }
 /* Large desktop: one more step on the page title and the big figure only. */
 @media (min-width: 90rem) {
-  :root { --text-h1: 1.75rem; --text-figure: 2.75rem; --pad-page-top: var(--space-2xl); }
+  :root { --text-h1: 1.5rem; --text-figure: 2.5rem; --pad-page-top: var(--space-xl); }
 }

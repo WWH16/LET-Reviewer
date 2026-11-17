@@ -17,6 +17,7 @@ import { paceMs, subareaName } from '../../domain/let-config';
 import { KEYS, type Area, type Key, type Mode, type Question } from '../../domain/types';
 import { drillMatches } from './DrillSetup';
 import { btn } from '../../ui/btn';
+import { Empty } from '../../ui/Empty';
 
 const TITLES: Record<string, string> = { drill: 'Practice', review: 'Missed questions', quick: 'Quick 10', qotd: 'Question of the Day', timed: 'Timed quiz' };
 /** mm:ss for the timed quiz's clock. */
@@ -138,12 +139,29 @@ export function Session() {
   if (!items.length)
     return (
       <Page title={title}>
-        <p>{mode === 'review' ? 'Nothing due. Questions you miss come back here the next day.' : 'No questions to practice yet. Import some, or load the samples from Study.'}</p>
-        <div className="row">
-          <Link className={btn.primary} to="/">
-            Back to Study
-          </Link>
-        </div>
+        {mode === 'review' ? (
+          <Empty icon="check" title="Nothing due today" text="Questions you miss come back here the next day.">
+            <Link className={btn.primary} to="/session?mode=quick">
+              Start a Quick 10
+            </Link>
+            <Link className={btn.secondary} to="/">
+              Back to Study
+            </Link>
+          </Empty>
+        ) : (
+          <Empty
+            icon="study"
+            title="No questions to practice"
+            text={mode === 'drill' ? 'Nothing in the bank matches this part, sub-area and topic.' : 'The bank has no questions with an answer key yet.'}
+          >
+            <Link className={btn.primary} to={mode === 'drill' ? '/drill' : '/bank/import'}>
+              {mode === 'drill' ? 'Change the drill' : 'Import questions'}
+            </Link>
+            <Link className={btn.secondary} to="/">
+              Back to Study
+            </Link>
+          </Empty>
+        )}
       </Page>
     );
 

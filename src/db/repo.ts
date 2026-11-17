@@ -5,6 +5,7 @@ import { previewImport } from '../domain/validate';
 import { isCorrect } from '../domain/leitner';
 import { DEFAULT_SETTINGS, type Attempt, type Key, type MockExam, type Question, type Settings } from '../domain/types';
 import sample from '../domain/sample-questions.json';
+import { DEMO_PREFIX, demoAttempts } from '../domain/demo';
 
 export const nowIso = () => new Date().toISOString();
 export const uuid = () => crypto.randomUUID();
@@ -158,3 +159,19 @@ export async function protectStorage(): Promise<boolean> {
   const already = await navigator.storage.persisted();
   return already || navigator.storage.persist();
 }
+
+// ---------- Sample answers ----------
+
+/** Fills the app with six weeks of sample answers (and the sample questions, if the bank is empty). */
+export async function loadDemoData(): Promise<number> {
+  if (!(await liveQuestionIds()).size) await loadSampleQuestions();
+  const list = demoAttempts(await db.questions.toArray(), new Date());
+  await db.transaction('rw', db.attempts, async () => {
+    await db.attempts.where('id').startsWith(DEMO_PREFIX).delete();
+    await db.attempts.bulkAdd(list);
+  });
+  return list.length;
+}
+
+/** Removes the sample answers only. Real answers stay. */
+export const clearDemoData = () => db.attempts.where('id').startsWith(DEMO_PREFIX).delete();

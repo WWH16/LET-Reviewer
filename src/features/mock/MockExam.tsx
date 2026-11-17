@@ -13,6 +13,7 @@ import { formatClock } from '../../domain/dates';
 import { PARTS } from '../../domain/let-config';
 import type { Key, MockExam as Exam, Question } from '../../domain/types';
 import { btn } from '../../ui/btn';
+import { Empty } from '../../ui/Empty';
 
 const MILESTONES = [30, 10, 5, 1];
 
@@ -260,7 +261,11 @@ export function MockExam() {
   if (!exam || exam.deleted)
     return (
       <Page title="Exam not found">
-        <Link to="/mock">Back to Mock</Link>
+        <Empty icon="mock" title="This exam is not on this device" text="It may have been removed, or made on another device.">
+          <Link className={btn.primary} to="/mock">
+            Back to Mock exam
+          </Link>
+        </Empty>
       </Page>
     );
   if (exam.status === 'graded' && !submitting.current) return <Navigate to={`/mock/${exam.id}/results`} replace />;

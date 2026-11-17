@@ -20,6 +20,8 @@ import { useSettings } from '../db/hooks';
 import { CommandMenu } from './CommandMenu';
 import { Welcome } from '../features/home/Welcome';
 import { useEffect } from 'react';
+import { Empty } from '../ui/Empty';
+import { btn } from '../ui/btn';
 
 // Four places, as in a phone exam-prep app: study (every quiz mode starts here), how it is going, what
 // you have answered, and settings. Practice and Mock are modes on Study, not tabs of their own.
@@ -33,9 +35,11 @@ const NAV = [
 function NotFound() {
   return (
     <Page title="Not found">
-      <p>
-        This page does not exist. <Link to="/">Back to Study</Link>
-      </p>
+      <Empty icon="study" title="This page does not exist" text="The link may be old or mistyped.">
+        <Link className={btn.primary} to="/">
+          Back to Study
+        </Link>
+      </Empty>
     </Page>
   );
 }
@@ -96,7 +100,7 @@ export function App() {
               {NAV.map((item) => (
                 <li key={item.to}>
                   <Link to={item.to} aria-current={here(item) ? 'page' : undefined}>
-                    <Icon name={item.icon} size={22} filled={here(item)} />
+                    <Icon name={item.icon} size={20} filled={here(item)} />
                     {item.label}
                   </Link>
                 </li>

@@ -11,6 +11,9 @@ import { btn } from '../../ui/btn';
 import { drillMatches, drillUrl } from '../practice/DrillSetup';
 import { Gauge, scoreTone } from '../../ui/Gauge';
 import { StreakCard } from '../home/StreakCard';
+import { Empty } from '../../ui/Empty';
+import { Icon } from '../../ui/Icon';
+import { loadDemoData } from '../../db/repo';
 
 const fmt = (p: number | null) => (p === null ? 'Not yet' : `${Math.round(p)}%`);
 
@@ -18,17 +21,19 @@ export function Progress() {
   const stats = useStats();
   const announce = useAnnounce();
   if (!stats) return <Page title="Stats">{null}</Page>;
-  const { attempts, qmap, settings, rating, parts, days, today, todayAttempts, todayCorrect } = stats;
+  const { attempts, qmap, settings, rating, parts, days, today, todayAttempts, todayCorrect, due } = stats;
 
   if (!attempts.length)
     return (
       <Page title="Stats">
-        <p>Your score, each subject and your weakest topics show here after your first answers.</p>
-        <div>
+        <Empty icon="stats" title="No answers yet" text="Your score, each subject and your weakest topics show here after your first answers.">
           <Link className={btn.primary} to="/session?mode=quick">
             Start a Quick 10
           </Link>
-        </div>
+          <button type="button" className={btn.secondary} onClick={async () => announce(`Added ${await loadDemoData()} sample answers`)}>
+            Fill with sample answers
+          </button>
+        </Empty>
       </Page>
     );
 
@@ -48,10 +53,28 @@ export function Progress() {
       {/* The screen's navy block: one ring for how often you are right, as on a phone exam-prep app. */}
       <section className="tile tile-inverse stats-hero" aria-label="Your score">
         <Gauge pct={answered ? (right / answered) * 100 : null} label="correct" />
-        <p className="stats-count">
-          <span className="num">{right}</span> / <span className="num">{answered}</span> answered correctly
-        </p>
-        <p className="meta">Each part’s most recent 150 answers.</p>
+        <div className="stats-side">
+          <div>
+            <p className="stats-count">
+              <span className="num">{right}</span> of <span className="num">{answered}</span> answered correctly
+            </p>
+            <p className="meta">Each part’s most recent 150 answers.</p>
+          </div>
+          <dl className="stat-row">
+            <div>
+              <dt>Answers</dt>
+              <dd className="num">{attempts.length}</dd>
+            </div>
+            <div>
+              <dt>Study days</dt>
+              <dd className="num">{days.size}</dd>
+            </div>
+            <div>
+              <dt>Due today</dt>
+              <dd className="num">{due.length}</dd>
+            </div>
+          </dl>
+        </div>
       </section>
 
       <RatingCard rating={rating} />
@@ -148,7 +171,7 @@ export function Progress() {
               return (
                 <li key={`${w.subarea}-${w.topic}`} className="weak-item">
                   <span className="stack-sm">
-                    <span>{name}</span>
+                    <span className="weak-name">{name}</span>
                     <span className="meta">
                       {subareaName(w.subarea)}: {fmt(pct(w.tally))} over {w.tally.total} answers
                     </span>
@@ -168,7 +191,7 @@ export function Progress() {
                         announce('Prompt copied. Paste it into Claude with your notes.');
                       }}
                     >
-                      Copy prompt
+                      <Icon name="copy" size={18} />
                     </button>
                   </span>
                 </li>

@@ -117,7 +117,7 @@ export function Home() {
             </p>
           </div>
           <Link to="/settings" className="greet-avatar" aria-label="Profile and settings">
-            <Avatar who={settings} size={48} />
+            <Avatar who={settings} size={40} />
           </Link>
         </div>
         <WeekStrip days={days} today={today} />

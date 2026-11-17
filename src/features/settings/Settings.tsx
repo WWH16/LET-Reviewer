@@ -4,8 +4,8 @@ import { Page } from '../../ui/Page';
 import { Dialog } from '../../ui/Dialog';
 import { useAnnounce } from '../../ui/Status';
 import { copyText, downloadText } from '../../ui/clipboard';
-import { useMeta, useSettings } from '../../db/hooks';
-import { protectStorage, saveSettings } from '../../db/repo';
+import { useDemoCount, useMeta, useSettings } from '../../db/hooks';
+import { clearDemoData, loadDemoData, protectStorage, saveSettings } from '../../db/repo';
 import { checkBackup, deviceCounts, exportBackup, restoreBackup, type Counts } from '../../db/backup';
 import { db } from '../../db/db';
 import { parsePasted } from '../../domain/validate';
@@ -26,6 +26,7 @@ export function Settings() {
   const [restore, setRestore] = useState<{ backup: Backup; incoming: Counts; device: Counts } | null>(null);
   const [restoreMsg, setRestoreMsg] = useState<{ text: string; questions?: boolean } | null>(null);
   const [attempts, setAttempts] = useState(0);
+  const demo = useDemoCount();
   const restoreInput = useRef<HTMLInputElement>(null);
   const announce = useAnnounce();
   // A link elsewhere ("Set your exam date", "Back up now") names the control it came for.
@@ -88,7 +89,7 @@ export function Settings() {
         {/* Folded to one row: people come to Settings for the exam date, display and backup. */}
         <details className="profile-summary">
           <summary>
-            <Avatar who={s} size={56} />
+            <Avatar who={s} size={44} />
             <span className="stack-sm">
               <span>{s.name.trim() || 'No name yet'}</span>
               <span className="meta">Edit name and avatar</span>
@@ -196,6 +197,33 @@ export function Settings() {
           {protectedStore === false && (
             <button type="button" className={btn.secondary} onClick={async () => setProtected(await protectStorage())}>
               Protect storage
+            </button>
+          )}
+        </div>
+      </section>
+
+      <section className="tile" aria-labelledby="set-demo">
+        <h2 id="set-demo">Sample data</h2>
+        <p className="muted">
+          {demo
+            ? `${demo} sample answers are mixed into your stats. Remove them before you study for real.`
+            : 'Six weeks of made-up answers, to see Stats, the streak and Missed questions full. Your own answers are not touched.'}
+        </p>
+        <div className="row">
+          {demo ? (
+            <button
+              type="button"
+              className={btn.secondary}
+              onClick={async () => {
+                await clearDemoData();
+                announce('Sample answers removed');
+              }}
+            >
+              Remove sample answers
+            </button>
+          ) : (
+            <button type="button" className={btn.secondary} onClick={async () => announce(`Added ${await loadDemoData()} sample answers`)}>
+              Add sample answers
             </button>
           )}
         </div>
