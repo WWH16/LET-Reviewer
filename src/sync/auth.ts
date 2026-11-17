@@ -1,1 +1,150 @@
-export const syncNow = async () => {};
+// Accounts: create, confirm, sign in, reset, sign out, delete, and the one entry point for a sync.
+// Every email carries a 6-digit code typed into the app, never a link: the app uses hash routes,
+// which is also where a Supabase redirect link would put its tokens.
+
+import { remote, supabase } from './client';
+import { runSync } from './run';
+import { dexieStore as store } from './store';
+import { EMPTY_STATE, EPOCH } from './trigger';
+
+export type AuthResult = { ok: true } | { ok: false; error: string };
+export type SignInResult = AuthResult | { ok: false; needsCode: true } | { ok: false; otherAccount: true };
+
+type Failure = { message?: string; code?: string; status?: number; name?: string };
+
+const MESSAGES: Record<string, string> = {
+  invalid_credentials: 'Wrong email or password.',
+  user_already_exists: 'This email already has an account. Sign in instead.',
+  email_exists: 'This email already has an account. Sign in instead.',
+  otp_expired: 'That code is wrong or has expired. Send a new one.',
+  over_email_send_rate_limit: 'Too many emails sent. Try again in a few minutes.',
+  over_request_rate_limit: 'Too many tries. Wait a minute, then try again.',
+  weak_password: 'Use 8 characters or more.',
+  same_password: 'That is your current password. Choose a different one.',
+  email_address_invalid: 'That email address does not look right.',
+  validation_failed: 'Check the email address and try again.',
+};
+const isOffline = (e: Failure) => e.name === 'AuthRetryableFetchError' || /failed to fetch|networkerror|load failed/i.test(e.message ?? '');
+
+/** An account error in words the person can act on. */
+export function messageFor(error: Failure): string {
+  if (error.code && MESSAGES[error.code]) return MESSAGES[error.code];
+  if (isOffline(error)) return 'You are offline. Try again when you are connected.';
+  return 'Could not reach the account service. Try again.';
+}
+const fail = (error: Failure): AuthResult => ({ ok: false, error: messageFor(error) });
+
+/** After any successful sign-in: this device's data must belong to this account, or to no one yet. */
+async function finishSignIn(userId: string | undefined): Promise<SignInResult> {
+  if (!userId) return fail({});
+  const state = await store.getState();
+  // The session stays, so Replace can go ahead; nothing syncs until the person decides.
+  if (state.userId && state.userId !== userId) return { ok: false, otherAccount: true };
+  await store.setState({ signedIn: true, lastError: null });
+  void syncNow();
+  return { ok: true };
+}
+
+/** Sends the confirmation code. The account is usable after `confirmSignUp`. */
+export async function signUp(email: string, password: string): Promise<AuthResult> {
+  const { data, error } = await supabase.auth.signUp({ email, password });
+  if (error) return fail(error);
+  // For an email that is already registered Supabase answers with a look-alike user that has no identities.
+  if (data.user && data.user.identities?.length === 0) return fail({ code: 'user_already_exists' });
+  return { ok: true };
+}
+
+export async function confirmSignUp(email: string, code: string): Promise<SignInResult> {
+  const { data, error } = await supabase.auth.verifyOtp({ email, token: code.trim(), type: 'signup' });
+  return error ? fail(error) : finishSignIn(data.user?.id);
+}
+
+export async function resendCode(email: string): Promise<AuthResult> {
+  const { error } = await supabase.auth.resend({ type: 'signup', email });
+  return error ? fail(error) : { ok: true };
+}
+
+export async function signIn(email: string, password: string): Promise<SignInResult> {
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error?.code === 'email_not_confirmed') {
+    const sent = await resendCode(email);
+    return sent.ok ? { ok: false, needsCode: true } : sent;
+  }
+  return error ? fail(error) : finishSignIn(data.user?.id);
+}
+
+/** Sends the reset code. `finishReset` takes it with the new password. */
+export async function requestReset(email: string): Promise<AuthResult> {
+  const { error } = await supabase.auth.resetPasswordForEmail(email);
+  return error ? fail(error) : { ok: true };
+}
+
+export async function finishReset(email: string, code: string, password: string): Promise<SignInResult> {
+  const { data, error } = await supabase.auth.verifyOtp({ email, token: code.trim(), type: 'recovery' });
+  if (error) return fail(error);
+  const changed = await supabase.auth.updateUser({ password });
+  return changed.error ? fail(changed.error) : finishSignIn(data.user?.id);
+}
+
+/** After `otherAccount`: this device's data is replaced by the signed-in account's. */
+export async function replaceDeviceData(): Promise<void> {
+  const { data } = await supabase.auth.getSession();
+  const userId = data.session?.user.id;
+  if (!userId) return;
+  await store.clear();
+  await store.setState({ ...EMPTY_STATE, userId, signedIn: true });
+  await syncNow();
+}
+
+/** Data stays on the device, and so does whose it is, so a different account is noticed later. */
+export async function signOut(): Promise<void> {
+  await supabase.auth.signOut({ scope: 'local' });
+  await store.setState({ signedIn: false, lastError: null });
+}
+
+/** Removes the account and its online copy. The device keeps its data, now belonging to no account. */
+export async function deleteAccount(): Promise<AuthResult> {
+  const { error } = await supabase.rpc('delete_my_account');
+  if (error) return fail(error);
+  await supabase.auth.signOut({ scope: 'local' });
+  await store.setState({ ...EMPTY_STATE });
+  return { ok: true };
+}
+
+export async function currentEmail(): Promise<string | null> {
+  const { data } = await supabase.auth.getSession();
+  return data.session?.user.email ?? null;
+}
+
+let running: Promise<void> | null = null;
+
+/**
+ * One sync, if signed in. Calls made while one runs share it. Never throws.
+ * `full` starts both cursors over, for after a backup restore.
+ */
+export function syncNow(opts: { full?: boolean } = {}): Promise<void> {
+  // A restore must not be swallowed by a run already under way: wait for it, then start over.
+  if (opts.full && running) return running.then(() => syncNow(opts));
+  running ??= (async () => {
+    try {
+      const state = await store.getState();
+      if (!state.signedIn) return;
+      const { data } = await supabase.auth.getSession();
+      const userId = data.session?.user.id;
+      if (!userId) return void (await store.setState({ signedIn: false }));
+      if (opts.full) await store.setState({ pulledAt: EPOCH, pulledId: '', pushedAt: EPOCH });
+      if (await runSync(remote, store, userId)) return;
+      // A failed run is either no network (try again later) or a session the server no longer accepts.
+      const check = await supabase.auth.getUser();
+      if (check.error && !isOffline(check.error)) {
+        await supabase.auth.signOut({ scope: 'local' });
+        await store.setState({ signedIn: false });
+      }
+    } catch {
+      /* a sync never interrupts studying; the next trigger tries again */
+    } finally {
+      running = null;
+    }
+  })();
+  return running;
+}

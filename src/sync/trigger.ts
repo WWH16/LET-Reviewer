@@ -21,8 +21,11 @@ export interface SyncState {
 export const EPOCH = '1970-01-01T00:00:00.000Z';
 export const EMPTY_STATE: SyncState = { userId: null, signedIn: false, pulledAt: EPOCH, pulledId: '', pushedAt: EPOCH, lastSyncAt: null, lastError: null };
 
-/** Starts a background sync and returns at once. Does nothing signed out or with no project set. Never throws. */
-export function requestSync(): void {
+/**
+ * Starts a background sync and returns at once. Does nothing signed out or with no project set. Never throws.
+ * `full` starts over from the beginning: for after a backup restore, when old records are new to the account.
+ */
+export function requestSync(opts: { full?: boolean } = {}): void {
   if (!syncAvailable) return;
-  import('./auth').then((m) => m.syncNow()).catch(() => {});
+  import('./auth').then((m) => m.syncNow(opts)).catch(() => {});
 }
