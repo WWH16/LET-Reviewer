@@ -44,7 +44,7 @@ export function FirstRun() {
       <hr />
       <section className="stack-sm" aria-labelledby="fr-try">
         <h2 id="fr-try">Just looking?</h2>
-        <p className="muted">Load 16 sample questions to try the app. You can remove them later from Bank.</p>
+        <p className="muted">Load 16 sample questions to try the app. You can remove them later from Review.</p>
         <div>
           <button
             type="button"

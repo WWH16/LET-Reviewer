@@ -1,7 +1,7 @@
 /* Base, on top of Kumo's reset (Tailwind preflight, inside kumo-standalone.css). Unlayered, so it wins over Kumo's layers. */
 *, *::before, *::after { box-sizing: border-box; }
 html, body { overflow-x: clip; }
-html { scrollbar-color: var(--color-control) var(--color-paper); scroll-padding-top: var(--space-2xl); }
+html { scrollbar-gutter: stable; scrollbar-color: var(--color-control) var(--color-paper); scroll-padding-top: var(--space-2xl); }
 body { margin: 0; background: var(--color-paper); color: var(--color-ink); font-family: var(--font-body); font-size: var(--text-lg); line-height: 1.55; -webkit-font-smoothing: antialiased; caret-color: var(--color-accent-text); }
 #root { isolation: isolate; }
 ::selection { background: color-mix(in oklab, var(--color-accent) 22%, transparent); color: var(--color-ink); }

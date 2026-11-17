@@ -26,7 +26,7 @@ export function Home() {
   const lastDrill = useMeta<DrillParams | null>('lastDrill', null);
   const lastBackup = useMeta<{ at: string; attempts: number } | null>('lastBackup', null);
 
-  if (!stats || !exams || lastDrill === undefined || lastBackup === undefined) return <Page title="Study">{null}</Page>;
+  if (!stats || !exams || lastDrill === undefined || lastBackup === undefined) return <Page title="Study" titleHidden>{null}</Page>;
   if (!stats.hasQuestions)
     return (
       <Page title="Study">

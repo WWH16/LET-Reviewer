@@ -49,9 +49,23 @@ summary.label {
 p.muted,
 form [role='status'],
 form [role='status'] p {
-  max-width: 65ch;
   font-size: var(--text-base);
   line-height: 1.5;
+}
+/* The measure holds the line, not the box: a status well still spans its card. */
+p.muted,
+form [role='status'] p {
+  max-width: 65ch;
+}
+/* An icon named in a sentence sits on the line with the words. */
+.inline-icon {
+  display: inline-flex;
+  vertical-align: -0.2em;
+}
+/* The page header: the way back and the lead line sit close to the title they belong to. */
+.back + h1,
+h1:not(.sr-only) + p {
+  margin-top: calc(var(--space-sm) - var(--gap-section));
 }
 .num,
 .exam-bar,
@@ -842,6 +856,10 @@ textarea.prose {
     min-height: 44px;
   }
 }
+/* Stacked options in a card read as one group, not as separate sections. */
+.tile > .check + .check {
+  margin-top: calc(var(--space-2xs) - var(--space-md));
+}
 .check input {
   width: 18px;
   height: 18px;
@@ -943,8 +961,10 @@ legend {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
+/* Locked choices switch to right and wrong at once: easing from the blue pick to red passes through violet. */
 .choice:has(input:disabled) {
   cursor: default;
+  transition: none;
 }
 .choice:has(input:disabled):hover {
   background: var(--color-card);
@@ -1969,6 +1989,11 @@ kbd {
 .result-item {
   content-visibility: auto;
   contain-intrinsic-size: auto 20rem;
+}
+/* A rule between checked items, so each item's explanation reads as the end of it. */
+.result-item + .result-item {
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--color-rule);
 }
 /* The item number is the landmark in a 150-item paper: the one display-face mark per item. */
 .booklet h2 {

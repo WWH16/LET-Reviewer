@@ -133,7 +133,7 @@ export function Session() {
   }, []);
 
   const title = TITLES[mode] ?? 'Practice';
-  if (!items || !qmap || !settings) return <Page title={title}>{null}</Page>;
+  if (!items || !qmap || !settings) return <Page title={title} titleHidden>{null}</Page>;
 
   if (!items.length)
     return (
@@ -318,6 +318,7 @@ export function Session() {
         {q.media && <p className="notice">Figure: {q.media.alt}</p>}
 
         <ChoiceGroup
+          key={q.id}
           name={`q-${q.id}`}
           labelledBy={`stem-${q.id}`}
           lang={q.lang}
@@ -376,7 +377,10 @@ export function Session() {
 
         {i === 0 && !checked && (
           <p className="muted">
-            The <Icon name="strike" size={16} />
+            The{' '}
+            <span className="inline-icon">
+              <Icon name="strike" size={16} />
+            </span>
             <span className="sr-only">Eliminate</span> button beside a choice crosses it out while you think.
           </p>
         )}

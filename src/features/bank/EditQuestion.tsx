@@ -27,7 +27,7 @@ export function EditQuestion() {
     return (
       <Page title="Question not found">
         <p>
-          This question is not in your bank. <Link to="/bank">Back to Bank</Link>
+          This question is not saved on this device. <Link to="/bank">Back to Review</Link>
         </p>
       </Page>
     );

@@ -187,10 +187,12 @@ export function Settings() {
           </p>
         )}
         <div className="spread">
-          <span>
-            Storage: {protectedStore === null ? 'checking…' : protectedStore ? 'protected' : 'not protected'}
-            <span className="muted">. The browser {protectedStore ? 'will not' : 'may'} clear it when space runs low.</span>
-          </span>
+          <p className="meta">
+            <span className="label">
+              Storage: {protectedStore === null ? 'checking…' : protectedStore ? 'protected' : 'not protected'}
+            </span>
+            . The browser {protectedStore ? 'will not' : 'may'} clear it when space runs low.
+          </p>
           {protectedStore === false && (
             <button type="button" className={btn.secondary} onClick={async () => setProtected(await protectStorage())}>
               Protect storage

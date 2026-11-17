@@ -92,7 +92,7 @@ export function CommandMenu() {
           aria-controls={`${id}-list`}
           aria-activedescendant={items[current] ? `${id}-${current}` : undefined}
           aria-autocomplete="list"
-          placeholder="Practice, Bank, Settings"
+          placeholder="Quick 10, Mock exam, Settings"
           autoComplete="off"
           value={query}
           onChange={(e) => {
