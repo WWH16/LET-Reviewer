@@ -68,9 +68,10 @@ export function Subject() {
           <h2 id="sb-quizzes">Quizzes</h2>
           <ul className="list">
             {mine.map((z) => (
-              <li key={z.id} className="stack-sm">
-                <div className="spread">
-                  <Link className="stack-sm" to={`/quiz/${encodeURIComponent(z.id)}`}>
+              // The row opens the quiz (its questions, timed takes, removal); Take starts it at once.
+              <li key={z.id} className="spread">
+                <Link className="list-link" to={`/quiz/${encodeURIComponent(z.id)}`}>
+                  <span className="stack-sm">
                     <span>
                       {z.name}
                       {z.topicId && <span className="meta">, {topicName(z.subarea, z.topicId)}</span>}
@@ -78,16 +79,11 @@ export function Subject() {
                     <span className="meta">
                       {count(z.questions.length, 'question')}, made {quizDate(z.createdAt)}. {lastLine(z.questions.map((q) => q.id), data.last)}.
                     </span>
-                  </Link>
-                  <span className="row">
-                    <Link className={btn.primary} to={`/session?mode=quiz&quiz=${encodeURIComponent(z.id)}`} aria-label={`Take ${z.name}`}>
-                      Take
-                    </Link>
-                    <Link className={btn.secondary} to={`/quiz/${encodeURIComponent(z.id)}`} aria-label={`${z.name} questions`}>
-                      Questions
-                    </Link>
                   </span>
-                </div>
+                </Link>
+                <Link className={btn.secondary} to={`/session?mode=quiz&quiz=${encodeURIComponent(z.id)}`} aria-label={`Take ${z.name}`}>
+                  Take
+                </Link>
               </li>
             ))}
           </ul>
