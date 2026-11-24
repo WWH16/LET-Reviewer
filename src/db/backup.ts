@@ -3,6 +3,7 @@
 import { db } from './db';
 import { nowIso, setMeta } from './repo';
 import { SCHEMA_VERSION, type Backup } from '../domain/types';
+import { upgradeQuestion } from '../domain/quiz';
 
 export async function exportBackup(): Promise<{ filename: string; text: string }> {
   const [questions, attempts, mockExams, settings] = await Promise.all([
@@ -47,8 +48,9 @@ export function checkBackup(v: Record<string, unknown>): { ok: true; backup: Bac
     };
   if (!Array.isArray(v.questions) || !Array.isArray(v.attempts))
     return { ok: false, error: 'This backup is missing its questions or answers. Nothing was restored.' };
-  // When SCHEMA_VERSION goes up, migrate older backups here before returning.
   const backup = { mockExams: [], settings: null, ...v } as unknown as Backup;
+  // v1 questions have no quiz yet.
+  backup.questions = backup.questions.map(upgradeQuestion);
   const questions = backup.questions.filter((q) => !q.deleted).length;
   return { ok: true, backup, counts: { questions, attempts: backup.attempts.length } };
 }

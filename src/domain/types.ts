@@ -15,6 +15,8 @@ export interface Choice {
 export interface Question {
   /** Assigned by the app at import (`ids.ts`), never taken from the pasted JSON. */
   id: string;
+  /** The quiz it was made in (`quiz.ts`). Older questions get one from their import batch. */
+  quizId: string;
   area: Area;
   /** Sub-area id from `let-config.ts`. */
   subarea: string;
@@ -126,7 +128,8 @@ export const DEFAULT_SETTINGS: Settings = {
   deleted: false,
 };
 
-export const SCHEMA_VERSION = 1;
+/** 2: questions carry `quizId`. Older backups are upgraded on restore. */
+export const SCHEMA_VERSION = 2;
 
 export interface Backup {
   type: 'backup';

@@ -3,6 +3,7 @@
 
 import { PARTS } from './let-config';
 import { questionId } from './ids';
+import { batchQuizId } from './quiz';
 import { KEYS, type Area, type Choice, type Key, type Question } from './types';
 
 // ---------- Parsing ----------
@@ -241,6 +242,7 @@ export function validateItem(raw: unknown, n: number, opts: { now: string; batch
 
   const q: Question = {
     id: questionId({ source, sourceRef, stem }),
+    quizId: batchQuizId(opts.batchId, subarea),
     area,
     subarea,
     topic: str(o.topic),

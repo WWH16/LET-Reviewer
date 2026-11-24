@@ -9,6 +9,7 @@ import { PARTS, subareaName } from '../../domain/let-config';
 import { btn } from '../../ui/btn';
 import { Select } from '../../ui/Select';
 import { PromptBuilder } from './PromptBuilder';
+import { batchQuizId } from '../../domain/quiz';
 
 /** Paste-first import with a preview. Nothing is written until she confirms (plan §5, DX C1). */
 export function Import() {
@@ -56,7 +57,7 @@ export function Import() {
     setBusy(true);
     const now = nowIso();
     const batchId = `batch-${now}`;
-    const n = await importQuestions(preview.ready.map((q) => ({ ...q, importBatchId: batchId, updatedAt: now })));
+    const n = await importQuestions(preview.ready.map((q) => ({ ...q, importBatchId: batchId, quizId: batchQuizId(batchId, q.subarea), updatedAt: now })));
     protectStorage(); // first real data: ask the browser not to evict it (DX R10)
     announce(`Imported ${n} question${n === 1 ? '' : 's'}`);
     navigate('/bank');

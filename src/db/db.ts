@@ -4,6 +4,7 @@
 
 import Dexie, { type EntityTable } from 'dexie';
 import type { Attempt, MockExam, Question, Settings } from '../domain/types';
+import { upgradeQuestion } from '../domain/quiz';
 
 /** Device-only values (never synced): last backup, drill presets, storage status. */
 export interface MetaRow {
@@ -26,3 +27,8 @@ db.version(1).stores({
   settings: 'id',
   meta: 'key',
 });
+
+// Quizzes: each question gets the quiz its import batch becomes.
+db.version(2)
+  .stores({ questions: 'id, quizId, area, subarea, status, source, importBatchId, updatedAt' })
+  .upgrade((tx) => tx.table<Question>('questions').toCollection().modify((q) => void (q.quizId = upgradeQuestion(q).quizId)));

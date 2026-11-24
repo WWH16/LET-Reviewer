@@ -3,6 +3,7 @@
 import { db } from '../db/db';
 import { getMeta, setMeta } from '../db/repo';
 import type { Settings } from '../domain/types';
+import { upgradeQuestion } from '../domain/quiz';
 import type { Store } from './run';
 import { EMPTY_STATE, type SyncState } from './trigger';
 
@@ -30,7 +31,8 @@ export const dexieStore: Store = {
   write: async (r) => {
     if (!r.questions.length && !r.mockExams.length && !r.attempts.length && !r.settings) return;
     await db.transaction('rw', [db.questions, db.mockExams, db.attempts, db.settings], async () => {
-      await db.questions.bulkPut(r.questions);
+      // A question from a device that has not updated yet arrives without its quiz.
+      await db.questions.bulkPut(r.questions.map(upgradeQuestion));
       await db.mockExams.bulkPut(r.mockExams);
       await db.attempts.bulkPut(r.attempts);
       if (r.settings) await db.settings.put({ ...r.settings, id: 'settings' } as Settings);

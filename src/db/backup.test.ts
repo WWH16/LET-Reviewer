@@ -13,6 +13,10 @@ describe('checkBackup', () => {
     expect(r.ok).toBe(false);
     expect(!r.ok && r.error).toMatch(/newer version .* Nothing was restored/);
   });
+  it('gives v1 questions their quiz', () => {
+    const r = checkBackup({ ...ok, schemaVersion: 1, questions: [{ id: 'a', subarea: 'english', importBatchId: 'sample', deleted: false }] });
+    expect(r.ok && r.backup.questions[0].quizId).toBe('quiz-sample~english');
+  });
   it('refuses a file with no version', () => {
     expect(checkBackup({ questions: [], attempts: [] }).ok).toBe(false);
   });
