@@ -1,56 +1,66 @@
 import { Link } from 'react-router-dom';
 import { Page } from '../../ui/Page';
+import { Empty } from '../../ui/Empty';
 import { useSettings } from '../../db/hooks';
 import { PARTS, partsFor } from '../../domain/let-config';
 import { btn } from '../../ui/btn';
-import { itemWord, subjectsOf } from '../../domain/subjects';
-import { useQuizzes } from './useQuizzes';
-import { MajorHint } from '../settings/MajorHint';
+import { subjectsOf } from '../../domain/subjects';
+import { count, useQuizzes } from './useQuizzes';
 
-/** Every subject of every part she takes, with how many quizzes and questions it has. */
+/** The subjects she has quizzes in, by part. Subjects and parts with none stay out of the list. */
 export function Quizzes() {
   const data = useQuizzes();
   const settings = useSettings();
   if (!data || !settings) return <Page title="Quizzes">{null}</Page>;
 
+  const parts = partsFor(settings.level)
+    .map((area) => ({
+      area,
+      subjects: subjectsOf(area, settings.subjects, data.qmap.values())
+        .map((s) => ({ ...s, quizzes: data.quizzes.filter((z) => z.area === area && z.subarea === s.id) }))
+        .filter((s) => s.quizzes.length > 0),
+    }))
+    .filter((p) => p.subjects.length > 0);
+
+  if (!parts.length)
+    return (
+      <Page title="Quizzes">
+        <Empty icon="practice" title="No quizzes yet" text="Pick a subject, copy the prompt to Claude, and paste the reply back.">
+          <Link className={btn.primary} to="/quizzes/new">
+            Make a quiz
+          </Link>
+        </Empty>
+      </Page>
+    );
+
   return (
     <Page title="Quizzes" wide>
-      <p className="muted">
-        A quiz covers one subject. Make one by asking Claude for questions, then take it as often as you like. Mock exams draw
-        their items from your quiz questions.
-      </p>
-      <MajorHint level={settings.level} />
+      <div>
+        <Link className={btn.primary} to="/quizzes/new">
+          New quiz
+        </Link>
+      </div>
       <div className="bento pairs">
-        {partsFor(settings.level).map((area) => (
+        {parts.map(({ area, subjects }) => (
           <section key={area} className="tile span-3 stack-sm" aria-labelledby={`qz-${area}`}>
             <h2 id={`qz-${area}`}>
               {PARTS[area].name}
               {area === 'Major' && settings.major ? `: ${settings.major}` : ''}
             </h2>
-            {subjectsOf(area, settings.subjects, data.qmap.values()).length === 0 && (
-              <p className="meta">
-                No {itemWord(area)}s yet. <Link to={`/quizzes/new?area=${area}`}>Make a quiz</Link> and name its {itemWord(area)}, or{' '}
-                <Link to="/settings/subjects">add your {itemWord(area)}s</Link>.
-              </p>
-            )}
             <ul className="list">
-              {subjectsOf(area, settings.subjects, data.qmap.values()).map((s) => {
-                const mine = data.quizzes.filter((z) => z.area === area && z.subarea === s.id);
-                const n = mine.reduce((sum, z) => sum + z.questions.length, 0);
-                return (
-                  <li key={s.id} className="spread">
-                    <Link className="stack-sm" to={`/quizzes/${area}/${s.id}`}>
-                      <span>{s.name}</span>
-                      <span className="meta">
-                        {mine.length ? `${mine.length} ${mine.length === 1 ? 'quiz' : 'quizzes'}, ${n} ${n === 1 ? 'question' : 'questions'}` : 'No quizzes yet'}
-                      </span>
-                    </Link>
-                    <Link className={btn.secondary} to={`/quizzes/new?area=${area}&sub=${s.id}`} aria-label={`New ${s.name} quiz`}>
-                      New quiz
-                    </Link>
-                  </li>
-                );
-              })}
+              {subjects.map((s) => (
+                <li key={s.id} className="spread">
+                  <Link className="stack-sm" to={`/quizzes/${area}/${s.id}`}>
+                    <span>{s.name}</span>
+                    <span className="meta">
+                      {count(s.quizzes.length, 'quiz')}, {count(s.quizzes.reduce((sum, z) => sum + z.questions.length, 0), 'question')}
+                    </span>
+                  </Link>
+                  <Link className={btn.secondary} to={`/quizzes/new?area=${area}&sub=${s.id}`} aria-label={`New ${s.name} quiz`}>
+                    New quiz
+                  </Link>
+                </li>
+              ))}
             </ul>
           </section>
         ))}
