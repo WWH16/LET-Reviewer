@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Page } from '../../ui/Page';
-import { Chip, StatusChip } from '../../ui/Chip';
+import { Chip } from '../../ui/Chip';
 import { ChoiceGroup } from '../../ui/ChoiceGroup';
 import { Stem } from '../../ui/Stem';
 import { Dialog } from '../../ui/Dialog';
@@ -67,9 +67,6 @@ export function States() {
       {group(
         'Chips',
         <div className="row">
-          {['verified', 'unverified', 'needs-key', 'flagged'].map((s) => (
-            <StatusChip key={s} status={s} />
-          ))}
           <Chip solid>Review center</Chip>
         </div>,
       )}

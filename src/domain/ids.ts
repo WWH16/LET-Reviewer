@@ -1,5 +1,5 @@
-// Question IDs come from the content, so the same handout imported on two devices
-// produces the same IDs and merges cleanly (plan §5, Import rules).
+// Ids from content: a question's id comes from its quiz and its text (`quiz.ts`), so the same paste on two
+// devices produces the same ids and merges cleanly.
 
 export const slug = (s: string) =>
   s
@@ -21,11 +21,6 @@ export function hash(str: string): string {
   h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
   h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
   return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
-}
-
-export function questionId(q: { source: string; sourceRef: string; stem: string }): string {
-  if (q.source === 'review-center' && slug(q.sourceRef)) return `rc-${slug(q.sourceRef)}`;
-  return `ai-${hash(q.stem.toLowerCase().replace(/\s+/g, ' ').trim())}`;
 }
 
 /** Exam label: part prefix, month and day, then A..Z, AA.. for each exam that day (DX N5). */

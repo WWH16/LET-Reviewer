@@ -10,55 +10,31 @@ import { db } from '../../db/db';
 import { useQuestionMap, useSettings } from '../../db/hooks';
 import { recordAttempt } from '../../db/repo';
 import { buildCards, dueCards } from '../../domain/leitner';
-import { gradable, questionOfTheDay, shuffle } from '../../domain/examDraw';
+import { shuffle } from '../../domain/examDraw';
+import { counts } from '../../domain/quiz';
 import { dayKey } from '../../domain/dates';
 import { choiceOrder, originalKey, shown } from '../../domain/choices';
 import { paceMs, subareaName } from '../../domain/let-config';
-import { KEYS, type Area, type Key, type Mode, type Question } from '../../domain/types';
-import { drillMatches } from './drill';
+import { KEYS, type Key, type Mode, type Question } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { Empty } from '../../ui/Empty';
 import { requestSync } from '../../sync/trigger';
 
-const TITLES: Record<string, string> = { quiz: 'Quiz', drill: 'Practice', review: 'Missed questions', quick: 'Quick 10', qotd: 'Question of the Day', timed: 'Timed quiz' };
+const TITLES: Record<string, string> = { quiz: 'Quiz', review: 'Missed questions' };
 /** mm:ss for the timed quiz's clock. */
 const mmss = (ms: number) => {
   const s = Math.max(0, Math.ceil(ms / 1000));
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 };
 
-/** Picks the session's items once, when it opens. */
+/** Picks the session's items once, when it opens: a quiz's questions, or the misses due today. */
 async function pickItems(mode: string, params: URLSearchParams, qmap: Map<string, Question>): Promise<string[]> {
-  const live = [...qmap.values()].filter(gradable);
-  if (mode === 'quiz') return shuffle(live.filter((q) => q.quizId === params.get('quiz'))).map((q) => q.id);
-  if (mode === 'qotd') {
-    const id = questionOfTheDay(dayKey(new Date()), qmap.values());
-    return id ? [id] : [];
-  }
-  if (mode === 'timed') return shuffle(live).slice(0, 10).map((q) => q.id);
-  if (mode === 'drill') {
-    const p = {
-      area: params.get('area') as Area,
-      sub: params.get('sub') ?? '',
-      topic: params.get('topic') ?? '',
-      ai: params.get('ai') === '1',
-    };
-    return shuffle(live.filter((q) => drillMatches(q, p))).slice(0, Number(params.get('n')) || 20).map((q) => q.id);
-  }
+  if (mode === 'quiz') return shuffle([...qmap.values()].filter((q) => counts(q) && q.quizId === params.get('quiz'))).map((q) => q.id);
   const due = dueCards(buildCards(await db.attempts.orderBy('at').toArray(), qmap), dayKey(new Date()))
-    .map((c) => c.questionId)
-    .filter((id) => {
-      const q = qmap.get(id);
-      return q && gradable(q);
-    });
-  if (mode === 'review') {
-    const sub = params.get('sub');
-    return sub ? due.filter((id) => qmap.get(id)!.subarea === sub && qmap.get(id)!.area === params.get('area')) : due;
-  }
-  // Quick 10: reviews due first, then random questions.
-  const first = due.slice(0, 10);
-  const rest = shuffle(live.filter((q) => !first.includes(q.id))).map((q) => q.id);
-  return [...first, ...rest].slice(0, 10);
+    .map((c) => qmap.get(c.questionId))
+    .filter((q): q is Question => !!q && counts(q));
+  const sub = params.get('sub');
+  return due.filter((q) => !sub || (q.subarea === sub && q.area === params.get('area'))).map((q) => q.id);
 }
 
 interface Result {
@@ -70,7 +46,7 @@ interface Result {
 
 export function Session() {
   const [params] = useSearchParams();
-  const mode = params.get('mode') ?? 'drill';
+  const mode = params.get('mode') === 'review' ? 'review' : 'quiz';
   const qmap = useQuestionMap();
   const settings = useSettings();
   const [items, setItems] = useState<string[] | null>(null);
@@ -103,7 +79,7 @@ export function Session() {
     });
   }, [qmap, items, mode, params, run]);
 
-  const timed = mode === 'timed' || params.get('timed') === '1';
+  const timed = params.get('timed') === '1';
   const limitMs = timed && items && qmap ? items.reduce((s, id) => s + paceMs(qmap.get(id)!.area), 0) : 0;
   const leftMs = limitMs - (now - startedAt);
   useEffect(() => {
@@ -144,7 +120,7 @@ export function Session() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  const title = TITLES[mode] ?? 'Practice';
+  const title = TITLES[mode];
   if (!items || !qmap || !settings) return <Page title={title} titleHidden>{null}</Page>;
 
   if (!items.length)
@@ -156,23 +132,10 @@ export function Session() {
               Back to Quizzes
             </Link>
           </Empty>
-        ) : mode === 'review' ? (
+        ) : (
           <Empty icon="check" title="Nothing due today" text="Questions you miss come back here the next day.">
             <Link className={btn.primary} to="/missed">
               Back to Missed questions
-            </Link>
-          </Empty>
-        ) : (
-          <Empty
-            icon="study"
-            title="No questions to practice"
-            text={mode === 'drill' ? 'Nothing in the bank matches this part, sub-area and topic.' : 'The bank has no questions with an answer key yet.'}
-          >
-            <Link className={btn.primary} to={mode === 'drill' ? '/drill' : '/bank/import'}>
-              {mode === 'drill' ? 'Change the drill' : 'Import questions'}
-            </Link>
-            <Link className={btn.secondary} to="/">
-              Back to Study
             </Link>
           </Empty>
         )}
@@ -239,19 +202,15 @@ export function Session() {
         )}
         <div className="row">
           <button type="button" className={btn.primary} onClick={restart}>
-            {mode === 'review' ? 'Check this subject again' : mode === 'quiz' ? 'Retake, shuffled' : 'Practice again'}
+            {mode === 'review' ? 'Check this subject again' : 'Retake, shuffled'}
           </button>
           {mode === 'quiz' ? (
             <Link className={btn.secondary} to={`/quiz/${encodeURIComponent(params.get('quiz') ?? '')}`}>
               Back to the quiz
             </Link>
-          ) : mode === 'review' ? (
+          ) : (
             <Link className={btn.secondary} to="/missed">
               Back to Missed questions
-            </Link>
-          ) : (
-            <Link className={btn.secondary} to="/">
-              Back to Study
             </Link>
           )}
         </div>

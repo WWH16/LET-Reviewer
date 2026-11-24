@@ -2,7 +2,6 @@
 // Chat output arrives wrapped in code fences, with prose around it, and sometimes cut off.
 
 import { PARTS } from './let-config';
-import { questionId } from './ids';
 import { batchQuizId, quizQuestionId } from './quiz';
 import { KEYS, type Area, type Choice, type Key, type Question } from './types';
 
@@ -176,8 +175,7 @@ const str = (v: unknown) => (typeof v === 'string' ? v.trim() : '');
 export function validateItem(raw: unknown, n: number, opts: { now: string; batchId: string }): ItemResult {
   const errors: string[] = [];
   const o = isObj(raw) ? raw : {};
-  const sourceRef = str(o.sourceRef);
-  const label = sourceRef ? `Item ${n} (${sourceRef})` : `Item ${n}`;
+  const label = `Item ${n}`;
   const base = { n, label, duplicate: false };
   if (!isObj(raw)) return { ...base, question: null, errors: ['is not a question object.'], subareaFix: null };
 
@@ -213,9 +211,6 @@ export function validateItem(raw: unknown, n: number, opts: { now: string; batch
   const answer = toAnswer(o.answer);
   if (answer === 'bad') errors.push(`answer is "${String(o.answer)}". It must be A, B, C, D, or empty.`);
 
-  const source = str(o.source) === 'review-center' ? 'review-center' : 'ai';
-  if (source === 'review-center' && !sourceRef)
-    errors.push('sourceRef is empty. Review-center items need it, e.g. "Handout 3, p.12, #7".');
 
   let media: Question['media'] = null;
   if (isObj(o.media)) {
@@ -233,15 +228,8 @@ export function validateItem(raw: unknown, n: number, opts: { now: string; batch
     return { ...base, question: null, errors, subareaFix: errors.length === 1 ? subareaFix : null };
   }
 
-  const unreadable = [stem, ...choices.map((c) => c.text)].some((t) => t.includes('[unreadable]'));
-  let status: Question['status'];
-  if (unreadable || str(o.status) === 'flagged') status = 'flagged';
-  else if (answer === null) status = 'needs-key';
-  else if (source === 'ai') status = 'unverified';
-  else status = 'verified';
-
   const q: Question = {
-    id: questionId({ source, sourceRef, stem }),
+    id: quizQuestionId(batchQuizId(opts.batchId, subarea), stem),
     quizId: batchQuizId(opts.batchId, subarea),
     area,
     subarea,
@@ -251,14 +239,8 @@ export function validateItem(raw: unknown, n: number, opts: { now: string; batch
     choices,
     answer,
     explanation: str(o.explanation),
-    source,
-    sourceRef: sourceRef || (source === 'ai' ? 'AI-generated' : ''),
-    status,
     media,
     tags: Array.isArray(o.tags) ? o.tags.filter((t): t is string => typeof t === 'string') : [],
-    flag: null,
-    importBatchId: opts.batchId,
-    edited: false,
     updatedAt: opts.now,
     deleted: false,
   };
@@ -317,7 +299,7 @@ export function previewQuiz(items: unknown[], quiz: { id: string; area: Area; su
   let repeats = 0;
   items.forEach((raw, i) => {
     const n = i + 1;
-    const patched = isObj(raw) ? { ...raw, area: quiz.area, subarea: quiz.subarea, source: 'ai' } : raw;
+    const patched = isObj(raw) ? { ...raw, area: quiz.area, subarea: quiz.subarea } : raw;
     const r = validateItem(patched, n, { now, batchId: '' });
     const errors = r.question?.answer === null ? ['has no answer. It must be A, B, C or D.'] : r.errors;
     if (!r.question || errors.length) return invalid.push({ n, errors });

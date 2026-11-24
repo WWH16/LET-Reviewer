@@ -13,10 +13,7 @@ import { Skeleton } from '../ui/Skeleton';
 // Study (the first screen) and Welcome load with the app; every other screen loads when first opened, so
 // the date picker, the select menus and the exam screens stay out of the first download. The service
 // worker precaches every chunk, so this costs nothing offline.
-const Bank = lazy(() => import('../features/bank/Bank').then((m) => ({ default: m.Bank })));
-const Import = lazy(() => import('../features/bank/Import').then((m) => ({ default: m.Import })));
-const EditQuestion = lazy(() => import('../features/bank/EditQuestion').then((m) => ({ default: m.EditQuestion })));
-const DrillSetup = lazy(() => import('../features/practice/DrillSetup').then((m) => ({ default: m.DrillSetup })));
+const EditQuestion = lazy(() => import('../features/quizzes/EditQuestion').then((m) => ({ default: m.EditQuestion })));
 const Session = lazy(() => import('../features/practice/Session').then((m) => ({ default: m.Session })));
 const Settings = lazy(() => import('../features/settings/Settings').then((m) => ({ default: m.Settings })));
 const Progress = lazy(() => import('../features/progress/Progress').then((m) => ({ default: m.Progress })));
@@ -139,7 +136,6 @@ export function App() {
       >
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/drill" element={<DrillSetup />} />
           <Route path="/session" element={<Session />} />
           <Route path="/missed" element={<Missed />} />
           <Route path="/review" element={<Navigate to="/missed" replace />} />
@@ -154,9 +150,7 @@ export function App() {
           <Route path="/quiz/:id" element={<QuizPage />} />
           <Route path="/question/:id" element={<EditQuestion />} />
           <Route path="/progress" element={<Progress />} />
-          <Route path="/bank" element={<Bank />} />
-          <Route path="/bank/import" element={<Import />} />
-          <Route path="/bank/:id" element={<EditQuestion />} />
+          <Route path="/bank/*" element={<Navigate to="/quizzes" replace />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/settings/:section" element={<Settings />} />
           <Route path="/states" element={<States />} />

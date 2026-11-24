@@ -39,14 +39,11 @@ export async function liveQuestionIds(): Promise<Set<string>> {
   return new Set(all.filter((q) => !q.deleted).map((q) => q.id));
 }
 
-/**
- * Adds new questions. An ID already in the bank is skipped, so a corrected key is never
- * overwritten. A removed, unedited item comes back.
- */
+/** Adds new questions. One already on the device is skipped, so a fixed key is never overwritten; a removed one comes back. */
 export async function importQuestions(list: Question[]): Promise<number> {
   return db.transaction('rw', db.questions, async () => {
     const existing = await db.questions.bulkGet(list.map((q) => q.id));
-    const fresh = list.filter((_, i) => !existing[i] || (existing[i]!.deleted && !existing[i]!.edited));
+    const fresh = list.filter((_, i) => !existing[i] || existing[i]!.deleted);
     await db.questions.bulkPut(fresh);
     return fresh.length;
   });
@@ -58,11 +55,7 @@ export async function loadSampleQuestions(): Promise<number> {
 }
 
 export async function saveQuestion(q: Question) {
-  await db.questions.put({ ...q, edited: true, updatedAt: nowIso() });
-}
-
-export async function setFlag(id: string, reason: string | null) {
-  await db.questions.update(id, { flag: reason ? { reason, at: nowIso() } : null, updatedAt: nowIso() });
+  await db.questions.put({ ...q, updatedAt: nowIso() });
 }
 
 export async function removeQuestion(id: string) {
@@ -89,14 +82,6 @@ export async function restoreQuestions(ids: string[]) {
   });
 }
 
-/** Soft-deletes a whole import batch (DX R4). Attempts stay, so history is not lost. */
-export async function removeBatch(batchId: string): Promise<number> {
-  const now = nowIso();
-  return db.questions.where('importBatchId').equals(batchId).modify((q) => {
-    q.deleted = true;
-    q.updatedAt = now;
-  });
-}
 
 // ---------- Attempts ----------
 

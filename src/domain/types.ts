@@ -3,8 +3,6 @@
 export type Area = 'GenEd' | 'ProfEd' | 'Major';
 export type Key = 'A' | 'B' | 'C' | 'D';
 export const KEYS: readonly Key[] = ['A', 'B', 'C', 'D'];
-export type QuestionStatus = 'verified' | 'unverified' | 'needs-key' | 'flagged';
-export type Source = 'review-center' | 'ai';
 export type Lang = 'en' | 'fil';
 
 export interface Choice {
@@ -26,16 +24,8 @@ export interface Question {
   choices: Choice[];
   answer: Key | null;
   explanation: string;
-  source: Source;
-  sourceRef: string;
-  status: QuestionStatus;
   media: { src?: string; alt: string } | null;
   tags: string[];
-  /** Set from practice ("Flag", "Key looks wrong"). Kept apart from `status` so clearing it restores nothing. */
-  flag: { reason: string; at: string } | null;
-  importBatchId: string;
-  /** True once she edits the item in the app. Re-importing never overwrites it. */
-  edited: boolean;
   updatedAt: string;
   deleted: boolean;
 }

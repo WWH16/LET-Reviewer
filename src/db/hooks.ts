@@ -8,8 +8,6 @@ import type { MockExam, Question } from '../domain/types';
 import { DEMO_PREFIX } from '../domain/demo';
 import { shown } from '../domain/choices';
 
-export const useQuestions = () => useLiveQuery(async () => (await db.questions.toArray()).filter((q) => !q.deleted));
-
 /** All questions by id, including removed ones, so old attempts still resolve. */
 export const useQuestionMap = () =>
   useLiveQuery(async () => new Map((await db.questions.toArray()).map((q): [string, Question] => [q.id, q])));

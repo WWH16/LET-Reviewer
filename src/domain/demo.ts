@@ -10,7 +10,7 @@ export const DEMO_PREFIX = 'demo-';
 const DAYS = 42;
 const STREAK = 6;
 const PER_DAY = [6, 10, 10, 14, 20, 28, 45];
-const MODES: Mode[] = ['quick', 'drill', 'drill', 'review', 'timed'];
+const MODES: Mode[] = ['quiz', 'quiz', 'quiz', 'review'];
 /** How far each question sits from its part's average, so some topics come out weak and some strong. */
 const SPREAD = [-0.34, -0.14, 0, 0.08, 0.14, 0.18];
 const PART_SKILL: Record<string, number> = { GenEd: 0.7, ProfEd: 0.8, Major: 0.74 };

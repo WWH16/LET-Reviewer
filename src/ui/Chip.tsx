@@ -12,20 +12,3 @@ export function Chip({ icon, solid, tone, children }: { icon?: IconName; solid?:
     </Badge>
   );
 }
-
-const STATUS: Record<string, { label: string; icon: IconName; tone: Tone }> = {
-  verified: { label: 'Verified', icon: 'check', tone: 'success' },
-  unverified: { label: 'Unverified', icon: 'alert', tone: 'secondary' },
-  'needs-key': { label: 'Needs key', icon: 'key', tone: 'secondary' },
-  flagged: { label: 'Flagged', icon: 'flag', tone: 'secondary' },
-};
-
-/** Text badge for a question's status. Never a colored dot alone (a11y R10). */
-export function StatusChip({ status }: { status: string }) {
-  const s = STATUS[status] ?? { label: status, icon: 'alert' as IconName, tone: 'secondary' as Tone };
-  return (
-    <Chip icon={s.icon} tone={s.tone}>
-      {s.label}
-    </Chip>
-  );
-}

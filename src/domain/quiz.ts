@@ -20,7 +20,8 @@ export const batchQuizId = (batchId: string, subarea: string) =>
  */
 export function upgradeQuestion(q: Question): Question {
   if (q.quizId) return q;
-  return { ...q, quizId: batchQuizId(q.importBatchId ?? 'imported', q.subarea) };
+  const batch = (q as Question & { importBatchId?: string }).importBatchId;
+  return { ...q, quizId: batchQuizId(batch ?? 'imported', q.subarea) };
 }
 
 /** A question a quiz or mock can ask: not removed, and it has an answer key. */

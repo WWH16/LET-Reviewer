@@ -4,7 +4,6 @@ import { useAnnounce } from '../../ui/Status';
 import { copyText } from '../../ui/clipboard';
 import { LEVEL_WEIGHTS, PARTS, partsFor, subareaName } from '../../domain/let-config';
 import { pct, recentByArea, tallyBy, weakestTopics, weakTopicsText } from '../../domain/scoring';
-import { templateB } from '../../domain/prompts';
 import { useStats } from './useStats';
 import { RatingCard } from './RatingCard';
 import { btn } from '../../ui/btn';

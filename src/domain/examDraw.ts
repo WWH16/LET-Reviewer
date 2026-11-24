@@ -2,26 +2,6 @@
 
 import type { Question } from './types';
 
-export const KEY_LOOKS_WRONG = 'Key looks wrong';
-
-/** Questions that can be graded: a key exists and nobody has doubted it. */
-export const gradable = (q: Question) =>
-  !q.deleted && q.answer !== null && q.status !== 'needs-key' && q.status !== 'flagged' && q.flag?.reason !== KEY_LOOKS_WRONG;
-
-export type SourceFilter = 'rc' | 'verified' | 'all';
-
-export const SOURCE_LABELS: Record<SourceFilter, string> = {
-  rc: 'Review-center only',
-  verified: 'Include verified AI questions',
-  all: 'Include all AI questions',
-};
-
-export function matchesSource(q: Question, f: SourceFilter): boolean {
-  if (f === 'rc') return q.source === 'review-center';
-  if (f === 'verified') return q.source === 'review-center' || q.status === 'verified';
-  return true;
-}
-
 export function shuffle<T>(list: T[], rng: () => number = Math.random): T[] {
   const a = [...list];
   for (let i = a.length - 1; i > 0; i--) {
@@ -29,18 +9,6 @@ export function shuffle<T>(list: T[], rng: () => number = Math.random): T[] {
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
-}
-
-/**
- * Question of the Day: one gradable question, the same all day and different the next. A small string
- * hash of the day picks from the question ids in a fixed order, so it needs no saved state.
- */
-export function questionOfTheDay(day: string, questions: Iterable<Question>): string | null {
-  const ids = [...questions].filter(gradable).map((q) => q.id).sort();
-  if (!ids.length) return null;
-  let h = 0;
-  for (const c of day) h = (h * 31 + c.charCodeAt(0)) >>> 0;
-  return ids[h % ids.length];
 }
 
 /** Largest-remainder split of n items by weight. */

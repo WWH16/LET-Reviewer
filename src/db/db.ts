@@ -32,3 +32,6 @@ db.version(1).stores({
 db.version(2)
   .stores({ questions: 'id, quizId, area, subarea, status, source, importBatchId, updatedAt' })
   .upgrade((tx) => tx.table<Question>('questions').toCollection().modify((q) => void (q.quizId = upgradeQuestion(q).quizId)));
+
+// The bank's status, source and import-batch filters are gone.
+db.version(3).stores({ questions: 'id, quizId, area, subarea, updatedAt' });

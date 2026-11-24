@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { batchQuizId, groupQuizzes, newQuizId, quizQuestionId, upgradeQuestion } from './quiz';
 import type { Question } from './types';
 
-const old = (over: Partial<Question>) => ({ id: 'x', subarea: 'english', importBatchId: 'batch-2026-11-01T08:00:00.000Z', ...over }) as Question;
+const old = (over: Partial<Question> & { importBatchId?: string }) => ({ id: 'x', subarea: 'english', importBatchId: 'batch-2026-11-01T08:00:00.000Z', ...over }) as Question;
 
 describe('quiz ids', () => {
   it('turns each import batch and subject into one quiz, keeping the batch time', () => {

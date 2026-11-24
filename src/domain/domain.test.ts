@@ -2,10 +2,10 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { parsePasted, previewImport, previewQuiz, validateItem } from './validate';
-import { examLabel, questionId } from './ids';
+import { examLabel } from './ids';
 import { buildCards, dueCards } from './leitner';
 import { dayKey, heatWeeks, longestStreak, streak } from './dates';
-import { drawMock, questionOfTheDay, quotas } from './examDraw';
+import { drawMock, quotas } from './examDraw';
 import { PARTS } from './let-config';
 import { lastResults, projectedRating, recentByArea, recentPartScores, tallyBy } from './scoring';
 import type { Attempt, Question } from './types';
@@ -23,7 +23,9 @@ const item = (over: Record<string, unknown> = {}) => ({
   sourceRef: 'Handout 3, p.12, #7',
   ...over,
 });
-const q = (over: Record<string, unknown> = {}): Question => validateItem(item(over), 1, opts).question!;
+// Ids come from the stem, so a test that varies only `sourceRef` gets a stem that differs too.
+const q = (over: Record<string, unknown> = {}): Question =>
+  validateItem(item('sourceRef' in over && !('stem' in over) ? { ...over, stem: `Which of the following? ${over.sourceRef}` } : over), 1, opts).question!;
 
 describe('parsePasted', () => {
   it('strips code fences and prose', () => {
@@ -43,17 +45,13 @@ describe('parsePasted', () => {
 describe('validateItem', () => {
   it('names the item, field, and allowed values', () => {
     const r = validateItem(item({ answer: 'E' }), 7, opts);
-    expect(r.label).toBe('Item 7 (Handout 3, p.12, #7)');
+    expect(r.label).toBe('Item 7');
     expect(r.errors).toEqual(['answer is "E". It must be A, B, C, D, or empty.']);
   });
   it('stores the sub-area id and offers the nearest match for a misspelling', () => {
     expect(q().subarea).toBe('assessment-of-learning');
     const r = validateItem(item({ subarea: 'Assessment in Learning' }), 1, opts);
     expect(r.subareaFix?.suggestion).toBe('assessment-of-learning');
-  });
-  it('marks AI items unverified and keyless items needs-key', () => {
-    expect(q({ source: 'ai', status: 'verified' }).status).toBe('unverified');
-    expect(q({ answer: null }).status).toBe('needs-key');
   });
   it('rejects a figure with no description', () => {
     expect(validateItem(item({ media: { src: 'fig.png' } }), 1, opts).errors[0]).toMatch(/no description/);
@@ -78,12 +76,12 @@ describe('previewQuiz', () => {
 });
 
 describe('ids and import', () => {
-  it('derives IDs from the content and ignores any pasted id', () => {
-    expect(q({ id: 'x-1' }).id).toBe('rc-handout-3-p-12-7');
-    expect(questionId({ source: 'ai', sourceRef: '', stem: 'A  b' })).toBe(questionId({ source: 'ai', sourceRef: '', stem: 'a b' }));
+  it('derives IDs from the quiz and the stem and ignores any pasted id', () => {
+    expect(q({ id: 'x-1' }).id).toBe(q().id);
+    expect(q().id.startsWith('quiz-test~assessment-of-learning~')).toBe(true);
   });
-  it('skips items already in the bank or repeated in the list', () => {
-    const p = previewImport([item(), item(), item({ sourceRef: 'Handout 3, p.12, #8' })], new Set(['rc-handout-3-p-12-8']), opts);
+  it('skips items already on the device or repeated in the list', () => {
+    const p = previewImport([item(), item(), item({ stem: 'Other?' })], new Set([q({ stem: 'Other?' }).id]), opts);
     expect(p.ready).toHaveLength(1);
     expect(p.duplicates).toHaveLength(2);
   });
@@ -224,18 +222,6 @@ describe('Progress window', () => {
     expect(part.total).toBe(150);
     expect(rows).toBe(part.total);
     expect(bySub.has(old.subarea)).toBe(false);
-  });
-});
-
-describe('questionOfTheDay', () => {
-  const qs = [1, 2, 3, 4].map((n) => q({ stem: `Question ${n}?`, sourceRef: `Handout 1, p.${n}` }));
-  it('keeps one question all day, whatever order the bank comes in', () => {
-    expect(questionOfTheDay('2026-11-16', qs)).toBe(questionOfTheDay('2026-11-16', [...qs].reverse()));
-  });
-  it('moves on across days, and skips questions that cannot be graded', () => {
-    const week = ['2026-11-16', '2026-11-17', '2026-11-18', '2026-11-19', '2026-11-20'].map((d) => questionOfTheDay(d, qs));
-    expect(new Set(week).size).toBeGreaterThan(1);
-    expect(questionOfTheDay('2026-11-16', [q({ answer: null })])).toBeNull();
   });
 });
 
