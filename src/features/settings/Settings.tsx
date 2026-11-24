@@ -15,7 +15,6 @@ import { btn } from '../../ui/btn';
 import { Select } from '../../ui/Select';
 import { DateField } from '../../ui/DateField';
 import { ProfileEditor } from './ProfileEditor';
-import { Avatar } from '../../ui/Avatar';
 import { AccountSection } from './AccountSection';
 import { SubjectsEditor } from './SubjectsEditor';
 import { EMPTY_STATE, requestSync, syncAvailable, type SyncState } from '../../sync/trigger';
@@ -116,17 +115,12 @@ export function Settings() {
         {show('subjects') && <SubjectsEditor s={s} />}
         {show('profile') && (
           <section className="tile" aria-label="Name and avatar">
-            <div className="row">
-              <Avatar who={s} size={44} />
-              <span>{s.name.trim() || 'No name yet'}</span>
-            </div>
             <ProfileEditor s={s} />
           </section>
         )}
 
         {show('exam') && (
-        <section className="tile span-3" aria-labelledby="set-exam">
-          <h2 id="set-exam">Exam</h2>
+        <section className="tile span-3">
           <div className="grid-2">
             <div className="field">
               <label htmlFor="s-level">Level</label>
@@ -168,8 +162,7 @@ export function Settings() {
         )}
 
         {show('display') && (
-        <section className="tile span-3" aria-labelledby="set-display">
-          <h2 id="set-display">Text and keys</h2>
+        <section className="tile span-3">
           <div className="field">
             <label htmlFor="s-size">Text size</label>
             <Select id="s-size" value={s.textSize} onChange={(v) => set({ textSize: Number(v) as S['textSize'] })}>
@@ -272,8 +265,7 @@ export function Settings() {
         )}
 
         {show('about') && (
-        <section className="tile span-3" aria-labelledby="set-about">
-          <h2 id="set-about">About</h2>
+        <section className="tile span-3">
           <p className="muted num">
             Version {version}, data format v{SCHEMA_VERSION}
           </p>
