@@ -3,6 +3,7 @@ import { Page } from '../../ui/Page';
 import { Empty } from '../../ui/Empty';
 import { useStats } from '../progress/useStats';
 import { PARTS, partsFor } from '../../domain/let-config';
+import { subjectsOf } from '../../domain/subjects';
 import { btn } from '../../ui/btn';
 
 /** Missed questions due today, by subject. Each subject reviews only its own misses. */
@@ -35,7 +36,8 @@ export function Missed() {
         </Empty>
       ) : (
         partsFor(stats.settings.level).map((area) => {
-          const subs = PARTS[area].subareas.filter((s) => due.has(`${area}/${s.id}`));
+          const dueQs = stats.due.map((c) => stats.qmap.get(c.questionId)!).filter(Boolean);
+          const subs = subjectsOf(area, stats.settings.subjects, dueQs).filter((s) => due.has(`${area}/${s.id}`));
           if (!subs.length) return null;
           return (
             <section key={area} className="stack-sm" aria-labelledby={`ms-${area}`}>

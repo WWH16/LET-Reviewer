@@ -11,6 +11,7 @@ import type { Area, MockExam, Question } from '../../domain/types';
 import { RatingCard } from '../progress/RatingCard';
 import { shown } from '../../domain/choices';
 import { counts } from '../../domain/quiz';
+import { subjectsOf } from '../../domain/subjects';
 import { shuffle } from '../../domain/examDraw';
 import { saveExam } from '../../db/repo';
 import { examLink, newExam } from './newExam';
@@ -105,7 +106,7 @@ export function MockResults() {
     if (q.answer !== null && exam.answers[String(i + 1)] === q.answer) t.right++;
     tally.set(q.subarea, t);
   });
-  const bySubject = PARTS[exam.part].subareas
+  const bySubject = subjectsOf(exam.part, settings.subjects, [...tally.keys()].map((subarea) => ({ area: exam.part, subarea })))
     .filter((s) => tally.has(s.id))
     .map((s) => ({ id: s.id, name: s.name, ...tally.get(s.id)!, pct: (tally.get(s.id)!.right / tally.get(s.id)!.total) * 100 }));
   const weakest = bySubject.length > 1 ? bySubject.reduce((w, x) => (x.pct < w.pct ? x : w)) : null;

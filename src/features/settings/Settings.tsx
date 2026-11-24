@@ -17,6 +17,7 @@ import { DateField } from '../../ui/DateField';
 import { ProfileEditor } from './ProfileEditor';
 import { Avatar } from '../../ui/Avatar';
 import { AccountSection } from './AccountSection';
+import { SubjectsEditor } from './SubjectsEditor';
 import { EMPTY_STATE, requestSync, syncAvailable, type SyncState } from '../../sync/trigger';
 import { SETTINGS_PAGES } from '../../app/nav';
 
@@ -110,6 +111,7 @@ export function Settings() {
   return (
     <Page title={page.label} back={{ to: '/settings', label: 'Settings' }}>
       <div className="stack">
+        {show('subjects') && <SubjectsEditor s={s} />}
         {show('profile') && (
           <section className="tile" aria-label="Name and avatar">
             <div className="row">

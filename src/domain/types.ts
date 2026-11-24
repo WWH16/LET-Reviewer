@@ -5,6 +5,13 @@ export type Key = 'A' | 'B' | 'C' | 'D';
 export const KEYS: readonly Key[] = ['A', 'B', 'C', 'D'];
 export type Lang = 'en' | 'fil';
 
+/** A subject in a part, named by her. The id is fixed when it is added; the name can change. */
+export interface Subject {
+  id: string;
+  name: string;
+}
+export type Subjects = Record<Area, Subject[]>;
+
 export interface Choice {
   key: Key;
   text: string;
@@ -16,7 +23,7 @@ export interface Question {
   /** The quiz it was made in (`quiz.ts`). Older questions get one from their import batch. */
   quizId: string;
   area: Area;
-  /** Sub-area id from `let-config.ts`. */
+  /** Her subject's id (`subjects.ts`). */
   subarea: string;
   topic: string;
   lang: Lang;
@@ -94,6 +101,8 @@ export interface Settings {
   onboarded: boolean;
   level: Level;
   major: string;
+  /** Her subjects in each part, in her order. Empty until she adds some. */
+  subjects: Subjects;
   examDate: string | null;
   timer: TimerSetting;
   textSize: 100 | 115 | 130;
@@ -113,6 +122,7 @@ export const DEFAULT_SETTINGS: Settings = {
   onboarded: false,
   level: 'elementary',
   major: '',
+  subjects: { GenEd: [], ProfEd: [], Major: [] },
   examDate: null,
   timer: 'real',
   textSize: 100,

@@ -62,10 +62,9 @@ describe('validateItem', () => {
     expect(r.label).toBe('Item 7');
     expect(r.errors).toEqual(['answer is "E". It must be A, B, C, D, or empty.']);
   });
-  it('stores the sub-area id and offers the nearest match for a misspelling', () => {
+  it('takes any subject name as its id, and needs one', () => {
     expect(q().subarea).toBe('assessment-of-learning');
-    const r = validateItem(item({ subarea: 'Assessment in Learning' }), 1, opts);
-    expect(r.subareaFix?.suggestion).toBe('assessment-of-learning');
+    expect(validateItem(item({ subarea: '' }), 1, opts).errors).toEqual(['has no subject.']);
   });
   it('rejects a figure with no description', () => {
     expect(validateItem(item({ media: { src: 'fig.png' } }), 1, opts).errors[0]).toMatch(/no description/);
@@ -159,9 +158,10 @@ describe('Leitner', () => {
 });
 
 describe('exam draw', () => {
-  const subs = PARTS.ProfEd.subareas.map((s) => s.id);
-  const pool = PARTS.ProfEd.subareas.flatMap((s, i) =>
-    Array.from({ length: i === 0 ? 2 : 20 }, (_, k) => ({ ...q({ subarea: s.name, sourceRef: `${s.id} ${k}` }) })),
+  const names = ['Foundations of Education', 'The Teaching Profession', 'Facilitating Learning', 'Assessment of Learning'];
+  const subs = names.map((n) => q({ subarea: n }).subarea);
+  const pool = names.flatMap((name, i) =>
+    Array.from({ length: i === 0 ? 2 : 20 }, (_, k) => ({ ...q({ subarea: name, sourceRef: `${name} ${k}` }) })),
   );
   it('splits evenly across the picked subjects and never repeats an item', () => {
     expect(quotas([1, 1, 2], 8)).toEqual([2, 2, 4]);
@@ -213,9 +213,8 @@ describe('layers', () => {
 
 describe('Progress window', () => {
   it("a part's sub-area rows add up to its figure, over the same recent 150 answers", () => {
-    const [s0, s1] = PARTS.ProfEd.subareas;
-    const old = q({ subarea: s0.name, stem: 'An older question?' });
-    const recent = q({ subarea: s1.name, stem: 'A recent question?' });
+    const old = q({ subarea: 'Foundations of Education', stem: 'An older question?' });
+    const recent = q({ subarea: 'The Teaching Profession', stem: 'A recent question?' });
     const qs = new Map([
       [old.id, old],
       [recent.id, recent],

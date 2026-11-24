@@ -3,6 +3,7 @@ import { Page } from '../../ui/Page';
 import { useAnnounce } from '../../ui/Status';
 import { copyText } from '../../ui/clipboard';
 import { LEVEL_WEIGHTS, PARTS, partsFor, subareaName } from '../../domain/let-config';
+import { subjectsOf } from '../../domain/subjects';
 import { pct, recentByArea, tallyBy, weakestTopics, weakTopicsText } from '../../domain/scoring';
 import { useStats } from './useStats';
 import { RatingCard } from './RatingCard';
@@ -113,7 +114,7 @@ export function Progress() {
                         </tr>
                       </thead>
                       <tbody>
-                        {PARTS[a].subareas.map((s) => {
+                        {subjectsOf(a, settings.subjects, qmap.values()).map((s) => {
                           const tally = bySub.get(s.id);
                           const sp = pct(tally);
                           return (

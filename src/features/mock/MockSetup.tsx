@@ -7,6 +7,7 @@ import { saveExam } from '../../db/repo';
 import { PARTS, partsFor, subareaName, timeLimit } from '../../domain/let-config';
 import { drawMock, quotas } from '../../domain/examDraw';
 import { counts } from '../../domain/quiz';
+import { subjectsOf } from '../../domain/subjects';
 import type { Area, MockExam, PaperSize } from '../../domain/types';
 import { examLink, newExam } from './newExam';
 import { btn } from '../../ui/btn';
@@ -38,7 +39,7 @@ export function MockSetup() {
   const pool = [...qmap.values()].filter((q) => counts(q) && q.area === part);
   const have = new Map<string, number>();
   for (const q of pool) have.set(q.subarea, (have.get(q.subarea) ?? 0) + 1);
-  const all = PARTS[part].subareas;
+  const all = subjectsOf(part, settings.subjects, pool);
   const subjects = pickedSubjects ?? all.filter((s) => have.has(s.id)).map((s) => s.id);
   const n = lengthOf(part, length);
   const need = quotas(subjects.map(() => 1), n);

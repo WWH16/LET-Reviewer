@@ -3,6 +3,7 @@ import { Page } from '../../ui/Page';
 import { useSettings } from '../../db/hooks';
 import { PARTS, partsFor } from '../../domain/let-config';
 import { btn } from '../../ui/btn';
+import { subjectsOf } from '../../domain/subjects';
 import { useQuizzes } from './useQuizzes';
 
 /** Every subject of every part she takes, with how many quizzes and questions it has. */
@@ -21,8 +22,14 @@ export function Quizzes() {
         {partsFor(settings.level).map((area) => (
           <section key={area} className="tile span-3 stack-sm" aria-labelledby={`qz-${area}`}>
             <h2 id={`qz-${area}`}>{PARTS[area].name}</h2>
+            {subjectsOf(area, settings.subjects, data.qmap.values()).length === 0 && (
+              <p className="meta">
+                No subjects yet. <Link to={`/quizzes/new?area=${area}`}>Make a quiz</Link> and name its subject, or{' '}
+                <Link to="/settings/subjects">add your subjects</Link>.
+              </p>
+            )}
             <ul className="list">
-              {PARTS[area].subareas.map((s) => {
+              {subjectsOf(area, settings.subjects, data.qmap.values()).map((s) => {
                 const mine = data.quizzes.filter((z) => z.area === area && z.subarea === s.id);
                 const n = mine.reduce((sum, z) => sum + z.questions.length, 0);
                 return (

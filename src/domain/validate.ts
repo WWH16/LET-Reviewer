@@ -1,7 +1,7 @@
 // Turns text pasted from a Claude chat into checked questions (plan §5, Import rules).
 // Chat output arrives wrapped in code fences, with prose around it, and sometimes cut off.
 
-import { PARTS } from './let-config';
+import { slug } from './ids';
 import { batchQuizId, quizQuestionId } from './quiz';
 import { KEYS, type Area, type Choice, type Key, type Question } from './types';
 
@@ -114,49 +114,12 @@ export function parsePasted(text: string): Parsed {
 
 const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
 
-export function levenshtein(a: string, b: string): number {
-  const row = Array.from({ length: b.length + 1 }, (_, i) => i);
-  for (let i = 1; i <= a.length; i++) {
-    let prev = row[0];
-    row[0] = i;
-    for (let j = 1; j <= b.length; j++) {
-      const tmp = row[j];
-      row[j] = Math.min(row[j] + 1, row[j - 1] + 1, prev + (a[i - 1] === b[j - 1] ? 0 : 1));
-      prev = tmp;
-    }
-  }
-  return row[b.length];
-}
-
-/** Returns the sub-area id for a name or id, or null. */
-export function matchSubarea(area: Area, value: string): string | null {
-  const n = norm(value);
-  const s = PARTS[area].subareas.find((x) => norm(x.id) === n || norm(x.name) === n);
-  return s?.id ?? null;
-}
-
-export function nearestSubarea(area: Area, value: string): string {
-  const n = norm(value);
-  let best = PARTS[area].subareas[0];
-  let bestD = Infinity;
-  for (const s of PARTS[area].subareas) {
-    const d = levenshtein(n, norm(s.name));
-    if (d < bestD) {
-      best = s;
-      bestD = d;
-    }
-  }
-  return best.id;
-}
-
 export interface ItemResult {
   /** 1-based position in the pasted list. */
   n: number;
   label: string;
   question: Question | null;
   errors: string[];
-  /** Present when only the sub-area is wrong. The UI offers this as a one-tap fix. */
-  subareaFix: { area: Area; given: string; suggestion: string } | null;
   duplicate: boolean;
 }
 
@@ -191,23 +154,14 @@ export function validateItem(raw: unknown, n: number, opts: { now: string; batch
   const o = isObj(raw) ? raw : {};
   const label = `Item ${n}`;
   const base = { n, label, duplicate: false };
-  if (!isObj(raw)) return { ...base, question: null, errors: ['is not a question object.'], subareaFix: null };
+  if (!isObj(raw)) return { ...base, question: null, errors: ['is not a question object.'] };
 
   const areaRaw = str(o.area);
   const area = AREAS.find((a) => norm(a) === norm(areaRaw));
   if (!area) errors.push(`area is "${areaRaw}". It must be GenEd, ProfEd, or Major.`);
 
-  let subarea = '';
-  let subareaFix: ItemResult['subareaFix'] = null;
-  const subRaw = str(o.subarea);
-  if (area) {
-    const m = subRaw && norm(subRaw) !== 'unknown' ? matchSubarea(area, subRaw) : null;
-    if (m) subarea = m;
-    else {
-      subareaFix = { area, given: subRaw, suggestion: nearestSubarea(area, subRaw) };
-      errors.push(subRaw && norm(subRaw) !== 'unknown' ? `sub-area "${subRaw}" is not in your list.` : 'has no sub-area.');
-    }
-  }
+  const subarea = slug(str(o.subarea));
+  if (!subarea || subarea === 'unknown') errors.push('has no subject.');
 
   const stem = str(o.stem);
   if (!stem) errors.push('stem (the question text) is empty.');
@@ -238,8 +192,7 @@ export function validateItem(raw: unknown, n: number, opts: { now: string; batch
   const lang = langRaw === 'fil' || langRaw === 'filipino' || langRaw === 'tl' ? 'fil' : 'en';
 
   if (errors.length || !area || !choices || answer === 'bad') {
-    // Only the sub-area is wrong: keep the offer of a one-tap fix.
-    return { ...base, question: null, errors, subareaFix: errors.length === 1 ? subareaFix : null };
+    return { ...base, question: null, errors };
   }
 
   const q: Question = {
@@ -258,7 +211,7 @@ export function validateItem(raw: unknown, n: number, opts: { now: string; batch
     updatedAt: opts.now,
     deleted: false,
   };
-  return { ...base, question: q, errors: [], subareaFix: null };
+  return { ...base, question: q, errors: [] };
 }
 
 export interface ImportPreview {

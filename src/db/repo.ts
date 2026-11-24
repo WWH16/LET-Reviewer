@@ -4,7 +4,9 @@ import { db } from './db';
 import { previewImport } from '../domain/validate';
 import { isCorrect } from '../domain/leitner';
 import { originalKey } from '../domain/choices';
-import { DEFAULT_SETTINGS, type Attempt, type Key, type MockExam, type Question, type Settings } from '../domain/types';
+import { DEFAULT_SETTINGS, type Area, type Attempt, type Key, type MockExam, type Question, type Settings } from '../domain/types';
+import { setSubjectNames } from '../domain/subjects';
+import { slug } from '../domain/ids';
 import sample from '../domain/sample-questions.json';
 import { DEMO_PREFIX, demoAttempts } from '../domain/demo';
 
@@ -24,7 +26,9 @@ export const setMeta = (key: string, value: unknown) => db.meta.put({ key, value
 export async function getSettings(): Promise<Settings> {
   const stored = await db.settings.get('settings');
   // Settings saved before the welcome screen existed belong to someone already using the app: skip it for them.
-  return { ...DEFAULT_SETTINGS, ...(stored && { onboarded: true }), ...stored };
+  const s: Settings = { ...DEFAULT_SETTINGS, ...(stored && { onboarded: true }), ...stored };
+  setSubjectNames(s.subjects);
+  return s;
 }
 export async function saveSettings(patch: Partial<Settings>) {
   const current = await getSettings();
@@ -49,8 +53,16 @@ export async function importQuestions(list: Question[]): Promise<number> {
   });
 }
 
+/** The 16 sample questions, and their subjects added to hers so the sample quizzes have names. */
 export async function loadSampleQuestions(): Promise<number> {
   const p = previewImport(sample, await liveQuestionIds(), { now: nowIso(), batchId: 'sample' });
+  const { subjects } = await getSettings();
+  const next = { ...subjects };
+  for (const x of sample) {
+    const area = x.area as Area;
+    if (!next[area].some((s) => s.id === slug(x.subarea))) next[area] = [...next[area], { id: slug(x.subarea), name: x.subarea }];
+  }
+  await saveSettings({ subjects: next });
   return importQuestions(p.ready);
 }
 

@@ -3,8 +3,9 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { useAnnounce } from '../../ui/Status';
 import { copyText } from '../../ui/clipboard';
-import { useSettings } from '../../db/hooks';
-import { importQuestions, nowIso, protectStorage } from '../../db/repo';
+import { useQuestionMap, useSettings } from '../../db/hooks';
+import { importQuestions, nowIso, protectStorage, saveSettings } from '../../db/repo';
+import { subjectId, subjectsOf } from '../../domain/subjects';
 import { PARTS, partsFor } from '../../domain/let-config';
 import { quizPrompt } from '../../domain/prompts';
 import { newQuizId } from '../../domain/quiz';
@@ -13,13 +14,18 @@ import type { Area } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { Select } from '../../ui/Select';
 
+const NEW = '__new';
+
 /**
  * Making a quiz is where questions come from: pick the subject, copy the prompt to Claude, paste the reply.
  * Nothing is saved until she confirms.
  */
 export function NewQuiz() {
   const settings = useSettings();
+  const qmap = useQuestionMap();
   const [params] = useSearchParams();
+  // Typed when she adds a subject here; her lists start empty, so the first quiz often names one.
+  const [newName, setNewName] = useState('');
   const [picked, setPicked] = useState<{ area: Area; sub: string } | null>(null);
   const [topic, setTopic] = useState(() => params.get('topic') ?? '');
   const [n, setN] = useState(10);
@@ -31,18 +37,21 @@ export function NewQuiz() {
 
   const parts = settings ? partsFor(settings.level) : [];
   const area = picked?.area ?? (parts.find((a) => a === params.get('area')) || parts[0]);
-  const subs = area ? PARTS[area].subareas : [];
-  const sub = subs.find((s) => s.id === (picked ? picked.sub : params.get('sub'))) ?? subs[0];
+  const subs = area && settings && qmap ? subjectsOf(area, settings.subjects, qmap.values()) : [];
+  const wanted = picked ? picked.sub : params.get('sub');
+  const adding = wanted === NEW || !subs.length;
+  const sub = adding ? null : (subs.find((s) => s.id === wanted) ?? subs[0]);
+  const subjectName = sub?.name ?? newName.trim();
 
   const parsed = useMemo(() => parsePasted(text), [text]);
   const preview = useMemo(
-    () => (parsed.kind === 'questions' && area && sub ? previewQuiz(parsed.items, { id: 'quiz-new', area, subarea: sub.id }, nowIso()) : null),
+    () => (parsed.kind === 'questions' && area ? previewQuiz(parsed.items, { id: 'quiz-new', area, subarea: sub?.id ?? 'new' }, nowIso()) : null),
     [parsed, area, sub],
   );
 
-  if (!settings || !area || !sub) return <Page title="New quiz">{null}</Page>;
-  const prompt = quizPrompt({ area, subject: sub.name, topic: topic.trim(), level: settings.level, major: settings.major, n });
-  const back = `/quizzes/${area}/${sub.id}`;
+  if (!settings || !qmap || !area) return <Page title="New quiz">{null}</Page>;
+  const prompt = quizPrompt({ area, subject: subjectName || '<subject>', topic: topic.trim(), level: settings.level, major: settings.major, n });
+  const back = sub ? `/quizzes/${area}/${sub.id}` : '/quizzes';
 
   const pasteClipboard = async () => {
     setClipError('');
@@ -55,24 +64,32 @@ export function NewQuiz() {
 
   const save = async (start: boolean) => {
     if (parsed.kind !== 'questions') return;
+    if (!subjectName) return;
     setBusy(true);
+    // A new subject joins her list first; a name she already has reuses that subject.
+    let subarea = sub?.id;
+    if (!subarea) {
+      const same = subs.find((s) => s.name.toLowerCase() === subjectName.toLowerCase());
+      subarea = same?.id ?? subjectId(subjectName, new Set(subs.map((s) => s.id)));
+      if (!same) await saveSettings({ subjects: { ...settings.subjects, [area]: [...settings.subjects[area], { id: subarea, name: subjectName }] } });
+    }
     const now = nowIso();
     const id = newQuizId(now);
-    const { ready } = previewQuiz(parsed.items, { id, area, subarea: sub.id }, now);
+    const { ready } = previewQuiz(parsed.items, { id, area, subarea }, now);
     await importQuestions(ready);
     protectStorage(); // first real data: ask the browser not to evict it
-    announce(`${sub.name} quiz saved with ${ready.length} questions`);
-    navigate(start ? `/session?mode=quiz&quiz=${encodeURIComponent(id)}` : back);
+    announce(`${subjectName} quiz saved with ${ready.length} questions`);
+    navigate(start ? `/session?mode=quiz&quiz=${encodeURIComponent(id)}` : `/quizzes/${area}/${subarea}`);
   };
 
   return (
-    <Page title="New quiz" back={{ to: back, label: `${sub.name} quizzes` }}>
+    <Page title="New quiz" back={{ to: back, label: sub ? `${sub.name} quizzes` : 'Quizzes' }}>
       <section className="tile stack" aria-labelledby="nq-1">
         <h2 id="nq-1">1. Pick the subject</h2>
         <div className="grid-2">
           <div className="field">
             <label htmlFor="nq-area">Part</label>
-            <Select id="nq-area" value={area} onChange={(v) => setPicked({ area: v as Area, sub: PARTS[v as Area].subareas[0].id })}>
+            <Select id="nq-area" value={area} onChange={(v) => setPicked({ area: v as Area, sub: '' })}>
               {parts.map((a) => (
                 <option key={a} value={a}>
                   {PARTS[a].name}
@@ -80,16 +97,25 @@ export function NewQuiz() {
               ))}
             </Select>
           </div>
-          <div className="field">
-            <label htmlFor="nq-sub">Subject</label>
-            <Select id="nq-sub" value={sub.id} onChange={(v) => setPicked({ area, sub: v })}>
-              {subs.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
-                </option>
-              ))}
-            </Select>
-          </div>
+          {subs.length > 0 && (
+            <div className="field">
+              <label htmlFor="nq-sub">Subject</label>
+              <Select id="nq-sub" value={sub?.id ?? NEW} onChange={(v) => setPicked({ area, sub: v })}>
+                {subs.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+                <option value={NEW}>Add a new subject…</option>
+              </Select>
+            </div>
+          )}
+          {adding && (
+            <div className="field">
+              <label htmlFor="nq-new">{subs.length ? 'New subject' : `Subject in ${PARTS[area].name}`}</label>
+              <input id="nq-new" type="text" placeholder="e.g. English" value={newName} onChange={(e) => setNewName(e.target.value)} />
+            </div>
+          )}
           <div className="field">
             <label htmlFor="nq-topic">Topic (optional)</label>
             <input id="nq-topic" type="text" value={topic} onChange={(e) => setTopic(e.target.value)} />
@@ -117,6 +143,7 @@ export function NewQuiz() {
           <button
             type="button"
             className={btn.secondary}
+            disabled={!subjectName}
             onClick={async () => {
               await copyText(prompt);
               announce('Prompt copied. Send it to Claude, then paste the reply below.');
@@ -170,10 +197,10 @@ export function NewQuiz() {
         )}
 
         <div className="row">
-          <button type="button" className={btn.primary} disabled={!preview?.ready.length || busy} onClick={() => save(true)}>
+          <button type="button" className={btn.primary} disabled={!preview?.ready.length || !subjectName || busy} onClick={() => save(true)}>
             Save and take it
           </button>
-          <button type="button" className={btn.secondary} disabled={!preview?.ready.length || busy} onClick={() => save(false)}>
+          <button type="button" className={btn.secondary} disabled={!preview?.ready.length || !subjectName || busy} onClick={() => save(false)}>
             Save only
           </button>
           <Link className={btn.quiet} to={back}>
