@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { parsePasted, previewImport, previewQuiz, validateItem } from './validate';
 import { examLabel } from './ids';
 import { buildCards, dueCards } from './leitner';
-import { dayKey, heatWeeks, longestStreak, streak } from './dates';
+import { dayKey, heatWeeks, streak } from './dates';
 import { drawMock, quotas } from './examDraw';
 import { PARTS } from './let-config';
 import { lastResults, projectedRating, recentByArea, recentPartScores, tallyBy } from './scoring';
@@ -143,12 +143,10 @@ describe('Leitner', () => {
     expect(dayKey(new Date(2026, 10, 16, 0, 30))).toBe('2026-11-15');
     expect(streak(new Set(['2026-11-13', '2026-11-14', '2026-11-15']), '2026-11-15')).toBe(3);
   });
-  it('keeps a streak alive until tonight, and finds the longest run across a month end', () => {
+  it('keeps a streak alive until tonight, across a month end', () => {
     const days = ['2026-10-30', '2026-10-31', '2026-11-01', '2026-11-02', '2026-11-14', '2026-11-15'];
     expect(streak(new Set(days), '2026-11-16')).toBe(2);
     expect(streak(new Set(days), '2026-11-17')).toBe(0);
-    expect(longestStreak(days)).toBe(4);
-    expect(longestStreak([])).toBe(0);
   });
   it('lays the activity grid out in Sunday-first weeks that stop at today', () => {
     // 2026-11-16 is a Monday: this week holds Sunday and Monday only.

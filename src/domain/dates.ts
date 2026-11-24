@@ -42,20 +42,7 @@ export function streak(days: { has(day: string): boolean }, today: string): numb
   return n;
 }
 
-/** The longest run of consecutive study days, ever. */
-export function longestStreak(days: Iterable<string>): number {
-  let best = 0;
-  let run = 0;
-  let prev = '';
-  for (const d of [...days].sort()) {
-    run = prev && addDays(prev, 1) === d ? run + 1 : 1;
-    if (run > best) best = run;
-    prev = d;
-  }
-  return best;
-}
-
-// ponytail: fixed answer counts per shade. One Quick 10 reaches level 2, a full mock level 4.
+// ponytail: fixed answer counts per shade. One 10-question quiz reaches level 2, a full mock level 4.
 // Scale them to her own busiest day if the grid ends up all one shade.
 export type HeatLevel = 0 | 1 | 2 | 3 | 4;
 export const heatLevel = (count: number): HeatLevel => (count <= 0 ? 0 : count < 10 ? 1 : count < 25 ? 2 : count < 50 ? 3 : 4);

@@ -765,11 +765,6 @@ main.wide {
 }
 
 /* A source chip (Review center) on the grey tint instead of Kumo's info badge */
-.chip-accent {
-  background: var(--color-accent-soft);
-  color: var(--color-on-soft);
-}
-
 /* ---------- Forms: Kumo's input, with a 3:1 border (a11y) ---------- */
 
 .field {

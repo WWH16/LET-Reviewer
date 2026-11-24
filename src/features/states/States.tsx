@@ -67,7 +67,8 @@ export function States() {
       {group(
         'Chips',
         <div className="row">
-          <Chip solid>Review center</Chip>
+          <Chip>Digital</Chip>
+          <Chip>Printed</Chip>
         </div>,
       )}
 
