@@ -1,0 +1,13 @@
+{
+  "scanned": "2026-11-24",
+  "findings": {
+    "fonts": "Schibsted Grotesk Variable, Instrument Sans Variable, DM Mono (Fontsource, package.json; tokens src/ui/tokens.css:17-20)",
+    "palette": "OKLCH role tokens, 60 white / 30 yellow / 10 near-black (src/ui/tokens.css :root), chosen by the user 2026-11-24",
+    "motion": "none (CSS only, --dur-micro and --dur-short)",
+    "spacing": "4px scale --space-3xs..2xl (src/ui/tokens.css:11)",
+    "framework": "React 19 + Vite 8, hash router, Kumo 2.18.1 components",
+    "render": "sloplint's headless profile is empty and shows the Welcome screen; screenshots come from the preview pane with sample data"
+  },
+  "preserve": ["yellow palette", "faces", "spacing scale", "Kumo components", "routes and wiring", "shell (side menu, bottom tab bar)"],
+  "introduce": ["bento composition per screen"]
+}

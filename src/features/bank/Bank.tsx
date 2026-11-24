@@ -94,119 +94,123 @@ export function Bank() {
     );
 
   return (
-    <Page title="Review">
-      <div className="row">
-        <Link className={btn.primary} to="/bank/import">
-          Import questions
-        </Link>
-        <CopyPhotoPrompt />
-      </div>
-
-      <div className="stack bank-filters">
-        <div className="field">
-          <label htmlFor="bank-search">Search questions</label>
-          <input
-            id="bank-search"
-            type="search"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setLimit(SHOW);
-            }}
-          />
+    <Page title="Review" wide>
+      <div className="bank-layout">
+        <div className="bank-rail">
+          <div className="row">
+            <Link className={btn.primary} to="/bank/import">
+              Import questions
+            </Link>
+            <CopyPhotoPrompt />
         </div>
-        <div className="review-tabs" role="group" aria-label="Show">
-          {QUEUES.map((x, i) => (
-            <button
-              key={x.id}
-              type="button"
-              aria-pressed={queue === x.id}
-              onClick={() => {
-                setQueue(x.id);
+
+        <div className="stack bank-filters">
+          <div className="field">
+            <label htmlFor="bank-search">Search questions</label>
+            <input
+              id="bank-search"
+              type="search"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
                 setLimit(SHOW);
               }}
-            >
-              <span>{x.label}</span>
-              <span className="num">{counts[i]}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <section className="stack-sm" aria-labelledby="bank-list">
-        <h2 id="bank-list">
-          {filtered.length > limit ? `Showing ${limit} of ${filtered.length}` : `${filtered.length} questions`}
-        </h2>
-        {filtered.length === 0 &&
-          (search.trim() ? (
-            <Empty icon="review" title="No questions match" text={`Nothing under ${QUEUES.find((x) => x.id === queue)!.label} matches “${search.trim()}”.`}>
-              <button type="button" className={btn.secondary} onClick={() => setSearch('')}>
-                Clear search
-              </button>
-            </Empty>
-          ) : (
-            <Empty icon="review" title={NONE[queue][0]} text={NONE[queue][1]}>
-              {queue !== 'all' && (
-                <button type="button" className={btn.secondary} onClick={() => setQueue('all')}>
-                  Show all questions
-                </button>
-              )}
-            </Empty>
-          ))}
-        <ul className="list" hidden={filtered.length === 0}>
-          {filtered.slice(0, limit).map((q) => {
-            const s = STATUS[isFlagged(q) ? 'flag' : last.get(q.id) === true ? 'right' : last.get(q.id) === false ? 'wrong' : 'new'];
-            return (
-              <li key={q.id}>
-                <Link className="list-link review-row" to={`/bank/${encodeURIComponent(q.id)}`}>
-                  <span className={`review-status ${s.cls}`}>
-                    <Icon name={s.icon} size={14} />
-                    <span className="sr-only">{s.text}: </span>
-                  </span>
-                  <span className="meta">
-                    {subareaName(q.subarea)}
-                    {q.topic ? `, ${q.topic}` : ''}
-                  </span>
-                  <span className="clamp-2" lang={q.lang}>
-                    {q.stem}
-                  </span>
-                  {(q.status !== 'verified' || q.source === 'ai' || q.lang === 'fil') && (
-                    <span className="row">
-                      {q.status !== 'verified' && <StatusChip status={q.status} />}
-                      {q.flag && <Chip icon="flag">{q.flag.reason}</Chip>}
-                      {q.source === 'ai' && <Chip>AI</Chip>}
-                      {q.lang === 'fil' && <Chip>Filipino</Chip>}
-                    </span>
-                  )}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-        {filtered.length > limit && (
-          <div>
-            <button type="button" className={btn.secondary} onClick={() => setLimit(limit + SHOW)}>
-              Show {Math.min(SHOW, filtered.length - limit)} more
-            </button>
+            />
           </div>
-        )}
-      </section>
-
-      <section className="stack-sm" aria-labelledby="bank-batches">
-        <h2 id="bank-batches">Imports</h2>
-        <ul className="list">
-          {batches.map(([id, count]) => (
-            <li key={id} className="spread">
-              <span>
-                {batchLabel(id)} <span className="muted">({count} items)</span>
-              </span>
-              <button type="button" className={btn.quiet} onClick={() => setRemoving({ id, count })}>
-                Remove
+          <div className="review-tabs" role="group" aria-label="Show">
+            {QUEUES.map((x, i) => (
+              <button
+                key={x.id}
+                type="button"
+                aria-pressed={queue === x.id}
+                onClick={() => {
+                  setQueue(x.id);
+                  setLimit(SHOW);
+                }}
+              >
+                <span>{x.label}</span>
+                <span className="num">{counts[i]}</span>
               </button>
-            </li>
-          ))}
-        </ul>
-      </section>
+            ))}
+          </div>
+        </div>
+        </div>
+
+        <section className="stack-sm" aria-labelledby="bank-list">
+          <h2 id="bank-list">
+            {filtered.length > limit ? `Showing ${limit} of ${filtered.length}` : `${filtered.length} questions`}
+          </h2>
+          {filtered.length === 0 &&
+            (search.trim() ? (
+              <Empty icon="review" title="No questions match" text={`Nothing under ${QUEUES.find((x) => x.id === queue)!.label} matches “${search.trim()}”.`}>
+                <button type="button" className={btn.secondary} onClick={() => setSearch('')}>
+                  Clear search
+                </button>
+              </Empty>
+            ) : (
+              <Empty icon="review" title={NONE[queue][0]} text={NONE[queue][1]}>
+                {queue !== 'all' && (
+                  <button type="button" className={btn.secondary} onClick={() => setQueue('all')}>
+                    Show all questions
+                  </button>
+                )}
+              </Empty>
+            ))}
+          <ul className="list" hidden={filtered.length === 0}>
+            {filtered.slice(0, limit).map((q) => {
+              const s = STATUS[isFlagged(q) ? 'flag' : last.get(q.id) === true ? 'right' : last.get(q.id) === false ? 'wrong' : 'new'];
+              return (
+                <li key={q.id}>
+                  <Link className="list-link review-row" to={`/bank/${encodeURIComponent(q.id)}`}>
+                    <span className={`review-status ${s.cls}`}>
+                      <Icon name={s.icon} size={14} />
+                      <span className="sr-only">{s.text}: </span>
+                    </span>
+                    <span className="meta">
+                      {subareaName(q.subarea)}
+                      {q.topic ? `, ${q.topic}` : ''}
+                    </span>
+                    <span className="clamp-2" lang={q.lang}>
+                      {q.stem}
+                    </span>
+                    {(q.status !== 'verified' || q.source === 'ai' || q.lang === 'fil') && (
+                      <span className="row">
+                        {q.status !== 'verified' && <StatusChip status={q.status} />}
+                        {q.flag && <Chip icon="flag">{q.flag.reason}</Chip>}
+                        {q.source === 'ai' && <Chip>AI</Chip>}
+                        {q.lang === 'fil' && <Chip>Filipino</Chip>}
+                      </span>
+                    )}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+          {filtered.length > limit && (
+            <div>
+              <button type="button" className={btn.secondary} onClick={() => setLimit(limit + SHOW)}>
+                Show {Math.min(SHOW, filtered.length - limit)} more
+              </button>
+            </div>
+          )}
+        </section>
+
+        <section className="stack-sm" aria-labelledby="bank-batches">
+          <h2 id="bank-batches">Imports</h2>
+          <ul className="list">
+            {batches.map(([id, count]) => (
+              <li key={id} className="spread">
+                <span>
+                  {batchLabel(id)} <span className="muted">({count} items)</span>
+                </span>
+                <button type="button" className={btn.quiet} onClick={() => setRemoving({ id, count })}>
+                  Remove
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
 
       <Dialog
         open={!!removing}

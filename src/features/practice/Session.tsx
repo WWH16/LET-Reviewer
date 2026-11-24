@@ -15,7 +15,7 @@ import { KEY_LOOKS_WRONG, gradable, questionOfTheDay, shuffle } from '../../doma
 import { dayKey } from '../../domain/dates';
 import { paceMs, subareaName } from '../../domain/let-config';
 import { KEYS, type Area, type Key, type Mode, type Question } from '../../domain/types';
-import { drillMatches } from './DrillSetup';
+import { drillMatches } from './drill';
 import { btn } from '../../ui/btn';
 import { Empty } from '../../ui/Empty';
 import { requestSync } from '../../sync/trigger';
@@ -186,7 +186,7 @@ export function Session() {
     const wrong = results.filter((r) => !r.correct);
     return (
       <Page title={`${title} results`}>
-        {/* The score is the screen's navy block, as on a quiz app's results screen. */}
+        {/* The score is the screen's yellow block, as on a quiz app's results screen. */}
         <section className="tile tile-inverse quiz-score" aria-labelledby="res-score">
           <h2 id="res-score" className="label">
             {timeUp ? 'Time is up' : `${title} done`}

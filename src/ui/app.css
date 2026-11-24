@@ -1,12 +1,16 @@
-/* Hallmark · shape: app screen · genre: modern-minimal · theme: exam-prep light, after the Pocket Prep apps (by request: their structure, flows and look; our own name, mark and palette) on Kumo components 2.18.1, the Dose faces kept · redesign: full
- * nav: four tabs (Study, Stats, Review, Settings), a bottom bar on phones and the side menu at 60rem and up · signature: Study's list of quiz modes, each a tinted icon tile, a name and a line; one navy block per screen holding its figure (the quiz bar, the Stats ring, the score) · answers: a blue ring when chosen, green with a check when right, red with a cross when wrong · states: loading, empty, full
- * axes: light/grotesk-sans/navy-blue with green, red and amber for state · posture: friendly-quiet · contrast: pass · modes: light+dark · v2.0.0 */
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: exam-prep light, after the Pocket Prep apps (by request: their structure, flows and look; our own name, mark and palette) on Kumo components 2.18.1, the Dose faces kept · redesign: full (bento, 2026-11-24, brand kept)
+ * nav: four tabs (Study, Stats, Review, Settings), a bottom bar on phones and the side menu at 60rem and up · screen: a six-column bento from 60rem (Study: the golden greeting beside resume and backup, the quiz modes as tiles with Quick 10 large on butter; Stats: the ring beside the rating, subjects beside weakest topics, the streak across; Review: a sticky rail of actions and filters beside the list; Settings: tiles in pairs; Mock setup: the form beside the open and past exams), one column below · signature: the golden greeting on Study holding the countdown and the week; one golden yellow block per screen holding its figure (the greeting, the quiz bar, the Stats ring, the score) · answers: a near-black ring on butter when chosen, green with a check when right, red with a cross when wrong · states: loading, empty, full
+ * axes: light/grotesk-sans/60 white, 30 yellow, 10 near-black, with green, red and orange for state · posture: friendly-quiet · contrast: pass · modes: light · v2.0.0 */
 /* Hallmark · waive 7b · surface: absolute on --print-ink and --print-paper only, used inside .paper and @media print · the printed booklet and answer sheet need pure black toner on white bond, and the corner markers must scan */
-/* Hallmark · dismissed 41 · the state fills (green, red, amber) carry icons in --color-card, never text in ink; every text pair is in contrast.test.ts */
+/* Hallmark · dismissed 41 · the state fills (green, red, orange) carry icons in --color-card, never text in ink; every text pair is in contrast.test.ts */
 /* Hallmark · dropped setSheetOpen(false), removeQuestion(q.id), removeBatch(removing · rewritten, not removed: the sheet's Close now calls closeSheet (it also returns focus), and both removes now announce an Undo */
 /* Hallmark · answered F4 · buttons are Kumo's own classes (src/ui/btn.ts): one primary per screen, secondary for the rest, ghost for quiet links; aria-pressed is a toggle on the secondary */
-/* Hallmark · answered F7 · surfaces follow one ladder: white cards at 16px with the card shadow on a cool grey ground, flat wells inside them, one navy block per screen; choices and feedback keep Kumo's 12px card; inputs share Kumo's one input recipe because they are one role */
-/* Hallmark · pre-emit critique: P4 H4 E4 S3 R4 V4 · weakest: S, the look follows a named reference by request; the quiz-mode list and the navy quiz bar are the objects the app is known by */
+/* Hallmark · answered F7 · surfaces follow one ladder: white cards at 16px with the card shadow on a warm off-white ground, flat wells inside them, one yellow block per screen; tiles in a bento row share its height; choices and feedback keep Kumo's 12px card; inputs share Kumo's one input recipe because they are one role */
+/* Hallmark · waive 24b · 10px and 6px only, on dense rows (.option, .choice, .list > li, th, the quiz bar) and small gaps (.field, .week-streak, .subject) · these rows sit between Kumo's 8 and 12 steps; on the 4px scale the list rows and answer cards read either cramped or loose */
+/* Hallmark · dismissed 49 · "Replace data on this device" is a dialog's destructive choice; it wraps inside the dialog's row by design rather than clipping */
+/* Hallmark · dismissed 70 · "New code sent" follows a real request: run() in AccountSection awaits the resendCode request and announces only when it succeeds */
+/* Hallmark · finish-review: in-thread · 1 finding (the Quick 10 tile's hover was one shade off its fill) · 1 resolved · gap: none */
+/* Hallmark · pre-emit critique: P4 H4 E4 S3 R4 V3 · weakest: S, the look follows a named reference by request; the golden greeting with the week and the Quick 10 tile are what Study is known by now, and the quiz-mode tiles keep the list's order on a phone */
 @import '@cloudflare/kumo/styles/kumo-standalone';
 @import url('./tokens.css');
 @import url('./base.css');
@@ -150,7 +154,7 @@ h1:not(.sr-only) + p {
 /* ---------- Surfaces: ground, tile, action tile, well, inverse ----------
    A tile is one bento block: one topic under its own heading. An action tile is a whole-tile choice and
    sits one shadow step higher. A well is a flat grey inset for secondary facts inside a tile, never a
-   card in a card. The inverse tile is the one dark mass on a screen and holds the figure it exists for. */
+   card in a card. The inverse tile is the one yellow block on a screen and holds the figure it exists for. */
 .tile {
   display: flex;
   flex-direction: column;
@@ -186,6 +190,12 @@ h1:not(.sr-only) + p {
   --color-kumo-line: color-mix(in oklab, var(--color-inverse-ink) 35%, transparent);
   --text-color-kumo-default: var(--color-inverse-ink);
 }
+/* The fills wash out on yellow, so the quiz bar segments and the low timer take the stronger text tones there. */
+:is(.tile-inverse, .quiz-bar) {
+  --color-success-fill: var(--color-success);
+  --color-error-fill: var(--color-error);
+  --color-warning-fill: var(--color-warning);
+}
 .tile-inverse :is(.muted, .meta, .display-unit, .label) {
   color: var(--color-inverse-muted);
 }
@@ -204,30 +214,61 @@ h1:not(.sr-only) + p {
   max-width: var(--measure-app);
 }
 
-/* ---------- Bento: Mock results only, the score beside the rating and pacing ----------
-   Phones: one column. 60rem and up: six columns, each block three wide. */
+/* ---------- Bento: each screen's tiles on one grid ----------
+   Phones and tablets: one column, in reading order. 60rem and up: six columns. A tile spans two (a third),
+   three (a half), four (two thirds) or, with no class, all six. Tiles in a row share its height. */
 .bento {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--gap-section);
 }
-.bento > * {
-  grid-column: 1 / -1;
+/* A pair whose heights depend on the data top-aligns, so the shorter tile never carries a white void. */
+.bento > .align-start {
+  align-self: start;
+}
+/* Tablets, 48rem up: halves. A third and a two-thirds tile both take a half, and a half left alone on the
+   last row takes the row. */
+@media (min-width: 48rem) {
+  .bento {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .bento > * {
+    grid-column: 1 / -1;
+  }
+  .bento > :is(.span-2, .span-3, .span-4) {
+    grid-column: span 3;
+  }
+  .bento > :is(.span-2, .span-3, .span-4):nth-child(odd of :is(.span-2, .span-3, .span-4)):last-child {
+    grid-column: 1 / -1;
+  }
 }
 @media (min-width: 60rem) {
   .bento {
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
+  .bento > * {
+    grid-column: 1 / -1;
+  }
+  .bento > .span-2 {
+    grid-column: span 2;
+  }
   .bento > .span-3 {
     grid-column: span 3;
+  }
+  .bento > .span-4 {
+    grid-column: span 4;
   }
   .bento > .rows-2 {
     grid-row: span 2;
   }
+  /* Settings pairs its halves; one left alone on the last row takes the row, so no cell stands empty. */
+  .bento.pairs > .span-3:nth-child(odd of .span-3):last-child {
+    grid-column: 1 / -1;
+  }
 }
 
 /* Option cards: a radio choice that needs a sentence to explain each side (the mock's form). Flat grey
-   at rest, a blue tint with a blue ring when chosen. */
+   at rest, a butter tint with a near-black ring when chosen. */
 .options {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
@@ -262,14 +303,12 @@ h1:not(.sr-only) + p {
   outline-offset: 2px;
 }
 .option-title {
-  font-size: var(--text-base);
+  font-size: var(--text-name);
   font-weight: 600;
 }
 /* Mock results: the score figure is the largest number on the screen. */
-@media (min-width: 60rem) {
-  .score-tile .display {
-    font-size: calc(var(--text-figure) * 1.6);
-  }
+.score-tile .display {
+  font-size: calc(var(--text-figure-lead) * 1.25);
 }
 /* A weak topic: its name and figures on the left, its two actions on the right, on one row at every width. */
 .weak-item {
@@ -288,19 +327,8 @@ h1:not(.sr-only) + p {
   gap: var(--space-2xs);
 }
 .weak-name {
-  font-size: var(--text-base);
+  font-size: var(--text-name);
   font-weight: 600;
-}
-/* On a wide screen the list runs in two columns, so a row's actions stay within reach of its name. */
-@media (min-width: 60rem) {
-  .tile .list:has(> .weak-item) {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: var(--space-xl);
-  }
-  .tile .list > .weak-item:nth-last-child(2):nth-child(odd) {
-    border-bottom: 0;
-  }
 }
 
 /* A note set in a bento takes the tiles' corners and padding, so the grid's edges line up. */
@@ -376,7 +404,7 @@ a.brand {
   width: 20px;
   height: 20px;
   border-radius: 5px;
-  background: var(--color-accent);
+  background: var(--color-inverse);
 }
 .nav a {
   display: flex;
@@ -401,7 +429,7 @@ a.brand {
 .nav a:active {
   background: var(--color-paper-3);
 }
-/* The current tab is the blue one, label and icon both, as in a phone exam-prep app. */
+/* The current tab sits on butter, label and icon both, as in a phone exam-prep app. */
 .nav a[aria-current='page'] {
   background: var(--color-accent-soft);
   color: var(--color-accent-text);
@@ -411,7 +439,7 @@ a.brand {
   color: var(--color-accent-text);
 }
 /* Avataaars are the one place with colour: her skin tone and hair are who she is. A paper disc keeps
-   them readable in dark mode and on the inverted Today card. */
+   them readable on the inverted Today card. */
 .avatar {
   flex: none;
   border-radius: 50%;
@@ -713,8 +741,8 @@ main.wide {
     display: none;
   }
 }
-/* The primary is Kumo's secondary button in the action blue. Kumo's own primary forces a white label,
-   which the light blue of dark mode cannot carry, so the label colour comes in through Kumo's text token. */
+/* The primary is Kumo's secondary button in near-black. The label colour comes in
+   through Kumo's text token, so it follows --color-button-ink. */
 .btn-primary {
   --text-color-kumo-default: var(--color-button-ink);
   background: var(--color-button);
@@ -743,7 +771,7 @@ main.wide {
   }
 }
 
-/* A source chip (Review center) on the grey tint instead of Kumo's blue info badge */
+/* A source chip (Review center) on the grey tint instead of Kumo's info badge */
 .chip-accent {
   background: var(--color-accent-soft);
   color: var(--color-on-soft);
@@ -978,7 +1006,7 @@ legend {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
-/* Locked choices switch to right and wrong at once: easing from the blue pick to red passes through violet. */
+/* Locked choices switch to right and wrong at once: easing from the dark pick to red passes through a muddy brown. */
 .choice:has(input:disabled) {
   cursor: default;
   transition: none;
@@ -1160,7 +1188,7 @@ th.num {
   border-bottom: 1px solid var(--color-rule);
 }
 .list .clamp-2 {
-  font-size: var(--text-base);
+  font-size: var(--text-body);
   font-weight: 500;
   line-height: 1.45;
 }
@@ -1365,13 +1393,39 @@ a.back {
   box-shadow: none;
 }
 
-/* ---------- Study: the greeting, this week, the quiz modes ---------- */
+/* ---------- Study: the greeting, this week, the quiz modes ----------
+   The greeting is Study's yellow block: it holds the countdown to the LET and the week, the figures
+   the screen opens on. .tile-inverse on the element swaps the tokens inside it. */
 
 .greet {
   display: grid;
-  gap: var(--space-sm);
+  align-content: space-between;
+  gap: var(--space-md);
   padding: var(--pad-card);
   border-radius: var(--radius-tile);
+  background: var(--color-inverse);
+  color: var(--color-inverse-ink);
+  box-shadow: var(--shadow-card);
+}
+.greet .meta a {
+  display: inline-block;
+  padding-block: var(--space-xs);
+  margin-block: calc(-1 * var(--space-xs));
+}
+.greet .week-day[aria-current] .week-dot {
+  box-shadow: 0 0 0 2px var(--color-inverse), 0 0 0 4px var(--color-inverse-ink);
+}
+.greet .week-day[aria-current] .week-name {
+  color: var(--color-inverse-ink);
+}
+/* Beside the greeting on a wide screen: an exam left open, the backup reminder. */
+.home-side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-section);
+}
+.home-side > .notice {
+  padding: var(--pad-card);
   background: var(--color-card);
   box-shadow: var(--shadow-card);
 }
@@ -1440,9 +1494,9 @@ a.back {
   font-size: var(--text-sm);
 }
 .week-streak svg {
-  color: var(--tone-amber);
+  color: var(--color-ink);
 }
-/* An exam left open: the one navy block on Study, so the way back in is the first thing seen. */
+/* An exam left open: a raised action tile beside the greeting, so the way back in is the first thing seen. */
 .resume {
   display: flex;
   align-items: center;
@@ -1450,24 +1504,24 @@ a.back {
   gap: var(--space-md);
   padding: var(--pad-card);
   border-radius: var(--radius-tile);
-  background: var(--color-inverse);
-  color: var(--color-inverse-ink);
+  background: var(--color-card);
+  color: var(--color-ink);
   box-shadow: var(--shadow-raised);
   text-decoration: none;
 }
-.resume .meta {
-  color: var(--color-inverse-muted);
+.resume:hover {
+  background: var(--color-paper);
 }
 a.resume,
 a.mode {
   text-decoration: none;
 }
 .resume-title {
-  font-size: var(--text-body);
+  font-size: var(--text-name);
   font-weight: 600;
 }
 .resume:focus-visible {
-  outline-color: var(--color-accent);
+  outline-color: var(--color-focus);
 }
 /* The quiz modes: one list, one row each, an icon tile, a name, a line and a chevron. */
 .modes {
@@ -1504,6 +1558,7 @@ a.mode:focus-visible {
   flex: none;
   color: var(--color-muted);
 }
+/* One icon family: a near-black glyph on butter, so the tiles read as one set and the yellow carries them. */
 .mode-icon {
   display: grid;
   place-items: center;
@@ -1511,6 +1566,8 @@ a.mode:focus-visible {
   width: 2.25rem;
   height: 2.25rem;
   border-radius: var(--radius-control);
+  background: var(--color-accent-soft);
+  color: var(--color-ink);
 }
 .mode-text {
   display: flex;
@@ -1520,7 +1577,7 @@ a.mode:focus-visible {
   min-width: 0;
 }
 .mode-name {
-  font-size: var(--text-base);
+  font-size: var(--text-name);
   font-weight: 600;
 }
 .mode-count {
@@ -1528,8 +1585,8 @@ a.mode:focus-visible {
   min-width: 1.75rem;
   padding: var(--space-3xs) var(--space-xs);
   border-radius: var(--radius-pill);
-  background: var(--color-error-tint);
-  color: var(--color-error);
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
   font-size: var(--text-xs);
   font-weight: 600;
   text-align: center;
@@ -1540,37 +1597,180 @@ a.mode:focus-visible {
 .mode.is-idle .mode-icon {
   opacity: 0.55;
 }
-.tone-amber {
-  background: var(--tone-amber-bg);
-  color: var(--tone-amber);
+/* 48rem and up the list becomes tiles on the bento's gap. Tablets: Quick 10 across the top on the butter
+   tint, then the other six in pairs. 60rem and up: Quick 10 two rows tall, four thirds beside it, then the
+   two modes you set up (Build your own, Mock exam) as halves. Seven tiles, no empty cell at either size. */
+@media (min-width: 48rem) {
+  .modes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--gap-section);
+    overflow: visible;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+  .modes > li {
+    display: grid;
+  }
+  .modes > li + li {
+    border-top: 0;
+  }
+  .modes > li:first-child {
+    grid-column: 1 / -1;
+  }
+  .mode {
+    flex-wrap: wrap;
+    align-content: flex-start;
+    row-gap: var(--space-sm);
+    padding: var(--pad-card);
+    border-radius: var(--radius-tile);
+    background: var(--color-card);
+    box-shadow: var(--shadow-card);
+  }
+  .mode-text {
+    flex-basis: 100%;
+    order: 3;
+  }
+  .mode-count,
+  .mode > svg:last-child {
+    margin-left: auto;
+  }
+  .mode-count + svg {
+    margin-left: 0;
+  }
+  .modes > li:first-child .mode {
+    align-content: space-between;
+    background: var(--color-accent-soft);
+    color: var(--color-on-soft);
+  }
+  .modes > li:first-child a.mode:hover {
+    background: var(--heat-2);
+  }
+  .modes > li:first-child .mode-icon {
+    width: 3rem;
+    height: 3rem;
+    background: var(--color-accent);
+    color: var(--color-inverse);
+  }
+  .modes > li:first-child .mode-name {
+    font-family: var(--font-display);
+    font-size: var(--text-h1);
+    letter-spacing: var(--tracking-display);
+  }
+  .modes > li:first-child .meta {
+    color: var(--color-ink-2);
+  }
 }
-.tone-blue {
-  background: var(--tone-blue-bg);
-  color: var(--tone-blue);
+@media (min-width: 60rem) {
+  .modes {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .modes > li {
+    grid-column: span 2;
+  }
+  .modes > li:first-child {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+  .modes > li:nth-child(n + 6) {
+    grid-column: span 3;
+  }
 }
-.tone-red {
-  background: var(--tone-red-bg);
-  color: var(--tone-red);
+/* ---------- Review: the rail (actions and filters) beside the question list ----------
+   Phones: one column, and the filters stick under the top while the list scrolls. 48rem and up: the rail
+   takes two of six columns and sticks as a whole; the list and the imports take the other four. */
+.bank-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-section);
 }
-.tone-violet {
-  background: var(--tone-violet-bg);
-  color: var(--tone-violet);
+.bank-rail {
+  display: contents;
 }
-.tone-teal {
-  background: var(--tone-teal-bg);
-  color: var(--tone-teal);
+@media (min-width: 48rem) {
+  .bank-layout {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-rows: auto 1fr;
+    align-items: start;
+  }
+  .bank-rail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-tile);
+    position: sticky;
+    top: calc(var(--pad-page-top) + var(--safe-top));
+    grid-column: 1 / span 2;
+    grid-row: 1 / span 2;
+  }
+  .bank-layout > section {
+    grid-column: 3 / -1;
+  }
+  .bank-rail .bank-filters {
+    position: static;
+    margin: 0;
+    padding: var(--pad-card);
+    border-radius: var(--radius-tile);
+    background: var(--color-card);
+    box-shadow: var(--shadow-card);
+  }
+  .bank-rail .review-tabs {
+    flex-direction: column;
+    gap: var(--space-3xs);
+    overflow: visible;
+    border-bottom: 0;
+  }
+  .bank-rail .review-tabs button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 36px;
+    padding-inline: var(--space-sm);
+    border-bottom: 0;
+    border-radius: var(--radius-control);
+    font-size: var(--text-sm);
+  }
+  .bank-rail .review-tabs button .num {
+    font-size: var(--text-sm);
+  }
+  .bank-rail .review-tabs button:hover {
+    background: var(--color-paper);
+  }
+  .bank-rail .review-tabs button[aria-pressed='true'] {
+    background: var(--color-accent-soft);
+    color: var(--color-on-soft);
+  }
+  .bank-rail .review-tabs button[aria-pressed='true'] .num {
+    color: var(--color-on-soft);
+  }
 }
-.tone-slate {
-  background: var(--tone-slate-bg);
-  color: var(--tone-slate);
+
+/* ---------- Mock setup: the form beside the exams in progress and the finished ones ---------- */
+.mock-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-section);
 }
-.tone-navy {
-  background: var(--tone-navy-bg);
-  color: var(--tone-navy);
+@media (min-width: 48rem) {
+  .mock-layout:has(> section) {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    align-items: start;
+  }
+  .mock-layout > form {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+  .mock-layout > section {
+    grid-column: 2;
+  }
 }
+
 /* ---------- Review: the tabs with counts ---------- */
 
-/* Each tab is its name over its count; the chosen one is blue with a bar under it. The row scrolls
+/* Each tab is its name over its count; the chosen one is golden brown with a near-black bar under it. The row scrolls
    sideways on a phone rather than wrapping into a second row of tabs. */
 .review-tabs {
   display: flex;
@@ -1640,6 +1840,23 @@ a.mode:focus-visible {
   flex: 1;
   min-width: 0;
 }
+/* Narrow phones: the ring and the headline share the top row; the three figures take the full width below,
+   so their labels stay on one line. */
+@media (max-width: 29.99rem) {
+  .stats-hero {
+    flex-wrap: wrap;
+  }
+  .stats-side {
+    display: contents;
+  }
+  .stats-side > div:first-child {
+    flex: 1;
+    min-width: 0;
+  }
+  .stat-row {
+    flex-basis: 100%;
+  }
+}
 .stat-row dt {
   order: 2;
   font-size: var(--text-xs);
@@ -1659,6 +1876,11 @@ a.mode:focus-visible {
   width: clamp(6.25rem, 30vw, 8rem);
   aspect-ratio: 1;
 }
+@media (min-width: 60rem) {
+  .gauge {
+    width: 10rem;
+  }
+}
 .gauge svg {
   width: 100%;
   height: 100%;
@@ -1675,15 +1897,6 @@ a.mode:focus-visible {
 .gauge-fill {
   stroke: var(--color-inverse-ink);
 }
-.gauge.is-pass .gauge-fill {
-  stroke: var(--color-success-fill);
-}
-.gauge.is-mid .gauge-fill {
-  stroke: var(--color-warning-fill);
-}
-.gauge.is-low .gauge-fill {
-  stroke: var(--color-error-fill);
-}
 .gauge-text {
   position: absolute;
   inset: 0;
@@ -1692,9 +1905,10 @@ a.mode:focus-visible {
   justify-items: center;
   gap: var(--space-3xs);
 }
+/* The ring's figure is Stats' lead figure: larger than the rating and the streak beside it. */
 .gauge-figure {
   font-family: var(--font-display);
-  font-size: clamp(1.5rem, 7vw, 1.875rem);
+  font-size: var(--text-figure-lead);
   font-weight: 700;
   letter-spacing: var(--tracking-display);
   line-height: 1;
@@ -1707,7 +1921,8 @@ a.mode:focus-visible {
 .stats-count {
   font-weight: 600;
 }
-/* Subject scores: a name and its figure, a bar coloured by the LET's own lines, a line of detail. */
+/* Subject scores: a name and its figure, a near-black bar, a line of detail. Only the figure takes the
+   LET's own lines: green at a passing 75%, orange from the 50% floor, red under it. */
 .subjects {
   display: grid;
   gap: var(--space-md);
@@ -1726,24 +1941,28 @@ a.mode:focus-visible {
   gap: var(--space-sm);
 }
 .subject-name {
-  font-size: var(--text-base);
+  font-size: var(--text-name);
   font-weight: 600;
 }
 .subject-pct {
-  font-size: var(--text-base);
+  font-size: var(--text-name);
   font-weight: 700;
 }
-.meter.is-pass > span {
-  background: var(--color-success-fill);
+.subject-pct.is-pass {
+  color: var(--color-success);
 }
-.meter.is-mid > span {
-  background: var(--color-warning-fill);
+.subject-pct.is-mid {
+  color: var(--color-warning);
 }
-.meter.is-low > span {
-  background: var(--color-error-fill);
+.subject-pct.is-low {
+  color: var(--color-error);
+}
+/* The projected rating's figure in deep gold, on a white card only (large text, 3:1). */
+.rating:not(.tile-inverse) .display {
+  color: var(--color-gold);
 }
 
-/* ---------- Quiz: the navy bar, its segments, the close button, the count and the clock ---------- */
+/* ---------- Quiz: the yellow bar, its segments, the close button, the count and the clock ---------- */
 
 .quiz-bar {
   display: grid;
@@ -1817,11 +2036,11 @@ a.mode:focus-visible {
 .quiz-timer.is-low {
   color: var(--color-warning-fill);
 }
-/* Results: the score in the navy block. */
+/* Results: the score in the yellow block, the screen's lead figure. */
 .quiz-score .display {
-  font-size: calc(var(--text-figure) * 1.4);
+  font-size: calc(var(--text-figure-lead) * 1.25);
 }
-/* A reviewed question: its status icon (green check, red cross, amber flag), then the question. */
+/* A reviewed question: its status icon (green check, red cross, orange flag), then the question. */
 .review-row {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);

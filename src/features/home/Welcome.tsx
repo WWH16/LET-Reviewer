@@ -7,7 +7,7 @@ import { btn } from '../../ui/btn';
 /** Shown once, before anything else: who is reviewing, and her avatar. Both can be changed later in Settings. */
 export function Welcome({ settings }: { settings: Settings }) {
   return (
-    <Page title="Welcome to LET Reviewer">
+    <Page title="Welcome, LPT">
       <p className="muted">Set your name and avatar, then add your first questions. Both can change later in Settings.</p>
       <form
         className="stack-lg"

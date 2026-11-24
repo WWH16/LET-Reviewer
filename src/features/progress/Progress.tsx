@@ -8,7 +8,7 @@ import { templateB } from '../../domain/prompts';
 import { useStats } from './useStats';
 import { RatingCard } from './RatingCard';
 import { btn } from '../../ui/btn';
-import { drillMatches, drillUrl } from '../practice/DrillSetup';
+import { drillMatches, drillUrl } from '../practice/drill';
 import { Gauge, scoreTone } from '../../ui/Gauge';
 import { StreakCard } from '../home/StreakCard';
 import { Empty } from '../../ui/Empty';
@@ -49,159 +49,161 @@ export function Progress() {
   const right = Math.round(recent.reduce((s, v) => s + (v!.pct * v!.total) / 100, 0));
 
   return (
-    <Page title="Stats">
-      {/* The screen's navy block: one ring for how often you are right, as on a phone exam-prep app. */}
-      <section className="tile tile-inverse stats-hero" aria-label="Your score">
-        <Gauge pct={answered ? (right / answered) * 100 : null} label="correct" />
-        <div className="stats-side">
-          <div>
-            <p className="stats-count">
-              <span className="num">{right}</span> of <span className="num">{answered}</span> answered correctly
-            </p>
-            <p className="meta">Each part’s most recent 150 answers.</p>
+    <Page title="Stats" wide>
+      <div className="bento">
+        {/* The screen's yellow block: one ring for how often you are right, as on a phone exam-prep app. */}
+        <section className="tile tile-inverse stats-hero span-4" aria-label="Your score">
+          <Gauge pct={answered ? (right / answered) * 100 : null} label="correct" />
+          <div className="stats-side">
+            <div>
+              <p className="stats-count">
+                <span className="num">{right}</span> of <span className="num">{answered}</span> answered correctly
+              </p>
+              <p className="meta">Each part’s most recent 150 answers.</p>
+            </div>
+            <dl className="stat-row">
+              <div>
+                <dt>Answers</dt>
+                <dd className="num">{attempts.length}</dd>
+              </div>
+              <div>
+                <dt>Study days</dt>
+                <dd className="num">{days.size}</dd>
+              </div>
+              <div>
+                <dt>Due today</dt>
+                <dd className="num">{due.length}</dd>
+              </div>
+            </dl>
           </div>
-          <dl className="stat-row">
-            <div>
-              <dt>Answers</dt>
-              <dd className="num">{attempts.length}</dd>
-            </div>
-            <div>
-              <dt>Study days</dt>
-              <dd className="num">{days.size}</dd>
-            </div>
-            <div>
-              <dt>Due today</dt>
-              <dd className="num">{due.length}</dd>
-            </div>
-          </dl>
-        </div>
-      </section>
+        </section>
 
-      <RatingCard rating={rating} />
+        <RatingCard rating={rating} className="span-2" />
 
-      <section className="tile" aria-labelledby="pr-subjects">
-        <h2 id="pr-subjects">Subject scores</h2>
-        <ul className="subjects">
-          {levelParts.map((a) => {
-            const p = parts[a]?.pct ?? null;
-            const n = parts[a]?.total ?? 0;
-            return (
-              <li key={a} className="subject">
-                <div className="subject-head">
-                  <span className="subject-name">{PARTS[a].name}</span>
-                  <span className="subject-pct num">{fmt(p)}</span>
-                </div>
-                <span className={`meter ${p === null ? '' : scoreTone(p)}`} aria-hidden="true">
-                  <span style={{ width: `${p ?? 0}%` }} />
-                </span>
-                <p className="meta">
-                  {Math.round(LEVEL_WEIGHTS[settings.level][a]! * 100)}% of your rating.{' '}
-                  {n ? `${Math.round(((p ?? 0) * n) / 100)} of your last ${n} correct.` : 'No answers yet.'}
-                </p>
-                <details>
-                  <summary className="label">Sub-areas</summary>
-                  <table>
-                    <caption className="sr-only">{PARTS[a].name} by sub-area</caption>
-                    <thead>
-                      <tr>
-                        <th scope="col">Sub-area</th>
-                        <th scope="col" className="num">
-                          Accuracy
-                        </th>
-                        <th scope="col" className="num">
-                          Answers
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {PARTS[a].subareas.map((s) => {
-                        const tally = bySub.get(s.id);
-                        const sp = pct(tally);
-                        return (
-                          <tr key={s.id}>
-                            <th scope="row">
-                              <span className="stack-sm">
-                                {s.name}
-                                {sp !== null && (
-                                  <span className={`meter ${scoreTone(sp)}`} aria-hidden="true">
-                                    <span style={{ width: `${sp}%` }} />
-                                  </span>
-                                )}
-                              </span>
-                            </th>
-                            <td className="num">{fmt(sp)}</td>
-                            <td className="num">{tally?.total ?? 0}</td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </details>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
-
-      <section className="tile" aria-labelledby="pr-weak">
-        <div className="spread">
-          <h2 id="pr-weak">Weakest topics</h2>
-          {weak.length > 0 && (
-            <button
-              type="button"
-              className={btn.secondary}
-              onClick={async () => {
-                await copyText(weakTopicsText(weak));
-                announce('Weak topics copied');
-              }}
-            >
-              Copy my weak topics
-            </button>
-          )}
-        </div>
-        {weak.length === 0 ? (
-          <p className="muted">Topics appear here after 3 or more answers each.</p>
-        ) : (
-          <ul className="list">
-            {weak.map((w) => {
-              const name = w.topic || subareaName(w.subarea);
-              const where = { area: w.area, sub: w.subarea, topic: w.topic };
-              // Drill from review-center questions when the topic has any, else from the AI ones she answered.
-              const ai = ![...qmap.values()].some((q) => drillMatches(q, { ...where, ai: false }));
+        <section className="tile span-3 align-start" aria-labelledby="pr-subjects">
+          <h2 id="pr-subjects">Subject scores</h2>
+          <ul className="subjects">
+            {levelParts.map((a) => {
+              const p = parts[a]?.pct ?? null;
+              const n = parts[a]?.total ?? 0;
               return (
-                <li key={`${w.subarea}-${w.topic}`} className="weak-item">
-                  <span className="stack-sm">
-                    <span className="weak-name">{name}</span>
-                    <span className="meta">
-                      {subareaName(w.subarea)}: {fmt(pct(w.tally))} over {w.tally.total} answers
-                    </span>
+                <li key={a} className="subject">
+                  <div className="subject-head">
+                    <span className="subject-name">{PARTS[a].name}</span>
+                    <span className={`subject-pct num ${p === null ? '' : scoreTone(p)}`}>{fmt(p)}</span>
+                  </div>
+                  <span className="meter" aria-hidden="true">
+                    <span style={{ width: `${p ?? 0}%` }} />
                   </span>
-                  <span className="row">
-                    <Link className={btn.secondary} to={drillUrl({ ...where, n: 10, ai })} aria-label={`Practice ${name}`}>
-                      Practice
-                    </Link>
-                    <button
-                      type="button"
-                      className={btn.quiet}
-                      aria-label={`Copy prompt for ${name}`}
-                      onClick={async () => {
-                        await copyText(
-                          templateB({ area: w.area, subarea: subareaName(w.subarea), topic: w.topic, level: settings.level, major: settings.major }),
-                        );
-                        announce('Prompt copied. Paste it into Claude with your notes.');
-                      }}
-                    >
-                      <Icon name="copy" size={18} />
-                    </button>
-                  </span>
+                  <p className="meta">
+                    {Math.round(LEVEL_WEIGHTS[settings.level][a]! * 100)}% of your rating.{' '}
+                    {n ? `${Math.round(((p ?? 0) * n) / 100)} of your last ${n} correct.` : 'No answers yet.'}
+                  </p>
+                  <details>
+                    <summary className="label">Sub-areas</summary>
+                    <table>
+                      <caption className="sr-only">{PARTS[a].name} by sub-area</caption>
+                      <thead>
+                        <tr>
+                          <th scope="col">Sub-area</th>
+                          <th scope="col" className="num">
+                            Accuracy
+                          </th>
+                          <th scope="col" className="num">
+                            Answers
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {PARTS[a].subareas.map((s) => {
+                          const tally = bySub.get(s.id);
+                          const sp = pct(tally);
+                          return (
+                            <tr key={s.id}>
+                              <th scope="row">
+                                <span className="stack-sm">
+                                  {s.name}
+                                  {sp !== null && (
+                                    <span className="meter" aria-hidden="true">
+                                      <span style={{ width: `${sp}%` }} />
+                                    </span>
+                                  )}
+                                </span>
+                              </th>
+                              <td className="num">{fmt(sp)}</td>
+                              <td className="num">{tally?.total ?? 0}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </details>
                 </li>
               );
             })}
           </ul>
-        )}
-      </section>
+        </section>
 
-      <StreakCard days={days} today={today} todayCount={todayAttempts.length} todayCorrect={todayCorrect} />
+        <section className="tile span-3 align-start" aria-labelledby="pr-weak">
+          <div className="spread">
+            <h2 id="pr-weak">Weakest topics</h2>
+            {weak.length > 0 && (
+              <button
+                type="button"
+                className={btn.secondary}
+                onClick={async () => {
+                  await copyText(weakTopicsText(weak));
+                  announce('Weak topics copied');
+                }}
+              >
+                Copy my weak topics
+              </button>
+            )}
+          </div>
+          {weak.length === 0 ? (
+            <p className="muted">Topics appear here after 3 or more answers each.</p>
+          ) : (
+            <ul className="list">
+              {weak.map((w) => {
+                const name = w.topic || subareaName(w.subarea);
+                const where = { area: w.area, sub: w.subarea, topic: w.topic };
+                // Drill from review-center questions when the topic has any, else from the AI ones she answered.
+                const ai = ![...qmap.values()].some((q) => drillMatches(q, { ...where, ai: false }));
+                return (
+                  <li key={`${w.subarea}-${w.topic}`} className="weak-item">
+                    <span className="stack-sm">
+                      <span className="weak-name">{name}</span>
+                      <span className="meta">
+                        {subareaName(w.subarea)}: {fmt(pct(w.tally))} over {w.tally.total} answers
+                      </span>
+                    </span>
+                    <span className="row">
+                      <Link className={btn.secondary} to={drillUrl({ ...where, n: 10, ai })} aria-label={`Practice ${name}`}>
+                        Practice
+                      </Link>
+                      <button
+                        type="button"
+                        className={btn.quiet}
+                        aria-label={`Copy prompt for ${name}`}
+                        onClick={async () => {
+                          await copyText(
+                            templateB({ area: w.area, subarea: subareaName(w.subarea), topic: w.topic, level: settings.level, major: settings.major }),
+                          );
+                          announce('Prompt copied. Paste it into Claude with your notes.');
+                        }}
+                      >
+                        <Icon name="copy" size={18} />
+                      </button>
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
+
+        <StreakCard days={days} today={today} todayCount={todayAttempts.length} todayCorrect={todayCorrect} />
+      </div>
     </Page>
   );
 }

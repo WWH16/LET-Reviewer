@@ -2,24 +2,29 @@ import { Link, Navigate, Route, Routes, useLocation, useMatch } from 'react-rout
 import { Page } from '../ui/Page';
 import { StatusProvider } from '../ui/Status';
 import { Icon } from '../ui/Icon';
-import { States } from '../features/states/States';
 import { Home } from '../features/home/Home';
-import { Bank } from '../features/bank/Bank';
-import { Import } from '../features/bank/Import';
-import { EditQuestion } from '../features/bank/EditQuestion';
-import { DrillSetup } from '../features/practice/DrillSetup';
-import { Session } from '../features/practice/Session';
-import { Settings } from '../features/settings/Settings';
-import { Progress } from '../features/progress/Progress';
-import { MockSetup } from '../features/mock/MockSetup';
-import { MockExam } from '../features/mock/MockExam';
-import { MockResults } from '../features/mock/MockResults';
-import { MockPrint } from '../features/mock/MockPrint';
-import { MockEntry } from '../features/mock/MockEntry';
 import { useSettings } from '../db/hooks';
 import { CommandMenu } from './CommandMenu';
 import { Welcome } from '../features/home/Welcome';
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
+import { Skeleton } from '../ui/Skeleton';
+
+// Study (the first screen) and Welcome load with the app; every other screen loads when first opened, so
+// the date picker, the select menus and the exam screens stay out of the first download. The service
+// worker precaches every chunk, so this costs nothing offline.
+const Bank = lazy(() => import('../features/bank/Bank').then((m) => ({ default: m.Bank })));
+const Import = lazy(() => import('../features/bank/Import').then((m) => ({ default: m.Import })));
+const EditQuestion = lazy(() => import('../features/bank/EditQuestion').then((m) => ({ default: m.EditQuestion })));
+const DrillSetup = lazy(() => import('../features/practice/DrillSetup').then((m) => ({ default: m.DrillSetup })));
+const Session = lazy(() => import('../features/practice/Session').then((m) => ({ default: m.Session })));
+const Settings = lazy(() => import('../features/settings/Settings').then((m) => ({ default: m.Settings })));
+const Progress = lazy(() => import('../features/progress/Progress').then((m) => ({ default: m.Progress })));
+const MockSetup = lazy(() => import('../features/mock/MockSetup').then((m) => ({ default: m.MockSetup })));
+const MockExam = lazy(() => import('../features/mock/MockExam').then((m) => ({ default: m.MockExam })));
+const MockResults = lazy(() => import('../features/mock/MockResults').then((m) => ({ default: m.MockResults })));
+const MockPrint = lazy(() => import('../features/mock/MockPrint').then((m) => ({ default: m.MockPrint })));
+const MockEntry = lazy(() => import('../features/mock/MockEntry').then((m) => ({ default: m.MockEntry })));
+const States = lazy(() => import('../features/states/States').then((m) => ({ default: m.States })));
 import { Empty } from '../ui/Empty';
 import { btn } from '../ui/btn';
 import { requestSync } from '../sync/trigger';
@@ -53,29 +58,17 @@ export function App() {
   const { pathname } = useLocation();
   const here = (item: (typeof NAV)[number]) =>
     item.to === '/' ? pathname === '/' || item.also.some((p) => pathname.startsWith(p)) : pathname.startsWith(item.to);
-  const theme = settings?.theme;
   const textSize = settings?.textSize;
   useEffect(() => {
-    if (!theme || !textSize) return;
-    const root = document.documentElement;
-    root.style.fontSize = `${textSize}%`;
-    // Mirrored for the inline script in index.html, which applies both before the first paint.
+    if (!textSize) return;
+    document.documentElement.style.fontSize = `${textSize}%`;
+    // Mirrored for the inline script in index.html, which applies it before the first paint.
     try {
-      localStorage.setItem('let-display', JSON.stringify({ theme, textSize }));
+      localStorage.setItem('let-display', JSON.stringify({ textSize }));
     } catch {
-      /* storage blocked: the next load just applies them a moment later */
+      /* storage blocked: the next load just applies it a moment later */
     }
-    // Kumo switches light and dark on data-mode; "system" follows the device and keeps following it.
-    if (theme !== 'system') {
-      root.dataset.mode = theme;
-      return;
-    }
-    const media = window.matchMedia('(prefers-color-scheme: dark)');
-    const sync = () => (root.dataset.mode = media.matches ? 'dark' : 'light');
-    sync();
-    media.addEventListener('change', sync);
-    return () => media.removeEventListener('change', sync);
-  }, [theme, textSize]);
+  }, [textSize]);
 
   // Signed in: bring this device up to date when the app opens and whenever the network comes back.
   useEffect(() => {
@@ -119,24 +112,32 @@ export function App() {
           <CommandMenu />
         </div>
       </header>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/drill" element={<DrillSetup />} />
-        <Route path="/session" element={<Session />} />
-        <Route path="/review" element={<Navigate to="/session?mode=review" replace />} />
-        <Route path="/mock" element={<MockSetup />} />
-        <Route path="/mock/:id" element={<MockExam />} />
-        <Route path="/mock/:id/print" element={<MockPrint />} />
-        <Route path="/mock/:id/entry" element={<MockEntry />} />
-        <Route path="/mock/:id/results" element={<MockResults />} />
-        <Route path="/progress" element={<Progress />} />
-        <Route path="/bank" element={<Bank />} />
-        <Route path="/bank/import" element={<Import />} />
-        <Route path="/bank/:id" element={<EditQuestion />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/states" element={<States />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <Suspense
+        fallback={
+          <main id="main">
+            <Skeleton />
+          </main>
+        }
+      >
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/drill" element={<DrillSetup />} />
+          <Route path="/session" element={<Session />} />
+          <Route path="/review" element={<Navigate to="/session?mode=review" replace />} />
+          <Route path="/mock" element={<MockSetup />} />
+          <Route path="/mock/:id" element={<MockExam />} />
+          <Route path="/mock/:id/print" element={<MockPrint />} />
+          <Route path="/mock/:id/entry" element={<MockEntry />} />
+          <Route path="/mock/:id/results" element={<MockResults />} />
+          <Route path="/progress" element={<Progress />} />
+          <Route path="/bank" element={<Bank />} />
+          <Route path="/bank/import" element={<Import />} />
+          <Route path="/bank/:id" element={<EditQuestion />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/states" element={<States />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
     </StatusProvider>
   );
 }

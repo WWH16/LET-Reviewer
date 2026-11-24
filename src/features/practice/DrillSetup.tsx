@@ -6,34 +6,13 @@ import { copyText } from '../../ui/clipboard';
 import { useMeta, useQuestions, useSettings } from '../../db/hooks';
 import { setMeta } from '../../db/repo';
 import { PARTS, partsFor, subareaName } from '../../domain/let-config';
-import { gradable } from '../../domain/examDraw';
 import { templateB } from '../../domain/prompts';
-import type { Area, Question } from '../../domain/types';
+import type { Area } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { Select } from '../../ui/Select';
+import { drillMatches, drillUrl, type DrillParams } from './drill';
 
 const STUDY = { to: '/', label: 'Study' };
-
-export interface DrillParams {
-  area: Area;
-  sub: string;
-  topic: string;
-  n: number;
-  ai: boolean;
-}
-
-export const drillUrl = (p: DrillParams) =>
-  `/session?${new URLSearchParams({ mode: 'drill', area: p.area, sub: p.sub, topic: p.topic, n: String(p.n), ai: p.ai ? '1' : '0' })}`;
-
-export function drillMatches(q: Question, p: Pick<DrillParams, 'area' | 'sub' | 'topic' | 'ai'>) {
-  return (
-    gradable(q) &&
-    q.area === p.area &&
-    (!p.sub || q.subarea === p.sub) &&
-    (!p.topic || q.topic === p.topic) &&
-    (p.ai || q.source === 'review-center')
-  );
-}
 
 export function DrillSetup() {
   const questions = useQuestions();

@@ -86,182 +86,173 @@ export function Settings() {
   const since = lastBackup ? attempts - lastBackup.attempts : attempts;
 
   return (
-    <Page title="Settings">
-      <section className="tile" aria-labelledby="set-profile">
-        <h2 id="set-profile">Profile</h2>
-        {/* Folded to one row: people come to Settings for the exam date, display and backup. */}
-        <details className="profile-summary">
-          <summary>
-            <Avatar who={s} size={44} />
-            <span className="stack-sm">
-              <span>{s.name.trim() || 'No name yet'}</span>
-              <span className="meta">Edit name and avatar</span>
-            </span>
-          </summary>
-          <ProfileEditor s={s} />
-        </details>
-      </section>
+    <Page title="Settings" wide>
+      <div className="bento pairs">
+        <section className="tile" aria-labelledby="set-profile">
+          <h2 id="set-profile">Profile</h2>
+          {/* Folded to one row: people come to Settings for the exam date, display and backup. */}
+          <details className="profile-summary">
+            <summary>
+              <Avatar who={s} size={44} />
+              <span className="stack-sm">
+                <span>{s.name.trim() || 'No name yet'}</span>
+                <span className="meta">Edit name and avatar</span>
+              </span>
+            </summary>
+            <ProfileEditor s={s} />
+          </details>
+        </section>
 
-      <section className="tile" aria-labelledby="set-exam">
-        <h2 id="set-exam">Exam</h2>
-        <div className="grid-2">
-          <div className="field">
-            <label htmlFor="s-level">Level</label>
-            <Select id="s-level" value={s.level} onChange={(v) => set({ level: v as S['level'] })}>
-              <option value="elementary">Elementary</option>
-              <option value="secondary">Secondary</option>
-            </Select>
-          </div>
-          {s.level === 'secondary' && (
+        <section className="tile span-3" aria-labelledby="set-exam">
+          <h2 id="set-exam">Exam</h2>
+          <div className="grid-2">
             <div className="field">
-              <label htmlFor="s-major">Major</label>
-              <input id="s-major" type="text" value={s.major} onChange={(e) => set({ major: e.target.value })} />
+              <label htmlFor="s-level">Level</label>
+              <Select id="s-level" value={s.level} onChange={(v) => set({ level: v as S['level'] })}>
+                <option value="elementary">Elementary</option>
+                <option value="secondary">Secondary</option>
+              </Select>
             </div>
-          )}
-          <div className="field">
-            <label htmlFor="s-date">Target exam date</label>
-            <DateField id="s-date" value={s.examDate} onChange={(examDate) => set({ examDate })} />
+            {s.level === 'secondary' && (
+              <div className="field">
+                <label htmlFor="s-major">Major</label>
+                <input id="s-major" type="text" value={s.major} onChange={(e) => set({ major: e.target.value })} />
+              </div>
+            )}
+            <div className="field">
+              <label htmlFor="s-date">Target exam date</label>
+              <DateField id="s-date" value={s.examDate} onChange={(examDate) => set({ examDate })} />
+            </div>
+            <div className="field">
+              <label htmlFor="s-timer">Mock exam timer</label>
+              <Select id="s-timer" value={s.timer} onChange={(v) => set({ timer: v as S['timer'] })}>
+                <option value="real">Real LET time</option>
+                <option value="1.5">1.5× time</option>
+                <option value="2">2× time</option>
+                <option value="off">Off</option>
+              </Select>
+            </div>
           </div>
+          <label className="check">
+            <input type="checkbox" checked={s.strictSheet} onChange={(e) => set({ strictSheet: e.target.checked })} />
+            Strict answer sheet: in digital mocks, answer on the bubble sheet only
+          </label>
+          <label className="check">
+            <input type="checkbox" checked={s.oneAtATime} onChange={(e) => set({ oneAtATime: e.target.checked })} />
+            One question at a time: in digital mocks, show one item per screen
+          </label>
+        </section>
+
+        <section className="tile span-3" aria-labelledby="set-display">
+          <h2 id="set-display">Display and keys</h2>
           <div className="field">
-            <label htmlFor="s-timer">Mock exam timer</label>
-            <Select id="s-timer" value={s.timer} onChange={(v) => set({ timer: v as S['timer'] })}>
-              <option value="real">Real LET time</option>
-              <option value="1.5">1.5× time</option>
-              <option value="2">2× time</option>
-              <option value="off">Off</option>
+            <label htmlFor="s-size">Text size</label>
+            <Select id="s-size" value={s.textSize} onChange={(v) => set({ textSize: Number(v) as S['textSize'] })}>
+              <option value={100}>100%</option>
+              <option value={115}>115%</option>
+              <option value={130}>130%</option>
             </Select>
           </div>
-        </div>
-        <label className="check">
-          <input type="checkbox" checked={s.strictSheet} onChange={(e) => set({ strictSheet: e.target.checked })} />
-          Strict answer sheet: in digital mocks, answer on the bubble sheet only
-        </label>
-        <label className="check">
-          <input type="checkbox" checked={s.oneAtATime} onChange={(e) => set({ oneAtATime: e.target.checked })} />
-          One question at a time: in digital mocks, show one item per screen
-        </label>
-      </section>
+          <label className="check">
+            <input type="checkbox" checked={s.shortcuts} onChange={(e) => set({ shortcuts: e.target.checked })} />
+            Single-key shortcuts (A to D, 1 to 4, Enter, F)
+          </label>
+        </section>
 
-      <section className="tile" aria-labelledby="set-display">
-        <h2 id="set-display">Display and keys</h2>
-        <fieldset className="stack-sm">
-          <legend className="label">Theme</legend>
+        {syncAvailable && <AccountSection />}
+
+        <section className="tile span-3" aria-labelledby="set-backup">
+          <h2 id="set-backup">Backup</h2>
+          <p className="muted">
+            {lastBackup
+              ? `Last backup ${fmtDate(lastBackup.at)}. ${since} answer${since === 1 ? '' : 's'} since then.`
+              : sync?.signedIn
+                ? 'No backup file yet. Your account keeps a copy online; a file is a second one.'
+                : 'No backup yet. Your progress lives only on this device.'}
+          </p>
           <div className="row">
-            {(['system', 'light', 'dark'] as const).map((t) => (
-              <label key={t} className="check" style={{ marginRight: 'var(--space-md)' }}>
-                <input type="radio" name="theme" checked={s.theme === t} onChange={() => set({ theme: t })} />
-                {t[0].toUpperCase() + t.slice(1)}
-              </label>
-            ))}
-          </div>
-        </fieldset>
-        <div className="field">
-          <label htmlFor="s-size">Text size</label>
-          <Select id="s-size" value={s.textSize} onChange={(v) => set({ textSize: Number(v) as S['textSize'] })}>
-            <option value={100}>100%</option>
-            <option value={115}>115%</option>
-            <option value={130}>130%</option>
-          </Select>
-        </div>
-        <label className="check">
-          <input type="checkbox" checked={s.shortcuts} onChange={(e) => set({ shortcuts: e.target.checked })} />
-          Single-key shortcuts (A to D, 1 to 4, Enter, F)
-        </label>
-      </section>
-
-      {syncAvailable && <AccountSection />}
-
-      <section className="tile" aria-labelledby="set-backup">
-        <h2 id="set-backup">Backup</h2>
-        <p className="muted">
-          {lastBackup
-            ? `Last backup ${fmtDate(lastBackup.at)}. ${since} answer${since === 1 ? '' : 's'} since then.`
-            : sync?.signedIn
-              ? 'No backup file yet. Your account keeps a copy online; a file is a second one.'
-              : 'No backup yet. Your progress lives only on this device.'}
-        </p>
-        <div className="row">
-          <button id="s-export" type="button" className={btn.primary} onClick={doExport}>
-            Export backup
-          </button>
-          <button type="button" className={btn.secondary} onClick={() => restoreInput.current?.click()}>
-            Restore backup
-          </button>
-          <input ref={restoreInput} type="file" accept=".json,application/json" className="sr-only" tabIndex={-1} onChange={pickRestore} aria-label="Backup file" />
-        </div>
-        {restoreMsg && (
-          <p role="alert">
-            {restoreMsg.text} {restoreMsg.questions && <Link to="/bank/import">Import it from Bank instead.</Link>}
-          </p>
-        )}
-        <div className="spread">
-          <p className="meta">
-            <span className="label">
-              Storage: {protectedStore === null ? 'checking…' : protectedStore ? 'protected' : 'not protected'}
-            </span>
-            . The browser {protectedStore ? 'will not' : 'may'} clear it when space runs low.
-          </p>
-          {protectedStore === false && (
-            <button type="button" className={btn.secondary} onClick={async () => setProtected(await protectStorage())}>
-              Protect storage
+            <button id="s-export" type="button" className={btn.primary} onClick={doExport}>
+              Export backup
             </button>
+            <button type="button" className={btn.secondary} onClick={() => restoreInput.current?.click()}>
+              Restore backup
+            </button>
+            <input ref={restoreInput} type="file" accept=".json,application/json" className="sr-only" tabIndex={-1} onChange={pickRestore} aria-label="Backup file" />
+          </div>
+          {restoreMsg && (
+            <p role="alert">
+              {restoreMsg.text} {restoreMsg.questions && <Link to="/bank/import">Import it from Bank instead.</Link>}
+            </p>
           )}
-        </div>
-      </section>
+          <div className="spread">
+            <p className="meta">
+              <span className="label">
+                Storage: {protectedStore === null ? 'checking…' : protectedStore ? 'protected' : 'not protected'}
+              </span>
+              . The browser {protectedStore ? 'will not' : 'may'} clear it when space runs low.
+            </p>
+            {protectedStore === false && (
+              <button type="button" className={btn.secondary} onClick={async () => setProtected(await protectStorage())}>
+                Protect storage
+              </button>
+            )}
+          </div>
+        </section>
 
-      <section className="tile" aria-labelledby="set-demo">
-        <h2 id="set-demo">Sample data</h2>
-        <p className="muted">
-          {demo
-            ? `${demo} sample answers are mixed into your stats. Remove them before you study for real.`
-            : 'Six weeks of made-up answers, to see Stats, the streak and Missed questions full. Your own answers are not touched.'}
-        </p>
-        <div className="row">
-          {demo ? (
+        <section className="tile span-3" aria-labelledby="set-demo">
+          <h2 id="set-demo">Sample data</h2>
+          <p className="muted">
+            {demo
+              ? `${demo} sample answers are mixed into your stats. Remove them before you study for real.`
+              : 'Six weeks of made-up answers, to see Stats, the streak and Missed questions full. Your own answers are not touched.'}
+          </p>
+          <div className="row">
+            {demo ? (
+              <button
+                type="button"
+                className={btn.secondary}
+                onClick={async () => {
+                  await clearDemoData();
+                  announce('Sample answers removed');
+                }}
+              >
+                Remove sample answers
+              </button>
+            ) : (
+              <button type="button" className={btn.secondary} onClick={async () => announce(`Added ${await loadDemoData()} sample answers`)}>
+                Add sample answers
+              </button>
+            )}
+          </div>
+        </section>
+
+        <section className="tile span-3" aria-labelledby="set-about">
+          <h2 id="set-about">About</h2>
+          <p className="muted num">
+            Version {version}, data format v{SCHEMA_VERSION}
+          </p>
+          <div className="row">
             <button
               type="button"
-              className={btn.secondary}
+              className={btn.quiet}
               onClick={async () => {
-                await clearDemoData();
-                announce('Sample answers removed');
+                const c = await deviceCounts();
+                await copyText(
+                  `LET Reviewer ${version}, data v${SCHEMA_VERSION}\nQuestions: ${c.questions}, answers: ${c.attempts}\nLast backup: ${lastBackup?.at ?? 'never'}\nStorage protected: ${protectedStore}\n${navigator.userAgent}`,
+                );
+                announce('Debug info copied');
               }}
             >
-              Remove sample answers
+              Copy debug info
             </button>
-          ) : (
-            <button type="button" className={btn.secondary} onClick={async () => announce(`Added ${await loadDemoData()} sample answers`)}>
-              Add sample answers
-            </button>
-          )}
-        </div>
-      </section>
-
-      <section className="tile" aria-labelledby="set-about">
-        <h2 id="set-about">About</h2>
-        <p className="muted num">
-          Version {version}, data format v{SCHEMA_VERSION}
-        </p>
-        <div className="row">
-          <button
-            type="button"
-            className={btn.quiet}
-            onClick={async () => {
-              const c = await deviceCounts();
-              await copyText(
-                `LET Reviewer ${version}, data v${SCHEMA_VERSION}\nQuestions: ${c.questions}, answers: ${c.attempts}\nLast backup: ${lastBackup?.at ?? 'never'}\nStorage protected: ${protectedStore}\n${navigator.userAgent}`,
-              );
-              announce('Debug info copied');
-            }}
-          >
-            Copy debug info
-          </button>
-          {import.meta.env.DEV && (
-            <Link className={btn.quiet} to="/states">
-              Visual states
-            </Link>
-          )}
-        </div>
-      </section>
+            {import.meta.env.DEV && (
+              <Link className={btn.quiet} to="/states">
+                Visual states
+              </Link>
+            )}
+          </div>
+        </section>
+      </div>
 
       <Dialog open={!!restore} onClose={() => setRestore(null)} title="Replace everything on this device?">
         {restore && (

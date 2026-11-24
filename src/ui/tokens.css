@@ -1,6 +1,7 @@
-/* Role tokens. Exam-prep light: a cool grey ground, white cards, navy ink and navy header blocks, one
-   blue for actions and the current place, and three state colours that always mean the same thing:
-   green is right, red is wrong, amber is flagged or middling. State is never colour alone: a right
+/* Role tokens, by the 60-30-10 rule: 60 white (a warm off-white ground and white cards), 30 yellow (the
+   golden header block on each screen, butter tints for the current place and a choice), 10 warm
+   near-black (ink, buttons, rings). Three state colours always mean the same thing: green is right,
+   red is wrong, orange is flagged or middling. State is never colour alone: a right
    answer also carries a check, a wrong one a cross, a flag the flag icon. Kumo's --color-kumo-* tokens
    point at these, so its components follow. Every text pair is checked in contrast.test.ts. */
 :root {
@@ -20,43 +21,39 @@
   --font-sans: var(--font-body); --font-mono: var(--font-num); --default-font-family: var(--font-body); --default-mono-font-family: var(--font-num);
   --tracking-display: -0.03em;
   /* Type and spacing roles that change with screen size. Phone values here; wider screens below. */
-  /* Compact scale: reading text at 15px, labels and secondary lines at 13px, section headings one step
-     above the text. Only the figures stay large, so a number is what the eye lands on. */
-  --text-body: 0.9375rem; --text-h1: 1.25rem; --text-h2: 1rem; --text-figure: 2rem; --text-stat: 1.125rem;
+  /* Compact scale with clear steps: meta 13, reading text 15, names 16 (semibold), section heads 18,
+     page titles 22. Figures come in two sizes: the lead figure a screen exists for (the ring, a score) and
+     the secondary ones beside it (the rating, the streak), so the lead is always the largest number. */
+  --text-body: 0.9375rem; --text-name: 1rem; --text-h1: 1.375rem; --text-h2: 1.125rem;
+  --text-figure: 1.75rem; --text-figure-lead: 2rem; --text-stat: 1.125rem;
   --pad-card: 14px; --gap-tile: var(--space-sm); --gap-section: var(--space-md); --pad-page-top: var(--space-md);
   --radius-control: 8px; --radius-card: 12px; --radius-tile: 14px; --radius-pill: 999px;
-  /* The activity grid: five steps from empty (paper-3) to busiest, in the action blue. Dark mode sets its own four. */
+  /* The activity grid: five steps from empty (paper-3) to busiest, butter to deep gold. */
   --heat-cell: 0.6875rem; --heat-gap: 3px;
-  --heat-0: var(--color-paper-3); --heat-1: oklch(89.6% 0.044 265.6); --heat-2: oklch(77% 0.099 263.2); --heat-3: oklch(62.2% 0.164 262.6); --heat-4: oklch(46.9% 0.17 262.5);
+  --heat-0: var(--color-paper-3); --heat-1: oklch(94% 0.07 95); --heat-2: oklch(88% 0.13 92); --heat-3: oklch(80% 0.16 85); --heat-4: oklch(62% 0.13 70);
   --measure-app: 48rem; --container-app: 72rem; --sidebar-w: 15rem; --header-h: 48px; --tabbar-h: 56px; --sticky-offset: env(safe-area-inset-top, 0px);
   --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px); --safe-left: env(safe-area-inset-left, 0px); --safe-right: env(safe-area-inset-right, 0px);
 
-  --color-paper: oklch(97% 0.006 264.5); --color-paper-2: oklch(94.5% 0.009 258.3); --color-paper-3: oklch(91.7% 0.013 255.5);
+  --color-paper: oklch(98.5% 0.005 95); --color-paper-2: oklch(96.2% 0.012 95); --color-paper-3: oklch(93.5% 0.018 95);
   --color-card: oklch(100% 0 0);
-  --color-ink: oklch(25.7% 0.047 261.2); --color-ink-2: oklch(34.6% 0.047 259.6); --color-muted: oklch(49.6% 0.036 258.9);
-  --color-rule: oklch(90.4% 0.013 255.5); --color-line: oklch(25.7% 0.047 261.2 / 0.12); --color-control: oklch(68.6% 0.029 257.1);
-  /* the action blue: primary buttons, links, the current tab, a selection */
-  --color-accent: oklch(54.3% 0.192 262.4); --color-accent-deep: oklch(46.9% 0.17 262.5); --color-accent-ink: oklch(100% 0 0);
-  --color-accent-text: oklch(49% 0.179 262.8); --color-accent-edge: oklch(54.3% 0.192 262.4); --color-accent-soft: oklch(93.8% 0.025 263.3); --color-on-soft: oklch(25.7% 0.047 261.2);
-  --color-focus: oklch(54.3% 0.192 262.4);
+  --color-ink: oklch(24% 0.015 80); --color-ink-2: oklch(33% 0.015 80); --color-muted: oklch(48% 0.02 80);
+  --color-rule: oklch(91% 0.012 90); --color-line: oklch(24% 0.015 80 / 0.12); --color-control: oklch(68% 0.02 85);
+  /* the 10: warm near-black for primary buttons, rings and focus; a golden brown for links; butter for the current tab and a selection */
+  --color-accent: oklch(24% 0.015 80); --color-accent-deep: oklch(15% 0.01 80); --color-accent-ink: oklch(100% 0 0);
+  --color-accent-text: oklch(45% 0.09 70); --color-accent-edge: oklch(24% 0.015 80); --color-accent-soft: oklch(95.5% 0.06 95); --color-on-soft: oklch(24% 0.015 80);
+  --color-focus: oklch(24% 0.015 80);
   /* right, wrong, flagged: text, fill (rings and icons) and tint (backgrounds) */
   --color-success: oklch(51.5% 0.109 160.6); --color-success-fill: oklch(62.1% 0.132 160); --color-success-tint: oklch(95% 0.024 163.1);
   --color-error: oklch(53.1% 0.172 25.2); --color-error-fill: oklch(59.7% 0.182 24.5); --color-error-tint: oklch(94.4% 0.022 17.5);
-  --color-warning: oklch(53.3% 0.114 72.6); --color-warning-fill: oklch(73.9% 0.15 75.6); --color-warning-tint: oklch(95.9% 0.033 83.7); --color-info-tint: oklch(94.7% 0.021 261.8);
-  --color-shade: oklch(25.7% 0.047 261.2 / 0.45);
-  /* the navy header block: one per screen, holding its figure (the quiz bar, the Stats gauge, the score) */
-  --color-inverse: oklch(25.7% 0.047 261.2); --color-inverse-ink: oklch(100% 0 0); --color-inverse-muted: oklch(77.2% 0.031 257.8); --color-inverse-tint: oklch(32.4% 0.053 260.5);
-  /* quiz-mode icon tiles: a soft tint and its own ink, the one decorative use of colour */
-  --tone-amber-bg: oklch(95.9% 0.033 83.7); --tone-amber: oklch(57.8% 0.125 69.8);
-  --tone-blue-bg: oklch(93.8% 0.025 263.3); --tone-blue: oklch(46.9% 0.17 262.5);
-  --tone-red-bg: oklch(94.4% 0.022 17.5); --tone-red: oklch(53.1% 0.172 25.2);
-  --tone-violet-bg: oklch(94.2% 0.027 299.5); --tone-violet: oklch(50.5% 0.194 291.1);
-  --tone-teal-bg: oklch(94.7% 0.023 190.2); --tone-teal: oklch(52.4% 0.087 186.5);
-  --tone-slate-bg: oklch(94.5% 0.009 258.3); --tone-slate: oklch(45.9% 0.046 262.6);
-  --tone-navy-bg: oklch(91.7% 0.017 259.4); --tone-navy: oklch(25.7% 0.047 261.2);
-  /* the primary button: the action blue with a white label */
-  --color-button: oklch(54.3% 0.192 262.4); --color-button-deep: oklch(46.9% 0.17 262.5); --color-button-ink: oklch(100% 0 0);
-  --shadow-card: 0 0 0 1px var(--color-line), 0 1px 2px oklch(25.7% 0.047 261.2 / 0.06), 0 4px 12px -4px oklch(25.7% 0.047 261.2 / 0.08);
+  --color-warning: oklch(46% 0.12 50); --color-warning-fill: oklch(62% 0.16 45); --color-warning-tint: oklch(95.5% 0.022 65); --color-info-tint: oklch(96% 0.04 95);
+  --color-shade: oklch(24% 0.015 80 / 0.45);
+  /* the 30: the golden header block, one per screen, holding its figure (the quiz bar, the Stats gauge, the score) */
+  --color-inverse: oklch(86% 0.16 88); --color-inverse-ink: oklch(24% 0.015 80); --color-inverse-muted: oklch(38% 0.05 75); --color-inverse-tint: oklch(80% 0.15 84);
+  /* deep gold for a large figure on a white card (the projected rating): 3.5:1, large text only */
+  --color-gold: oklch(63% 0.13 78);
+  /* the primary button: near-black with a white label */
+  --color-button: oklch(24% 0.015 80); --color-button-deep: oklch(15% 0.01 80); --color-button-ink: oklch(100% 0 0);
+  --shadow-card: 0 0 0 1px var(--color-line), 0 1px 2px oklch(24% 0.015 80 / 0.06), 0 4px 12px -4px oklch(24% 0.015 80 / 0.08);
   /* an action tile sits one step higher than a tile: you press it */
   --shadow-raised: 0 0 0 1px var(--color-line), 0 2px 4px oklch(0% 0 0 / 0.06), 0 14px 28px -12px oklch(0% 0 0 / 0.08);
   --shadow-pop: 0 0 0 1px var(--color-line), 0 12px 32px -8px oklch(0% 0 0 / 0.07);
@@ -77,70 +74,14 @@
   --print-ink: #000; --print-paper: #fff; --font-print: var(--font-body);
 }
 
-/* Night: a navy ground, cards one step lighter, the blue and the state colours lifted for contrast. */
-:root[data-mode='dark'] {
-  color-scheme: dark;
-  --color-paper: oklch(20.4% 0.033 260.3); --color-paper-2: oklch(23.9% 0.042 260.2); --color-paper-3: oklch(27.7% 0.049 260.7);
-  --color-card: oklch(25.3% 0.049 261.9);
-  --color-ink: oklch(94.5% 0.012 259.8); --color-ink-2: oklch(85.8% 0.024 258.4); --color-muted: oklch(71.8% 0.034 258.4);
-  --color-rule: oklch(32.7% 0.047 259.6); --color-line: oklch(94.5% 0.012 259.8 / 0.12); --color-control: oklch(52.4% 0.037 258.4);
-  --color-accent: oklch(70.6% 0.153 263.6); --color-accent-deep: oklch(77% 0.116 264.4); --color-accent-ink: oklch(19.3% 0.039 263.1);
-  --color-accent-text: oklch(77% 0.116 264.4); --color-accent-edge: oklch(70.6% 0.153 263.6); --color-accent-soft: oklch(30.9% 0.068 262.5); --color-on-soft: oklch(94.5% 0.012 259.8);
-  --color-focus: oklch(77% 0.116 264.4);
-  --heat-1: oklch(35.5% 0.091 261.8); --heat-2: oklch(48.7% 0.145 261.7); --heat-3: oklch(62.2% 0.164 262.6); --heat-4: oklch(77% 0.116 264.4);
-  --color-button: oklch(70.6% 0.153 263.6); --color-button-deep: oklch(77% 0.116 264.4); --color-button-ink: oklch(19.3% 0.039 263.1);
-  --color-success: oklch(74.9% 0.128 165.5); --color-success-fill: oklch(68.9% 0.139 161.3); --color-success-tint: oklch(29.6% 0.045 171.6);
-  --color-error: oklch(76.5% 0.14 20.8); --color-error-fill: oklch(64.4% 0.17 23.1); --color-error-tint: oklch(27.3% 0.046 5.1);
-  --color-warning: oklch(81.1% 0.14 78.3); --color-warning-fill: oklch(73.9% 0.15 75.6); --color-warning-tint: oklch(29.8% 0.043 82.1); --color-info-tint: oklch(28.2% 0.06 260.1);
-  --color-shade: oklch(10% 0.03 260 / 0.6);
-  --color-inverse: oklch(33.5% 0.069 261.4); --color-inverse-ink: oklch(100% 0 0); --color-inverse-muted: oklch(81.3% 0.038 259.8); --color-inverse-tint: oklch(39.5% 0.084 262.4);
-  --tone-amber-bg: oklch(29.8% 0.043 82.1); --tone-amber: oklch(81.1% 0.14 78.3);
-  --tone-blue-bg: oklch(30.9% 0.068 262.5); --tone-blue: oklch(77% 0.116 264.4);
-  --tone-red-bg: oklch(27.3% 0.046 5.1); --tone-red: oklch(76.5% 0.14 20.8);
-  --tone-violet-bg: oklch(28.6% 0.083 288.9); --tone-violet: oklch(77% 0.131 294.1);
-  --tone-teal-bg: oklch(29.2% 0.038 187.1); --tone-teal: oklch(78.8% 0.105 185.2);
-  --tone-slate-bg: oklch(28.7% 0.039 259.4); --tone-slate: oklch(81.3% 0.038 259.8);
-  --tone-navy-bg: oklch(36.6% 0.069 261.9); --tone-navy: oklch(94.5% 0.012 259.8);
-  --shadow-card: 0 0 0 1px var(--color-line), inset 0 1px 0 oklch(100% 0 0 / 0.04); --shadow-raised: 0 0 0 1px var(--color-line), inset 0 1px 0 oklch(100% 0 0 / 0.08), 0 12px 24px -12px oklch(0% 0 0 / 0.6); --shadow-pop: 0 0 0 1px var(--color-line), 0 12px 32px -8px oklch(0% 0 0 / 0.5);
-  --shadow-bar: 0 4px 12px -6px oklch(0% 0 0 / 0.5); --shadow-bar-up: 0 -4px 12px -6px oklch(0% 0 0 / 0.5); --shadow-side: 4px 0 12px -6px oklch(0% 0 0 / 0.5);
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-mode]) {
-    color-scheme: dark;
-    --color-paper: oklch(20.4% 0.033 260.3); --color-paper-2: oklch(23.9% 0.042 260.2); --color-paper-3: oklch(27.7% 0.049 260.7);
-    --color-card: oklch(25.3% 0.049 261.9);
-    --color-ink: oklch(94.5% 0.012 259.8); --color-ink-2: oklch(85.8% 0.024 258.4); --color-muted: oklch(71.8% 0.034 258.4);
-    --color-rule: oklch(32.7% 0.047 259.6); --color-line: oklch(94.5% 0.012 259.8 / 0.12); --color-control: oklch(52.4% 0.037 258.4);
-    --color-accent: oklch(70.6% 0.153 263.6); --color-accent-deep: oklch(77% 0.116 264.4); --color-accent-ink: oklch(19.3% 0.039 263.1);
-    --color-accent-text: oklch(77% 0.116 264.4); --color-accent-edge: oklch(70.6% 0.153 263.6); --color-accent-soft: oklch(30.9% 0.068 262.5); --color-on-soft: oklch(94.5% 0.012 259.8);
-    --color-focus: oklch(77% 0.116 264.4);
-    --heat-1: oklch(35.5% 0.091 261.8); --heat-2: oklch(48.7% 0.145 261.7); --heat-3: oklch(62.2% 0.164 262.6); --heat-4: oklch(77% 0.116 264.4);
-    --color-button: oklch(70.6% 0.153 263.6); --color-button-deep: oklch(77% 0.116 264.4); --color-button-ink: oklch(19.3% 0.039 263.1);
-    --color-success: oklch(74.9% 0.128 165.5); --color-success-fill: oklch(68.9% 0.139 161.3); --color-success-tint: oklch(29.6% 0.045 171.6);
-    --color-error: oklch(76.5% 0.14 20.8); --color-error-fill: oklch(64.4% 0.17 23.1); --color-error-tint: oklch(27.3% 0.046 5.1);
-    --color-warning: oklch(81.1% 0.14 78.3); --color-warning-fill: oklch(73.9% 0.15 75.6); --color-warning-tint: oklch(29.8% 0.043 82.1); --color-info-tint: oklch(28.2% 0.06 260.1);
-    --color-shade: oklch(10% 0.03 260 / 0.6);
-    --color-inverse: oklch(33.5% 0.069 261.4); --color-inverse-ink: oklch(100% 0 0); --color-inverse-muted: oklch(81.3% 0.038 259.8); --color-inverse-tint: oklch(39.5% 0.084 262.4);
-    --tone-amber-bg: oklch(29.8% 0.043 82.1); --tone-amber: oklch(81.1% 0.14 78.3);
-    --tone-blue-bg: oklch(30.9% 0.068 262.5); --tone-blue: oklch(77% 0.116 264.4);
-    --tone-red-bg: oklch(27.3% 0.046 5.1); --tone-red: oklch(76.5% 0.14 20.8);
-    --tone-violet-bg: oklch(28.6% 0.083 288.9); --tone-violet: oklch(77% 0.131 294.1);
-    --tone-teal-bg: oklch(29.2% 0.038 187.1); --tone-teal: oklch(78.8% 0.105 185.2);
-    --tone-slate-bg: oklch(28.7% 0.039 259.4); --tone-slate: oklch(81.3% 0.038 259.8);
-    --tone-navy-bg: oklch(36.6% 0.069 261.9); --tone-navy: oklch(94.5% 0.012 259.8);
-    --shadow-card: 0 0 0 1px var(--color-line), inset 0 1px 0 oklch(100% 0 0 / 0.04); --shadow-raised: 0 0 0 1px var(--color-line), inset 0 1px 0 oklch(100% 0 0 / 0.08), 0 12px 24px -12px oklch(0% 0 0 / 0.6); --shadow-pop: 0 0 0 1px var(--color-line), 0 12px 32px -8px oklch(0% 0 0 / 0.5);
-    --shadow-bar: 0 4px 12px -6px oklch(0% 0 0 / 0.5); --shadow-bar-up: 0 -4px 12px -6px oklch(0% 0 0 / 0.5); --shadow-side: 4px 0 12px -6px oklch(0% 0 0 / 0.5);
-  }
-}
-
 /* Laptop and up: one step up on headings and figures, a little more room in cards and between sections. */
 @media (min-width: 60rem) {
   :root {
-    --text-h1: 1.375rem; --text-h2: 1.0625rem; --text-figure: 2.25rem; --text-stat: 1.25rem;
+    --text-h1: 1.625rem; --text-h2: 1.25rem; --text-figure: 2rem; --text-figure-lead: 2.75rem; --text-stat: 1.25rem;
     --pad-card: 20px; --gap-tile: var(--space-md); --gap-section: 20px; --pad-page-top: var(--space-lg);
   }
 }
 /* Large desktop: one more step on the page title and the big figure only. */
 @media (min-width: 90rem) {
-  :root { --text-h1: 1.5rem; --text-figure: 2.5rem; --pad-page-top: var(--space-xl); }
+  :root { --text-h1: 1.75rem; --text-figure: 2.25rem; --text-figure-lead: 3rem; --pad-page-top: var(--space-xl); }
 }

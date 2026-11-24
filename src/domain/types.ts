@@ -99,7 +99,6 @@ export interface Settings {
   major: string;
   examDate: string | null;
   timer: TimerSetting;
-  theme: 'system' | 'light' | 'dark';
   textSize: 100 | 115 | 130;
   shortcuts: boolean;
   strictSheet: boolean;
@@ -119,7 +118,6 @@ export const DEFAULT_SETTINGS: Settings = {
   major: '',
   examDate: null,
   timer: 'real',
-  theme: 'light',
   textSize: 100,
   shortcuts: true,
   strictSheet: false,

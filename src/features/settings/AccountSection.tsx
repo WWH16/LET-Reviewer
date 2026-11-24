@@ -72,7 +72,7 @@ export function AccountSection() {
   const formOk = (e: { currentTarget: HTMLButtonElement }) => e.currentTarget.form?.reportValidity() ?? false;
 
   return (
-    <section className="tile" aria-labelledby="set-account">
+    <section className="tile span-3" aria-labelledby="set-account">
       <h2 id="set-account">Account</h2>
 
       {signedIn ? (

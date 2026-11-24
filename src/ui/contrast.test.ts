@@ -1,4 +1,4 @@
-// Checks the colour token pairs in tokens.css against WCAG contrast minimums, light and dark.
+// Checks the colour token pairs in tokens.css against WCAG contrast minimums.
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -33,13 +33,9 @@ const ratio = (x: [number, number, number], y: [number, number, number]) => {
   return (hi + 0.05) / (lo + 0.05);
 };
 
-const light = block(':root {');
-const dark = { ...light, ...block(":root[data-mode='dark']") };
+const t = block(':root {');
 
-describe.each([
-  ['light', light],
-  ['dark', dark],
-])('%s mode', (_name, t) => {
+describe('tokens', () => {
   const pairs: [string, string, number][] = [
     ['color-ink', 'color-paper', 4.5],
     ['color-ink', 'color-card', 4.5],
@@ -63,6 +59,17 @@ describe.each([
     ['color-accent-edge', 'color-card', 3],
     ['color-accent-edge', 'color-paper', 3],
     ['color-accent-edge', 'color-accent-soft', 3],
+    ['color-accent-text', 'color-accent-soft', 4.5],
+    // On the yellow block the state colours stand in for their fills (app.css), and the low timer is text.
+    ['color-warning', 'color-inverse', 4.5],
+    ['color-success', 'color-inverse', 3],
+    ['color-error', 'color-inverse', 3],
+    // White checks, crosses and flags sit on the state fills.
+    ['color-card', 'color-success-fill', 3],
+    ['color-card', 'color-error-fill', 3],
+    ['color-card', 'color-warning-fill', 3],
+    // The rating's gold figure is large text.
+    ['color-gold', 'color-card', 3],
   ];
   it.each(pairs)('%s on %s', (fg, bg, min) => {
     expect(t[fg], fg).toBeDefined();
@@ -71,7 +78,3 @@ describe.each([
   });
 });
 
-it('the system dark block matches the explicit dark block', () => {
-  const sys = block(':root:not([data-mode])');
-  expect(sys).toEqual(block(":root[data-mode='dark']"));
-});

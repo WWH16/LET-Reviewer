@@ -188,7 +188,7 @@ source "ai", status "unverified", sourceRef "AI from: {topic} notes".
 5. **Results**: score per part, projected weighted rating, a pass/fail check against both rules, and the wrong items with **Add all to Review**.
 6. **Progress**: accuracy by area and subarea over time, the weakest 5 topics, and the "Copy my weak topics" button.
 7. **Bank**: import by paste with a preview (§5, Import rules), **Copy prompt** for Template A, search, edit an item, and queues for *Needs key*, *Unverified*, and *Flagged*.
-8. **Settings**: level/major, target exam date, timer options, theme, text size, keyboard shortcuts on/off, export/import backup, and cloud backup (sign in with an email code, "Last synced" status, **Sync now**).
+8. **Settings**: level/major, target exam date, timer options, text size, keyboard shortcuts on/off, export/import backup, and cloud backup (sign in with an email code, "Last synced" status, **Sync now**).
 
 ## 7. Spaced repetition (Review Mistakes)
 
@@ -351,7 +351,7 @@ These are v1 acceptance criteria, not polish. Details are in `reviews/audit-as-a
 - The mock timer can be extended or turned off, and it announces only at milestones.
 - Filipino items are marked `lang="fil"`. Math and figures are text, never images alone.
 - Single-key shortcuts can be turned off. There's a visible focus ring. Tap targets are at least 44 px.
-- Light and dark themes both pass contrast. `prefers-reduced-motion` is respected.
+- The light theme passes contrast. `prefers-reduced-motion` is respected.
 
 ## 12. Open questions for the user
 
@@ -365,12 +365,12 @@ These are v1 acceptance criteria, not polish. Details are in `reviews/audit-as-a
 
 ## 13. Visual design
 
-**Direction (2026-11-15):** Cloudflare's Kumo components (`@cloudflare/kumo`) in monochrome: black, white and greys only, no hue anywhere. White cards on a light grey page with a hairline ring and a soft shadow. The primary button and the current selection are near-black (near-white in dark mode). Type is Schibsted Grotesk, Instrument Sans and DM Mono.
+**Direction (2026-11-15):** Cloudflare's Kumo components (`@cloudflare/kumo`) in monochrome: black, white and greys only, no hue anywhere. White cards on a light grey page with a hairline ring and a soft shadow. The primary button and the current selection are near-black. Type is Schibsted Grotesk, Instrument Sans and DM Mono.
 
 **How it is built**
 - Kumo's precompiled stylesheet (`kumo-standalone.css`), so no Tailwind. Role tokens live in `src/ui/tokens.css`; Kumo's own `--color-kumo-*` tokens point at them, so Kumo's buttons, badges and rings follow the palette.
 - Buttons wear Kumo's own classes (`src/ui/btn.ts`); status chips are Kumo `Badge`. Inputs, radios, the dialog and the answer sheet stay native elements, styled to match, because the accessibility rules depend on them (§11).
-- Dark mode is `data-mode="dark"` on `<html>`. "System" follows the device.
+- Light only: there is no dark mode.
 
 **State**
 
@@ -382,7 +382,7 @@ These are v1 acceptance criteria, not polish. Details are in `reviews/audit-as-a
 | Her wrong pick | Grey card, 2 px mid-grey ring, cross icon, the words "Your answer", text struck through |
 | Eliminated | Muted text, struck through |
 | Unverified / Flagged / Needs key | Neutral Kumo badge with an icon and the word; Verified carries a check icon |
-| Primary button | Near-black with a white label (near-white with a dark label in dark mode). One per screen. |
+| Primary button | Near-black with a white label. One per screen. |
 | Secondary button | Kumo secondary, white with a ring |
 
 Colour is never the only signal: every state also has an icon, a fill or ring change, and words.
@@ -392,10 +392,10 @@ Colour is never the only signal: every state also has an icon, a fill or ring ch
 - Sizes step with the screen (`--text-h1`, `--text-h2`, `--text-figure`, `--text-stat` in `tokens.css`): page title 22 px on phones, 24 px from 60rem, 28 px from 90rem; section heading 18 then 20 px; the big figure 32, 40, 44 px. Card padding is 16 px on phones and 24 px from 60rem; sections sit 24 px apart on phones and 32 px from 60rem.
 - Question text and choices at 16 px; interface and helper text at 14 px. Everything is in rem, so the Text size setting scales Kumo's components too.
 
-**Depth:** a 1 px subtle border on every raised surface first, then a soft neutral shadow under 0.08 alpha in light mode; in dark mode, a faint top-edge highlight instead of shadow.
+**Depth:** a 1 px subtle border on every raised surface first, then a soft neutral shadow under 0.08 alpha.
 
 **Contrast:** every text pair is 4.5:1 or better in both modes, and selection edges reach 3:1 (`src/ui/contrast.test.ts`).
 
-**Touch and focus:** tap targets stay at 44 px on touch screens (§11). Focus ring: 2 px near-black (near-white in dark mode).
+**Touch and focus:** tap targets stay at 44 px on touch screens (§11). Focus ring: 2 px near-black.
 
 **Print:** the mock exam booklet and answer sheet keep pure black on white (§8.3).

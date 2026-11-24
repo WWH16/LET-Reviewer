@@ -3,18 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#F6F6F6" />
+    <meta name="theme-color" content="#FBFAF6" />
     <link rel="apple-touch-icon" href="/icon-180.png" />
     <title>LET Reviewer</title>
     <script>
-      // Theme and text size, saved by App.tsx, applied before the first paint so neither flashes.
+      // Text size, saved by App.tsx, applied before the first paint so it does not flash.
       try {
         var d = JSON.parse(localStorage.getItem('let-display'));
-        if (d) {
-          var dark = d.theme === 'system' ? matchMedia('(prefers-color-scheme: dark)').matches : d.theme === 'dark';
-          document.documentElement.dataset.mode = dark ? 'dark' : 'light';
-          if (+d.textSize) document.documentElement.style.fontSize = +d.textSize + '%';
-        }
+        if (d && +d.textSize) document.documentElement.style.fontSize = +d.textSize + '%';
       } catch (e) {}
     </script>
   </head>

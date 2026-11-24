@@ -4,6 +4,35 @@
   "depth": "full",
   "scope": "app",
   "shape": "app screen",
+  "theme": "brand (yellow 60-30-10, kept)",
+  "axes": "light/grotesk-sans/60 white 30 yellow 10 near-black",
+  "nav": "side menu at 60rem and up, bottom tab bar below",
+  "footer": "none",
+  "hero": "none",
+  "imagery": "none",
+  "photos": [],
+  "entry": "golden greeting",
+  "signature": "the golden greeting on Study holding the countdown and the week",
+  "sections": [
+   "study bento: greeting, side, quiz-mode tiles",
+   "stats bento: ring, rating, subjects, weakest, streak",
+   "review rail beside the list",
+   "settings pairs",
+   "mock setup form beside exams"
+  ],
+  "waived": [
+   "7b",
+   "24b"
+  ],
+  "fingerprint": "six-column bento from 60rem, Quick 10 large on butter",
+  "prompt": "study app for teacher licensure exam practice: relayout the screens as a bento grid",
+  "date": "2026-11-24"
+ },
+ {
+  "mode": "redesign",
+  "depth": "full",
+  "scope": "app",
+  "shape": "app screen",
   "theme": "kumo (by request)",
   "axes": "light/system-sans/chromatic-blue",
   "nav": "side menu at 60rem and up, bottom tab bar below",

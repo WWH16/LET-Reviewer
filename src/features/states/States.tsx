@@ -22,10 +22,6 @@ export function States() {
   const [value, setValue] = useState<string | null>('B');
   const [elim, setElim] = useState(new Set(['D']));
   const [sheet, setSheet] = useState<Record<string, string | null>>({ '1': 'A', '2': null });
-  const setTheme = (t: string) => {
-    const dark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    document.documentElement.dataset.mode = dark ? 'dark' : 'light';
-  };
 
   const group = (title: string, el: React.ReactNode) => (
     <section className="stack-sm">
@@ -36,14 +32,6 @@ export function States() {
 
   return (
     <Page title="States">
-      <div className="row">
-        {['system', 'light', 'dark'].map((t) => (
-          <button key={t} className={btn.secondary} onClick={() => setTheme(t)}>
-            Theme: {t}
-          </button>
-        ))}
-      </div>
-
       {group(
         'Type',
         <div className="stack-sm">

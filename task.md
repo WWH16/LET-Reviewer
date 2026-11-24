@@ -31,7 +31,7 @@ Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-ho
 - Dexie (IndexedDB) is the source of truth. Screens read and write it only.
 - Hash router (`react-router-dom`), so no Vercel rewrite is needed
 - Kumo's precompiled stylesheet (`kumo-standalone.css`) plus plain CSS with tokens. No Tailwind, no state library.
-- Look: Cloudflare's Kumo design system. Buttons use Kumo's own classes (`src/ui/btn.ts`, checked by `btn.test.ts`), badges are Kumo `Badge`, everything else is plain CSS on Kumo's tokens. Stylesheets: `src/ui/tokens.css` (role tokens copied from Kumo's theme file), `src/ui/base.css`, `src/ui/app.css` (the app, stamp at the top). Dark mode is `data-mode` on `<html>`. Icons: Phosphor. Fonts: Schibsted Grotesk (headings, big figures), Instrument Sans (everything else), DM Mono (timers, scores, IDs), bundled; Kumo's font tokens point at them.
+- Look: Cloudflare's Kumo design system. Buttons use Kumo's own classes (`src/ui/btn.ts`, checked by `btn.test.ts`), badges are Kumo `Badge`, everything else is plain CSS on Kumo's tokens. Stylesheets: `src/ui/tokens.css` (role tokens copied from Kumo's theme file), `src/ui/base.css`, `src/ui/app.css` (the app, stamp at the top). Light only, no dark mode. Icons: Phosphor. Fonts: Schibsted Grotesk (headings, big figures), Instrument Sans (everything else), DM Mono (timers, scores, IDs), bundled; Kumo's font tokens point at them.
 - Vercel static hosting. Supabase (Auth with email code + one `docs` table) is added later as an optional copy.
 - No server code in v1
 
@@ -41,7 +41,7 @@ Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-ho
 2. **Derived, never stored:** whether an attempt was correct, and review cards (Leitner). Both are worked out from attempts and the question's current answer.
 3. **IDs:** the app assigns question IDs at import (`rc-` + slug of `sourceRef`, `ai-` + hash of the stem). Attempts and mock exams use `crypto.randomUUID()`. A mock exam's `GE-1115-A` is a display `label`, not its ID.
 4. **Synced records** (questions, mock exams, settings) carry `updatedAt` and a `deleted` flag. Attempts are append-only.
-5. **Kumo components, monochrome.** Black, white and greys only, no hue. The primary button and the current selection are the darkest things on screen (they flip to the lightest in dark mode). A right answer is a dark ring with a check, a wrong pick a mid-grey ring with a cross, never red. State is always also shown by icon and words. Text pairs keep 4.5:1. No uppercase tracked labels, no middle-dot strings, no dashes in copy. Run Hallmark sloplint after UI changes (see .hallmark/).
+5. **Kumo components, monochrome.** Black, white and greys only, no hue. The primary button and the current selection are the darkest things on screen. A right answer is a dark ring with a check, a wrong pick a mid-grey ring with a cross, never red. State is always also shown by icon and words. Text pairs keep 4.5:1. No uppercase tracked labels, no middle-dot strings, no dashes in copy. Run Hallmark sloplint after UI changes (see .hallmark/).
 6. **No review-center content in the repo.** Development uses `src/domain/sample-questions.json`, which holds original items only.
 7. **LET sub-area weights in `let-config.ts` are placeholders** until the user confirms their level, major, and the official TOS (plan §12, questions 1–3). Mark them clearly in the file.
 8. **Commit after each completed task.** One commit per finished step (F0, F1, ...), made after the step is verified. No `Co-Authored-By` or "Generated with" lines in the commit message. Tick the step's boxes in this file in the same commit. This folder is its own git repository on branch `main`.
@@ -58,9 +58,9 @@ Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-ho
 - [ ] Deploy to Vercel on the final production domain (**needs you**: Vercel sign-in and the domain choice)
 
 ### F1. Design system
-- [x] `src/ui/tokens.css`: five color tokens for light and dark, spacing scale, Geist fonts, focus ring, 44 px tap targets
+- [x] `src/ui/tokens.css`: five color tokens (light only), spacing scale, Geist fonts, focus ring, 44 px tap targets
 - [x] Base pieces: buttons, Chip, ChoiceGroup (real radio group in a `fieldset`), Dialog (native `<dialog>`), StatusRegion (`role="status"`)
-- [x] `/states` page showing every state in both themes
+- [x] `/states` page showing every state
 - [x] Check every token pair with a contrast tool (`src/ui/contrast.test.ts`)
 
 ### F2. Domain (`src/domain/`)
@@ -92,7 +92,7 @@ Installed versions: React 19.3, react-router-dom 7.18, Dexie 4.4, dexie-react-ho
 - [x] Results inside the session
 
 ### F6. Settings, backup, offline
-- [x] Settings: level, major, exam date, timer, theme, text size, shortcuts, strict sheet
+- [x] Settings: level, major, exam date, timer, text size, shortcuts, strict sheet
 - [x] Export and restore with a preview dialog
 - [x] `navigator.storage.persist()` and its status
 - [x] Service worker precaches the app; a reload with the server stopped loads from cache (tested in preview build). Real-phone airplane-mode test still to do.

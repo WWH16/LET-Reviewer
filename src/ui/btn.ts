@@ -14,7 +14,7 @@ export const KUMO = {
 } as const;
 
 export const btn = {
-  // Kumo's primary forces a white label; the blue primary needs a dark label in dark mode, so it wears the secondary.
+  // The near-black primary wears Kumo's secondary so its label colour comes from --color-button-ink (app.css).
   primary: `${KUMO.secondary} btn btn-primary`,
   secondary: `${KUMO.secondary} btn`,
   quiet: `${KUMO.ghost} btn`,

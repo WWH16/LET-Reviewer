@@ -8,7 +8,7 @@ import { Icon, type IconName } from './Icon';
 export function Empty({ icon, title, children, text }: { icon: IconName; title: string; text: ReactNode; children?: ReactNode }) {
   return (
     <div className="empty">
-      <span className="mode-icon tone-slate" aria-hidden="true">
+      <span className="mode-icon" aria-hidden="true">
         <Icon name={icon} size={20} />
       </span>
       <div className="stack-sm">

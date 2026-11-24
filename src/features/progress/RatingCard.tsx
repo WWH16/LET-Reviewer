@@ -38,10 +38,10 @@ export function RatingCard({
             <p className="display num">{rating.rating.toFixed(1)}%</p>
             <p>
               {rating.passes
-                ? `At or above ${PASSING_AVERAGE}%, with no part below ${PART_FLOOR}%.`
+                ? `At or above ${PASSING_AVERAGE}%, with no part below ${PART_FLOOR}%. That is an LPT’s score.`
                 : rating.rating < PASSING_AVERAGE
-                  ? `Below the ${PASSING_AVERAGE}% passing average.`
-                  : `Average passes, but a part is below ${PART_FLOOR}%.`}
+                  ? `Below the ${PASSING_AVERAGE}% passing average, for now. Keep going, LPT.`
+                  : `Average passes. Lift the part below ${PART_FLOOR}% and your LPT is set.`}
             </p>
           </>
         )}
