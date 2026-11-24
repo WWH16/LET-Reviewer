@@ -33,7 +33,7 @@ export function MockSetup() {
   const [paper, setPaper] = useState<NonNullable<MockExam['paper']>>({ size: 'folio', columns: 2, large: false, answerKey: true });
   const navigate = useNavigate();
 
-  if (!qmap || !exams || !settings) return <Page title="Mock exam" back={{ to: '/', label: 'Study' }}>{null}</Page>;
+  if (!qmap || !exams || !settings) return <Page title="Mock exams">{null}</Page>;
 
   const part = picked ?? partsFor(settings.level)[0];
   const pool = [...qmap.values()].filter((q) => counts(q) && q.area === part);
@@ -63,7 +63,7 @@ export function MockSetup() {
   const done = exams.filter((e) => e.status === 'graded').slice(0, 10);
 
   return (
-    <Page title="Mock exam" back={{ to: '/', label: 'Study' }} wide={open.length > 0 || done.length > 0}>
+    <Page title="Mock exams" wide={open.length > 0 || done.length > 0}>
       <div className="mock-layout">
         {open.length > 0 && (
           <section className="stack-sm" aria-labelledby="mk-open">
