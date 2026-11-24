@@ -48,16 +48,16 @@ export function Quizzes() {
               {area === 'Major' && settings.major ? `: ${settings.major}` : ''}
             </h2>
             <ul className="list">
+              {/* A row opens the subject, which has its own New quiz; one New quiz on top covers the rest. */}
               {subjects.map((s) => (
-                <li key={s.id} className="spread">
-                  <Link className="stack-sm" to={`/quizzes/${area}/${s.id}`}>
-                    <span>{s.name}</span>
-                    <span className="meta">
-                      {count(s.quizzes.length, 'quiz')}, {count(s.quizzes.reduce((sum, z) => sum + z.questions.length, 0), 'question')}
+                <li key={s.id}>
+                  <Link className="list-link" to={`/quizzes/${area}/${s.id}`}>
+                    <span className="stack-sm">
+                      <span>{s.name}</span>
+                      <span className="meta">
+                        {count(s.quizzes.length, 'quiz')}, {count(s.quizzes.reduce((sum, z) => sum + z.questions.length, 0), 'question')}
+                      </span>
                     </span>
-                  </Link>
-                  <Link className={btn.secondary} to={`/quizzes/new?area=${area}&sub=${s.id}`} aria-label={`New ${s.name} quiz`}>
-                    New quiz
                   </Link>
                 </li>
               ))}
