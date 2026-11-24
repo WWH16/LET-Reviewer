@@ -22,3 +22,36 @@ export function upgradeQuestion(q: Question): Question {
   if (q.quizId) return q;
   return { ...q, quizId: batchQuizId(q.importBatchId ?? 'imported', q.subarea) };
 }
+
+/** A question a quiz or mock can ask: not removed, and it has an answer key. */
+export const counts = (q: Question) => !q.deleted && q.answer !== null;
+
+export interface Quiz {
+  id: string;
+  area: Question['area'];
+  subarea: string;
+  /** "Quiz 2": its place among the subject's quizzes, oldest first. */
+  name: string;
+  /** When it was made: from its id, or its oldest question for one with no time in its id. */
+  createdAt: string;
+  questions: Question[];
+}
+
+/** Every quiz with at least one question left, oldest first, named in order within each subject. */
+export function groupQuizzes(questions: Iterable<Question>): Quiz[] {
+  const byId = new Map<string, Question[]>();
+  for (const q of questions) if (counts(q)) byId.set(q.quizId, [...(byId.get(q.quizId) ?? []), q]);
+  const dated = [...byId].map(([id, qs]) => {
+    const stamp = id.slice(5).split('~')[0];
+    const createdAt = Number.isNaN(Date.parse(stamp)) ? qs.map((q) => q.updatedAt).sort()[0] : stamp;
+    return { id, area: qs[0].area, subarea: qs[0].subarea, name: '', createdAt, questions: qs };
+  });
+  dated.sort((a, b) => (a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0));
+  const n = new Map<string, number>();
+  for (const z of dated) {
+    const k = `${z.area}/${z.subarea}`;
+    n.set(k, (n.get(k) ?? 0) + 1);
+    z.name = `Quiz ${n.get(k)}`;
+  }
+  return dated;
+}

@@ -24,6 +24,10 @@ const MockExam = lazy(() => import('../features/mock/MockExam').then((m) => ({ d
 const MockResults = lazy(() => import('../features/mock/MockResults').then((m) => ({ default: m.MockResults })));
 const MockPrint = lazy(() => import('../features/mock/MockPrint').then((m) => ({ default: m.MockPrint })));
 const MockEntry = lazy(() => import('../features/mock/MockEntry').then((m) => ({ default: m.MockEntry })));
+const Quizzes = lazy(() => import('../features/quizzes/Quizzes').then((m) => ({ default: m.Quizzes })));
+const Subject = lazy(() => import('../features/quizzes/Subject').then((m) => ({ default: m.Subject })));
+const QuizPage = lazy(() => import('../features/quizzes/QuizPage').then((m) => ({ default: m.QuizPage })));
+const NewQuiz = lazy(() => import('../features/quizzes/NewQuiz').then((m) => ({ default: m.NewQuiz })));
 const States = lazy(() => import('../features/states/States').then((m) => ({ default: m.States })));
 import { Empty } from '../ui/Empty';
 import { btn } from '../ui/btn';
@@ -33,6 +37,7 @@ import { requestSync } from '../sync/trigger';
 // you have answered, and settings. Practice and Mock are modes on Study, not tabs of their own.
 const NAV = [
   { to: '/', label: 'Study', icon: 'study', also: ['/drill', '/mock', '/session', '/review'] },
+  { to: '/quizzes', label: 'Quizzes', icon: 'practice', also: ['/quiz/', '/question/'] },
   { to: '/progress', label: 'Stats', icon: 'stats', also: [] },
   { to: '/bank', label: 'Review', icon: 'review', also: [] },
   { to: '/settings', label: 'Settings', icon: 'settings', also: [] },
@@ -57,7 +62,7 @@ export function App() {
   // A tab stays lit on the screens it leads to (Study on a quiz or the mock setup, Review on an edit).
   const { pathname } = useLocation();
   const here = (item: (typeof NAV)[number]) =>
-    item.to === '/' ? pathname === '/' || item.also.some((p) => pathname.startsWith(p)) : pathname.startsWith(item.to);
+    (item.to === '/' ? pathname === '/' : pathname.startsWith(item.to)) || item.also.some((p) => pathname.startsWith(p));
   const textSize = settings?.textSize;
   useEffect(() => {
     if (!textSize) return;
@@ -129,6 +134,11 @@ export function App() {
           <Route path="/mock/:id/print" element={<MockPrint />} />
           <Route path="/mock/:id/entry" element={<MockEntry />} />
           <Route path="/mock/:id/results" element={<MockResults />} />
+          <Route path="/quizzes" element={<Quizzes />} />
+          <Route path="/quizzes/new" element={<NewQuiz />} />
+          <Route path="/quizzes/:area/:sub" element={<Subject />} />
+          <Route path="/quiz/:id" element={<QuizPage />} />
+          <Route path="/question/:id" element={<EditQuestion />} />
           <Route path="/progress" element={<Progress />} />
           <Route path="/bank" element={<Bank />} />
           <Route path="/bank/import" element={<Import />} />

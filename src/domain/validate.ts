@@ -3,7 +3,7 @@
 
 import { PARTS } from './let-config';
 import { questionId } from './ids';
-import { batchQuizId } from './quiz';
+import { batchQuizId, quizQuestionId } from './quiz';
 import { KEYS, type Area, type Choice, type Key, type Question } from './types';
 
 // ---------- Parsing ----------
@@ -296,4 +296,35 @@ export function previewImport(
     duplicates: results.filter((r) => r.duplicate),
     invalid: results.filter((r) => !r.question),
   };
+}
+
+export interface QuizPreview {
+  ready: Question[];
+  /** Items that could not be used, with why. */
+  invalid: { n: number; errors: string[] }[];
+  /** Items repeated within the paste: kept once. */
+  repeats: number;
+}
+
+/**
+ * Checks a pasted reply for one quiz. The quiz decides the part and subject, so the reply needs only the
+ * questions, and every question needs an answer key.
+ */
+export function previewQuiz(items: unknown[], quiz: { id: string; area: Area; subarea: string }, now: string): QuizPreview {
+  const ready: Question[] = [];
+  const invalid: QuizPreview['invalid'] = [];
+  const seen = new Set<string>();
+  let repeats = 0;
+  items.forEach((raw, i) => {
+    const n = i + 1;
+    const patched = isObj(raw) ? { ...raw, area: quiz.area, subarea: quiz.subarea, source: 'ai' } : raw;
+    const r = validateItem(patched, n, { now, batchId: '' });
+    const errors = r.question?.answer === null ? ['has no answer. It must be A, B, C or D.'] : r.errors;
+    if (!r.question || errors.length) return invalid.push({ n, errors });
+    const id = quizQuestionId(quiz.id, r.question.stem);
+    if (seen.has(id)) return repeats++;
+    seen.add(id);
+    ready.push({ ...r.question, id, quizId: quiz.id });
+  });
+  return { ready, invalid, repeats };
 }

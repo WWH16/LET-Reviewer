@@ -2,16 +2,15 @@ import { useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Page } from '../../ui/Page';
-import { Chip } from '../../ui/Chip';
 import { Icon } from '../../ui/Icon';
 import { ChoiceGroup } from '../../ui/ChoiceGroup';
 import { Stem } from '../../ui/Stem';
 import { useAnnounce } from '../../ui/Status';
 import { db } from '../../db/db';
 import { useQuestionMap, useSettings } from '../../db/hooks';
-import { recordAttempt, setFlag } from '../../db/repo';
+import { recordAttempt } from '../../db/repo';
 import { buildCards, dueCards } from '../../domain/leitner';
-import { KEY_LOOKS_WRONG, gradable, questionOfTheDay, shuffle } from '../../domain/examDraw';
+import { gradable, questionOfTheDay, shuffle } from '../../domain/examDraw';
 import { dayKey } from '../../domain/dates';
 import { choiceOrder, originalKey, shown } from '../../domain/choices';
 import { paceMs, subareaName } from '../../domain/let-config';
@@ -21,17 +20,17 @@ import { btn } from '../../ui/btn';
 import { Empty } from '../../ui/Empty';
 import { requestSync } from '../../sync/trigger';
 
-const TITLES: Record<string, string> = { drill: 'Practice', review: 'Missed questions', quick: 'Quick 10', qotd: 'Question of the Day', timed: 'Timed quiz' };
+const TITLES: Record<string, string> = { quiz: 'Quiz', drill: 'Practice', review: 'Missed questions', quick: 'Quick 10', qotd: 'Question of the Day', timed: 'Timed quiz' };
 /** mm:ss for the timed quiz's clock. */
 const mmss = (ms: number) => {
   const s = Math.max(0, Math.ceil(ms / 1000));
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 };
-const FLAGGED = 'Flagged during practice';
 
 /** Picks the session's items once, when it opens. */
 async function pickItems(mode: string, params: URLSearchParams, qmap: Map<string, Question>): Promise<string[]> {
   const live = [...qmap.values()].filter(gradable);
+  if (mode === 'quiz') return shuffle(live.filter((q) => q.quizId === params.get('quiz'))).map((q) => q.id);
   if (mode === 'qotd') {
     const id = questionOfTheDay(dayKey(new Date()), qmap.values());
     return id ? [id] : [];
@@ -101,7 +100,7 @@ export function Session() {
     });
   }, [qmap, items, mode, params, run]);
 
-  const timed = mode === 'timed';
+  const timed = mode === 'timed' || params.get('timed') === '1';
   const limitMs = timed && items && qmap ? items.reduce((s, id) => s + paceMs(qmap.get(id)!.area), 0) : 0;
   const leftMs = limitMs - (now - startedAt);
   useEffect(() => {
@@ -148,7 +147,13 @@ export function Session() {
   if (!items.length)
     return (
       <Page title={title}>
-        {mode === 'review' ? (
+        {mode === 'quiz' ? (
+          <Empty icon="practice" title="This quiz has no questions left" text="Its questions were removed, or it is not on this device.">
+            <Link className={btn.primary} to="/quizzes">
+              Back to Quizzes
+            </Link>
+          </Empty>
+        ) : mode === 'review' ? (
           <Empty icon="check" title="Nothing due today" text="Questions you miss come back here the next day.">
             <Link className={btn.primary} to="/session?mode=quick">
               Start a Quick 10
@@ -234,11 +239,17 @@ export function Session() {
         )}
         <div className="row">
           <button type="button" className={btn.primary} onClick={restart}>
-            {mode === 'review' ? 'Check for more reviews' : 'Practice again'}
+            {mode === 'review' ? 'Check for more reviews' : mode === 'quiz' ? 'Retake, shuffled' : 'Practice again'}
           </button>
-          <Link className={btn.secondary} to="/">
-            Back to Study
-          </Link>
+          {mode === 'quiz' ? (
+            <Link className={btn.secondary} to={`/quiz/${encodeURIComponent(params.get('quiz') ?? '')}`}>
+              Back to the quiz
+            </Link>
+          ) : (
+            <Link className={btn.secondary} to="/">
+              Back to Study
+            </Link>
+          )}
         </div>
       </Page>
     );
@@ -267,15 +278,6 @@ export function Session() {
       document.startViewTransition(() => flushSync(advance));
     else advance();
   };
-  const toggleFlag = async () => {
-    const on = q.flag?.reason !== FLAGGED;
-    await setFlag(q.id, on ? FLAGGED : null);
-    announce(on ? 'Flagged. Find it in Review under Flagged.' : 'Flag removed');
-  };
-  const reportKey = async () => {
-    await setFlag(q.id, KEY_LOOKS_WRONG);
-    announce('Reported. It is in Review under Flagged and left out of mock exams until you fix it.');
-  };
 
   const onKeyDown = (e: KeyboardEvent) => {
     if (!settings.shortcuts || e.ctrlKey || e.metaKey || e.altKey || document.querySelector('dialog[open]')) return;
@@ -291,9 +293,6 @@ export function Session() {
       e.preventDefault();
       if (checked) next();
       else check();
-    } else if (k === 'F') {
-      e.preventDefault();
-      toggleFlag();
     }
   };
   keyHandler.current = onKeyDown;
@@ -338,7 +337,6 @@ export function Session() {
             {subareaName(q.subarea)}
             {q.topic ? `, ${q.topic}` : ''}
           </span>
-          {q.status === 'unverified' && <Chip icon="alert">Unverified</Chip>}
         </div>
 
         <Stem id={`stem-${q.id}`} lang={q.lang} text={q.stem} />
@@ -385,19 +383,10 @@ export function Session() {
                 {isLast ? 'See results' : 'Next'}
                 {settings.shortcuts && <kbd className="kbd-inline" aria-hidden="true">Enter</kbd>}
               </button>
-              <button
-                type="button"
-                className={btn.secondary}
-                aria-pressed={q.flag?.reason === FLAGGED}
-                onClick={toggleFlag}
-                aria-keyshortcuts={settings.shortcuts ? 'F' : undefined}
-              >
-                <Icon name="flag" /> Flag
-                {settings.shortcuts && <kbd className="kbd-inline" aria-hidden="true">F</kbd>}
-              </button>
-              <button type="button" className={btn.quiet} onClick={reportKey} disabled={q.flag?.reason === KEY_LOOKS_WRONG}>
-                {q.flag?.reason === KEY_LOOKS_WRONG ? 'Key reported' : 'Key looks wrong'}
-              </button>
+              {/* A wrong key from Claude would mark every retake wrong, so the fix is one tap away. */}
+              <Link className={btn.quiet} to={`/question/${encodeURIComponent(q.id)}`}>
+                Fix this question
+              </Link>
             </div>
           </div>
         )}
@@ -413,7 +402,7 @@ export function Session() {
         )}
         {settings.shortcuts && i === 0 && !checked && (
           <p className="kbd-hint label">
-            <kbd>A</kbd> to <kbd>D</kbd> or <kbd>1</kbd> to <kbd>4</kbd> choose. <kbd>Enter</kbd> checks, then goes next. <kbd>F</kbd> flags.
+            <kbd>A</kbd> to <kbd>D</kbd> or <kbd>1</kbd> to <kbd>4</kbd> choose. <kbd>Enter</kbd> checks, then goes next.
           </p>
         )}
       </div>

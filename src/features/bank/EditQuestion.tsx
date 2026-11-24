@@ -5,8 +5,8 @@ import { Dialog } from '../../ui/Dialog';
 import { useAnnounce } from '../../ui/Status';
 import { db } from '../../db/db';
 import { removeQuestion, restoreQuestions, saveQuestion } from '../../db/repo';
-import { PARTS } from '../../domain/let-config';
-import { KEYS, type Area, type Key, type Question } from '../../domain/types';
+import { PARTS, subareaName } from '../../domain/let-config';
+import { KEYS, type Key, type Question } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { Empty } from '../../ui/Empty';
 import { Select } from '../../ui/Select';
@@ -27,23 +27,16 @@ export function EditQuestion() {
   if (q === null)
     return (
       <Page title="Question not found">
-        <Empty icon="review" title="This question is not on this device" text="It may have been removed with its import.">
-          <Link className={btn.primary} to="/bank">
-            Back to Review
+        <Empty icon="review" title="This question is not on this device" text="It may have been removed with its quiz.">
+          <Link className={btn.primary} to="/quizzes">
+            Back to Quizzes
           </Link>
         </Empty>
       </Page>
     );
 
   const set = (patch: Partial<Question>) => setQ({ ...q, ...patch });
-  const setAnswer = (v: string) => {
-    const answer = (v || null) as Key | null;
-    // Filling in a missing key means she checked it against the paper.
-    let status = q.status;
-    if (answer && status === 'needs-key') status = q.source === 'ai' ? 'unverified' : 'verified';
-    if (!answer && status !== 'flagged') status = 'needs-key';
-    set({ answer, status });
-  };
+  const quiz = `/quiz/${encodeURIComponent(q.quizId)}`;
 
   const save = async () => {
     if (!q.stem.trim()) return setError('The question text is empty.');
@@ -55,9 +48,9 @@ export function EditQuestion() {
   };
 
   return (
-    <Page title="Edit question" back={{ to: '/bank', label: 'Review' }}>
+    <Page title="Edit question" back={{ to: quiz, label: `${subareaName(q.subarea)} quiz` }}>
       <p className="muted">
-        {q.source === 'ai' ? `AI-generated from ${q.sourceRef.replace(/^AI from:\s*/i, '')}` : `Review center: ${q.sourceRef}`}
+        {PARTS[q.area].name}, {subareaName(q.subarea)}
       </p>
 
       <form
@@ -97,27 +90,15 @@ export function EditQuestion() {
         </section>
         <section className="tile" aria-labelledby="eq-h-grade">
           <h2 id="eq-h-grade">Grading</h2>
-          <div className="grid-2">
-            <div className="field">
-              <label htmlFor="eq-answer">Answer key</label>
-              <Select id="eq-answer" value={q.answer ?? ''} onChange={(v) => setAnswer(v)}>
-                <option value="">No key yet</option>
-                {KEYS.map((k) => (
-                  <option key={k} value={k}>
-                    {k}
-                  </option>
-                ))}
-              </Select>
-            </div>
-            <div className="field">
-              <label htmlFor="eq-status">Status</label>
-              <Select id="eq-status" value={q.status} onChange={(v) => set({ status: v as Question['status'] })}>
-                <option value="verified">Verified</option>
-                <option value="unverified">Unverified</option>
-                <option value="needs-key">Needs key</option>
-                <option value="flagged">Flagged</option>
-              </Select>
-            </div>
+          <div className="field">
+            <label htmlFor="eq-answer">Answer key</label>
+            <Select id="eq-answer" value={q.answer ?? 'A'} onChange={(v) => set({ answer: v as Key })}>
+              {KEYS.map((k) => (
+                <option key={k} value={k}>
+                  {k}
+                </option>
+              ))}
+            </Select>
           </div>
         </section>
         <section className="tile" aria-labelledby="eq-h-expl">
@@ -135,35 +116,8 @@ export function EditQuestion() {
           </div>
         </section>
         <section className="tile" aria-labelledby="eq-h-file">
-          <h2 id="eq-h-file">Filed under</h2>
+          <h2 id="eq-h-file">Details</h2>
           <div className="grid-2">
-            <div className="field">
-              <label htmlFor="eq-area">Part</label>
-              <Select
-                id="eq-area"
-                value={q.area}
-                onChange={(v) => {
-                  const area = v as Area;
-                  set({ area, subarea: PARTS[area].subareas[0].id });
-                }}
-              >
-                {Object.values(PARTS).map((p) => (
-                  <option key={p.area} value={p.area}>
-                    {p.name}
-                  </option>
-                ))}
-              </Select>
-            </div>
-            <div className="field">
-              <label htmlFor="eq-sub">Sub-area</label>
-              <Select id="eq-sub" value={q.subarea} onChange={(v) => set({ subarea: v })}>
-                {PARTS[q.area].subareas.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
-                  </option>
-                ))}
-              </Select>
-            </div>
             <div className="field">
               <label htmlFor="eq-topic">Topic</label>
               <input id="eq-topic" type="text" value={q.topic} onChange={(e) => set({ topic: e.target.value })} />
@@ -177,15 +131,6 @@ export function EditQuestion() {
             </div>
           </div>
         </section>
-
-        {q.flag && (
-          <div className="notice spread">
-            <span>Flagged: {q.flag.reason}</span>
-            <button type="button" className={btn.secondary} onClick={() => set({ flag: null })}>
-              Clear flag
-            </button>
-          </div>
-        )}
 
         {error && <p role="alert">{error}</p>}
 
@@ -205,7 +150,7 @@ export function EditQuestion() {
       </form>
 
       <Dialog open={confirm} onClose={() => setConfirm(false)} title="Remove this question?">
-        <p>Your past answers to it stay in your history.</p>
+        <p>It leaves this quiz and future mocks. Your past answers to it stay in your history.</p>
         <div className="row">
           <button type="button" className={btn.primary} data-autofocus onClick={() => setConfirm(false)}>
             Keep it
@@ -216,7 +161,7 @@ export function EditQuestion() {
             onClick={async () => {
               await removeQuestion(q.id);
               announce('Question removed', () => restoreQuestions([q.id]));
-              navigate('/bank');
+              navigate(quiz);
             }}
           >
             Remove question

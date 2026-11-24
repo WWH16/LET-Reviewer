@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { parsePasted, previewImport, validateItem } from './validate';
+import { parsePasted, previewImport, previewQuiz, validateItem } from './validate';
 import { examLabel, questionId } from './ids';
 import { buildCards, dueCards } from './leitner';
 import { dayKey, heatWeeks, longestStreak, streak } from './dates';
@@ -57,6 +57,23 @@ describe('validateItem', () => {
   });
   it('rejects a figure with no description', () => {
     expect(validateItem(item({ media: { src: 'fig.png' } }), 1, opts).errors[0]).toMatch(/no description/);
+  });
+});
+
+describe('previewQuiz', () => {
+  const quiz = { id: 'quiz-x', area: 'GenEd' as const, subarea: 'english' };
+  it('files every item under the quiz, needs a key, and keeps a repeat once', () => {
+    const p = previewQuiz(
+      [item({ area: 'ProfEd', subarea: 'nope' }), item({ answer: null, stem: 'Other?' }), item(), { stem: '' }],
+      quiz,
+      opts.now,
+    );
+    expect(p.ready).toHaveLength(1);
+    expect(p.ready[0]).toMatchObject({ quizId: 'quiz-x', area: 'GenEd', subarea: 'english' });
+    expect(p.ready[0].id.startsWith('quiz-x~')).toBe(true);
+    expect(p.repeats).toBe(1);
+    expect(p.invalid.map((r) => r.n)).toEqual([2, 4]);
+    expect(p.invalid[0].errors[0]).toMatch(/no answer/);
   });
 });
 

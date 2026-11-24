@@ -69,6 +69,17 @@ export async function removeQuestion(id: string) {
   await db.questions.update(id, { deleted: true, updatedAt: nowIso() });
 }
 
+/** Removes a whole quiz. Past answers stay, so history and Stats keep them. Returns the ids, for Undo. */
+export async function removeQuiz(quizId: string): Promise<string[]> {
+  const now = nowIso();
+  const ids = (await db.questions.where('quizId').equals(quizId).toArray()).filter((q) => !q.deleted).map((q) => q.id);
+  await db.questions.where('id').anyOf(ids).modify((q) => {
+    q.deleted = true;
+    q.updatedAt = now;
+  });
+  return ids;
+}
+
 /** Brings soft-deleted questions back (the Undo on a remove). */
 export async function restoreQuestions(ids: string[]) {
   const now = nowIso();
