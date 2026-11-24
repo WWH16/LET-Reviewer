@@ -28,6 +28,7 @@ const Quizzes = lazy(() => import('../features/quizzes/Quizzes').then((m) => ({ 
 const Subject = lazy(() => import('../features/quizzes/Subject').then((m) => ({ default: m.Subject })));
 const QuizPage = lazy(() => import('../features/quizzes/QuizPage').then((m) => ({ default: m.QuizPage })));
 const NewQuiz = lazy(() => import('../features/quizzes/NewQuiz').then((m) => ({ default: m.NewQuiz })));
+const Missed = lazy(() => import('../features/practice/Missed').then((m) => ({ default: m.Missed })));
 const States = lazy(() => import('../features/states/States').then((m) => ({ default: m.States })));
 import { Empty } from '../ui/Empty';
 import { btn } from '../ui/btn';
@@ -128,7 +129,8 @@ export function App() {
           <Route path="/" element={<Home />} />
           <Route path="/drill" element={<DrillSetup />} />
           <Route path="/session" element={<Session />} />
-          <Route path="/review" element={<Navigate to="/session?mode=review" replace />} />
+          <Route path="/missed" element={<Missed />} />
+          <Route path="/review" element={<Navigate to="/missed" replace />} />
           <Route path="/mock" element={<MockSetup />} />
           <Route path="/mock/:id" element={<MockExam />} />
           <Route path="/mock/:id/print" element={<MockPrint />} />

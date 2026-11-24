@@ -8,7 +8,6 @@ import { templateB } from '../../domain/prompts';
 import { useStats } from './useStats';
 import { RatingCard } from './RatingCard';
 import { btn } from '../../ui/btn';
-import { drillMatches, drillUrl } from '../practice/drill';
 import { Gauge, scoreTone } from '../../ui/Gauge';
 import { StreakCard } from '../home/StreakCard';
 import { Empty } from '../../ui/Empty';
@@ -166,9 +165,6 @@ export function Progress() {
             <ul className="list">
               {weak.map((w) => {
                 const name = w.topic || subareaName(w.subarea);
-                const where = { area: w.area, sub: w.subarea, topic: w.topic };
-                // Drill from review-center questions when the topic has any, else from the AI ones she answered.
-                const ai = ![...qmap.values()].some((q) => drillMatches(q, { ...where, ai: false }));
                 return (
                   <li key={`${w.subarea}-${w.topic}`} className="weak-item">
                     <span className="stack-sm">
@@ -178,22 +174,16 @@ export function Progress() {
                       </span>
                     </span>
                     <span className="row">
-                      <Link className={btn.secondary} to={drillUrl({ ...where, n: 10, ai })} aria-label={`Practice ${name}`}>
-                        Practice
+                      <Link className={btn.secondary} to={`/quizzes/${w.area}/${w.subarea}`} aria-label={`${subareaName(w.subarea)} quizzes`}>
+                        Quizzes
                       </Link>
-                      <button
-                        type="button"
+                      <Link
                         className={btn.quiet}
-                        aria-label={`Copy prompt for ${name}`}
-                        onClick={async () => {
-                          await copyText(
-                            templateB({ area: w.area, subarea: subareaName(w.subarea), topic: w.topic, level: settings.level, major: settings.major }),
-                          );
-                          announce('Prompt copied. Paste it into Claude with your notes.');
-                        }}
+                        to={`/quizzes/new?area=${w.area}&sub=${w.subarea}&topic=${encodeURIComponent(w.topic)}`}
+                        aria-label={`New quiz on ${name}`}
                       >
-                        <Icon name="copy" size={18} />
-                      </button>
+                        New quiz
+                      </Link>
                     </span>
                   </li>
                 );

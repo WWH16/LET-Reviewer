@@ -21,7 +21,7 @@ export function NewQuiz() {
   const settings = useSettings();
   const [params] = useSearchParams();
   const [picked, setPicked] = useState<{ area: Area; sub: string } | null>(null);
-  const [topic, setTopic] = useState('');
+  const [topic, setTopic] = useState(() => params.get('topic') ?? '');
   const [n, setN] = useState(10);
   const [text, setText] = useState('');
   const [clipError, setClipError] = useState('');

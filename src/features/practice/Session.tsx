@@ -51,7 +51,10 @@ async function pickItems(mode: string, params: URLSearchParams, qmap: Map<string
       const q = qmap.get(id);
       return q && gradable(q);
     });
-  if (mode === 'review') return due;
+  if (mode === 'review') {
+    const sub = params.get('sub');
+    return sub ? due.filter((id) => qmap.get(id)!.subarea === sub && qmap.get(id)!.area === params.get('area')) : due;
+  }
   // Quick 10: reviews due first, then random questions.
   const first = due.slice(0, 10);
   const rest = shuffle(live.filter((q) => !first.includes(q.id))).map((q) => q.id);
@@ -155,11 +158,8 @@ export function Session() {
           </Empty>
         ) : mode === 'review' ? (
           <Empty icon="check" title="Nothing due today" text="Questions you miss come back here the next day.">
-            <Link className={btn.primary} to="/session?mode=quick">
-              Start a Quick 10
-            </Link>
-            <Link className={btn.secondary} to="/">
-              Back to Study
+            <Link className={btn.primary} to="/missed">
+              Back to Missed questions
             </Link>
           </Empty>
         ) : (
@@ -239,11 +239,15 @@ export function Session() {
         )}
         <div className="row">
           <button type="button" className={btn.primary} onClick={restart}>
-            {mode === 'review' ? 'Check for more reviews' : mode === 'quiz' ? 'Retake, shuffled' : 'Practice again'}
+            {mode === 'review' ? 'Check this subject again' : mode === 'quiz' ? 'Retake, shuffled' : 'Practice again'}
           </button>
           {mode === 'quiz' ? (
             <Link className={btn.secondary} to={`/quiz/${encodeURIComponent(params.get('quiz') ?? '')}`}>
               Back to the quiz
+            </Link>
+          ) : mode === 'review' ? (
+            <Link className={btn.secondary} to="/missed">
+              Back to Missed questions
             </Link>
           ) : (
             <Link className={btn.secondary} to="/">
