@@ -46,6 +46,6 @@ export const SETTINGS_PAGES: SettingsPage[] = [
   { id: 'subjects', label: 'Subjects', line: 'The subjects in each part, for your quizzes and mocks.' },
   { id: 'display', label: 'Display', line: 'Text size and keyboard shortcuts.' },
   ...(syncAvailable ? [{ id: 'account', label: 'Account', line: 'Sign in to keep your progress on every device.' }] : []),
-  { id: 'data', label: 'Data', line: 'Back up, restore, and sample answers.' },
+  { id: 'data', label: 'Data', line: 'Back up, restore, sample answers, and erase this device.' },
   { id: 'about', label: 'About', line: 'Version and debug info.' },
 ];

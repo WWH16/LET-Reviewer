@@ -64,3 +64,13 @@ export async function restoreBackup(b: Backup) {
     if (b.settings) await db.settings.put(b.settings);
   });
 }
+
+/**
+ * Erases everything this app keeps on this device: the whole database (questions, answers, mocks,
+ * settings, sync position) and its local storage, which also holds the account sign-in. The caller
+ * reloads, so the app starts over at the welcome screen. An account's copy online is not touched.
+ */
+export async function eraseDevice() {
+  await db.delete();
+  localStorage.clear();
+}

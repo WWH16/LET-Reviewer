@@ -6,7 +6,7 @@ import { useAnnounce } from '../../ui/Status';
 import { copyText, downloadText } from '../../ui/clipboard';
 import { useDemoCount, useMeta, useSettings } from '../../db/hooks';
 import { clearDemoData, loadDemoData, protectStorage, saveSettings } from '../../db/repo';
-import { checkBackup, deviceCounts, exportBackup, restoreBackup, type Counts } from '../../db/backup';
+import { checkBackup, deviceCounts, eraseDevice, exportBackup, restoreBackup, type Counts } from '../../db/backup';
 import { db } from '../../db/db';
 import { parsePasted } from '../../domain/validate';
 import { SCHEMA_VERSION, type Backup, type Settings as S } from '../../domain/types';
@@ -31,6 +31,8 @@ export function Settings() {
   const [protectedStore, setProtected] = useState<boolean | null>(null);
   const [restore, setRestore] = useState<{ backup: Backup; incoming: Counts; device: Counts } | null>(null);
   const [restoreMsg, setRestoreMsg] = useState<{ text: string; questions?: boolean } | null>(null);
+  // What erasing would remove, shown in the confirmation. Null while it is closed.
+  const [erase, setErase] = useState<Counts | null>(null);
   const [attempts, setAttempts] = useState(0);
   const demo = useDemoCount();
   const sync = useMeta<SyncState>('sync', EMPTY_STATE);
@@ -253,6 +255,21 @@ export function Settings() {
         </section>
         )}
 
+        {show('data') && (
+        <section className="tile span-3" aria-labelledby="set-erase">
+          <h2 id="set-erase">Erase this device</h2>
+          <p className="muted">
+            Removes every quiz, answer, mock exam, subject and setting on this device and starts the app fresh. Export a backup first
+            if you might want them back.
+          </p>
+          <div>
+            <button type="button" className={btn.secondary} onClick={async () => setErase(await deviceCounts())}>
+              Erase everything on this device
+            </button>
+          </div>
+        </section>
+        )}
+
         {show('about') && (
         <section className="tile span-3" aria-labelledby="set-about">
           <h2 id="set-about">About</h2>
@@ -282,6 +299,35 @@ export function Settings() {
         </section>
         )}
       </div>
+
+      <Dialog open={!!erase} onClose={() => setErase(null)} title="Erase everything on this device?">
+        {erase && (
+          <>
+            <p>
+              This removes <span className="num">{erase.questions}</span> question{erase.questions === 1 ? '' : 's'},{' '}
+              <span className="num">{erase.attempts}</span> answer{erase.attempts === 1 ? '' : 's'},
+              your mock exams, subjects and settings from this device. It cannot be undone.
+            </p>
+            {sync?.signedIn && <p>This device also signs out. Your account keeps its own copy online; signing in again brings it back.</p>}
+            <div className="row">
+              <button type="button" className={btn.primary} data-autofocus onClick={() => setErase(null)}>
+                Keep my data
+              </button>
+              <button
+                type="button"
+                className={btn.secondary}
+                onClick={async () => {
+                  await eraseDevice();
+                  // Start over at the welcome screen with nothing in memory from before.
+                  window.location.replace(window.location.pathname);
+                }}
+              >
+                Erase everything
+              </button>
+            </div>
+          </>
+        )}
+      </Dialog>
 
       <Dialog open={!!restore} onClose={() => setRestore(null)} title="Replace everything on this device?">
         {restore && (
