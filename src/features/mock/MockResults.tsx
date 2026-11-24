@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { ChoiceGroup } from '../../ui/ChoiceGroup';
 import { Stem } from '../../ui/Stem';
@@ -10,6 +10,10 @@ import { projectedRating } from '../../domain/scoring';
 import type { Area, MockExam, Question } from '../../domain/types';
 import { RatingCard } from '../progress/RatingCard';
 import { shown } from '../../domain/choices';
+import { counts } from '../../domain/quiz';
+import { shuffle } from '../../domain/examDraw';
+import { saveExam } from '../../db/repo';
+import { examLink, newExam } from './newExam';
 import { btn } from '../../ui/btn';
 
 type Filter = 'all' | 'wrong' | 'flagged' | 'unanswered';
@@ -37,6 +41,8 @@ export function MockResults() {
   const settings = useSettings();
   const location = useLocation();
   const [filter, setFilter] = useState<Filter>('all');
+  const [retakeSubs, setRetakeSubs] = useState<string[] | null>(null);
+  const navigate = useNavigate();
   const scoreRef = useRef<HTMLParagraphElement>(null);
   const timeUp = (location.state as { timeUp?: boolean } | null)?.timeUp;
 
@@ -89,6 +95,41 @@ export function MockResults() {
 
   const hasPacing = exam.form === 'digital' && checkpoints.length > 0;
 
+  // The breakdown by subject, in the part's own order.
+  const tally = new Map<string, { right: number; total: number }>();
+  exam.itemIds.forEach((_, i) => {
+    const q = examItem(exam, i, qmap);
+    if (!q) return;
+    const t = tally.get(q.subarea) ?? { right: 0, total: 0 };
+    t.total++;
+    if (q.answer !== null && exam.answers[String(i + 1)] === q.answer) t.right++;
+    tally.set(q.subarea, t);
+  });
+  const bySubject = PARTS[exam.part].subareas
+    .filter((s) => tally.has(s.id))
+    .map((s) => ({ id: s.id, name: s.name, ...tally.get(s.id)!, pct: (tally.get(s.id)!.right / tally.get(s.id)!.total) * 100 }));
+  const weakest = bySubject.length > 1 ? bySubject.reduce((w, x) => (x.pct < w.pct ? x : w)) : null;
+
+  const again = retakeSubs ?? bySubject.map((x) => x.id);
+  const againIds = exam.itemIds.filter((id) => {
+    const q = qmap.get(id);
+    return q && counts(q) && again.includes(q.subarea);
+  });
+  const retake = async () => {
+    const next = newExam({
+      part: exam.part,
+      form: exam.form,
+      itemIds: shuffle(againIds),
+      qmap,
+      subjects: again,
+      paper: exam.paper,
+      settings,
+      labels: exams.map((e) => e.label),
+    });
+    await saveExam(next);
+    navigate(examLink(next));
+  };
+
   return (
     <Page title={`${exam.label} results`} wide>
       {timeUp && <p className="notice">Time is up. Your answers were submitted.</p>}
@@ -112,7 +153,7 @@ export function MockResults() {
             Time: {exam.form === 'digital' ? formatClock(exam.elapsedMs) : exam.totalMin !== null ? `${exam.totalMin} min (entered)` : 'not entered'}
             {exam.timeLimitMin !== null && ` of ${exam.timeLimitMin} min`}
           </p>
-          {wrongCount > 0 && <p className="muted">Wrong and blank items were added to Review.</p>}
+          {wrongCount > 0 && <p className="muted">Wrong and blank items were added to Missed questions.</p>}
         </section>
 
         <RatingCard rating={rating} warned={s.pct < PART_FLOOR ? exam.part : undefined} className="span-3">
@@ -124,6 +165,66 @@ export function MockResults() {
             .
           </p>
         </RatingCard>
+
+        <section className="tile span-3" aria-labelledby="mr-subjects">
+          <h2 id="mr-subjects">By subject</h2>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Subject</th>
+                <th scope="col" className="num">
+                  Right
+                </th>
+                <th scope="col" className="num">
+                  Score
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {bySubject.map((x) => (
+                <tr key={x.id}>
+                  <th scope="row">
+                    {x.name}
+                    {weakest?.id === x.id && <span className="meta">, weakest</span>}
+                  </th>
+                  <td className="num">
+                    {x.right} / {x.total}
+                  </td>
+                  <td className="num">{Math.round(x.pct)}%</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {weakest && (
+            <Link to={`/quizzes/${exam.part}/${weakest.id}`}>Practice {weakest.name} in Quizzes</Link>
+          )}
+        </section>
+
+        <section className="tile span-3" aria-labelledby="mr-retake">
+          <h2 id="mr-retake">Retake</h2>
+          <p className="meta">The same questions in a new order, with the choices shuffled again. Pick the subjects to take again.</p>
+          <fieldset className="stack-sm">
+            <legend className="sr-only">Subjects to retake</legend>
+            {bySubject.map((x) => (
+              <label key={x.id} className="check">
+                <input
+                  type="checkbox"
+                  checked={again.includes(x.id)}
+                  onChange={() => setRetakeSubs(bySubject.map((y) => y.id).filter((y) => (y === x.id ? !again.includes(y) : again.includes(y))))}
+                />
+                {x.name} <span className="meta">({x.total} items)</span>
+              </label>
+            ))}
+          </fieldset>
+          <div className="row">
+            <button type="button" className={btn.primary} disabled={!againIds.length} onClick={retake}>
+              Retake {againIds.length} items
+            </button>
+            <Link className={btn.secondary} to="/mock">
+              New mock, new questions
+            </Link>
+          </div>
+        </section>
 
         {hasPacing && (
           <section className="tile span-3" aria-labelledby="mr-pace">

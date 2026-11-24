@@ -5,7 +5,7 @@ import { parsePasted, previewImport, previewQuiz, validateItem } from './validat
 import { examLabel, questionId } from './ids';
 import { buildCards, dueCards } from './leitner';
 import { dayKey, heatWeeks, longestStreak, streak } from './dates';
-import { drawExam, questionOfTheDay, quotas } from './examDraw';
+import { drawMock, questionOfTheDay, quotas } from './examDraw';
 import { PARTS } from './let-config';
 import { lastResults, projectedRating, recentByArea, recentPartScores, tallyBy } from './scoring';
 import type { Attempt, Question } from './types';
@@ -147,20 +147,28 @@ describe('Leitner', () => {
 });
 
 describe('exam draw', () => {
+  const subs = PARTS.ProfEd.subareas.map((s) => s.id);
   const pool = PARTS.ProfEd.subareas.flatMap((s, i) =>
     Array.from({ length: i === 0 ? 2 : 20 }, (_, k) => ({ ...q({ subarea: s.name, sourceRef: `${s.id} ${k}` }) })),
   );
-  it('splits by weight and never repeats an item', () => {
+  it('splits evenly across the picked subjects and never repeats an item', () => {
     expect(quotas([1, 1, 2], 8)).toEqual([2, 2, 4]);
-    const r = drawExam(pool, PARTS.ProfEd, 75, () => 0.5);
-    expect(r.ok && new Set(r.itemIds).size).toBe(75);
+    expect(quotas([], 25)).toEqual([]);
+    const r = drawMock(pool, subs.slice(1, 4), 30, new Set(), () => 0.5);
+    expect(r.ok && new Set(r.itemIds).size).toBe(30);
+    const per = new Map<string, number>();
+    if (r.ok) for (const id of r.itemIds) per.set(pool.find((x) => x.id === id)!.subarea, (per.get(pool.find((x) => x.id === id)!.subarea) ?? 0) + 1);
+    expect([...per.values()]).toEqual([10, 10, 10]);
   });
-  it('fills a short sub-area from the others and says so', () => {
-    const r = drawExam(pool, PARTS.ProfEd, 75);
-    expect(r.ok && r.note).toMatch(/Foundations of Education had 2 of 9/);
+  it('takes questions not in an earlier mock first', () => {
+    const sub = subs[1];
+    const group = pool.filter((x) => x.subarea === sub);
+    const used = new Set(group.slice(0, 15).map((x) => x.id));
+    const r = drawMock(pool, [sub], 5, used);
+    expect(r.ok && r.itemIds.every((id) => !used.has(id))).toBe(true);
   });
-  it('refuses when the bank is too small', () => {
-    expect(drawExam(pool.slice(0, 10), PARTS.ProfEd, 75)).toEqual({ ok: false, needed: 75, available: 10 });
+  it('refuses when a subject is short, and says how short', () => {
+    expect(drawMock(pool, subs.slice(0, 2), 30, new Set())).toEqual({ ok: false, short: [{ subarea: subs[0], have: 2, need: 15 }] });
   });
 });
 

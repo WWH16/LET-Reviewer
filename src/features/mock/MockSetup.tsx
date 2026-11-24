@@ -2,14 +2,13 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { Chip } from '../../ui/Chip';
-import { useAnnounce } from '../../ui/Status';
-import { useExams, useQuestions, useSettings } from '../../db/hooks';
-import { nowIso, saveExam, uuid } from '../../db/repo';
-import { PARTS, partsFor, timeLimit } from '../../domain/let-config';
-import { SOURCE_LABELS, drawExam, gradable, matchesSource, type SourceFilter } from '../../domain/examDraw';
-import { examLabel } from '../../domain/ids';
-import { choiceOrder } from '../../domain/choices';
+import { useExams, useQuestionMap, useSettings } from '../../db/hooks';
+import { saveExam } from '../../db/repo';
+import { PARTS, partsFor, subareaName, timeLimit } from '../../domain/let-config';
+import { drawMock, quotas } from '../../domain/examDraw';
+import { counts } from '../../domain/quiz';
 import type { Area, MockExam, PaperSize } from '../../domain/types';
+import { examLink, newExam } from './newExam';
 import { btn } from '../../ui/btn';
 import { Select } from '../../ui/Select';
 
@@ -20,64 +19,42 @@ const lengthOf = (area: Area, l: Length) => (l === 'full' ? PARTS[area].items : 
 
 const STATUS_TEXT: Record<MockExam['status'], string> = { 'in-progress': 'In progress', printed: 'Printed, not graded', graded: 'Graded' };
 
-export function examLink(e: MockExam) {
-  if (e.status === 'graded') return `/mock/${e.id}/results`;
-  if (e.form === 'printed') return `/mock/${e.id}/print`;
-  return `/mock/${e.id}`;
-}
 
 export function MockSetup() {
-  const questions = useQuestions();
+  const qmap = useQuestionMap();
   const exams = useExams();
   const settings = useSettings();
   const [form, setForm] = useState<'digital' | 'printed'>('digital');
   const [picked, setPart] = useState<Area | null>(null);
-  // Null until she picks: then the length is the longest one her questions can fill.
-  const [pickedLength, setLength] = useState<Length | null>(null);
-  const [source, setSource] = useState<SourceFilter>('rc');
+  // Null until she changes them: then every subject with questions is in.
+  const [pickedSubjects, setSubjects] = useState<string[] | null>(null);
+  const [length, setLength] = useState<Length>('short');
   const [paper, setPaper] = useState<NonNullable<MockExam['paper']>>({ size: 'folio', columns: 2, large: false, answerKey: true });
   const navigate = useNavigate();
-  const announce = useAnnounce();
 
-  if (!questions || !exams || !settings) return <Page title="Mock exam" back={{ to: '/', label: 'Study' }}>{null}</Page>;
+  if (!qmap || !exams || !settings) return <Page title="Mock exam" back={{ to: '/', label: 'Study' }}>{null}</Page>;
 
   const part = picked ?? partsFor(settings.level)[0];
-  const inPart = questions.filter((q) => gradable(q) && q.area === part);
-  const pool = inPart.filter((q) => matchesSource(q, source));
-  const length = pickedLength ?? (['full', 'half', 'short'] as const).find((l) => pool.length >= lengthOf(part, l)) ?? 'full';
+  const pool = [...qmap.values()].filter((q) => counts(q) && q.area === part);
+  const have = new Map<string, number>();
+  for (const q of pool) have.set(q.subarea, (have.get(q.subarea) ?? 0) + 1);
+  const all = PARTS[part].subareas;
+  const subjects = pickedSubjects ?? all.filter((s) => have.has(s.id)).map((s) => s.id);
   const n = lengthOf(part, length);
-  const rc = inPart.filter((q) => q.source === 'review-center').length;
-  const ai = inPart.length - rc;
-  const enough = pool.length >= n;
+  const need = quotas(subjects.map(() => 1), n);
+  const short = subjects.map((id, i) => ({ id, have: have.get(id) ?? 0, need: need[i] })).filter((x) => x.have < x.need);
+  const ready = subjects.length > 0 && short.length === 0;
   const limit = timeLimit(part, settings.timer, n);
+  // Kept in the part's own order, so the list and the draw read the same way.
+  const toggle = (id: string) =>
+    setSubjects(all.map((s) => s.id).filter((x) => (x === id ? !subjects.includes(id) : subjects.includes(x))));
 
   const start = async () => {
-    const r = drawExam(pool, PARTS[part], n);
+    const used = new Set(exams.flatMap((e) => e.itemIds));
+    const r = drawMock(pool, subjects, n, used);
     if (!r.ok) return;
-    const now = new Date();
-    const exam: MockExam = {
-      id: uuid(),
-      label: examLabel(part, now, exams.map((e) => e.label)),
-      form,
-      part,
-      itemIds: r.itemIds,
-      orders: r.itemIds.map((id) => choiceOrder(pool.find((q) => q.id === id)!)),
-      timeLimitMin: form === 'digital' ? limit : PARTS[part].minutes * (n / PARTS[part].items),
-      paper: form === 'printed' ? paper : null,
-      answers: {},
-      answeredAt: {},
-      flags: [],
-      drawNote: r.note,
-      status: form === 'digital' ? 'in-progress' : 'printed',
-      createdAt: nowIso(),
-      elapsedMs: 0,
-      submittedAt: null,
-      totalMin: null,
-      updatedAt: nowIso(),
-      deleted: false,
-    };
+    const exam = newExam({ part, form, itemIds: r.itemIds, qmap, subjects, paper, settings, labels: exams.map((e) => e.label) });
     await saveExam(exam);
-    if (r.note) announce(r.note);
     navigate(examLink(exam));
   };
 
@@ -125,7 +102,7 @@ export function MockSetup() {
           className="tile"
           onSubmit={(e) => {
             e.preventDefault();
-            if (enough) start();
+            if (ready) start();
           }}
         >
           <h2>New exam</h2>
@@ -151,7 +128,14 @@ export function MockSetup() {
           <div className="grid-2">
             <div className="field">
               <label htmlFor="mk-part">Part</label>
-              <Select id="mk-part" value={part} onChange={(v) => setPart(v as Area)}>
+              <Select
+                id="mk-part"
+                value={part}
+                onChange={(v) => {
+                  setPart(v as Area);
+                  setSubjects(null);
+                }}
+              >
                 {partsFor(settings.level).map((a) => (
                   <option key={a} value={a}>
                     {PARTS[a].name}
@@ -162,22 +146,23 @@ export function MockSetup() {
             <div className="field">
               <label htmlFor="mk-len">Length</label>
               <Select id="mk-len" value={length} onChange={(v) => setLength(v as Length)}>
-                <option value="full">Full: {PARTS[part].items} items</option>
-                <option value="half">Half: {Math.round(PARTS[part].items / 2)} items</option>
                 <option value="short">Short: {SHORT} items</option>
-              </Select>
-            </div>
-            <div className="field">
-              <label htmlFor="mk-src">Questions</label>
-              <Select id="mk-src" value={source} onChange={(v) => setSource(v as SourceFilter)}>
-                {(Object.keys(SOURCE_LABELS) as SourceFilter[]).map((s) => (
-                  <option key={s} value={s}>
-                    {SOURCE_LABELS[s]}
-                  </option>
-                ))}
+                <option value="half">Half: {Math.round(PARTS[part].items / 2)} items</option>
+                <option value="full">Full: {PARTS[part].items} items</option>
               </Select>
             </div>
           </div>
+
+          <fieldset className="stack-sm">
+            <legend className="label">Subjects</legend>
+            <p className="meta">Items are split evenly across the subjects you pick, from your quiz questions in them.</p>
+            {all.map((s) => (
+              <label key={s.id} className="check">
+                <input type="checkbox" checked={subjects.includes(s.id)} onChange={() => toggle(s.id)} />
+                {s.name} <span className="meta">({have.get(s.id) ?? 0})</span>
+              </label>
+            ))}
+          </fieldset>
 
           {form === 'printed' && (
             <fieldset className="stack-sm">
@@ -210,46 +195,42 @@ export function MockSetup() {
             </fieldset>
           )}
 
-          <div role="status" className={enough ? undefined : 'well'}>
-            {enough ? (
+          <div role="status" className={ready ? undefined : 'well'}>
+            {!subjects.length ? (
+              <p>Pick at least one subject.</p>
+            ) : ready ? (
               <p>
-                {n} items from {pool.length} available.{' '}
+                {n} items, {need[0] === need[need.length - 1] ? need[0] : `${need[need.length - 1]} to ${need[0]}`} per subject.{' '}
                 {form === 'digital' && (limit === null ? 'Timer off.' : `${limit} minutes.`)}
               </p>
             ) : (
               <div className="stack-sm">
-                <p>
-                  {length === 'full' ? 'A full' : length === 'half' ? 'A half-length' : 'A short'} {PARTS[part].name} mock needs {n} questions.
-                  You have {rc} from the review center{ai > 0 ? ` and ${ai} AI` : ''}.
-                </p>
-                <div className="row">
-                  {length === 'full' && pool.length >= lengthOf(part, 'half') && (
-                    <button type="button" className={btn.secondary} onClick={() => setLength('half')}>
-                      Use half length
-                    </button>
-                  )}
-                  {length !== 'short' && pool.length >= SHORT && (
+                <p>Some subjects need more quiz questions for this length:</p>
+                <ul className="list">
+                  {short.map((x) => (
+                    <li key={x.id} className="spread">
+                      <span>
+                        {subareaName(x.id)}: {x.have} of {x.need}
+                      </span>
+                      <Link className={btn.secondary} to={`/quizzes/new?area=${part}&sub=${x.id}`}>
+                        New {subareaName(x.id)} quiz
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+                {length !== 'short' && (
+                  <div>
                     <button type="button" className={btn.secondary} onClick={() => setLength('short')}>
                       Use {SHORT} items
                     </button>
-                  )}
-                  {source !== 'all' && inPart.length > pool.length && (
-                    <button type="button" className={btn.secondary} onClick={() => setSource('all')}>
-                      Include AI questions
-                    </button>
-                  )}
-                  {inPart.length < SHORT && (
-                    <Link className={btn.secondary} to="/bank/import">
-                      Import more questions
-                    </Link>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
 
           <div>
-            <button type="submit" className={btn.primary} disabled={!enough}>
+            <button type="submit" className={btn.primary} disabled={!ready}>
               {form === 'digital' ? 'Start exam' : 'Make printable exam'}
             </button>
           </div>

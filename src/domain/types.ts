@@ -66,6 +66,8 @@ export interface MockExam {
   itemIds: string[];
   /** Each item's choice order as shown, as original keys (`choices.ts`). Absent on exams made before shuffling. */
   orders?: Key[][];
+  /** The subjects she picked, as sub-area ids. Absent on exams made before subject picks. */
+  subjects?: string[];
   /** Minutes allowed, after the timer setting. `null` = timer off. */
   timeLimitMin: number | null;
   paper: { size: PaperSize; columns: 1 | 2; large: boolean; answerKey: boolean } | null;
