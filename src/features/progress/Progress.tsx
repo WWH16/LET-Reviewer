@@ -26,8 +26,8 @@ export function Progress() {
     return (
       <Page title="Stats">
         <Empty icon="stats" title="No answers yet" text="Your score, each subject and your weakest topics show here after your first answers.">
-          <Link className={btn.primary} to="/session?mode=quick">
-            Start a Quick 10
+          <Link className={btn.primary} to="/quizzes">
+            Take a quiz
           </Link>
           <button type="button" className={btn.secondary} onClick={async () => announce(`Added ${await loadDemoData()} sample answers`)}>
             Fill with sample answers

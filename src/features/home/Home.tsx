@@ -5,7 +5,7 @@ import { daysBetween } from '../../domain/dates';
 import { useStats } from '../progress/useStats';
 import { weakestTopics } from '../../domain/scoring';
 import { subareaName } from '../../domain/let-config';
-import { drillMatches, drillUrl, type DrillParams } from '../practice/drill';
+import { groupQuizzes } from '../../domain/quiz';
 import { FirstRun } from './FirstRun';
 import { WeekStrip } from './WeekStrip';
 import { btn } from '../../ui/btn';
@@ -22,10 +22,9 @@ type Mode = { name: string; line: string; icon: IconName; to?: string; count?: n
 export function Home() {
   const stats = useStats();
   const exams = useExams();
-  const lastDrill = useMeta<DrillParams | null>('lastDrill', null);
   const lastBackup = useMeta<{ at: string; attempts: number } | null>('lastBackup', null);
 
-  if (!stats || !exams || lastDrill === undefined || lastBackup === undefined) return <Page title="Study" titleHidden>{null}</Page>;
+  if (!stats || !exams || lastBackup === undefined) return <Page title="Study" titleHidden>{null}</Page>;
   if (!stats.hasQuestions)
     return (
       <Page title="Study">
@@ -43,40 +42,31 @@ export function Home() {
   const name = settings.name.trim();
 
   const weakest = weakestTopics(attempts, qmap)[0];
-  const weakestTo = weakest
-    ? (() => {
-        const where = { area: weakest.area, sub: weakest.subarea, topic: weakest.topic };
-        const ai = ![...qmap.values()].some((q) => drillMatches(q, { ...where, ai: false }));
-        return drillUrl({ ...where, n: 10, ai });
-      })()
-    : undefined;
+  const quizzes = groupQuizzes(qmap.values()).length;
 
-  // Quick 10 leads: it is always open, and on a wide screen it is the large tile.
+  // A new quiz leads: it is how questions come in, and on a wide screen it is the large tile.
   const modes: Mode[] = [
-    { name: 'Quick 10', line: 'Due reviews first, then a random mix.', icon: 'lightning', to: '/session?mode=quick' },
-    // Coming soon: no link until the daily pick is settled. The picker and the qotd session mode stay in place.
-    { name: 'Question of the Day', line: 'Coming soon.', icon: 'sun' },
+    { name: 'New quiz', line: 'Pick a subject, ask Claude, then take it.', icon: 'lightning', to: '/quizzes/new' },
     {
       name: 'Missed questions',
-      line: due.length ? `${due.length} due today.` : 'Nothing due today. Misses come back the next day.',
+      line: due.length ? `${due.length} due today, by subject.` : 'Nothing due today. Misses come back the next day.',
       icon: 'retry',
-      to: due.length ? '/review' : undefined,
+      to: due.length ? '/missed' : undefined,
       count: due.length || undefined,
+    },
+    {
+      name: 'Your quizzes',
+      line: quizzes ? `${quizzes} ${quizzes === 1 ? 'quiz' : 'quizzes'} to retake, by subject.` : 'Quizzes you make show up here.',
+      icon: 'practice',
+      to: '/quizzes',
     },
     {
       name: 'Weakest subject',
       line: weakest ? `${weakest.topic || subareaName(weakest.subarea)}, ${subareaName(weakest.subarea)}.` : 'Shows up after 3 answers in a topic.',
       icon: 'target',
-      to: weakestTo,
+      to: weakest ? `/quizzes/${weakest.area}/${weakest.subarea}` : undefined,
     },
-    { name: 'Timed quiz', line: '10 questions against the LET clock.', icon: 'timer', to: '/session?mode=timed' },
-    {
-      name: 'Build your own',
-      line: lastDrill ? `Pick a part, sub-area and topic. Last: ${subareaName(lastDrill.sub) || 'all sub-areas'}.` : 'Pick a part, sub-area, topic and count.',
-      icon: 'sliders',
-      to: '/drill',
-    },
-    { name: 'Mock exam', line: 'A full or short exam, on screen or printed.', icon: 'mock', to: '/mock' },
+    { name: 'Mock exam', line: 'One part, the subjects you pick, on screen or printed.', icon: 'mock', to: '/mock' },
   ];
 
   const side = Boolean(open || printed || remindBackup);
@@ -93,7 +83,7 @@ export function Home() {
               </h2>
               <p className="meta">
                 {toExam === null ? (
-                  <Link to="/settings" state={{ focus: 's-date' }}>
+                  <Link to="/settings/exam" state={{ focus: 's-date' }}>
                     Set your exam date
                   </Link>
                 ) : toExam > 0 ? (
@@ -103,14 +93,14 @@ export function Home() {
                 ) : (
                   <>
                     Exam date has passed.{' '}
-                    <Link to="/settings" state={{ focus: 's-date' }}>
+                    <Link to="/settings/exam" state={{ focus: 's-date' }}>
                       Update it
                     </Link>
                   </>
                 )}
               </p>
             </div>
-            <Link to="/settings" className="greet-avatar" aria-label="Profile and settings">
+            <Link to="/settings/profile" className="greet-avatar" aria-label="Profile">
               <Avatar who={settings} size={40} />
             </Link>
           </div>
@@ -137,7 +127,7 @@ export function Home() {
                   {sinceBackup} {sinceBackup === 1 ? 'answer' : 'answers'} since your{' '}
                   {lastBackup ? `last backup on ${new Date(lastBackup.at).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}` : 'first session, with no backup yet'}.
                 </span>
-                <Link className={btn.secondary} to="/settings" state={{ focus: 's-export' }}>
+                <Link className={btn.secondary} to="/settings/data" state={{ focus: 's-export' }}>
                   Back up now
                 </Link>
               </p>
@@ -146,7 +136,7 @@ export function Home() {
         )}
 
         <section className="stack-sm" aria-labelledby="modes-title">
-          <h2 id="modes-title">Quiz modes</h2>
+          <h2 id="modes-title">Study</h2>
           <ul className="modes">
             {modes.map((m) => {
               const body = (

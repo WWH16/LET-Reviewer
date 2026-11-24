@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { Dialog } from '../../ui/Dialog';
 import { useAnnounce } from '../../ui/Status';
@@ -18,10 +18,13 @@ import { ProfileEditor } from './ProfileEditor';
 import { Avatar } from '../../ui/Avatar';
 import { AccountSection } from './AccountSection';
 import { EMPTY_STATE, requestSync, syncAvailable, type SyncState } from '../../sync/trigger';
+import { SETTINGS_PAGES } from '../../app/nav';
 
 const fmtDate = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
 
 export function Settings() {
+  const { section } = useParams();
+  const page = SETTINGS_PAGES.find((x) => x.id === section);
   const s = useSettings();
   const lastBackup = useMeta<{ at: string; attempts: number } | null>('lastBackup', null);
   const [protectedStore, setProtected] = useState<boolean | null>(null);
@@ -49,7 +52,26 @@ export function Settings() {
     el?.focus();
   }, [loaded, focus]);
 
-  if (!s) return <Page title="Settings">{null}</Page>;
+  if (!s) return <Page title={page?.label ?? 'Settings'}>{null}</Page>;
+  // No page named: the list of them (the phone's Settings tab; the sidebar lists them on wide screens).
+  if (!page)
+    return (
+      <Page title="Settings">
+        <ul className="list">
+          {SETTINGS_PAGES.map((x) => (
+            <li key={x.id}>
+              <Link className="list-link" to={`/settings/${x.id}`}>
+                <span className="stack-sm">
+                  <span>{x.label}</span>
+                  <span className="meta">{x.line}</span>
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </Page>
+    );
+  const show = (id: string) => page.id === id;
   const set = (patch: Partial<S>) => saveSettings(patch);
 
 
@@ -86,23 +108,19 @@ export function Settings() {
   const since = lastBackup ? attempts - lastBackup.attempts : attempts;
 
   return (
-    <Page title="Settings" wide>
-      <div className="bento pairs">
-        <section className="tile" aria-labelledby="set-profile">
-          <h2 id="set-profile">Profile</h2>
-          {/* Folded to one row: people come to Settings for the exam date, display and backup. */}
-          <details className="profile-summary">
-            <summary>
+    <Page title={page.label} back={{ to: '/settings', label: 'Settings' }}>
+      <div className="stack">
+        {show('profile') && (
+          <section className="tile" aria-label="Name and avatar">
+            <div className="row">
               <Avatar who={s} size={44} />
-              <span className="stack-sm">
-                <span>{s.name.trim() || 'No name yet'}</span>
-                <span className="meta">Edit name and avatar</span>
-              </span>
-            </summary>
+              <span>{s.name.trim() || 'No name yet'}</span>
+            </div>
             <ProfileEditor s={s} />
-          </details>
-        </section>
+          </section>
+        )}
 
+        {show('exam') && (
         <section className="tile span-3" aria-labelledby="set-exam">
           <h2 id="set-exam">Exam</h2>
           <div className="grid-2">
@@ -142,9 +160,11 @@ export function Settings() {
             One question at a time: in digital mocks, show one item per screen
           </label>
         </section>
+        )}
 
+        {show('display') && (
         <section className="tile span-3" aria-labelledby="set-display">
-          <h2 id="set-display">Display and keys</h2>
+          <h2 id="set-display">Text and keys</h2>
           <div className="field">
             <label htmlFor="s-size">Text size</label>
             <Select id="s-size" value={s.textSize} onChange={(v) => set({ textSize: Number(v) as S['textSize'] })}>
@@ -158,9 +178,11 @@ export function Settings() {
             Single-key shortcuts (A to D, 1 to 4, Enter, F)
           </label>
         </section>
+        )}
 
-        {syncAvailable && <AccountSection />}
+        {show('account') && syncAvailable && <AccountSection />}
 
+        {show('data') && (
         <section className="tile span-3" aria-labelledby="set-backup">
           <h2 id="set-backup">Backup</h2>
           <p className="muted">
@@ -181,7 +203,7 @@ export function Settings() {
           </div>
           {restoreMsg && (
             <p role="alert">
-              {restoreMsg.text} {restoreMsg.questions && <Link to="/bank/import">Import it from Bank instead.</Link>}
+              {restoreMsg.text} {restoreMsg.questions && <Link to="/quizzes/new">Make a quiz from it instead.</Link>}
             </p>
           )}
           <div className="spread">
@@ -198,7 +220,9 @@ export function Settings() {
             )}
           </div>
         </section>
+        )}
 
+        {show('data') && (
         <section className="tile span-3" aria-labelledby="set-demo">
           <h2 id="set-demo">Sample data</h2>
           <p className="muted">
@@ -225,7 +249,9 @@ export function Settings() {
             )}
           </div>
         </section>
+        )}
 
+        {show('about') && (
         <section className="tile span-3" aria-labelledby="set-about">
           <h2 id="set-about">About</h2>
           <p className="muted num">
@@ -252,6 +278,7 @@ export function Settings() {
             )}
           </div>
         </section>
+        )}
       </div>
 
       <Dialog open={!!restore} onClose={() => setRestore(null)} title="Replace everything on this device?">

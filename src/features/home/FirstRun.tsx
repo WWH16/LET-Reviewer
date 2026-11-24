@@ -1,50 +1,30 @@
 import { Link } from 'react-router-dom';
 import { useAnnounce } from '../../ui/Status';
 import { loadSampleQuestions } from '../../db/repo';
-import { copyText } from '../../ui/clipboard';
-import { templateA } from '../../domain/prompts';
 import { btn } from '../../ui/btn';
 
-/** Copies Template A, the prompt that turns a handout photo into questions. Named for what it does, not its number. */
-export function CopyPhotoPrompt() {
-  const announce = useAnnounce();
-  return (
-    <button
-      type="button"
-      className={btn.secondary}
-      onClick={async () => {
-        await copyText(templateA());
-        announce('Photo prompt copied. Paste it into Claude with your photo.');
-      }}
-    >
-      Copy photo prompt
-    </button>
-  );
-}
-
-/** Home and Bank when the bank is empty (DX R11): one job, add questions. */
+/** Study before any questions (DX R11): one job, make the first quiz. */
 export function FirstRun() {
   const announce = useAnnounce();
   return (
     <div className="stack-lg">
       <section className="stack" aria-labelledby="fr-title">
-        <h2 id="fr-title">Add your first questions</h2>
+        <h2 id="fr-title">Make your first quiz</h2>
         <ol className="stack-sm" style={{ paddingLeft: '1.25rem', margin: 0 }}>
-          <li>Photograph one page of a review-center handout.</li>
-          <li>Copy the photo prompt, and send it to Claude with the photo. Fill in the handout name and page.</li>
-          <li>Copy Claude&rsquo;s reply and paste it on the Import screen.</li>
+          <li>Pick a part and a subject, like General Education, English.</li>
+          <li>Copy the prompt the app writes and send it to Claude.</li>
+          <li>Paste Claude&rsquo;s reply back, then take the quiz.</li>
         </ol>
         <div className="row">
-          <CopyPhotoPrompt />
-          <Link className={btn.primary} to="/bank/import">
-            Import questions
+          <Link className={btn.primary} to="/quizzes/new">
+            Make a quiz
           </Link>
         </div>
       </section>
       <hr />
       <section className="stack-sm" aria-labelledby="fr-try">
         <h2 id="fr-try">Just looking?</h2>
-        <p className="muted">Load 16 sample questions to try the app. You can remove them later from Review.</p>
+        <p className="muted">Load 16 sample questions to try the app. They arrive as quizzes you can remove later.</p>
         <div>
           <button
             type="button"

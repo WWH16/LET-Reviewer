@@ -11,7 +11,7 @@ import { lastResults } from '../../domain/scoring';
 import { Icon } from '../../ui/Icon';
 import type { Question } from '../../domain/types';
 import { btn } from '../../ui/btn';
-import { CopyPhotoPrompt, FirstRun } from '../home/FirstRun';
+import { FirstRun } from '../home/FirstRun';
 import { Empty } from '../../ui/Empty';
 
 type Queue = 'all' | 'incorrect' | 'correct' | 'flagged' | 'unanswered' | 'check';
@@ -101,7 +101,6 @@ export function Bank() {
             <Link className={btn.primary} to="/bank/import">
               Import questions
             </Link>
-            <CopyPhotoPrompt />
         </div>
 
         <div className="stack bank-filters">

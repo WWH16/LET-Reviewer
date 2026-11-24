@@ -5,6 +5,7 @@ import { Icon } from '../ui/Icon';
 import { Home } from '../features/home/Home';
 import { useSettings } from '../db/hooks';
 import { CommandMenu } from './CommandMenu';
+import { PLACES, SETTINGS_PAGES } from './nav';
 import { Welcome } from '../features/home/Welcome';
 import { lazy, Suspense, useEffect } from 'react';
 import { Skeleton } from '../ui/Skeleton';
@@ -34,16 +35,6 @@ import { Empty } from '../ui/Empty';
 import { btn } from '../ui/btn';
 import { requestSync } from '../sync/trigger';
 
-// Four places, as in a phone exam-prep app: study (every quiz mode starts here), how it is going, what
-// you have answered, and settings. Practice and Mock are modes on Study, not tabs of their own.
-const NAV = [
-  { to: '/', label: 'Study', icon: 'study', also: ['/drill', '/mock', '/session', '/review'] },
-  { to: '/quizzes', label: 'Quizzes', icon: 'practice', also: ['/quiz/', '/question/'] },
-  { to: '/progress', label: 'Stats', icon: 'stats', also: [] },
-  { to: '/bank', label: 'Review', icon: 'review', also: [] },
-  { to: '/settings', label: 'Settings', icon: 'settings', also: [] },
-] as const;
-
 function NotFound() {
   return (
     <Page title="Not found">
@@ -60,10 +51,8 @@ export function App() {
   const settings = useSettings();
   // A running mock exam (finished and printed ones redirect away from this route).
   const inExam = useMatch('/mock/:id') !== null;
-  // A tab stays lit on the screens it leads to (Study on a quiz or the mock setup, Review on an edit).
-  const { pathname } = useLocation();
-  const here = (item: (typeof NAV)[number]) =>
-    (item.to === '/' ? pathname === '/' : pathname.startsWith(item.to)) || item.also.some((p) => pathname.startsWith(p));
+  // A tab stays lit on the screens it leads to (Quizzes on a quiz session, Missed questions on a review).
+  const { pathname, search } = useLocation();
   const textSize = settings?.textSize;
   useEffect(() => {
     if (!textSize) return;
@@ -105,11 +94,34 @@ export function App() {
           </Link>
           <nav className="nav" aria-label="Main">
             <ul>
-              {NAV.map((item) => (
-                <li key={item.to}>
-                  <Link to={item.to} aria-current={here(item) ? 'page' : undefined}>
-                    <Icon name={item.icon} size={20} filled={here(item)} />
-                    {item.label}
+              {PLACES.map((item) => {
+                const on = item.here(pathname, search);
+                return (
+                  <li key={item.to} className={item.wideOnly ? 'only-wide' : item.narrowOnly ? 'only-narrow' : undefined}>
+                    <Link to={item.to} aria-current={on ? 'page' : undefined}>
+                      <Icon name={item.icon} size={20} filled={on} />
+                      {item.short ? (
+                        <>
+                          <span className="only-wide">{item.label}</span>
+                          <span className="only-narrow">{item.short}</span>
+                        </>
+                      ) : (
+                        item.label
+                      )}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+            {/* Wide screens list the Settings pages themselves; phones reach them from the Settings tab. */}
+            <h2 className="nav-group only-wide" id="nav-settings">
+              Settings
+            </h2>
+            <ul className="only-wide" aria-labelledby="nav-settings">
+              {SETTINGS_PAGES.map((pg) => (
+                <li key={pg.id}>
+                  <Link to={`/settings/${pg.id}`} aria-current={pathname === `/settings/${pg.id}` ? 'page' : undefined}>
+                    {pg.label}
                   </Link>
                 </li>
               ))}
@@ -146,6 +158,7 @@ export function App() {
           <Route path="/bank/import" element={<Import />} />
           <Route path="/bank/:id" element={<EditQuestion />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/settings/:section" element={<Settings />} />
           <Route path="/states" element={<States />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

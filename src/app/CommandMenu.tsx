@@ -1,17 +1,11 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { PLACES, SETTINGS_PAGES } from './nav';
 
 const COMMANDS = [
-  { label: 'Study', to: '/' },
-  { label: 'Quick 10', to: '/session?mode=quick' },
-  { label: 'Missed questions', to: '/review' },
-  { label: 'Timed quiz', to: '/session?mode=timed' },
-  { label: 'Build your own', to: '/drill' },
-  { label: 'Mock exam', to: '/mock' },
-  { label: 'Stats', to: '/progress' },
-  { label: 'Review', to: '/bank' },
-  { label: 'Import questions', to: '/bank/import' },
-  { label: 'Settings', to: '/settings' },
+  ...PLACES.filter((p) => p.to !== '/settings').map((p) => ({ label: p.label, to: p.to })),
+  { label: 'New quiz', to: '/quizzes/new' },
+  ...SETTINGS_PAGES.map((p) => ({ label: `Settings: ${p.label}`, to: `/settings/${p.id}` })),
 ];
 
 const mac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
@@ -91,7 +85,7 @@ export function CommandMenu() {
           aria-controls={`${id}-list`}
           aria-activedescendant={items[current] ? `${id}-${current}` : undefined}
           aria-autocomplete="list"
-          placeholder="Quick 10, Mock exam, Settings"
+          placeholder="Quizzes, Mock exams, Settings: Exam"
           autoComplete="off"
           value={query}
           onChange={(e) => {
