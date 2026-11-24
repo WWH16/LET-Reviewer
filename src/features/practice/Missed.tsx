@@ -41,7 +41,10 @@ export function Missed() {
           if (!subs.length) return null;
           return (
             <section key={area} className="stack-sm" aria-labelledby={`ms-${area}`}>
-              <h2 id={`ms-${area}`}>{PARTS[area].name}</h2>
+              <h2 id={`ms-${area}`}>
+                {PARTS[area].name}
+                {area === 'Major' && stats.settings.major ? `: ${stats.settings.major}` : ''}
+              </h2>
               <ul className="list">
                 {subs.map((s) => {
                   const n = due.get(`${area}/${s.id}`)!;
@@ -51,7 +54,7 @@ export function Missed() {
                         <span>{s.name}</span>
                         <span className="meta">{n} due today</span>
                       </span>
-                      <Link className={btn.primary} to={`/session?mode=review&area=${area}&sub=${s.id}`} aria-label={`Review ${s.name}`}>
+                      <Link className={btn.secondary} to={`/session?mode=review&area=${area}&sub=${s.id}`} aria-label={`Review ${s.name}`}>
                         Review
                       </Link>
                     </li>
