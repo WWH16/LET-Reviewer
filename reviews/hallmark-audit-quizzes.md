@@ -55,3 +55,16 @@ Lightest depth that settles all of it: **polish** plus removals. Nothing here as
 8. Stats: "Subjects" for the disclosure; drop Copy my weak topics and `weakTopicsText`.
 9. Settings: drop the repeated profile row and the repeated headings.
 10. Leftovers: drop `longestStreak` and its test, and the stale chips on the dev States page.
+
+## Outcome
+
+All ten steps applied, one commit each (71f5e04 to f17a3a2). Step 10 also trimmed `src/ui/Chip.tsx` to the
+plain chip it still uses and dropped `.chip-accent`, which the plan's Files row did not name.
+
+- **After** · `sloplint src --scope app`: 0 FAIL, 0 WARN · typecheck and build pass · tests pass except
+  `sync/boundary.test.ts` ("is off when the env is missing"), which fails before and after because a local
+  Supabase `.env` is present.
+- **Dropped** · the `/review` and `/bank/*` redirects, the bank and review styles, nine icons, the Questions
+  button on quiz rows, the repeated New quiz and profile row, four repeated headings, Copy my weak topics with
+  `weakTopicsText`, `longestStreak`.
+- **Checked** · every screen renders in the preview with sample data; no console errors.
