@@ -33,7 +33,7 @@ export function Home() {
       </Page>
     );
 
-  const { due, days, today, settings, attempts, qmap, todayAttempts } = stats;
+  const { due, days, today, settings, attempts, qmap } = stats;
   const open = exams.find((e) => e.status === 'in-progress' && e.form === 'digital');
   const printed = exams.find((e) => e.status === 'printed');
   const toExam = settings.examDate ? daysBetween(today, settings.examDate) : null;
@@ -50,17 +50,12 @@ export function Home() {
         return drillUrl({ ...where, n: 10, ai });
       })()
     : undefined;
-  const qotdDone = todayAttempts.some((a) => a.mode === 'qotd');
 
   // Quick 10 leads: it is always open, and on a wide screen it is the large tile.
   const modes: Mode[] = [
     { name: 'Quick 10', line: 'Due reviews first, then a random mix.', icon: 'lightning', to: '/session?mode=quick' },
-    {
-      name: 'Question of the Day',
-      line: qotdDone ? 'Done for today. A new one comes tomorrow.' : 'One question, new each day.',
-      icon: 'sun',
-      to: '/session?mode=qotd',
-    },
+    // Coming soon: no link until the daily pick is settled. The picker and the qotd session mode stay in place.
+    { name: 'Question of the Day', line: 'Coming soon.', icon: 'sun' },
     {
       name: 'Missed questions',
       line: due.length ? `${due.length} due today.` : 'Nothing due today. Misses come back the next day.',

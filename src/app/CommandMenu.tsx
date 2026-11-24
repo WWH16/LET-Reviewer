@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 const COMMANDS = [
   { label: 'Study', to: '/' },
-  { label: 'Question of the Day', to: '/session?mode=qotd' },
   { label: 'Quick 10', to: '/session?mode=quick' },
   { label: 'Missed questions', to: '/review' },
   { label: 'Timed quiz', to: '/session?mode=timed' },
