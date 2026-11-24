@@ -3,13 +3,19 @@
 import { PARTS } from './let-config';
 import type { Area, Level } from './types';
 
+// The answers come last, after every question, so copying the reply never shows question 1's answer.
 const QUIZ_SCHEMA = `{
-  "topic": "<short topic name>",
-  "lang": "en | fil",
-  "stem": "<question text>",
-  "choices": [{"key":"A","text":"..."},{"key":"B","text":"..."},{"key":"C","text":"..."},{"key":"D","text":"..."}],
-  "answer": "A | B | C | D",
-  "explanation": "<why the answer is right>"
+  "questions": [
+    {
+      "topic": "<short topic name>",
+      "lang": "en | fil",
+      "stem": "<question text>",
+      "choices": [{"key":"A","text":"..."},{"key":"B","text":"..."},{"key":"C","text":"..."},{"key":"D","text":"..."}]
+    }
+  ],
+  "answers": [
+    { "n": 1, "answer": "A | B | C | D", "explanation": "<why the answer is right>" }
+  ]
 }`;
 
 /** The prompt that asks Claude for one quiz's questions. Its reply comes back through the paste box. */
@@ -28,6 +34,10 @@ other choice is wrong, and name the source concept (theorist, law, principle).
 If you are not certain of the correct answer, skip that item.
 Write math as plain text (e.g. "x^2 + 3x - 4 = 0", "3/4").
 
-Output a JSON array only, one object per question, in this schema:
-${QUIZ_SCHEMA}`;
+Output one JSON object only, in this schema:
+${QUIZ_SCHEMA}
+
+Keep the answers hidden until the end: never put an answer or explanation inside "questions".
+After the last question, list every answer and its explanation in "answers", numbered from 1
+in the same order as the questions.`;
 }

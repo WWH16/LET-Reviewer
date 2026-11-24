@@ -16,13 +16,27 @@ export type Parsed =
 
 const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 
+/**
+ * The quiz prompt asks for the answers in their own list after all the questions, so they stay out of
+ * sight while she copies. Each one joins its question by `n` (1-based), or by position without one.
+ */
+function withAnswers(items: unknown[], answers: unknown): unknown[] {
+  if (!Array.isArray(answers)) return items;
+  const byN = new Map(answers.filter(isObj).map((a, i) => [typeof a.n === 'number' ? a.n : i + 1, a]));
+  return items.map((q, i) => {
+    const a = byN.get(i + 1);
+    if (!isObj(q) || !a) return q;
+    return { ...q, answer: q.answer ?? a.answer, explanation: q.explanation ?? a.explanation };
+  });
+}
+
 function classify(v: unknown): Parsed {
   if (Array.isArray(v)) return { kind: 'questions', items: v, truncatedAfter: null, unreadable: [] };
   if (!isObj(v)) return { kind: 'unknown' };
   if (v.type === 'backup' || ('schemaVersion' in v && Array.isArray(v.questions) && Array.isArray(v.attempts)))
     return { kind: 'backup', value: v };
   for (const k of ['questions', 'items', 'data']) {
-    if (Array.isArray(v[k])) return { kind: 'questions', items: v[k] as unknown[], truncatedAfter: null, unreadable: [] };
+    if (Array.isArray(v[k])) return { kind: 'questions', items: withAnswers(v[k] as unknown[], v.answers), truncatedAfter: null, unreadable: [] };
   }
   if ('stem' in v) return { kind: 'questions', items: [v], truncatedAfter: null, unreadable: [] };
   return { kind: 'unknown' };

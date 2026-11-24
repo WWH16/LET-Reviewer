@@ -28,6 +28,20 @@ const q = (over: Record<string, unknown> = {}): Question =>
   validateItem(item('sourceRef' in over && !('stem' in over) ? { ...over, stem: `Which of the following? ${over.sourceRef}` } : over), 1, opts).question!;
 
 describe('parsePasted', () => {
+  it('joins the answers listed after the questions to their questions', () => {
+    const { answer, ...bare } = item();
+    const explanation = 'Why.';
+    const p = parsePasted(
+      JSON.stringify({
+        questions: [bare, { ...bare, stem: 'Second?' }, { ...bare, stem: 'Third?' }],
+        answers: [{ n: 2, answer: 'D', explanation: 'Because D.' }, { n: 1, answer, explanation }],
+      }),
+    );
+    expect(p.kind === 'questions' && p.items).toMatchObject([{ answer: 'B', explanation: 'Why.' }, { answer: 'D', explanation: 'Because D.' }, { stem: 'Third?' }]);
+    const ready = p.kind === 'questions' ? previewQuiz(p.items, { id: 'quiz-x', area: 'GenEd', subarea: 'english' }, opts.now) : null;
+    expect(ready?.ready.map((q) => q.answer)).toEqual(['B', 'D']);
+    expect(ready?.invalid.map((r) => r.n)).toEqual([3]);
+  });
   it('strips code fences and prose', () => {
     const p = parsePasted('Here you go:\n```json\n[' + JSON.stringify(item()) + ']\n```\nLet me know!');
     expect(p.kind).toBe('questions');
