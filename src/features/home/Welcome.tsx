@@ -8,7 +8,7 @@ import { btn } from '../../ui/btn';
 export function Welcome({ settings }: { settings: Settings }) {
   return (
     <Page title="Welcome, LPT">
-      <p className="muted">Set your name and avatar, then add your first questions. Both can change later in Settings.</p>
+      <p className="muted">Set your name and avatar, then make your first quiz. Both can change later in Settings.</p>
       <form
         className="stack-lg"
         onSubmit={(e) => {
