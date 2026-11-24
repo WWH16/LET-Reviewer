@@ -1,10 +1,9 @@
 import { Link } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { useAnnounce } from '../../ui/Status';
-import { copyText } from '../../ui/clipboard';
 import { LEVEL_WEIGHTS, PARTS, partsFor, subareaName } from '../../domain/let-config';
-import { subjectsOf } from '../../domain/subjects';
-import { pct, recentByArea, tallyBy, weakestTopics, weakTopicsText } from '../../domain/scoring';
+import { itemWord, subjectsOf } from '../../domain/subjects';
+import { pct, recentByArea, tallyBy, weakestTopics } from '../../domain/scoring';
 import { useStats } from './useStats';
 import { RatingCard } from './RatingCard';
 import { btn } from '../../ui/btn';
@@ -36,7 +35,7 @@ export function Progress() {
       </Page>
     );
 
-  // Sub-areas over the same recent window as each part's figure, so a tile's rows add up to its figure.
+  // Subjects over the same recent window as each part's figure, so a tile's rows add up to its figure.
   const bySub = tallyBy([...recentByArea(attempts, qmap).values()].flat(), qmap, (q) => q.subarea);
   const weak = weakestTopics(attempts, qmap);
 
@@ -99,12 +98,14 @@ export function Progress() {
                     {n ? `${Math.round(((p ?? 0) * n) / 100)} of your last ${n} correct.` : 'No answers yet.'}
                   </p>
                   <details>
-                    <summary className="label">Sub-areas</summary>
+                    <summary className="label">{a === 'Major' ? 'Topics' : 'Subjects'}</summary>
                     <table>
-                      <caption className="sr-only">{PARTS[a].name} by sub-area</caption>
+                      <caption className="sr-only">
+                        {PARTS[a].name} by {itemWord(a)}
+                      </caption>
                       <thead>
                         <tr>
-                          <th scope="col">Sub-area</th>
+                          <th scope="col">{a === 'Major' ? 'Topic' : 'Subject'}</th>
                           <th scope="col" className="num">
                             Accuracy
                           </th>
@@ -144,21 +145,7 @@ export function Progress() {
         </section>
 
         <section className="tile span-3 align-start" aria-labelledby="pr-weak">
-          <div className="spread">
-            <h2 id="pr-weak">Weakest topics</h2>
-            {weak.length > 0 && (
-              <button
-                type="button"
-                className={btn.secondary}
-                onClick={async () => {
-                  await copyText(weakTopicsText(weak));
-                  announce('Weak topics copied');
-                }}
-              >
-                Copy my weak topics
-              </button>
-            )}
-          </div>
+          <h2 id="pr-weak">Weakest topics</h2>
           {weak.length === 0 ? (
             <p className="muted">Topics appear here after 3 or more answers each.</p>
           ) : (

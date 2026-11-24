@@ -1,7 +1,7 @@
 // Accuracy and the projected LET rating (plan §3, §6.6, §8.4).
 
 import { isCorrect } from './leitner';
-import { LEVEL_WEIGHTS, PART_FLOOR, PASSING_AVERAGE, subareaName } from './let-config';
+import { LEVEL_WEIGHTS, PART_FLOOR, PASSING_AVERAGE } from './let-config';
 import { topicOf } from './subjects';
 import type { Area, Attempt, Level, Question } from './types';
 
@@ -137,13 +137,4 @@ export function weakestTopics(
     .sort(([, a], [, b]) => pct(a)! - pct(b)! || b.total - a.total)
     .slice(0, n)
     .map(([k, tally]) => ({ ...meta.get(k)!, tally }));
-}
-
-export function weakTopicsText(list: readonly WeakTopic[]): string {
-  return list
-    .map((w) => {
-      const name = w.topic ? `${subareaName(w.subarea)}, ${w.topic}` : subareaName(w.subarea);
-      return `${name}: ${Math.round(pct(w.tally)!)}% over ${w.tally.total} attempts`;
-    })
-    .join('\n');
 }
