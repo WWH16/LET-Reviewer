@@ -13,8 +13,11 @@ import { parsePasted, previewQuiz } from '../../domain/validate';
 import type { Area } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { Select } from '../../ui/Select';
+import { MajorHint } from '../settings/MajorHint';
 
 const NEW = '__new';
+/** One reply from Claude stays reliable up to about this many questions. */
+const MAX = 50;
 
 /**
  * Making a quiz is where questions come from: pick the part, the subject (or Major topic) and maybe a topic
@@ -32,7 +35,9 @@ export function NewQuiz() {
   const [newSub, setNewSub] = useState('');
   const [topicPick, setTopicPick] = useState(() => params.get('topic') ?? (params.get('newTopic') ? NEW : ''));
   const [newTopic, setNewTopic] = useState(() => params.get('newTopic') ?? '');
-  const [n, setN] = useState(10);
+  // Typed, so it can be any size; kept as text while she types, read as a whole number from 1 to MAX.
+  const [nText, setNText] = useState('10');
+  const n = Math.min(MAX, Math.max(1, Math.round(Number(nText)) || 10));
   const [text, setText] = useState('');
   const [clipError, setClipError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -113,6 +118,7 @@ export function NewQuiz() {
     <Page title="New quiz" back={{ to: back, label: sub ? `${sub.name} quizzes` : 'Quizzes' }}>
       <section className="tile stack" aria-labelledby="nq-1">
         <h2 id="nq-1">1. Pick what it covers</h2>
+        <MajorHint level={settings.level} />
         <div className="grid-2">
           <div className="field">
             <label htmlFor="nq-area">Part</label>
@@ -180,13 +186,23 @@ export function NewQuiz() {
           )}
           <div className="field">
             <label htmlFor="nq-n">Number of questions</label>
-            <Select id="nq-n" value={n} onChange={(v) => setN(Number(v))}>
+            <input
+              id="nq-n"
+              type="number"
+              inputMode="numeric"
+              min={1}
+              max={MAX}
+              list="nq-n-sizes"
+              value={nText}
+              onChange={(e) => setNText(e.target.value)}
+              onBlur={() => setNText(String(n))}
+            />
+            <datalist id="nq-n-sizes">
               {[5, 10, 15, 20, 30].map((x) => (
-                <option key={x} value={x}>
-                  {x}
-                </option>
+                <option key={x} value={x} />
               ))}
-            </Select>
+            </datalist>
+            <span className="meta">Type any number from 1 to {MAX}, or pick a usual size.</span>
           </div>
         </div>
       </section>

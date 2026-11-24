@@ -134,11 +134,12 @@ export function Settings() {
                 <option value="elementary">Elementary</option>
                 <option value="secondary">Secondary</option>
               </Select>
+              <span className="meta">{s.level === 'secondary' ? 'Adds your major as a third part.' : 'Pick Secondary if you take a major.'}</span>
             </div>
             {s.level === 'secondary' && (
               <div className="field">
                 <label htmlFor="s-major">Major</label>
-                <input id="s-major" type="text" value={s.major} onChange={(e) => set({ major: e.target.value })} />
+                <input id="s-major" type="text" placeholder="e.g. English" value={s.major} onChange={(e) => set({ major: e.target.value })} />
               </div>
             )}
             <div className="field">

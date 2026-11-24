@@ -5,6 +5,7 @@ import { PARTS, partsFor } from '../../domain/let-config';
 import { btn } from '../../ui/btn';
 import { itemWord, subjectsOf } from '../../domain/subjects';
 import { useQuizzes } from './useQuizzes';
+import { MajorHint } from '../settings/MajorHint';
 
 /** Every subject of every part she takes, with how many quizzes and questions it has. */
 export function Quizzes() {
@@ -18,6 +19,7 @@ export function Quizzes() {
         A quiz covers one subject. Make one by asking Claude for questions, then take it as often as you like. Mock exams draw
         their items from your quiz questions.
       </p>
+      <MajorHint level={settings.level} />
       <div className="bento pairs">
         {partsFor(settings.level).map((area) => (
           <section key={area} className="tile span-3 stack-sm" aria-labelledby={`qz-${area}`}>

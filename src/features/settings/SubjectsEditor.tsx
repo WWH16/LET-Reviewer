@@ -6,6 +6,7 @@ import { counts } from '../../domain/quiz';
 import { itemWord, subjectId, subjectsOf } from '../../domain/subjects';
 import type { Area, Settings, Subject } from '../../domain/types';
 import { btn } from '../../ui/btn';
+import { MajorHint } from './MajorHint';
 
 /**
  * Her subjects in each part, and the topics inside each Gen Ed and Prof Ed subject. In Major, her
@@ -25,6 +26,7 @@ export function SubjectsEditor({ s }: { s: Settings }) {
         Name the subjects in General Education and Professional Education, and the topics inside any of them. Your major is
         listed by topic. Quizzes, mock exams, Missed questions and Stats all follow this list.
       </p>
+      <MajorHint level={s.level} />
       {partsFor(s.level).map((area) => {
         const list = subjectsOf(area, s.subjects, live);
         const word = itemWord(area);
