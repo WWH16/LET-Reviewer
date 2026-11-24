@@ -203,7 +203,11 @@ export function MockResults() {
 
         <section className="tile span-3" aria-labelledby="mr-retake">
           <h2 id="mr-retake">Retake</h2>
-          <p className="meta">The same questions in a new order, with the choices shuffled again. Pick the subjects to take again.</p>
+          <p className="meta">
+            The same questions in a new order, with the choices shuffled again.{bySubject.length > 1 && ` Pick the ${itemWord(exam.part)}s to take again.`}
+          </p>
+          {/* One subject has nothing to pick. */}
+          {bySubject.length > 1 && (
           <fieldset className="stack-sm">
             <legend className="sr-only">Subjects to retake</legend>
             {bySubject.map((x) => (
@@ -217,6 +221,7 @@ export function MockResults() {
               </label>
             ))}
           </fieldset>
+          )}
           <div className="row">
             <button type="button" className={btn.primary} disabled={!againIds.length} onClick={retake}>
               Retake {againIds.length} items
