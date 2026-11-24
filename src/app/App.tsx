@@ -1,4 +1,4 @@
-import { Link, Navigate, Route, Routes, useLocation, useMatch } from 'react-router-dom';
+import { Link, Route, Routes, useLocation, useMatch } from 'react-router-dom';
 import { Page } from '../ui/Page';
 import { StatusProvider } from '../ui/Status';
 import { Icon } from '../ui/Icon';
@@ -138,7 +138,6 @@ export function App() {
           <Route path="/" element={<Home />} />
           <Route path="/session" element={<Session />} />
           <Route path="/missed" element={<Missed />} />
-          <Route path="/review" element={<Navigate to="/missed" replace />} />
           <Route path="/mock" element={<MockSetup />} />
           <Route path="/mock/:id" element={<MockExam />} />
           <Route path="/mock/:id/print" element={<MockPrint />} />
@@ -150,7 +149,6 @@ export function App() {
           <Route path="/quiz/:id" element={<QuizPage />} />
           <Route path="/question/:id" element={<EditQuestion />} />
           <Route path="/progress" element={<Progress />} />
-          <Route path="/bank/*" element={<Navigate to="/quizzes" replace />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/settings/:section" element={<Settings />} />
           <Route path="/states" element={<States />} />

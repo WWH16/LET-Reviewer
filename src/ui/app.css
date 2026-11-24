@@ -1,16 +1,15 @@
-/* Hallmark · shape: app screen · genre: modern-minimal · theme: exam-prep light, after the Pocket Prep apps (by request: their structure, flows and look; our own name, mark and palette) on Kumo components 2.18.1, the Dose faces kept · redesign: full (bento, 2026-11-24, brand kept)
- * nav: four tabs (Study, Stats, Review, Settings), a bottom bar on phones and the side menu at 60rem and up · screen: a six-column bento from 60rem (Study: the golden greeting beside resume and backup, the quiz modes as tiles with Quick 10 large on butter; Stats: the ring beside the rating, subjects beside weakest topics, the streak across; Review: a sticky rail of actions and filters beside the list; Settings: tiles in pairs; Mock setup: the form beside the open and past exams), one column below · signature: the golden greeting on Study holding the countdown and the week; one golden yellow block per screen holding its figure (the greeting, the quiz bar, the Stats ring, the score) · answers: a near-black ring on butter when chosen, green with a check when right, red with a cross when wrong · states: loading, empty, full
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: exam-prep light, after the Pocket Prep apps (by request: their structure, flows and look; our own name, mark and palette) on Kumo components 2.18.1, the Dose faces kept · redesign: polish (quizzes rework, 2026-11-24, brand kept)
+ * nav: a side menu at 60rem and up (Study, Quizzes, Mock exams, Missed questions, Stats, then the Settings pages) and a five-tab bottom bar on phones (Study, Quizzes, Mock, Stats, Settings) · screen: a six-column bento from 60rem (Study: the golden greeting beside resume and backup, the ways to study as tiles with New quiz large on butter; Quizzes: one tile per part listing the subjects with quizzes; Stats: the ring beside the rating, subjects beside weakest topics, the streak across; Mock setup: the form beside the open and past exams; mock results: the score beside the rating, the subject breakdown and the retake), one column below · signature: the golden greeting on Study holding the countdown and the week; one golden yellow block per screen holding its figure (the greeting, the quiz bar, the Stats ring, the score) · answers: a near-black ring on butter when chosen, green with a check when right, red with a cross when wrong · states: loading, empty, full
  * axes: light/grotesk-sans/60 white, 30 yellow, 10 near-black, with green, red and orange for state · posture: friendly-quiet · contrast: pass · modes: light · v2.0.0 */
 /* Hallmark · waive 7b · surface: absolute on --print-ink and --print-paper only, used inside .paper and @media print · the printed booklet and answer sheet need pure black toner on white bond, and the corner markers must scan */
 /* Hallmark · dismissed 41 · the state fills (green, red, orange) carry icons in --color-card, never text in ink; every text pair is in contrast.test.ts */
-/* Hallmark · dropped setSheetOpen(false), removeQuestion(q.id), removeBatch(removing · rewritten, not removed: the sheet's Close now calls closeSheet (it also returns focus), and both removes now announce an Undo */
 /* Hallmark · answered F4 · buttons are Kumo's own classes (src/ui/btn.ts): one primary per screen, secondary for the rest, ghost for quiet links; aria-pressed is a toggle on the secondary */
 /* Hallmark · answered F7 · surfaces follow one ladder: white cards at 16px with the card shadow on a warm off-white ground, flat wells inside them, one yellow block per screen; tiles in a bento row share its height; choices and feedback keep Kumo's 12px card; inputs share Kumo's one input recipe because they are one role */
 /* Hallmark · waive 24b · 10px and 6px only, on dense rows (.option, .choice, .list > li, th, the quiz bar) and small gaps (.field, .week-streak, .subject) · these rows sit between Kumo's 8 and 12 steps; on the 4px scale the list rows and answer cards read either cramped or loose */
 /* Hallmark · dismissed 49 · "Replace data on this device" is a dialog's destructive choice; it wraps inside the dialog's row by design rather than clipping */
 /* Hallmark · dismissed 70 · "New code sent" follows a real request: run() in AccountSection awaits the resendCode request and announces only when it succeeds */
-/* Hallmark · finish-review: in-thread · 1 finding (the Quick 10 tile's hover was one shade off its fill) · 1 resolved · gap: none */
-/* Hallmark · pre-emit critique: P4 H4 E4 S3 R4 V3 · weakest: S, the look follows a named reference by request; the golden greeting with the week and the Quick 10 tile are what Study is known by now, and the quiz-mode tiles keep the list's order on a phone */
+/* Hallmark · finish-review: in-thread · audit after the quizzes rework (reviews/hallmark-audit-quizzes.md) · 16 findings · all resolved · gap: none */
+/* Hallmark · pre-emit critique: P4 H4 E4 S3 R4 V3 · weakest: S, the look follows a named reference by request; the golden greeting with the week and the New quiz tile are what Study is known by now, and the tiles keep the list's order on a phone */
 @import '@cloudflare/kumo/styles/kumo-standalone';
 @import url('./tokens.css');
 @import url('./base.css');
@@ -491,16 +490,6 @@ a.brand {
   min-width: min(100%, 18rem);
   max-width: 26rem;
 }
-/* Settings: the profile folds to the avatar and name; the editor opens in place. */
-.profile-summary > summary {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  padding-block: var(--space-2xs);
-}
-.profile-summary[open] > summary {
-  margin-block-end: var(--space-lg);
-}
 .part-strips {
   padding-block-start: var(--space-sm);
 }
@@ -643,13 +632,9 @@ a.brand {
     flex-direction: column;
     gap: var(--space-3xs);
   }
-  .nav a,
-  .top-settings {
+  .nav a {
     min-height: 34px;
     padding-inline: var(--space-sm);
-  }
-  .top-settings {
-    margin: auto 0 0;
   }
   /* The Settings pages, under their own small heading below the main places. */
   .nav-group {
@@ -1200,16 +1185,6 @@ th.num {
   font-weight: 500;
   line-height: 1.45;
 }
-/* Bank: search and queue filters stay in view while the list scrolls. */
-.bank-filters {
-  position: sticky;
-  top: calc(var(--space-2xs) + var(--safe-top));
-  z-index: var(--z-sticky);
-  margin-inline: calc(-1 * var(--space-md));
-  padding: var(--space-xs) var(--space-md);
-  background: var(--color-paper);
-  box-shadow: 0 1px 0 var(--color-rule);
-}
 .list > li:last-child {
   border-bottom: 0;
 }
@@ -1685,75 +1660,6 @@ a.mode:focus-visible {
     grid-column: span 3;
   }
 }
-/* ---------- Review: the rail (actions and filters) beside the question list ----------
-   Phones: one column, and the filters stick under the top while the list scrolls. 48rem and up: the rail
-   takes two of six columns and sticks as a whole; the list and the imports take the other four. */
-.bank-layout {
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap-section);
-}
-.bank-rail {
-  display: contents;
-}
-@media (min-width: 48rem) {
-  .bank-layout {
-    display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    grid-template-rows: auto 1fr;
-    align-items: start;
-  }
-  .bank-rail {
-    display: flex;
-    flex-direction: column;
-    gap: var(--gap-tile);
-    position: sticky;
-    top: calc(var(--pad-page-top) + var(--safe-top));
-    grid-column: 1 / span 2;
-    grid-row: 1 / span 2;
-  }
-  .bank-layout > section {
-    grid-column: 3 / -1;
-  }
-  .bank-rail .bank-filters {
-    position: static;
-    margin: 0;
-    padding: var(--pad-card);
-    border-radius: var(--radius-tile);
-    background: var(--color-card);
-    box-shadow: var(--shadow-card);
-  }
-  .bank-rail .review-tabs {
-    flex-direction: column;
-    gap: var(--space-3xs);
-    overflow: visible;
-    border-bottom: 0;
-  }
-  .bank-rail .review-tabs button {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 36px;
-    padding-inline: var(--space-sm);
-    border-bottom: 0;
-    border-radius: var(--radius-control);
-    font-size: var(--text-sm);
-  }
-  .bank-rail .review-tabs button .num {
-    font-size: var(--text-sm);
-  }
-  .bank-rail .review-tabs button:hover {
-    background: var(--color-paper);
-  }
-  .bank-rail .review-tabs button[aria-pressed='true'] {
-    background: var(--color-accent-soft);
-    color: var(--color-on-soft);
-  }
-  .bank-rail .review-tabs button[aria-pressed='true'] .num {
-    color: var(--color-on-soft);
-  }
-}
-
 /* ---------- Mock setup: the form beside the exams in progress and the finished ones ---------- */
 .mock-layout {
   display: flex;
@@ -1774,52 +1680,6 @@ a.mode:focus-visible {
   .mock-layout > section {
     grid-column: 2;
   }
-}
-
-/* ---------- Review: the tabs with counts ---------- */
-
-/* Each tab is its name over its count; the chosen one is golden brown with a near-black bar under it. The row scrolls
-   sideways on a phone rather than wrapping into a second row of tabs. */
-.review-tabs {
-  display: flex;
-  gap: var(--space-2xs);
-  overflow-x: auto;
-  scrollbar-width: none;
-  border-bottom: 1px solid var(--color-rule);
-}
-.review-tabs button {
-  display: grid;
-  justify-items: center;
-  flex: none;
-  min-height: 44px;
-  padding: var(--space-2xs) var(--space-sm);
-  border: 0;
-  border-bottom: 2px solid transparent;
-  background: none;
-  color: var(--color-muted);
-  font: inherit;
-  font-size: var(--text-xs);
-  line-height: 1.3;
-  cursor: pointer;
-}
-.review-tabs button .num {
-  font-size: var(--text-body);
-  font-weight: 700;
-  color: var(--color-ink);
-}
-.review-tabs button:hover {
-  color: var(--color-ink);
-}
-.review-tabs button[aria-pressed='true'] {
-  border-bottom-color: var(--color-accent);
-  color: var(--color-accent-text);
-  font-weight: 600;
-}
-.review-tabs button[aria-pressed='true'] .num {
-  color: var(--color-accent-text);
-}
-.review-tabs button:focus-visible {
-  outline-offset: -2px;
 }
 
 /* ---------- Stats: the ring, the subject scores ---------- */
@@ -2074,13 +1934,6 @@ a.mode:focus-visible {
 }
 .review-status.is-wrong {
   background: var(--color-error-fill);
-}
-.review-status.is-flag {
-  background: var(--color-warning-fill);
-}
-.review-status.is-new {
-  background: var(--color-paper-3);
-  color: var(--color-muted);
 }
 
 
