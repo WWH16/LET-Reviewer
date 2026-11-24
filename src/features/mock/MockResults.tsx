@@ -9,14 +9,21 @@ import { LEVEL_WEIGHTS, PARTS, PART_FLOOR, paceMs } from '../../domain/let-confi
 import { projectedRating } from '../../domain/scoring';
 import type { Area, MockExam, Question } from '../../domain/types';
 import { RatingCard } from '../progress/RatingCard';
+import { shown } from '../../domain/choices';
 import { btn } from '../../ui/btn';
 
 type Filter = 'all' | 'wrong' | 'flagged' | 'unanswered';
 
+/** Item i of an exam as it was shown, with the exam's choice order. */
+export const examItem = (e: MockExam, i: number, qmap: ReadonlyMap<string, Question>) => {
+  const q = qmap.get(e.itemIds[i]);
+  return q && shown(q, e.orders?.[i]);
+};
+
 export function examScore(e: MockExam, qmap: ReadonlyMap<string, Question>) {
   let correct = 0;
   e.itemIds.forEach((id, i) => {
-    const q = qmap.get(id);
+    const q = examItem(e, i, qmap);
     if (q && q.answer !== null && e.answers[String(i + 1)] === q.answer) correct++;
   });
   return { correct, total: e.itemIds.length, pct: e.itemIds.length ? (correct / e.itemIds.length) * 100 : 0 };
@@ -70,7 +77,7 @@ export function MockResults() {
     .map((k) => ({ k, at: times[k - 1], target: k * pace }));
 
   const rows = exam.itemIds
-    .map((qid, i) => ({ n: i + 1, q: qmap.get(qid), chosen: exam.answers[String(i + 1)] ?? null }))
+    .map((_, i) => ({ n: i + 1, q: examItem(exam, i, qmap), chosen: exam.answers[String(i + 1)] ?? null }))
     .filter(({ n, q, chosen }) => {
       if (filter === 'wrong') return q && chosen !== null && chosen !== q.answer;
       if (filter === 'flagged') return exam.flags.includes(n);
@@ -78,7 +85,7 @@ export function MockResults() {
       return true;
     });
 
-  const wrongCount = exam.itemIds.filter((qid, i) => qmap.get(qid)?.answer !== (exam.answers[String(i + 1)] ?? null)).length;
+  const wrongCount = exam.itemIds.filter((_, i) => examItem(exam, i, qmap)?.answer !== (exam.answers[String(i + 1)] ?? null)).length;
 
   const hasPacing = exam.form === 'digital' && checkpoints.length > 0;
 

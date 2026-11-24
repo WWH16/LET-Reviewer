@@ -3,6 +3,7 @@
 import { db } from './db';
 import { previewImport } from '../domain/validate';
 import { isCorrect } from '../domain/leitner';
+import { originalKey } from '../domain/choices';
 import { DEFAULT_SETTINGS, type Attempt, type Key, type MockExam, type Question, type Settings } from '../domain/types';
 import sample from '../domain/sample-questions.json';
 import { DEMO_PREFIX, demoAttempts } from '../domain/demo';
@@ -132,15 +133,11 @@ export async function gradeExam(exam: MockExam): Promise<{ correct: number; tota
   const qs = await db.questions.bulkGet(exam.itemIds);
   const at = nowIso();
   const mode = exam.form === 'digital' ? 'mock-digital' : 'mock-printed';
-  const attempts: Attempt[] = exam.itemIds.map((questionId, i) => ({
-    id: uuid(),
-    questionId,
-    chosen: (exam.answers[String(i + 1)] ?? null) as Key | null,
-    ms: null,
-    mode,
-    at,
-    examId: exam.id,
-  }));
+  const attempts: Attempt[] = exam.itemIds.map((questionId, i) => {
+    // The exam saves the letters she saw; the answer is kept as the question's own key.
+    const letter = exam.answers[String(i + 1)] ?? null;
+    return { id: uuid(), questionId, chosen: letter && originalKey(exam.orders?.[i], letter), ms: null, mode, at, examId: exam.id };
+  });
   const correct = attempts.filter((a, i) => isCorrect(a, qs[i])).length;
   await db.transaction('rw', db.attempts, db.mockExams, async () => {
     // Grading is idempotent: a second Submit or Grade (a double tap, a time-up racing a tap) adds nothing.

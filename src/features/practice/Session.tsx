@@ -13,6 +13,7 @@ import { recordAttempt, setFlag } from '../../db/repo';
 import { buildCards, dueCards } from '../../domain/leitner';
 import { KEY_LOOKS_WRONG, gradable, questionOfTheDay, shuffle } from '../../domain/examDraw';
 import { dayKey } from '../../domain/dates';
+import { choiceOrder, originalKey, shown } from '../../domain/choices';
 import { paceMs, subareaName } from '../../domain/let-config';
 import { KEYS, type Area, type Key, type Mode, type Question } from '../../domain/types';
 import { drillMatches } from './drill';
@@ -60,6 +61,7 @@ async function pickItems(mode: string, params: URLSearchParams, qmap: Map<string
 
 interface Result {
   id: string;
+  /** The letter she picked, as shown. */
   chosen: Key;
   correct: boolean;
 }
@@ -70,6 +72,8 @@ export function Session() {
   const qmap = useQuestionMap();
   const settings = useSettings();
   const [items, setItems] = useState<string[] | null>(null);
+  // Each question's choice order for this take: a new shuffle every time the session starts.
+  const [orders, setOrders] = useState<Map<string, Key[]>>(new Map());
   const [i, setI] = useState(0);
   const [chosen, setChosen] = useState<Key | null>(null);
   const [checked, setChecked] = useState(false);
@@ -90,6 +94,7 @@ export function Session() {
   useEffect(() => {
     if (!qmap || items) return;
     pickItems(mode, params, qmap).then((picked) => {
+      setOrders(new Map(picked.map((id) => [id, choiceOrder(qmap.get(id)!)])));
       setItems(picked);
       setStartedAt(Date.now());
       setNow(Date.now());
@@ -205,7 +210,7 @@ export function Session() {
             <h2 id="res-wrong">To review</h2>
             <ul className="list review-list">
               {wrong.map((r) => {
-                const q = qmap.get(r.id)!;
+                const q = shown(qmap.get(r.id)!, orders.get(r.id));
                 return (
                   <li key={r.id} lang={q.lang}>
                     <details>
@@ -239,7 +244,7 @@ export function Session() {
     );
   }
 
-  const q = qmap.get(items[i])!;
+  const q = shown(qmap.get(items[i])!, orders.get(items[i]));
   const isLast = i === items.length - 1;
   const correct = chosen === q.answer;
 
@@ -247,7 +252,7 @@ export function Session() {
     if (!chosen || checked) return;
     setChecked(true);
     setResults((r) => [...r, { id: q.id, chosen, correct: chosen === q.answer }]);
-    await recordAttempt({ questionId: q.id, chosen, ms: Date.now() - shownAt.current, mode: mode as Mode });
+    await recordAttempt({ questionId: q.id, chosen: originalKey(orders.get(q.id), chosen), ms: Date.now() - shownAt.current, mode: mode as Mode });
   };
   const next = () => {
     if (isLast) return setDone(true);

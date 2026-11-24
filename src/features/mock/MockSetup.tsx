@@ -8,6 +8,7 @@ import { nowIso, saveExam, uuid } from '../../db/repo';
 import { PARTS, partsFor, timeLimit } from '../../domain/let-config';
 import { SOURCE_LABELS, drawExam, gradable, matchesSource, type SourceFilter } from '../../domain/examDraw';
 import { examLabel } from '../../domain/ids';
+import { choiceOrder } from '../../domain/choices';
 import type { Area, MockExam, PaperSize } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { Select } from '../../ui/Select';
@@ -60,6 +61,7 @@ export function MockSetup() {
       form,
       part,
       itemIds: r.itemIds,
+      orders: r.itemIds.map((id) => choiceOrder(pool.find((q) => q.id === id)!)),
       timeLimitMin: form === 'digital' ? limit : PARTS[part].minutes * (n / PARTS[part].items),
       paper: form === 'printed' ? paper : null,
       answers: {},
