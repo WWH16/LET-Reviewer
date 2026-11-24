@@ -259,7 +259,11 @@ export interface QuizPreview {
  * Checks a pasted reply for one quiz. The quiz decides the part and subject, so the reply needs only the
  * questions, and every question needs an answer key.
  */
-export function previewQuiz(items: unknown[], quiz: { id: string; area: Area; subarea: string }, now: string): QuizPreview {
+export function previewQuiz(
+  items: unknown[],
+  quiz: { id: string; area: Area; subarea: string; topic?: { id: string; name: string } | null },
+  now: string,
+): QuizPreview {
   const ready: Question[] = [];
   const invalid: QuizPreview['invalid'] = [];
   const seen = new Set<string>();
@@ -273,7 +277,7 @@ export function previewQuiz(items: unknown[], quiz: { id: string; area: Area; su
     const id = quizQuestionId(quiz.id, r.question.stem);
     if (seen.has(id)) return repeats++;
     seen.add(id);
-    ready.push({ ...r.question, id, quizId: quiz.id });
+    ready.push({ ...r.question, id, quizId: quiz.id, ...(quiz.topic && { topicId: quiz.topic.id, topic: quiz.topic.name }) });
   });
   return { ready, invalid, repeats };
 }

@@ -31,6 +31,8 @@ export interface Quiz {
   id: string;
   area: Question['area'];
   subarea: string;
+  /** Her topic the quiz was made for; absent for the whole subject. */
+  topicId?: string;
   /** "Quiz 2": its place among the subject's quizzes, oldest first. */
   name: string;
   /** When it was made: from its id, or its oldest question for one with no time in its id. */
@@ -45,7 +47,7 @@ export function groupQuizzes(questions: Iterable<Question>): Quiz[] {
   const dated = [...byId].map(([id, qs]) => {
     const stamp = id.slice(5).split('~')[0];
     const createdAt = Number.isNaN(Date.parse(stamp)) ? qs.map((q) => q.updatedAt).sort()[0] : stamp;
-    return { id, area: qs[0].area, subarea: qs[0].subarea, name: '', createdAt, questions: qs };
+    return { id, area: qs[0].area, subarea: qs[0].subarea, topicId: qs[0].topicId, name: '', createdAt, questions: qs };
   });
   dated.sort((a, b) => (a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0));
   const n = new Map<string, number>();

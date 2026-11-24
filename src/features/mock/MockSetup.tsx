@@ -7,7 +7,7 @@ import { saveExam } from '../../db/repo';
 import { PARTS, partsFor, subareaName, timeLimit } from '../../domain/let-config';
 import { drawMock, quotas } from '../../domain/examDraw';
 import { counts } from '../../domain/quiz';
-import { subjectsOf } from '../../domain/subjects';
+import { itemWord, subjectsOf } from '../../domain/subjects';
 import type { Area, MockExam, PaperSize } from '../../domain/types';
 import { examLink, newExam } from './newExam';
 import { btn } from '../../ui/btn';
@@ -155,8 +155,8 @@ export function MockSetup() {
           </div>
 
           <fieldset className="stack-sm">
-            <legend className="label">Subjects</legend>
-            <p className="meta">Items are split evenly across the subjects you pick, from your quiz questions in them.</p>
+            <legend className="label">{part === 'Major' ? 'Topics' : 'Subjects'}</legend>
+            <p className="meta">Items are split evenly across the {itemWord(part)}s you pick, from your quiz questions in them.</p>
             {all.map((s) => (
               <label key={s.id} className="check">
                 <input type="checkbox" checked={subjects.includes(s.id)} onChange={() => toggle(s.id)} />
@@ -198,15 +198,15 @@ export function MockSetup() {
 
           <div role="status" className={ready ? undefined : 'well'}>
             {!subjects.length ? (
-              <p>Pick at least one subject.</p>
+              <p>Pick at least one {itemWord(part)}.</p>
             ) : ready ? (
               <p>
-                {n} items, {need[0] === need[need.length - 1] ? need[0] : `${need[need.length - 1]} to ${need[0]}`} per subject.{' '}
+                {n} items, {need[0] === need[need.length - 1] ? need[0] : `${need[need.length - 1]} to ${need[0]}`} per {itemWord(part)}.{' '}
                 {form === 'digital' && (limit === null ? 'Timer off.' : `${limit} minutes.`)}
               </p>
             ) : (
               <div className="stack-sm">
-                <p>Some subjects need more quiz questions for this length:</p>
+                <p>Some {itemWord(part)}s need more quiz questions for this length:</p>
                 <ul className="list">
                   {short.map((x) => (
                     <li key={x.id} className="spread">

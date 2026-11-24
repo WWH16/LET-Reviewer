@@ -14,6 +14,7 @@ import { shuffle } from '../../domain/examDraw';
 import { counts } from '../../domain/quiz';
 import { dayKey } from '../../domain/dates';
 import { choiceOrder, originalKey, shown } from '../../domain/choices';
+import { topicOf } from '../../domain/subjects';
 import { paceMs, subareaName } from '../../domain/let-config';
 import { KEYS, type Key, type Mode, type Question } from '../../domain/types';
 import { btn } from '../../ui/btn';
@@ -298,7 +299,7 @@ export function Session() {
         <div className="row">
           <span className="meta">
             {subareaName(q.subarea)}
-            {q.topic ? `, ${q.topic}` : ''}
+            {topicOf(q) ? `, ${topicOf(q)}` : ''}
           </span>
         </div>
 

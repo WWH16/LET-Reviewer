@@ -5,10 +5,14 @@ export type Key = 'A' | 'B' | 'C' | 'D';
 export const KEYS: readonly Key[] = ['A', 'B', 'C', 'D'];
 export type Lang = 'en' | 'fil';
 
-/** A subject in a part, named by her. The id is fixed when it is added; the name can change. */
+/**
+ * A subject in a part, named by her (in Major, where the part is her specialization, these are its topics).
+ * A Gen Ed or Prof Ed subject can hold topics of its own. Ids are fixed when added; names can change.
+ */
 export interface Subject {
   id: string;
   name: string;
+  topics?: Subject[];
 }
 export type Subjects = Record<Area, Subject[]>;
 
@@ -25,7 +29,10 @@ export interface Question {
   area: Area;
   /** Her subject's id (`subjects.ts`). */
   subarea: string;
+  /** What the question is about, as Claude wrote it. Shown when the quiz had no topic of hers. */
   topic: string;
+  /** Her topic (inside the subject) the quiz was made for. Absent on a quiz for the whole subject. */
+  topicId?: string;
   lang: Lang;
   stem: string;
   choices: Choice[];

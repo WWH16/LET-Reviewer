@@ -166,7 +166,7 @@ export function Progress() {
               {weak.map((w) => {
                 const name = w.topic || subareaName(w.subarea);
                 return (
-                  <li key={`${w.subarea}-${w.topic}`} className="weak-item">
+                  <li key={`${w.subarea}-${w.topicId ?? w.topic}`} className="weak-item">
                     <span className="stack-sm">
                       <span className="weak-name">{name}</span>
                       <span className="meta">
@@ -179,7 +179,9 @@ export function Progress() {
                       </Link>
                       <Link
                         className={btn.quiet}
-                        to={`/quizzes/new?area=${w.area}&sub=${w.subarea}&topic=${encodeURIComponent(w.topic)}`}
+                        to={`/quizzes/new?area=${w.area}&sub=${w.subarea}${
+                          w.topicId ? `&topic=${w.topicId}` : w.topic && w.area !== 'Major' ? `&newTopic=${encodeURIComponent(w.topic)}` : ''
+                        }`}
                         aria-label={`New quiz on ${name}`}
                       >
                         New quiz

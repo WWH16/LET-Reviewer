@@ -86,6 +86,10 @@ describe('previewQuiz', () => {
     expect(p.invalid.map((r) => r.n)).toEqual([2, 4]);
     expect(p.invalid[0].errors[0]).toMatch(/no answer/);
   });
+  it('files the questions under her topic when the quiz is for one', () => {
+    const p = previewQuiz([item()], { ...quiz, topic: { id: 'tos', name: 'Table of specifications' } }, opts.now);
+    expect(p.ready[0]).toMatchObject({ topicId: 'tos', topic: 'Table of specifications' });
+  });
 });
 
 describe('ids and import', () => {

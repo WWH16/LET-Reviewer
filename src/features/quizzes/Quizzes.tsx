@@ -3,7 +3,7 @@ import { Page } from '../../ui/Page';
 import { useSettings } from '../../db/hooks';
 import { PARTS, partsFor } from '../../domain/let-config';
 import { btn } from '../../ui/btn';
-import { subjectsOf } from '../../domain/subjects';
+import { itemWord, subjectsOf } from '../../domain/subjects';
 import { useQuizzes } from './useQuizzes';
 
 /** Every subject of every part she takes, with how many quizzes and questions it has. */
@@ -21,11 +21,14 @@ export function Quizzes() {
       <div className="bento pairs">
         {partsFor(settings.level).map((area) => (
           <section key={area} className="tile span-3 stack-sm" aria-labelledby={`qz-${area}`}>
-            <h2 id={`qz-${area}`}>{PARTS[area].name}</h2>
+            <h2 id={`qz-${area}`}>
+              {PARTS[area].name}
+              {area === 'Major' && settings.major ? `: ${settings.major}` : ''}
+            </h2>
             {subjectsOf(area, settings.subjects, data.qmap.values()).length === 0 && (
               <p className="meta">
-                No subjects yet. <Link to={`/quizzes/new?area=${area}`}>Make a quiz</Link> and name its subject, or{' '}
-                <Link to="/settings/subjects">add your subjects</Link>.
+                No {itemWord(area)}s yet. <Link to={`/quizzes/new?area=${area}`}>Make a quiz</Link> and name its {itemWord(area)}, or{' '}
+                <Link to="/settings/subjects">add your {itemWord(area)}s</Link>.
               </p>
             )}
             <ul className="list">

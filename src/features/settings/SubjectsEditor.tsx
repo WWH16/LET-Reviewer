@@ -1,102 +1,147 @@
-import { useState, type FormEvent } from 'react';
+import { useState, type FormEvent, type ReactNode } from 'react';
 import { useQuestionMap } from '../../db/hooks';
 import { saveSettings } from '../../db/repo';
 import { PARTS, partsFor } from '../../domain/let-config';
 import { counts } from '../../domain/quiz';
-import { subjectId, subjectsOf } from '../../domain/subjects';
+import { itemWord, subjectId, subjectsOf } from '../../domain/subjects';
 import type { Area, Settings, Subject } from '../../domain/types';
 import { btn } from '../../ui/btn';
 
 /**
- * Her subjects in each part: add, rename, remove. Renaming keeps the subject's id, so its quizzes stay with it.
- * A subject that still has quizzes cannot be removed, so no question is left without one.
+ * Her subjects in each part, and the topics inside each Gen Ed and Prof Ed subject. In Major, her
+ * specialization, the list is its topics. Renaming keeps the id, so quizzes stay attached; anything that
+ * still has questions cannot be removed.
  */
 export function SubjectsEditor({ s }: { s: Settings }) {
   const qmap = useQuestionMap();
-  const [draft, setDraft] = useState<Partial<Record<Area, string>>>({});
-  const [error, setError] = useState<{ area: Area; text: string } | null>(null);
   if (!qmap) return null;
 
+  const live = [...qmap.values()].filter(counts);
   const save = (area: Area, list: Subject[]) => saveSettings({ subjects: { ...s.subjects, [area]: list } });
 
   return (
     <>
       <p className="muted">
-        Name the subjects in each part. Quizzes, mock exams, Missed questions and Stats all use this list.
+        Name the subjects in General Education and Professional Education, and the topics inside any of them. Your major is
+        listed by topic. Quizzes, mock exams, Missed questions and Stats all follow this list.
       </p>
       {partsFor(s.level).map((area) => {
-        const list = subjectsOf(area, s.subjects, qmap.values());
-        const used = new Map<string, number>();
-        for (const q of qmap.values()) if (q.area === area && counts(q)) used.set(q.subarea, (used.get(q.subarea) ?? 0) + 1);
-
-        const add = (e: FormEvent) => {
-          e.preventDefault();
-          const name = (draft[area] ?? '').trim();
-          if (!name) return;
-          if (list.some((x) => x.name.toLowerCase() === name.toLowerCase())) return setError({ area, text: `${name} is already in ${PARTS[area].name}.` });
-          setError(null);
-          setDraft({ ...draft, [area]: '' });
-          save(area, [...list, { id: subjectId(name, new Set(list.map((x) => x.id))), name }]);
-        };
-        const rename = (id: string, name: string) => {
-          const clean = name.trim();
-          if (!clean || list.some((x) => x.id !== id && x.name.toLowerCase() === clean.toLowerCase())) return;
-          save(area, list.map((x) => (x.id === id ? { ...x, name: clean } : x)));
-        };
-
+        const list = subjectsOf(area, s.subjects, live);
+        const word = itemWord(area);
         return (
           <section key={area} className="tile stack-sm" aria-labelledby={`sj-${area}`}>
-            <h2 id={`sj-${area}`}>{PARTS[area].name}</h2>
-            {list.length === 0 && <p className="meta">No subjects yet.</p>}
-            <ul className="list">
-              {list.map((x) => {
-                const n = used.get(x.id) ?? 0;
-                return (
-                  <li key={x.id} className="spread">
-                    {/* Saved when she leaves the field, so a half-typed name never renames anything. */}
-                    <input
-                      key={x.name}
-                      type="text"
-                      aria-label={`Name of ${x.name}`}
-                      defaultValue={x.name}
-                      onBlur={(e) => rename(x.id, e.target.value)}
-                    />
-                    <span className="row">
-                      <span className="meta">{n ? `${n} question${n === 1 ? '' : 's'}` : 'No quizzes'}</span>
-                      <button
-                        type="button"
-                        className={btn.quiet}
-                        disabled={n > 0}
-                        title={n > 0 ? 'Remove its quizzes first' : undefined}
-                        aria-label={`Remove ${x.name}`}
-                        onClick={() => save(area, list.filter((y) => y.id !== x.id))}
-                      >
-                        Remove
-                      </button>
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-            <form className="row" onSubmit={add}>
-              <label className="sr-only" htmlFor={`sj-new-${area}`}>
-                New subject in {PARTS[area].name}
-              </label>
-              <input
-                id={`sj-new-${area}`}
-                type="text"
-                placeholder="New subject, e.g. English"
-                value={draft[area] ?? ''}
-                onChange={(e) => setDraft({ ...draft, [area]: e.target.value })}
-              />
-              <button type="submit" className={btn.secondary} disabled={!(draft[area] ?? '').trim()}>
-                Add
-              </button>
-            </form>
-            {error?.area === area && <p role="alert">{error.text}</p>}
+            <h2 id={`sj-${area}`}>
+              {PARTS[area].name}
+              {area === 'Major' && s.major ? `: ${s.major}` : ''}
+            </h2>
+            <NameList
+              id={`sj-${area}`}
+              word={word}
+              items={list}
+              used={(x) => live.filter((q) => q.area === area && q.subarea === x.id).length}
+              onChange={(next) => save(area, next)}
+              inside={
+                area === 'Major'
+                  ? undefined
+                  : (subject) => (
+                      <div className="topics">
+                        <NameList
+                          id={`sj-${area}-${subject.id}`}
+                          word="topic"
+                          small
+                          items={subject.topics ?? []}
+                          used={(t) => live.filter((q) => q.subarea === subject.id && q.topicId === t.id).length}
+                          onChange={(topics) => save(area, list.map((x) => (x.id === subject.id ? { ...x, topics } : x)))}
+                        />
+                      </div>
+                    )
+              }
+            />
           </section>
         );
       })}
     </>
+  );
+}
+
+/** One editable list of names: add, rename on leaving the field, remove when nothing uses it. */
+function NameList({
+  id,
+  word,
+  items,
+  used,
+  onChange,
+  inside,
+  small,
+}: {
+  id: string;
+  word: string;
+  items: Subject[];
+  used: (x: Subject) => number;
+  onChange: (next: Subject[]) => void;
+  inside?: (x: Subject) => ReactNode;
+  small?: boolean;
+}) {
+  const [draft, setDraft] = useState('');
+  const [error, setError] = useState('');
+  const taken = (name: string, except?: string) => items.some((x) => x.id !== except && x.name.toLowerCase() === name.toLowerCase());
+
+  const add = (e: FormEvent) => {
+    e.preventDefault();
+    const name = draft.trim();
+    if (!name) return;
+    if (taken(name)) return setError(`${name} is already here.`);
+    setError('');
+    setDraft('');
+    onChange([...items, { id: subjectId(name, new Set(items.map((x) => x.id))), name }]);
+  };
+  const rename = (x: Subject, name: string) => {
+    const clean = name.trim();
+    if (clean && clean !== x.name && !taken(clean, x.id)) onChange(items.map((y) => (y.id === x.id ? { ...y, name: clean } : y)));
+  };
+
+  return (
+    <div className="stack-sm">
+      {items.length === 0 && !small && <p className="meta">No {word}s yet.</p>}
+      {items.length > 0 && (
+        <ul className="list">
+          {items.map((x) => {
+            const n = used(x);
+            return (
+              <li key={x.id} className="stack-sm">
+                <div className="spread">
+                  {/* Saved when she leaves the field, so a half-typed name never renames anything. */}
+                  <input key={x.name} type="text" aria-label={`Name of ${word} ${x.name}`} defaultValue={x.name} onBlur={(e) => rename(x, e.target.value)} />
+                  <span className="row">
+                    <span className="meta">{n ? `${n} question${n === 1 ? '' : 's'}` : 'No quizzes'}</span>
+                    <button
+                      type="button"
+                      className={btn.quiet}
+                      disabled={n > 0}
+                      title={n > 0 ? 'Remove its quizzes first' : undefined}
+                      aria-label={`Remove ${word} ${x.name}`}
+                      onClick={() => onChange(items.filter((y) => y.id !== x.id))}
+                    >
+                      Remove
+                    </button>
+                  </span>
+                </div>
+                {inside?.(x)}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+      <form className="row" onSubmit={add}>
+        <label className="sr-only" htmlFor={`${id}-new`}>
+          New {word}
+        </label>
+        <input id={`${id}-new`} type="text" placeholder={`New ${word}`} value={draft} onChange={(e) => setDraft(e.target.value)} />
+        <button type="submit" className={btn.secondary} disabled={!draft.trim()}>
+          Add {word}
+        </button>
+      </form>
+      {error && <p role="alert">{error}</p>}
+    </div>
   );
 }

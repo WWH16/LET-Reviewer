@@ -11,7 +11,7 @@ import type { Area, MockExam, Question } from '../../domain/types';
 import { RatingCard } from '../progress/RatingCard';
 import { shown } from '../../domain/choices';
 import { counts } from '../../domain/quiz';
-import { subjectsOf } from '../../domain/subjects';
+import { itemWord, subjectsOf } from '../../domain/subjects';
 import { shuffle } from '../../domain/examDraw';
 import { saveExam } from '../../db/repo';
 import { examLink, newExam } from './newExam';
@@ -168,11 +168,11 @@ export function MockResults() {
         </RatingCard>
 
         <section className="tile span-3" aria-labelledby="mr-subjects">
-          <h2 id="mr-subjects">By subject</h2>
+          <h2 id="mr-subjects">By {itemWord(exam.part)}</h2>
           <table>
             <thead>
               <tr>
-                <th scope="col">Subject</th>
+                <th scope="col">{exam.part === 'Major' ? 'Topic' : 'Subject'}</th>
                 <th scope="col" className="num">
                   Right
                 </th>

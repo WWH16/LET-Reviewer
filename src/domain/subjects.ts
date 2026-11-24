@@ -33,13 +33,26 @@ const OLD_NAMES: Record<string, string> = Object.fromEntries(
 // ponytail: one module-level name table, filled from her settings each time they are read (repo.getSettings),
 // so any screen can show a name without passing settings down. Make it a context if names ever need to differ per screen.
 let names = new Map<string, string>();
+let topicNames = new Map<string, string>();
 export function setSubjectNames(subjects: Subjects) {
-  names = new Map(Object.values(subjects).flatMap((list) => list.map((s): [string, string] => [s.id, s.name])));
+  const all = Object.values(subjects).flat();
+  names = new Map(all.map((s): [string, string] => [s.id, s.name]));
+  topicNames = new Map(all.flatMap((s) => (s.topics ?? []).map((t): [string, string] => [`${s.id}/${t.id}`, t.name])));
 }
 
+/** Major is her specialization, so what sits inside it is called a topic; Gen Ed and Prof Ed hold subjects. */
+export const itemWord = (area: Area) => (area === 'Major' ? 'topic' : 'subject');
+
+/** A topic's name inside its subject. */
+export const topicName = (subarea: string, topicId: string): string => topicNames.get(`${subarea}/${topicId}`) ?? readable(topicId);
+
+/** What a question is about inside its subject: her topic's name, else the topic Claude wrote. */
+export const topicOf = (q: { subarea: string; topic: string; topicId?: string }) => (q.topicId ? topicName(q.subarea, q.topicId) : q.topic);
+
 /** A subject's name: hers, else the old built-in one, else its id made readable. */
-export const subareaName = (id: string): string =>
-  names.get(id) ?? OLD_NAMES[id] ?? (id.charAt(0).toUpperCase() + id.slice(1)).replace(/-/g, ' ');
+export const subareaName = (id: string): string => names.get(id) ?? OLD_NAMES[id] ?? readable(id);
+
+const readable = (id: string) => (id.charAt(0).toUpperCase() + id.slice(1)).replace(/-/g, ' ');
 
 /**
  * Her subjects for a part, in her order, then any subject her questions still use that is not on her list

@@ -2,6 +2,7 @@
 
 import { isCorrect } from './leitner';
 import { LEVEL_WEIGHTS, PART_FLOOR, PASSING_AVERAGE, subareaName } from './let-config';
+import { topicOf } from './subjects';
 import type { Area, Attempt, Level, Question } from './types';
 
 export interface Tally {
@@ -112,7 +113,9 @@ export function projectedRating(level: Level, parts: Partial<Record<Area, number
 
 export interface WeakTopic {
   subarea: string;
+  /** Shown name: her topic's, else Claude's. */
   topic: string;
+  topicId?: string;
   area: Area;
   tally: Tally;
 }
@@ -123,10 +126,10 @@ export function weakestTopics(
   n = 5,
   minAttempts = 3,
 ): WeakTopic[] {
-  const meta = new Map<string, { area: Area; subarea: string; topic: string }>();
+  const meta = new Map<string, { area: Area; subarea: string; topic: string; topicId?: string }>();
   const tallies = tallyBy(attempts, questions, (q) => {
-    const k = `${q.subarea}\u0000${q.topic}`;
-    meta.set(k, { area: q.area, subarea: q.subarea, topic: q.topic });
+    const k = `${q.subarea}\u0000${q.topicId ? `#${q.topicId}` : q.topic}`;
+    meta.set(k, { area: q.area, subarea: q.subarea, topic: topicOf(q), topicId: q.topicId });
     return k;
   });
   return [...tallies]

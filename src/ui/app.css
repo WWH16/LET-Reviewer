@@ -2630,3 +2630,9 @@ dialog.command input:focus-visible {
     break-after: auto;
   }
 }
+
+/* ---------- Settings, Subjects: a subject's topics sit indented under it ---------- */
+.topics {
+  padding-left: var(--space-lg);
+  border-left: 2px solid var(--color-rule);
+}
