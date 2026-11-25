@@ -50,17 +50,6 @@ export function App() {
   const inExam = useMatch('/mock/:id') !== null;
   // A tab stays lit on the screens it leads to (Quizzes on a quiz session and a question's edit).
   const { pathname, search } = useLocation();
-  const textSize = settings?.textSize;
-  useEffect(() => {
-    if (!textSize) return;
-    document.documentElement.style.fontSize = `${textSize}%`;
-    // Mirrored for the inline script in index.html, which applies it before the first paint.
-    try {
-      localStorage.setItem('let-display', JSON.stringify({ textSize }));
-    } catch {
-      /* storage blocked: the next load just applies it a moment later */
-    }
-  }, [textSize]);
 
   // Signed in: bring this device up to date when the app opens and whenever the network comes back.
   useEffect(() => {

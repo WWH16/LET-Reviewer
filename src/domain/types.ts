@@ -128,6 +128,7 @@ export interface Settings {
   subjects: Subjects;
   examDate: string | null;
   timer: TimerSetting;
+  /** No longer applied: text is always the default size (the Display page is gone). Kept so older settings still read. */
   textSize: 100 | 115 | 130;
   shortcuts: boolean;
   strictSheet: boolean;

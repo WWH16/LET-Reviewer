@@ -7,10 +7,9 @@
     <link rel="apple-touch-icon" href="/icon-180.png" />
     <title>LET Reviewer</title>
     <script>
-      // Text size, saved by App.tsx, applied before the first paint so it does not flash.
+      // Text size is always the default now that Display is gone: drop a size saved by an older version.
       try {
-        var d = JSON.parse(localStorage.getItem('let-display'));
-        if (d && +d.textSize) document.documentElement.style.fontSize = +d.textSize + '%';
+        localStorage.removeItem('let-display');
       } catch (e) {}
     </script>
   </head>
