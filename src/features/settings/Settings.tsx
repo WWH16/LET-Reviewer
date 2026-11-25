@@ -226,7 +226,7 @@ export function Settings() {
           <p className="muted">
             {demo
               ? `${demo} sample answers are mixed into your stats. Remove them before you study for real.`
-              : 'Six weeks of made-up answers, to see Stats, the streak and Missed questions full. Your own answers are not touched.'}
+              : 'Six weeks of made-up answers, to see Stats and the streak full. Your own answers are not touched.'}
           </p>
           <div className="row">
             {demo ? (

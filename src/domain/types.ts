@@ -51,6 +51,28 @@ export interface Attempt {
   examId?: string;
 }
 
+/** One answer in a quiz take: the letter she picked as shown, and whether it was right. */
+export interface TakeResult {
+  id: string;
+  chosen: Key;
+  correct: boolean;
+}
+
+/** A quiz take in progress, kept on this device (meta 'quizTakes') so she can leave and continue it. */
+export interface QuizTake {
+  id: string;
+  quizId: string;
+  timed: boolean;
+  /** Question ids in this take's shuffled order. */
+  items: string[];
+  /** Each question's shown choice order, as original keys. */
+  orders: Record<string, Key[]>;
+  results: TakeResult[];
+  /** Time spent with the take open, for a timed quiz's clock. */
+  spentMs: number;
+  updatedAt: string;
+}
+
 export type PaperSize = 'a4' | 'letter' | 'folio';
 
 export interface MockExam {

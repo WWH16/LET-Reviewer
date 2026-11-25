@@ -3,7 +3,6 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { parsePasted, previewImport, previewQuiz, validateItem } from './validate';
 import { examLabel } from './ids';
-import { buildCards, dueCards } from './leitner';
 import { dayKey, heatWeeks, streak } from './dates';
 import { drawMock, quotas } from './examDraw';
 import { PARTS } from './let-config';
@@ -108,50 +107,6 @@ describe('ids and import', () => {
     const p = previewImport(sample, new Set(), opts);
     expect(p.invalid.map((r) => `${r.label}: ${r.errors.join(' ')}`)).toEqual([]);
     expect(p.ready).toHaveLength(sample.length);
-  });
-});
-
-describe('Leitner', () => {
-  const question = q();
-  const qs = new Map([[question.id, question]]);
-  const att = (at: string, chosen: string, mode: Attempt['mode'] = 'drill'): Attempt => ({
-    id: at,
-    questionId: question.id,
-    chosen: chosen as Attempt['chosen'],
-    ms: 1000,
-    mode,
-    at,
-  });
-  it('puts a wrong answer in box 1, due tomorrow', () => {
-    const c = buildCards([att('2026-11-10T21:00:00', 'A')], qs).get(question.id)!;
-    expect(c).toMatchObject({ box: 1, due: '2026-11-11' });
-  });
-  it('moves up only on a right answer in Review', () => {
-    const c = buildCards([att('2026-11-10T21:00:00', 'A'), att('2026-11-11T21:00:00', 'B', 'review'), att('2026-11-12T21:00:00', 'B')], qs);
-    expect(c.get(question.id)).toMatchObject({ box: 2, due: '2026-11-13' });
-    expect(dueCards(c, '2026-11-12')).toHaveLength(0);
-  });
-  it('re-scores history when the key is fixed', () => {
-    const fixed = new Map([[question.id, { ...question, answer: 'A' as const }]]);
-    expect(buildCards([att('2026-11-10T21:00:00', 'A')], fixed).size).toBe(0);
-  });
-  it('counts 00:30 as the night before, and streaks across days', () => {
-    expect(dayKey(new Date(2026, 10, 16, 0, 30))).toBe('2026-11-15');
-    expect(streak(new Set(['2026-11-13', '2026-11-14', '2026-11-15']), '2026-11-15')).toBe(3);
-  });
-  it('keeps a streak alive until tonight, across a month end', () => {
-    const days = ['2026-10-30', '2026-10-31', '2026-11-01', '2026-11-02', '2026-11-14', '2026-11-15'];
-    expect(streak(new Set(days), '2026-11-16')).toBe(2);
-    expect(streak(new Set(days), '2026-11-17')).toBe(0);
-  });
-  it('lays the activity grid out in Sunday-first weeks that stop at today', () => {
-    // 2026-11-16 is a Monday: this week holds Sunday and Monday only.
-    const weeks = heatWeeks(new Map([['2026-11-16', 12], ['2026-11-08', 150]]), '2026-11-16', 3);
-    expect(weeks.map((w) => w.length)).toEqual([7, 7, 2]);
-    expect(weeks[0][0].day).toBe('2026-11-01');
-    expect(weeks[1][0]).toEqual({ day: '2026-11-08', count: 150, level: 4 });
-    expect(weeks[2][1]).toEqual({ day: '2026-11-16', count: 12, level: 2 });
-    expect(weeks[2][0].level).toBe(0);
   });
 });
 

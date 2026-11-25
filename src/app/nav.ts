@@ -28,7 +28,7 @@ export const PLACES: Place[] = [
     here: (p, s) => p.startsWith('/quiz') || p.startsWith('/question/') || session(p, s, 'quiz'),
   },
   { to: '/mock', label: 'Mock exams', short: 'Mock', icon: 'mock', here: (p) => p.startsWith('/mock') },
-  { to: '/missed', label: 'Missed questions', icon: 'retry', wideOnly: true, here: (p, s) => p === '/missed' || session(p, s, 'review') },
+  { to: '/unfinished', label: 'Unfinished', icon: 'clock', wideOnly: true, here: (p) => p === '/unfinished' },
   { to: '/progress', label: 'Stats', icon: 'stats', here: (p) => p.startsWith('/progress') },
   { to: '/settings', label: 'Settings', icon: 'settings', narrowOnly: true, here: (p) => p.startsWith('/settings') },
 ];

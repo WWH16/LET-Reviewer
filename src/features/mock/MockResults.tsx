@@ -92,7 +92,6 @@ export function MockResults() {
       return true;
     });
 
-  const wrongCount = exam.itemIds.filter((_, i) => examItem(exam, i, qmap)?.answer !== (exam.answers[String(i + 1)] ?? null)).length;
 
   const hasPacing = exam.form === 'digital' && checkpoints.length > 0;
 
@@ -154,7 +153,6 @@ export function MockResults() {
             Time: {exam.form === 'digital' ? formatClock(exam.elapsedMs) : exam.totalMin !== null ? `${exam.totalMin} min (entered)` : 'not entered'}
             {exam.timeLimitMin !== null && ` of ${exam.timeLimitMin} min`}
           </p>
-          {wrongCount > 0 && <p className="muted">Wrong and blank items were added to Missed questions.</p>}
         </section>
 
         <RatingCard rating={rating} warned={s.pct < PART_FLOOR ? exam.part : undefined} className="span-3">

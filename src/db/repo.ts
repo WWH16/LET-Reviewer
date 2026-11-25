@@ -2,9 +2,9 @@
 
 import { db } from './db';
 import { previewImport } from '../domain/validate';
-import { isCorrect } from '../domain/leitner';
+import { isCorrect } from '../domain/scoring';
 import { originalKey } from '../domain/choices';
-import { DEFAULT_SETTINGS, type Area, type Attempt, type Key, type MockExam, type Question, type Settings } from '../domain/types';
+import { DEFAULT_SETTINGS, type Area, type Attempt, type Key, type MockExam, type Question, type QuizTake, type Settings } from '../domain/types';
 import { setSubjectNames } from '../domain/subjects';
 import { slug } from '../domain/ids';
 import sample from '../domain/sample-questions.json';
@@ -94,6 +94,21 @@ export async function restoreQuestions(ids: string[]) {
   });
 }
 
+
+// ---------- Quiz takes (device-only, so a quiz left midway can be continued) ----------
+
+const TAKES = 'quizTakes';
+export const getTakes = () => getMeta<QuizTake[]>(TAKES, []);
+
+/** Saves a take, newest first. */
+export async function saveTake(t: QuizTake) {
+  const rest = (await getTakes()).filter((x) => x.id !== t.id);
+  await setMeta(TAKES, [{ ...t, updatedAt: nowIso() }, ...rest]);
+}
+
+export async function dropTake(id: string) {
+  await setMeta(TAKES, (await getTakes()).filter((x) => x.id !== id));
+}
 
 // ---------- Attempts ----------
 

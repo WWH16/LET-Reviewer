@@ -19,7 +19,7 @@ export function Progress() {
   const stats = useStats();
   const announce = useAnnounce();
   if (!stats) return <Page title="Stats">{null}</Page>;
-  const { attempts, qmap, settings, rating, parts, days, today, todayAttempts, todayCorrect, due } = stats;
+  const { attempts, qmap, settings, rating, parts, days, today, todayAttempts, todayCorrect } = stats;
 
   if (!attempts.length)
     return (
@@ -67,10 +67,6 @@ export function Progress() {
               <div>
                 <dt>Study days</dt>
                 <dd className="num">{days.size}</dd>
-              </div>
-              <div>
-                <dt>Due today</dt>
-                <dd className="num">{due.length}</dd>
               </div>
             </dl>
           </div>

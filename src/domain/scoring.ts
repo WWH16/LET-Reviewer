@@ -1,8 +1,13 @@
 // Accuracy and the projected LET rating (plan §3, §6.6, §8.4).
 
-import { isCorrect } from './leitner';
 import { LEVEL_WEIGHTS, PART_FLOOR, PASSING_AVERAGE } from './let-config';
 import type { Area, Attempt, Level, Question } from './types';
+
+/** `null` when the question has no key or is gone, so the attempt cannot be scored. */
+export function isCorrect(a: Attempt, q: Question | undefined): boolean | null {
+  if (!q || q.deleted || q.answer === null) return null;
+  return a.chosen === q.answer;
+}
 
 export interface Tally {
   correct: number;

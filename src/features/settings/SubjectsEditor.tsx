@@ -22,7 +22,7 @@ export function SubjectsEditor({ s }: { s: Settings }) {
   return (
     <>
       <p className="muted">
-        Name the subjects in each part. Quizzes, mock exams, Missed questions and Stats all follow this list.
+        Name the subjects in each part. Quizzes, mock exams and Stats all follow this list.
       </p>
       <MajorHint level={s.level} />
       {partsFor(s.level).map((area) => {

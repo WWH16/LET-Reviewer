@@ -26,7 +26,7 @@ const Quizzes = lazy(() => import('../features/quizzes/Quizzes').then((m) => ({ 
 const Subject = lazy(() => import('../features/quizzes/Subject').then((m) => ({ default: m.Subject })));
 const QuizPage = lazy(() => import('../features/quizzes/QuizPage').then((m) => ({ default: m.QuizPage })));
 const NewQuiz = lazy(() => import('../features/quizzes/NewQuiz').then((m) => ({ default: m.NewQuiz })));
-const Missed = lazy(() => import('../features/practice/Missed').then((m) => ({ default: m.Missed })));
+const Unfinished = lazy(() => import('../features/practice/Unfinished').then((m) => ({ default: m.Unfinished })));
 const States = lazy(() => import('../features/states/States').then((m) => ({ default: m.States })));
 import { Empty } from '../ui/Empty';
 import { btn } from '../ui/btn';
@@ -48,7 +48,7 @@ export function App() {
   const settings = useSettings();
   // A running mock exam (finished and printed ones redirect away from this route).
   const inExam = useMatch('/mock/:id') !== null;
-  // A tab stays lit on the screens it leads to (Quizzes on a quiz session, Missed questions on a review).
+  // A tab stays lit on the screens it leads to (Quizzes on a quiz session and a question's edit).
   const { pathname, search } = useLocation();
   const textSize = settings?.textSize;
   useEffect(() => {
@@ -137,7 +137,7 @@ export function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/session" element={<Session />} />
-          <Route path="/missed" element={<Missed />} />
+          <Route path="/unfinished" element={<Unfinished />} />
           <Route path="/mock" element={<MockSetup />} />
           <Route path="/mock/:id" element={<MockExam />} />
           <Route path="/mock/:id/print" element={<MockPrint />} />

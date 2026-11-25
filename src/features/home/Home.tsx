@@ -6,6 +6,7 @@ import { useStats } from '../progress/useStats';
 import { weakestSubjects } from '../../domain/scoring';
 import { PARTS, subareaName } from '../../domain/let-config';
 import { groupQuizzes } from '../../domain/quiz';
+import type { QuizTake } from '../../domain/types';
 import { FirstRun } from './FirstRun';
 import { WeekStrip } from './WeekStrip';
 import { btn } from '../../ui/btn';
@@ -23,8 +24,9 @@ export function Home() {
   const stats = useStats();
   const exams = useExams();
   const lastBackup = useMeta<{ at: string; attempts: number } | null>('lastBackup', null);
+  const takes = useMeta<QuizTake[]>('quizTakes', []);
 
-  if (!stats || !exams || lastBackup === undefined) return <Page title="Study" titleHidden>{null}</Page>;
+  if (!stats || !exams || lastBackup === undefined || !takes) return <Page title="Study" titleHidden>{null}</Page>;
   if (!stats.hasQuestions)
     return (
       <Page title="Study">
@@ -32,7 +34,7 @@ export function Home() {
       </Page>
     );
 
-  const { due, days, today, settings, attempts, qmap } = stats;
+  const { days, today, settings, attempts, qmap } = stats;
   const open = exams.find((e) => e.status === 'in-progress' && e.form === 'digital');
   const printed = exams.find((e) => e.status === 'printed');
   const toExam = settings.examDate ? daysBetween(today, settings.examDate) : null;
@@ -43,16 +45,18 @@ export function Home() {
 
   const weakest = weakestSubjects(attempts, qmap)[0];
   const quizzes = groupQuizzes(qmap.values()).length;
+  // Quiz takes left midway and mocks not graded yet.
+  const unfinished = takes.length + exams.filter((e) => e.status !== 'graded').length;
 
   // A new quiz leads: it is how questions come in, and on a wide screen it is the large tile.
   const modes: Mode[] = [
     { name: 'New quiz', line: 'Pick a subject, ask Claude, then take it.', icon: 'lightning', to: '/quizzes/new' },
     {
-      name: 'Missed questions',
-      line: due.length ? `${due.length} due today, by subject.` : 'Nothing due today. Misses come back the next day.',
-      icon: 'retry',
-      to: due.length ? '/missed' : undefined,
-      count: due.length || undefined,
+      name: 'Unfinished',
+      line: unfinished ? `${unfinished} to continue.` : 'Nothing left midway.',
+      icon: 'clock',
+      to: unfinished ? '/unfinished' : undefined,
+      count: unfinished || undefined,
     },
     {
       name: 'Your quizzes',

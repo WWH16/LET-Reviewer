@@ -1,6 +1,6 @@
 // Shuffled choices: each quiz take and each mock shows the choices in a new order, so the answer is not
 // always the same letter. She sees the letters A to D in that order; answers are saved as the original
-// keys, so history and Missed questions never depend on how a question was shown.
+// keys, so history and Stats never depend on how a question was shown.
 
 import { shuffle } from './examDraw';
 import { KEYS, type Key, type Question } from './types';

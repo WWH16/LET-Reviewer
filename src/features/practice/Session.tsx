@@ -5,61 +5,41 @@ import { Page } from '../../ui/Page';
 import { Icon } from '../../ui/Icon';
 import { ChoiceGroup } from '../../ui/ChoiceGroup';
 import { Stem } from '../../ui/Stem';
-import { useAnnounce } from '../../ui/Status';
-import { db } from '../../db/db';
 import { useQuestionMap, useSettings } from '../../db/hooks';
-import { recordAttempt } from '../../db/repo';
-import { buildCards, dueCards } from '../../domain/leitner';
+import { dropTake, getTakes, nowIso, recordAttempt, saveTake, uuid } from '../../db/repo';
 import { shuffle } from '../../domain/examDraw';
 import { counts } from '../../domain/quiz';
-import { dayKey } from '../../domain/dates';
 import { choiceOrder, originalKey, shown } from '../../domain/choices';
 import { paceMs, subareaName } from '../../domain/let-config';
-import { KEYS, type Key, type Mode, type Question } from '../../domain/types';
+import { KEYS, type Key, type QuizTake, type TakeResult } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { Empty } from '../../ui/Empty';
 import { requestSync } from '../../sync/trigger';
 
-const TITLES: Record<string, string> = { quiz: 'Quiz', review: 'Missed questions' };
+const title = 'Quiz';
 /** mm:ss for the timed quiz's clock. */
 const mmss = (ms: number) => {
   const s = Math.max(0, Math.ceil(ms / 1000));
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 };
 
-/** Picks the session's items once, when it opens: a quiz's questions, or the misses due today. */
-async function pickItems(mode: string, params: URLSearchParams, qmap: Map<string, Question>): Promise<string[]> {
-  if (mode === 'quiz') return shuffle([...qmap.values()].filter((q) => counts(q) && q.quizId === params.get('quiz'))).map((q) => q.id);
-  const due = dueCards(buildCards(await db.attempts.orderBy('at').toArray(), qmap), dayKey(new Date()))
-    .map((c) => qmap.get(c.questionId))
-    .filter((q): q is Question => !!q && counts(q));
-  const sub = params.get('sub');
-  return due.filter((q) => !sub || (q.subarea === sub && q.area === params.get('area'))).map((q) => q.id);
-}
-
-interface Result {
-  id: string;
-  /** The letter she picked, as shown. */
-  chosen: Key;
-  correct: boolean;
-}
-
+/**
+ * One take of a quiz. The take is saved as she answers, so leaving midway keeps her place: Unfinished lists it
+ * and Continue (`&take=`) picks up at the next unanswered question. Finishing or ending the take clears it.
+ */
 export function Session() {
-  const [params] = useSearchParams();
-  const mode = params.get('mode') === 'review' ? 'review' : 'quiz';
+  const [params, setParams] = useSearchParams();
+  const quizId = params.get('quiz') ?? '';
   const qmap = useQuestionMap();
   const settings = useSettings();
-  const [items, setItems] = useState<string[] | null>(null);
-  // Each question's choice order for this take: a new shuffle every time the session starts.
-  const [orders, setOrders] = useState<Map<string, Key[]>>(new Map());
+  const [take, setTake] = useState<QuizTake | null>(null);
   const [i, setI] = useState(0);
   const [chosen, setChosen] = useState<Key | null>(null);
   const [checked, setChecked] = useState(false);
   const [eliminated, setEliminated] = useState<Set<string>>(new Set());
-  const [results, setResults] = useState<Result[]>([]);
   const [done, setDone] = useState(false);
   const [run, setRun] = useState(0);
-  // Timed quiz: the clock starts when the questions are picked and runs at the LET's own pace per item.
+  // Timed quiz: the clock runs at the LET's own pace per item, and only while the take is open.
   const [startedAt, setStartedAt] = useState(0);
   const [now, setNow] = useState(() => Date.now());
   const [timeUp, setTimeUp] = useState(false);
@@ -67,19 +47,49 @@ export function Session() {
   const qHeading = useRef<HTMLHeadingElement>(null);
   const fbHeading = useRef<HTMLHeadingElement>(null);
   const resHeading = useRef<HTMLHeadingElement>(null);
-  const announce = useAnnounce();
 
+  // Opens the take once: the saved one named in the URL, or a new shuffle of the quiz.
   useEffect(() => {
-    if (!qmap || items) return;
-    pickItems(mode, params, qmap).then((picked) => {
-      setOrders(new Map(picked.map((id) => [id, choiceOrder(qmap.get(id)!)])));
-      setItems(picked);
-      setStartedAt(Date.now());
+    if (!qmap || take) return;
+    (async () => {
+      const saved = (await getTakes()).find((t) => t.id === params.get('take') && t.quizId === quizId);
+      const live = saved?.items.filter((id) => qmap.get(id) && counts(qmap.get(id)!));
+      let next: QuizTake;
+      if (saved && live?.length) next = { ...saved, items: live, results: saved.results.filter((r) => live.includes(r.id)) };
+      else {
+        const items = shuffle([...qmap.values()].filter((q) => counts(q) && q.quizId === quizId)).map((q) => q.id);
+        next = {
+          id: uuid(),
+          quizId,
+          timed: params.get('timed') === '1',
+          items,
+          orders: Object.fromEntries(items.map((id) => [id, choiceOrder(qmap.get(id)!)])),
+          results: [],
+          spentMs: 0,
+          updatedAt: nowIso(),
+        };
+        if (items.length) await saveTake(next);
+      }
+      setTake(next);
+      setI(Math.min(next.results.length, next.items.length - 1));
+      setDone(next.items.length > 0 && next.results.length >= next.items.length);
+      setStartedAt(Date.now() - next.spentMs);
       setNow(Date.now());
-    });
-  }, [qmap, items, mode, params, run]);
+      // The URL names the take, so a reload continues it instead of starting over.
+      if (params.get('take') !== next.id)
+        setParams(
+          (p) => {
+            p.set('take', next.id);
+            return p;
+          },
+          { replace: true },
+        );
+    })();
+  }, [qmap, take, quizId, params, setParams, run]);
 
-  const timed = params.get('timed') === '1';
+  const items = take?.items ?? null;
+  const results: TakeResult[] = take?.results ?? [];
+  const timed = !!take?.timed;
   const limitMs = timed && items && qmap ? items.reduce((s, id) => s + paceMs(qmap.get(id)!.area), 0) : 0;
   const leftMs = limitMs - (now - startedAt);
   useEffect(() => {
@@ -103,12 +113,13 @@ export function Session() {
     if (checked) fbHeading.current?.focus();
   }, [checked]);
 
+  // A finished or ended take leaves Unfinished, and its answers go to the account. Never on each answer.
   useEffect(() => {
-    if (!done) return;
+    if (!done || !take) return;
     resHeading.current?.focus();
-    // A finished session is one of the moments answers go to the account. Never on each answer.
+    dropTake(take.id);
     requestSync();
-  }, [done]);
+  }, [done, take]);
 
   // Shortcuts listen on the window, so they work wherever focus is: on the page heading when
   // question 1 opens, or on the page after a click on empty space. Only a question screen sets a handler.
@@ -120,37 +131,36 @@ export function Session() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  const title = TITLES[mode];
-  if (!items || !qmap || !settings) return <Page title={title} titleHidden>{null}</Page>;
+  if (!items || !take || !qmap || !settings) return <Page title={title} titleHidden>{null}</Page>;
 
   if (!items.length)
     return (
       <Page title={title}>
-        {mode === 'quiz' ? (
-          <Empty icon="practice" title="This quiz has no questions left" text="Its questions were removed, or it is not on this device.">
-            <Link className={btn.primary} to="/quizzes">
-              Back to Quizzes
-            </Link>
-          </Empty>
-        ) : (
-          <Empty icon="check" title="Nothing due today" text="Questions you miss come back here the next day.">
-            <Link className={btn.primary} to="/missed">
-              Back to Missed questions
-            </Link>
-          </Empty>
-        )}
+        <Empty icon="practice" title="This quiz has no questions left" text="Its questions were removed, or it is not on this device.">
+          <Link className={btn.primary} to="/quizzes">
+            Back to Quizzes
+          </Link>
+        </Empty>
       </Page>
     );
 
+  const orders = new Map(Object.entries(take.orders));
   const restart = () => {
-    setItems(null);
+    setTake(null);
     setI(0);
     setChosen(null);
     setChecked(false);
     setEliminated(new Set());
-    setResults([]);
     setDone(false);
     setTimeUp(false);
+    // A retake is a new take: drop the URL's, so the open effect shuffles afresh.
+    setParams(
+      (p) => {
+        p.delete('take');
+        return p;
+      },
+      { replace: true },
+    );
     setRun((r) => r + 1);
   };
 
@@ -168,10 +178,9 @@ export function Session() {
             <span className="display">{results.length ? Math.round((correct / results.length) * 100) : 0}%</span>
             <span className="display-unit">
               {correct} of {results.length} correct
-              {timeUp && results.length < items.length ? `, ${items.length - results.length} not reached` : ''}
+              {results.length < items.length ? `, ${items.length - results.length} not reached` : ''}
             </span>
           </p>
-          {wrong.length > 0 && <p className="well">Missed questions come back in Missed questions tomorrow.</p>}
         </section>
         {wrong.length > 0 && (
           <section className="stack-sm" aria-labelledby="res-wrong">
@@ -202,17 +211,11 @@ export function Session() {
         )}
         <div className="row">
           <button type="button" className={btn.primary} onClick={restart}>
-            {mode === 'review' ? 'Check this subject again' : 'Retake, shuffled'}
+            Retake, shuffled
           </button>
-          {mode === 'quiz' ? (
-            <Link className={btn.secondary} to={`/quiz/${encodeURIComponent(params.get('quiz') ?? '')}`}>
-              Back to the quiz
-            </Link>
-          ) : (
-            <Link className={btn.secondary} to="/missed">
-              Back to Missed questions
-            </Link>
-          )}
+          <Link className={btn.secondary} to={`/quiz/${encodeURIComponent(quizId)}`}>
+            Back to the quiz
+          </Link>
         </div>
       </Page>
     );
@@ -225,8 +228,10 @@ export function Session() {
   const check = async () => {
     if (!chosen || checked) return;
     setChecked(true);
-    setResults((r) => [...r, { id: q.id, chosen, correct: chosen === q.answer }]);
-    await recordAttempt({ questionId: q.id, chosen: originalKey(orders.get(q.id), chosen), ms: Date.now() - shownAt.current, mode: mode as Mode });
+    const saved = { ...take, results: [...results, { id: q.id, chosen, correct: chosen === q.answer }], spentMs: Date.now() - startedAt };
+    setTake(saved);
+    await recordAttempt({ questionId: q.id, chosen: originalKey(orders.get(q.id), chosen), ms: Date.now() - shownAt.current, mode: 'quiz' });
+    await saveTake(saved);
   };
   const next = () => {
     if (isLast) return setDone(true);

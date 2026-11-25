@@ -1,4 +1,4 @@
-// Sample answers, so Stats, the streak and Missed questions can be seen full before any real studying.
+// Sample answers, so Stats and the streak can be seen full before any real studying.
 // Pure: the same questions and date always give the same answers.
 
 import { addDays, dayKey, parseDay } from './dates';
