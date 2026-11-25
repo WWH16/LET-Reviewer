@@ -12,12 +12,14 @@ import { newQuizId } from '../../domain/quiz';
 import { parsePasted, previewQuiz } from '../../domain/validate';
 import type { Area } from '../../domain/types';
 import { btn } from '../../ui/btn';
+import { Icon } from '../../ui/Icon';
 import { Select } from '../../ui/Select';
 import { MajorHint } from '../settings/MajorHint';
 
 const NEW = '__new';
-/** One reply from Claude stays reliable up to about this many questions. */
-const MAX = 50;
+/** A quiz asks for 10 to 150 questions: 150 is the size of one part of the LET. */
+const MIN = 10;
+const MAX = 150;
 
 /**
  * Making a quiz is where questions come from: pick the part and the subject, copy the prompt to Claude,
@@ -33,12 +35,15 @@ export function NewQuiz() {
   const [pickedArea, setArea] = useState<Area | null>(null);
   const [subPick, setSubPick] = useState(() => params.get('sub') ?? '');
   const [newSub, setNewSub] = useState('');
-  // Typed, so it can be any size; kept as text while she types, read as a whole number from 1 to MAX.
-  const [nText, setNText] = useState('10');
-  const n = Math.min(MAX, Math.max(1, Math.round(Number(nText)) || 10));
+  // Digits only, never above MAX while she types; below MIN it is read as MIN and set to it when she leaves the field.
+  const [nText, setNText] = useState(String(MIN));
+  const n = Math.min(MAX, Math.max(MIN, Number(nText) || MIN));
   const [text, setText] = useState('');
   const [clipError, setClipError] = useState('');
-  const [busy, setBusy] = useState(false);
+  /** The save under way: `take` for Save and take it, `only` for Save only. That button shows the spinner. */
+  const [busy, setBusy] = useState<'take' | 'only' | null>(null);
+  /** The prompt last copied, so the button says Copied until the prompt changes or two seconds pass. */
+  const [copiedPrompt, setCopiedPrompt] = useState<string | null>(null);
   const navigate = useNavigate();
   const announce = useAnnounce();
 
@@ -81,15 +86,20 @@ export function NewQuiz() {
 
   const save = async (start: boolean) => {
     if (parsed.kind !== 'questions' || !ready || busy) return;
-    setBusy(true);
-    const subarea = await fileUnder();
-    const now = nowIso();
-    const id = newQuizId(now);
-    const { ready: qs } = previewQuiz(parsed.items, { id, area, subarea }, now);
-    await importQuestions(qs);
-    protectStorage(); // first real data: ask the browser not to evict it
-    announce(`${subjectName} quiz saved with ${qs.length} questions`);
-    navigate(start ? `/session?mode=quiz&quiz=${encodeURIComponent(id)}` : `/quizzes/${area}/${subarea}`);
+    setBusy(start ? 'take' : 'only');
+    try {
+      const subarea = await fileUnder();
+      const now = nowIso();
+      const id = newQuizId(now);
+      const { ready: qs } = previewQuiz(parsed.items, { id, area, subarea }, now);
+      await importQuestions(qs);
+      protectStorage(); // first real data: ask the browser not to evict it
+      announce(`${subjectName} quiz saved with ${qs.length} questions`);
+      navigate(start ? `/session?mode=quiz&quiz=${encodeURIComponent(id)}` : `/quizzes/${area}/${subarea}`);
+    } catch {
+      setBusy(null);
+      announce('Could not save the quiz. Try again.');
+    }
   };
 
   return (
@@ -140,23 +150,36 @@ export function NewQuiz() {
           )}
           <div className="field">
             <label htmlFor="nq-n">Number of questions</label>
+            {/* Text, not type="number": a number field also takes "e", "-" and decimals. The arrow keys still step. */}
             <input
               id="nq-n"
-              type="number"
+              type="text"
               inputMode="numeric"
-              min={1}
-              max={MAX}
+              pattern="[0-9]*"
               list="nq-n-sizes"
+              aria-describedby="nq-n-help"
               value={nText}
-              onChange={(e) => setNText(e.target.value)}
+              onChange={(e) => {
+                // Stripped here rather than with maxLength, so a stray letter never blocks the next digit.
+                const digits = e.target.value.replace(/\D/g, '').slice(0, 3);
+                setNText(digits && Number(digits) > MAX ? String(MAX) : digits);
+              }}
+              onKeyDown={(e) => {
+                const step = e.key === 'ArrowUp' ? 1 : e.key === 'ArrowDown' ? -1 : 0;
+                if (!step) return;
+                e.preventDefault();
+                setNText(String(Math.min(MAX, Math.max(MIN, n + step))));
+              }}
               onBlur={() => setNText(String(n))}
             />
             <datalist id="nq-n-sizes">
-              {[5, 10, 15, 20, 30].map((x) => (
+              {[10, 20, 50, 100, 150].map((x) => (
                 <option key={x} value={x} />
               ))}
             </datalist>
-            <span className="meta">Type any number from 1 to {MAX}, or pick a usual size.</span>
+            <span id="nq-n-help" className="meta">
+              Type any number from {MIN} to {MAX}, or pick a usual size.
+            </span>
           </div>
         </div>
       </section>
@@ -170,14 +193,23 @@ export function NewQuiz() {
         <div>
           <button
             type="button"
-            className={btn.secondary}
+            className={copiedPrompt === prompt ? `${btn.secondary} is-copied` : btn.secondary}
             disabled={!ready}
             onClick={async () => {
               await copyText(prompt);
+              setCopiedPrompt(prompt);
+              setTimeout(() => setCopiedPrompt((p) => (p === prompt ? null : p)), 2000);
               announce('Prompt copied. Send it to Claude, then paste the reply below.');
             }}
           >
-            Copy prompt
+            {copiedPrompt === prompt ? (
+              <>
+                <Icon name="check" size={16} />
+                Copied
+              </>
+            ) : (
+              'Copy prompt'
+            )}
           </button>
         </div>
       </section>
@@ -225,10 +257,22 @@ export function NewQuiz() {
         )}
 
         <div className="row">
-          <button type="button" className={btn.primary} disabled={!preview?.ready.length || !ready || busy} onClick={() => save(true)}>
+          <button
+            type="button"
+            className={btn.primary}
+            disabled={!preview?.ready.length || !ready || !!busy}
+            aria-busy={busy === 'take'}
+            onClick={() => save(true)}
+          >
             Save and take it
           </button>
-          <button type="button" className={btn.secondary} disabled={!preview?.ready.length || !ready || busy} onClick={() => save(false)}>
+          <button
+            type="button"
+            className={btn.secondary}
+            disabled={!preview?.ready.length || !ready || !!busy}
+            aria-busy={busy === 'only'}
+            onClick={() => save(false)}
+          >
             Save only
           </button>
           <Link className={btn.quiet} to={back}>

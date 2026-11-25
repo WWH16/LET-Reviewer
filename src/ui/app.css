@@ -1141,6 +1141,10 @@ main.wide {
 .btn[aria-busy='true'] {
   cursor: progress;
 }
+/* Copied: for two seconds the button says so in green words with a check, then turns back. */
+.btn.is-copied {
+  --text-color-kumo-default: var(--color-success);
+}
 /* Working: a ring turns before the label while that button's request runs. A busy primary keeps its ink, so it
    reads as working, not as unavailable. Under reduced motion the ring turns slower but still turns: it is the
    only sign that something is happening. */
