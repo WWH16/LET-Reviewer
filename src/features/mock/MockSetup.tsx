@@ -67,7 +67,7 @@ export function MockSetup() {
       <div className="mock-layout">
         {open.length > 0 && (
           <section className="stack-sm" aria-labelledby="mk-open">
-            <h2 id="mk-open">Not finished</h2>
+            <h2 id="mk-open">Unfinished</h2>
             <ul className="list">
               {open.map((e) => (
                 <li key={e.id} className="spread">
