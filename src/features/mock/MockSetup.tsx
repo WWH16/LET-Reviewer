@@ -30,6 +30,8 @@ export function MockSetup() {
   // Null until she changes them: then every subject with questions is in.
   const [pickedSubjects, setSubjects] = useState<string[] | null>(null);
   const [length, setLength] = useState<Length>('short');
+  // Minutes she sets for this mock, as typed. Empty follows the default: real LET time for its length (Settings, Exam).
+  const [minutes, setMinutes] = useState('');
   const [paper, setPaper] = useState<NonNullable<MockExam['paper']>>({ size: 'folio', columns: 2, large: false, answerKey: true });
   const navigate = useNavigate();
 
@@ -45,7 +47,10 @@ export function MockSetup() {
   const need = quotas(subjects.map(() => 1), n);
   const short = subjects.map((id, i) => ({ id, have: have.get(id) ?? 0, need: need[i] })).filter((x) => x.have < x.need);
   const ready = subjects.length > 0 && short.length === 0;
-  const limit = timeLimit(part, settings.timer, n);
+  const defaultLimit = timeLimit(part, settings.timer, n);
+  // 0 turns the timer off; a blank field takes the default.
+  const typed = minutes.trim() === '' ? null : Math.max(0, Math.round(Number(minutes)) || 0);
+  const limit = typed === null ? defaultLimit : typed === 0 ? null : typed;
   // Kept in the part's own order, so the list and the draw read the same way.
   const toggle = (id: string) =>
     setSubjects(all.map((s) => s.id).filter((x) => (x === id ? !subjects.includes(id) : subjects.includes(x))));
@@ -54,7 +59,7 @@ export function MockSetup() {
     const used = new Set(exams.flatMap((e) => e.itemIds));
     const r = drawMock(pool, subjects, n, used);
     if (!r.ok) return;
-    const exam = newExam({ part, form, itemIds: r.itemIds, qmap, subjects, paper, settings, labels: exams.map((e) => e.label) });
+    const exam = newExam({ part, form, itemIds: r.itemIds, qmap, subjects, paper, settings, labels: exams.map((e) => e.label), timeLimitMin: limit });
     await saveExam(exam);
     navigate(examLink(exam));
   };
@@ -152,6 +157,23 @@ export function MockSetup() {
                 <option value="full">Full: {PARTS[part].items} items</option>
               </Select>
             </div>
+            {form === 'digital' && (
+              <div className="field">
+                <label htmlFor="mk-min">Time limit, in minutes</label>
+                <input
+                  id="mk-min"
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  placeholder={defaultLimit === null ? 'No timer' : String(defaultLimit)}
+                  value={minutes}
+                  onChange={(e) => setMinutes(e.target.value)}
+                />
+                <span className="meta">
+                  {defaultLimit === null ? 'Blank for no timer.' : `Blank for the real LET time, ${defaultLimit} minutes.`} 0 turns the timer off.
+                </span>
+              </div>
+            )}
           </div>
 
           <fieldset className="stack-sm">

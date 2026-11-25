@@ -14,6 +14,8 @@ export function newExam(o: {
   paper: MockExam['paper'];
   settings: Settings;
   labels: readonly string[];
+  /** Minutes she set for a digital mock (null: no timer). Absent: the default from Settings, Exam. */
+  timeLimitMin?: number | null;
 }): MockExam {
   const n = o.itemIds.length;
   const now = nowIso();
@@ -25,7 +27,7 @@ export function newExam(o: {
     itemIds: o.itemIds,
     orders: o.itemIds.map((id) => choiceOrder(o.qmap.get(id)!)),
     subjects: o.subjects,
-    timeLimitMin: o.form === 'digital' ? timeLimit(o.part, o.settings.timer, n) : PARTS[o.part].minutes * (n / PARTS[o.part].items),
+    timeLimitMin: o.form === 'digital' ? (o.timeLimitMin !== undefined ? o.timeLimitMin : timeLimit(o.part, o.settings.timer, n)) : PARTS[o.part].minutes * (n / PARTS[o.part].items),
     paper: o.form === 'printed' ? o.paper : null,
     answers: {},
     answeredAt: {},
