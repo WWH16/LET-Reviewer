@@ -6,7 +6,6 @@ import { Empty } from '../../ui/Empty';
 import { useAnnounce } from '../../ui/Status';
 import { removeQuiz, restoreQuestions } from '../../db/repo';
 import { subareaName } from '../../domain/let-config';
-import { topicName } from '../../domain/subjects';
 import { btn } from '../../ui/btn';
 import { count, lastLine, quizDate, useQuizzes } from './useQuizzes';
 
@@ -38,7 +37,6 @@ export function QuizPage() {
   return (
     <Page title={`${subject}, ${z.name}`} back={{ to: back, label: `${subject} quizzes` }}>
       <p className="muted">
-        {z.topicId ? `Topic: ${topicName(z.subarea, z.topicId)}. ` : 'The whole subject. '}
         {count(z.questions.length, 'question')}, made {quizDate(z.createdAt)}. {lastLine(z.questions.map((q) => q.id), data.last)}.
       </p>
       <div className="row">

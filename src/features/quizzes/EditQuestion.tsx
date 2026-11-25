@@ -6,7 +6,6 @@ import { useAnnounce } from '../../ui/Status';
 import { db } from '../../db/db';
 import { removeQuestion, restoreQuestions, saveQuestion } from '../../db/repo';
 import { PARTS, subareaName } from '../../domain/let-config';
-import { topicName } from '../../domain/subjects';
 import { KEYS, type Key, type Question } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { Empty } from '../../ui/Empty';
@@ -119,18 +118,6 @@ export function EditQuestion() {
         <section className="tile" aria-labelledby="eq-h-file">
           <h2 id="eq-h-file">Details</h2>
           <div className="grid-2">
-            {q.topicId ? (
-              <p className="field">
-                <span className="label">Topic</span>
-                <span>{topicName(q.subarea, q.topicId)}</span>
-                <span className="meta">Rename it in Settings, Subjects.</span>
-              </p>
-            ) : (
-              <div className="field">
-                <label htmlFor="eq-topic">Topic</label>
-                <input id="eq-topic" type="text" value={q.topic} onChange={(e) => set({ topic: e.target.value })} />
-              </div>
-            )}
             <div className="field">
               <label htmlFor="eq-lang">Language</label>
               <Select id="eq-lang" value={q.lang} onChange={(v) => set({ lang: v as Question['lang'] })}>

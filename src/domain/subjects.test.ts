@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { setSubjectNames, subareaName, subjectId, subjectsOf, topicOf } from './subjects';
+import { setSubjectNames, subareaName, subjectId, subjectsOf } from './subjects';
 import type { Subjects } from './types';
 
-const mine: Subjects = { GenEd: [{ id: 'english', name: 'English 1', topics: [{ id: 'phonology', name: 'Phonology' }] }], ProfEd: [], Major: [] };
+const mine: Subjects = { GenEd: [{ id: 'english', name: 'English 1' }], ProfEd: [], Major: [] };
 
 describe('subjects', () => {
   it('lists hers first, then any subject her questions still use', () => {
@@ -24,10 +24,5 @@ describe('subjects', () => {
   it('gives a new subject an id no other subject in the part has', () => {
     expect(subjectId('English', new Set(['english', 'english-2']))).toBe('english-3');
     expect(subjectId('  ', new Set())).toBe('subject');
-  });
-  it('names what a question is about: her topic, else the topic Claude wrote', () => {
-    setSubjectNames(mine);
-    expect(topicOf({ subarea: 'english', topic: 'Sounds', topicId: 'phonology' })).toBe('Phonology');
-    expect(topicOf({ subarea: 'english', topic: 'Grammar' })).toBe('Grammar');
   });
 });

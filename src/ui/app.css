@@ -1,5 +1,5 @@
 /* Hallmark · shape: app screen · genre: modern-minimal · theme: exam-prep light, after the Pocket Prep apps (by request: their structure, flows and look; our own name, mark and palette) on Kumo components 2.18.1, the Dose faces kept · redesign: polish (quizzes rework, 2026-11-24, brand kept)
- * nav: a side menu at 60rem and up (Study, Quizzes, Mock exams, Missed questions, Stats, then the Settings pages) and a five-tab bottom bar on phones (Study, Quizzes, Mock, Stats, Settings) · screen: a six-column bento from 60rem (Study: the golden greeting beside resume and backup, the ways to study as tiles with New quiz large on butter; Quizzes: one tile per part listing the subjects with quizzes; Stats: the ring beside the rating, subjects beside weakest topics, the streak across; Mock setup: the form beside the open and past exams; mock results: the score beside the rating, the subject breakdown and the retake), one column below · signature: the golden greeting on Study holding the countdown and the week; one golden yellow block per screen holding its figure (the greeting, the quiz bar, the Stats ring, the score) · answers: a near-black ring on butter when chosen, green with a check when right, red with a cross when wrong · states: loading, empty, full
+ * nav: a side menu at 60rem and up (Study, Quizzes, Mock exams, Missed questions, Stats, then the Settings pages) and a five-tab bottom bar on phones (Study, Quizzes, Mock, Stats, Settings) · screen: a six-column bento from 60rem (Study: the golden greeting beside resume and backup, the ways to study as tiles with New quiz large on butter; Quizzes: one tile per part listing the subjects with quizzes; Stats: the ring beside the rating, subjects beside the weakest subjects, the streak across; Mock setup: the form beside the open and past exams; mock results: the score beside the rating, the subject breakdown and the retake), one column below · signature: the golden greeting on Study holding the countdown and the week; one golden yellow block per screen holding its figure (the greeting, the quiz bar, the Stats ring, the score) · answers: a near-black ring on butter when chosen, green with a check when right, red with a cross when wrong · states: loading, empty, full
  * axes: light/grotesk-sans/60 white, 30 yellow, 10 near-black, with green, red and orange for state · posture: friendly-quiet · contrast: pass · modes: light · v2.0.0 */
 /* Hallmark · waive 7b · surface: absolute on --print-ink and --print-paper only, used inside .paper and @media print · the printed booklet and answer sheet need pure black toner on white bond, and the corner markers must scan */
 /* Hallmark · dismissed 41 · the state fills (green, red, orange) carry icons in --color-card, never text in ink; every text pair is in contrast.test.ts */
@@ -309,7 +309,7 @@ h1:not(.sr-only) + p {
 .score-tile .display {
   font-size: calc(var(--text-figure-lead) * 1.25);
 }
-/* A weak topic: its name and figures on the left, its two actions on the right, on one row at every width. */
+/* A weak subject: its name and figures on the left, its two actions on the right, on one row at every width. */
 .weak-item {
   display: flex;
   align-items: center;
@@ -2477,10 +2477,4 @@ dialog.command input:focus-visible {
   .paper .page:last-child {
     break-after: auto;
   }
-}
-
-/* ---------- Settings, Subjects: a subject's topics sit indented under it ---------- */
-.topics {
-  padding-left: var(--space-lg);
-  border-left: 2px solid var(--color-rule);
 }

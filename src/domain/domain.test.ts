@@ -7,7 +7,7 @@ import { buildCards, dueCards } from './leitner';
 import { dayKey, heatWeeks, streak } from './dates';
 import { drawMock, quotas } from './examDraw';
 import { PARTS } from './let-config';
-import { lastResults, projectedRating, recentByArea, recentPartScores, tallyBy } from './scoring';
+import { lastResults, projectedRating, recentByArea, recentPartScores, tallyBy, weakestSubjects } from './scoring';
 import type { Attempt, Question } from './types';
 import sample from './sample-questions.json';
 
@@ -85,10 +85,6 @@ describe('previewQuiz', () => {
     expect(p.repeats).toBe(1);
     expect(p.invalid.map((r) => r.n)).toEqual([2, 4]);
     expect(p.invalid[0].errors[0]).toMatch(/no answer/);
-  });
-  it('files the questions under her topic when the quiz is for one', () => {
-    const p = previewQuiz([item()], { ...quiz, topic: { id: 'tos', name: 'Table of specifications' } }, opts.now);
-    expect(p.ready[0]).toMatchObject({ topicId: 'tos', topic: 'Table of specifications' });
   });
 });
 
@@ -253,5 +249,20 @@ describe('lastResults', () => {
     expect(r.get(one.id)).toBe(true);
     expect(r.get(two.id)).toBe(false);
     expect(r.size).toBe(2);
+  });
+});
+
+describe('weakestSubjects', () => {
+  it('ranks subjects by score and skips ones with too few answers', () => {
+    const a = q({ subarea: 'Assessment of Learning' });
+    const b = q({ subarea: 'Facilitating Learning' });
+    const c = q({ subarea: 'Curriculum Development' });
+    const qs = new Map([a, b, c].map((x) => [x.id, x]));
+    const at = (x: Question, chosen: 'A' | 'B', i: number): Attempt => ({ id: `${x.id}-${i}`, questionId: x.id, chosen, ms: null, mode: 'quiz', at: `2026-11-0${i + 1}T00:00:00.000Z` });
+    const attempts = [0, 1, 2].flatMap((i) => [at(a, 'B', i), at(b, i ? 'A' : 'B', i)]).concat(at(c, 'A', 0));
+    expect(weakestSubjects(attempts, qs).map((w) => [w.subarea, w.tally.correct])).toEqual([
+      ['facilitating-learning', 1],
+      ['assessment-of-learning', 3],
+    ]);
   });
 });

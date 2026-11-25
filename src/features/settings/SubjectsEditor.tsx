@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ReactNode } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useQuestionMap } from '../../db/hooks';
 import { saveSettings } from '../../db/repo';
 import { PARTS, partsFor } from '../../domain/let-config';
@@ -9,8 +9,8 @@ import { btn } from '../../ui/btn';
 import { MajorHint } from './MajorHint';
 
 /**
- * Her subjects in each part, and the topics inside each subject. Renaming keeps the id, so quizzes stay
- * attached; anything that still has questions cannot be removed.
+ * Her subjects in each part. Renaming keeps the id, so quizzes stay attached; a subject that still has
+ * questions cannot be removed.
  */
 export function SubjectsEditor({ s }: { s: Settings }) {
   const qmap = useQuestionMap();
@@ -22,8 +22,7 @@ export function SubjectsEditor({ s }: { s: Settings }) {
   return (
     <>
       <p className="muted">
-        Name the subjects in each part, and the topics inside any of them. Quizzes, mock exams, Missed questions and Stats
-        all follow this list.
+        Name the subjects in each part. Quizzes, mock exams, Missed questions and Stats all follow this list.
       </p>
       <MajorHint level={s.level} />
       {partsFor(s.level).map((area) => {
@@ -40,18 +39,6 @@ export function SubjectsEditor({ s }: { s: Settings }) {
               items={list}
               used={(x) => live.filter((q) => q.area === area && q.subarea === x.id).length}
               onChange={(next) => save(area, next)}
-              inside={(subject) => (
-                <div className="topics">
-                  <NameList
-                    id={`sj-${area}-${subject.id}`}
-                    word="topic"
-                    small
-                    items={subject.topics ?? []}
-                    used={(t) => live.filter((q) => q.subarea === subject.id && q.topicId === t.id).length}
-                    onChange={(topics) => save(area, list.map((x) => (x.id === subject.id ? { ...x, topics } : x)))}
-                  />
-                </div>
-              )}
             />
           </section>
         );
@@ -67,16 +54,12 @@ function NameList({
   items,
   used,
   onChange,
-  inside,
-  small,
 }: {
   id: string;
   word: string;
   items: Subject[];
   used: (x: Subject) => number;
   onChange: (next: Subject[]) => void;
-  inside?: (x: Subject) => ReactNode;
-  small?: boolean;
 }) {
   const [draft, setDraft] = useState('');
   const [error, setError] = useState('');
@@ -98,7 +81,7 @@ function NameList({
 
   return (
     <div className="stack-sm">
-      {items.length === 0 && !small && <p className="meta">No {word}s yet.</p>}
+      {items.length === 0 && <p className="meta">No {word}s yet.</p>}
       {items.length > 0 && (
         <ul className="list">
           {items.map((x) => {
@@ -122,7 +105,6 @@ function NameList({
                     </button>
                   </span>
                 </div>
-                {inside?.(x)}
               </li>
             );
           })}

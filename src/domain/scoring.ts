@@ -2,7 +2,6 @@
 
 import { isCorrect } from './leitner';
 import { LEVEL_WEIGHTS, PART_FLOOR, PASSING_AVERAGE } from './let-config';
-import { topicOf } from './subjects';
 import type { Area, Attempt, Level, Question } from './types';
 
 export interface Tally {
@@ -111,30 +110,26 @@ export function projectedRating(level: Level, parts: Partial<Record<Area, number
   };
 }
 
-export interface WeakTopic {
-  subarea: string;
-  /** Shown name: her topic's, else Claude's. */
-  topic: string;
-  topicId?: string;
+export interface WeakSubject {
   area: Area;
+  subarea: string;
   tally: Tally;
 }
 
-export function weakestTopics(
+/** Her lowest-scoring subjects, each with at least `minAttempts` answers. */
+export function weakestSubjects(
   attempts: readonly Attempt[],
   questions: ReadonlyMap<string, Question>,
   n = 5,
   minAttempts = 3,
-): WeakTopic[] {
-  const meta = new Map<string, { area: Area; subarea: string; topic: string; topicId?: string }>();
-  const tallies = tallyBy(attempts, questions, (q) => {
-    const k = `${q.subarea}\u0000${q.topicId ? `#${q.topicId}` : q.topic}`;
-    meta.set(k, { area: q.area, subarea: q.subarea, topic: topicOf(q), topicId: q.topicId });
-    return k;
-  });
+): WeakSubject[] {
+  const tallies = tallyBy(attempts, questions, (q) => `${q.area}/${q.subarea}`);
   return [...tallies]
     .filter(([, t]) => t.total >= minAttempts)
     .sort(([, a], [, b]) => pct(a)! - pct(b)! || b.total - a.total)
     .slice(0, n)
-    .map(([k, tally]) => ({ ...meta.get(k)!, tally }));
+    .map(([k, tally]) => {
+      const [area, subarea] = k.split('/') as [Area, string];
+      return { area, subarea, tally };
+    });
 }

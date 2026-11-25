@@ -200,7 +200,6 @@ export function validateItem(raw: unknown, n: number, opts: { now: string; batch
     quizId: batchQuizId(opts.batchId, subarea),
     area,
     subarea,
-    topic: str(o.topic),
     lang,
     stem,
     choices,
@@ -261,7 +260,7 @@ export interface QuizPreview {
  */
 export function previewQuiz(
   items: unknown[],
-  quiz: { id: string; area: Area; subarea: string; topic?: { id: string; name: string } | null },
+  quiz: { id: string; area: Area; subarea: string },
   now: string,
 ): QuizPreview {
   const ready: Question[] = [];
@@ -277,7 +276,7 @@ export function previewQuiz(
     const id = quizQuestionId(quiz.id, r.question.stem);
     if (seen.has(id)) return repeats++;
     seen.add(id);
-    ready.push({ ...r.question, id, quizId: quiz.id, ...(quiz.topic && { topicId: quiz.topic.id, topic: quiz.topic.name }) });
+    ready.push({ ...r.question, id, quizId: quiz.id });
   });
   return { ready, invalid, repeats };
 }

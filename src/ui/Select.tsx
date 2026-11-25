@@ -3,7 +3,7 @@ import { Select as KumoSelect } from '@cloudflare/kumo/components/select';
 
 type OptionProps = { value: string | number; children: ReactNode };
 
-// Kumo draws an empty value as a grey placeholder, but here '' is a real choice ("All topics"),
+// Kumo draws an empty value as a grey placeholder, but here '' is a real choice (an "Any" option),
 // so it travels under a stand-in value and is drawn in ink like any other choice.
 const EMPTY = '\u0000all';
 const enc = (v: string) => (v === '' ? EMPTY : v);

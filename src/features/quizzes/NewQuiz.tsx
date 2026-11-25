@@ -20,21 +20,19 @@ const NEW = '__new';
 const MAX = 50;
 
 /**
- * Making a quiz is where questions come from: pick the part, the subject and maybe a topic inside it,
- * copy the prompt to Claude, paste the reply.
+ * Making a quiz is where questions come from: pick the part and the subject, copy the prompt to Claude,
+ * paste the reply.
  * Nothing is saved until she confirms.
  */
 export function NewQuiz() {
   const settings = useSettings();
   const qmap = useQuestionMap();
   const [params] = useSearchParams();
-  // Linked picks: the part, then a subject in it, then optionally a topic in that subject.
+  // Linked picks: the part, then a subject in it.
   // Her lists start empty, so each pick can also name a new one here.
   const [pickedArea, setArea] = useState<Area | null>(null);
   const [subPick, setSubPick] = useState(() => params.get('sub') ?? '');
   const [newSub, setNewSub] = useState('');
-  const [topicPick, setTopicPick] = useState(() => params.get('topic') ?? (params.get('newTopic') ? NEW : ''));
-  const [newTopic, setNewTopic] = useState(() => params.get('newTopic') ?? '');
   // Typed, so it can be any size; kept as text while she types, read as a whole number from 1 to MAX.
   const [nText, setNText] = useState('10');
   const n = Math.min(MAX, Math.max(1, Math.round(Number(nText)) || 10));
@@ -50,11 +48,7 @@ export function NewQuiz() {
   const addingSub = subPick === NEW || !subs.length;
   const sub = addingSub ? null : (subs.find((s) => s.id === subPick) ?? subs[0]);
   const subjectName = sub?.name ?? newSub.trim();
-  const topics = sub?.topics ?? [];
-  const addingTopic = topicPick === NEW;
-  const topic = addingTopic ? null : (topics.find((t) => t.id === topicPick) ?? null);
-  const topicName = topic?.name ?? (addingTopic ? newTopic.trim() : '');
-  const ready = !!subjectName && (!addingTopic || !!topicName);
+  const ready = !!subjectName;
 
   const parsed = useMemo(() => parsePasted(text), [text]);
   const preview = useMemo(
@@ -63,30 +57,17 @@ export function NewQuiz() {
   );
 
   if (!settings || !qmap || !area) return <Page title="New quiz">{null}</Page>;
-  const prompt = quizPrompt({ area, subject: subjectName || '<subject>', topic: topicName, level: settings.level, major: settings.major, n });
+  const prompt = quizPrompt({ area, subject: subjectName || '<subject>', level: settings.level, major: settings.major, n });
   const back = sub ? `/quizzes/${area}/${sub.id}` : '/quizzes';
 
-  /** Adds a new subject or topic she named here to her list, reusing one with the same name. Returns the ids to file under. */
-  const fileUnder = async (): Promise<{ subarea: string; topic: { id: string; name: string } | null }> => {
-    let list = settings.subjects[area];
-    const same = (a: string, b: string) => a.toLowerCase() === b.toLowerCase();
-    let subject = sub ?? subs.find((x) => same(x.name, subjectName));
-    if (!subject) {
-      subject = { id: subjectId(subjectName, new Set(subs.map((x) => x.id))), name: subjectName };
-      list = [...list, subject];
-    }
-    let t: { id: string; name: string } | null = topic;
-    if (addingTopic) {
-      t = (subject.topics ?? []).find((x) => same(x.name, topicName)) ?? null;
-      if (!t) {
-        t = { id: subjectId(topicName, new Set((subject.topics ?? []).map((x) => x.id))), name: topicName };
-        const withTopic = { ...subject, topics: [...(subject.topics ?? []), t] };
-        // A subject only her old questions use is not on her list yet: it joins it with its new topic.
-        list = list.some((x) => x.id === subject!.id) ? list.map((x) => (x.id === subject!.id ? withTopic : x)) : [...list, withTopic];
-      }
-    }
-    if (list !== settings.subjects[area]) await saveSettings({ subjects: { ...settings.subjects, [area]: list } });
-    return { subarea: subject.id, topic: t };
+  /** Adds a subject she named here to her list, reusing one with the same name. Returns its id. */
+  const fileUnder = async (): Promise<string> => {
+    if (sub) return sub.id;
+    const same = subs.find((x) => x.name.toLowerCase() === subjectName.toLowerCase());
+    if (same) return same.id;
+    const subject = { id: subjectId(subjectName, new Set(subs.map((x) => x.id))), name: subjectName };
+    await saveSettings({ subjects: { ...settings.subjects, [area]: [...settings.subjects[area], subject] } });
+    return subject.id;
   };
 
   const pasteClipboard = async () => {
@@ -101,20 +82,20 @@ export function NewQuiz() {
   const save = async (start: boolean) => {
     if (parsed.kind !== 'questions' || !ready) return;
     setBusy(true);
-    const { subarea, topic: t } = await fileUnder();
+    const subarea = await fileUnder();
     const now = nowIso();
     const id = newQuizId(now);
-    const { ready: qs } = previewQuiz(parsed.items, { id, area, subarea, topic: t }, now);
+    const { ready: qs } = previewQuiz(parsed.items, { id, area, subarea }, now);
     await importQuestions(qs);
     protectStorage(); // first real data: ask the browser not to evict it
-    announce(`${t ? `${subjectName}, ${t.name}` : subjectName} quiz saved with ${qs.length} questions`);
+    announce(`${subjectName} quiz saved with ${qs.length} questions`);
     navigate(start ? `/session?mode=quiz&quiz=${encodeURIComponent(id)}` : `/quizzes/${area}/${subarea}`);
   };
 
   return (
     <Page title="New quiz" back={{ to: back, label: sub ? `${sub.name} quizzes` : 'Quizzes' }}>
       <section className="tile stack" aria-labelledby="nq-1">
-        <h2 id="nq-1">1. Pick what it covers</h2>
+        <h2 id="nq-1">1. Pick the subject</h2>
         <MajorHint level={settings.level} />
         <div className="grid-2">
           <div className="field">
@@ -125,7 +106,6 @@ export function NewQuiz() {
               onChange={(v) => {
                 setArea(v as Area);
                 setSubPick('');
-                setTopicPick('');
               }}
             >
               {parts.map((a) => (
@@ -141,10 +121,7 @@ export function NewQuiz() {
               <Select
                 id="nq-sub"
                 value={sub?.id ?? NEW}
-                onChange={(v) => {
-                  setSubPick(v);
-                  setTopicPick('');
-                }}
+                onChange={(v) => setSubPick(v)}
               >
                 {subs.map((x) => (
                   <option key={x.id} value={x.id}>
@@ -159,24 +136,6 @@ export function NewQuiz() {
             <div className="field">
               <label htmlFor="nq-new">{subs.length ? 'New subject' : `Subject in ${PARTS[area].name}`}</label>
               <input id="nq-new" type="text" placeholder="e.g. English" value={newSub} onChange={(e) => setNewSub(e.target.value)} />
-            </div>
-          )}
-          <div className="field">
-            <label htmlFor="nq-topic">Topic in {subjectName || 'the subject'}</label>
-            <Select id="nq-topic" value={addingTopic ? NEW : (topic?.id ?? '')} onChange={(v) => setTopicPick(v)}>
-              <option value="">The whole subject</option>
-              {topics.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.name}
-                </option>
-              ))}
-              <option value={NEW}>Add a new topic…</option>
-            </Select>
-          </div>
-          {addingTopic && (
-            <div className="field">
-              <label htmlFor="nq-new-topic">New topic</label>
-              <input id="nq-new-topic" type="text" placeholder="e.g. Figures of speech" value={newTopic} onChange={(e) => setNewTopic(e.target.value)} />
             </div>
           )}
           <div className="field">

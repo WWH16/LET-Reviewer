@@ -3,7 +3,7 @@ import { Page } from '../../ui/Page';
 import { useAnnounce } from '../../ui/Status';
 import { LEVEL_WEIGHTS, PARTS, partsFor, subareaName } from '../../domain/let-config';
 import { subjectsOf } from '../../domain/subjects';
-import { pct, recentByArea, tallyBy, weakestTopics } from '../../domain/scoring';
+import { pct, recentByArea, tallyBy, weakestSubjects } from '../../domain/scoring';
 import { useStats } from './useStats';
 import { RatingCard } from './RatingCard';
 import { btn } from '../../ui/btn';
@@ -24,7 +24,7 @@ export function Progress() {
   if (!attempts.length)
     return (
       <Page title="Stats">
-        <Empty icon="stats" title="No answers yet" text="Your score, each subject and your weakest topics show here after your first answers.">
+        <Empty icon="stats" title="No answers yet" text="Your score, each subject and your weakest subjects show here after your first answers.">
           <Link className={btn.primary} to="/quizzes">
             Take a quiz
           </Link>
@@ -37,7 +37,7 @@ export function Progress() {
 
   // Subjects over the same recent window as each part's figure, so a tile's rows add up to its figure.
   const bySub = tallyBy([...recentByArea(attempts, qmap).values()].flat(), qmap, (q) => q.subarea);
-  const weak = weakestTopics(attempts, qmap);
+  const weak = weakestSubjects(attempts, qmap);
 
   const levelParts = partsFor(settings.level);
 
@@ -145,31 +145,29 @@ export function Progress() {
         </section>
 
         <section className="tile span-3 align-start" aria-labelledby="pr-weak">
-          <h2 id="pr-weak">Weakest topics</h2>
+          <h2 id="pr-weak">Weakest subjects</h2>
           {weak.length === 0 ? (
-            <p className="muted">Topics appear here after 3 or more answers each.</p>
+            <p className="muted">Subjects appear here after 3 or more answers each.</p>
           ) : (
             <ul className="list">
               {weak.map((w) => {
-                const name = w.topic || subareaName(w.subarea);
+                const name = subareaName(w.subarea);
                 return (
-                  <li key={`${w.subarea}-${w.topicId ?? w.topic}`} className="weak-item">
+                  <li key={`${w.area}-${w.subarea}`} className="weak-item">
                     <span className="stack-sm">
                       <span className="weak-name">{name}</span>
                       <span className="meta">
-                        {subareaName(w.subarea)}: {fmt(pct(w.tally))} over {w.tally.total} answers
+                        {PARTS[w.area].name}: {fmt(pct(w.tally))} over {w.tally.total} answers
                       </span>
                     </span>
                     <span className="row">
-                      <Link className={btn.secondary} to={`/quizzes/${w.area}/${w.subarea}`} aria-label={`${subareaName(w.subarea)} quizzes`}>
+                      <Link className={btn.secondary} to={`/quizzes/${w.area}/${w.subarea}`} aria-label={`${name} quizzes`}>
                         Quizzes
                       </Link>
                       <Link
                         className={btn.quiet}
-                        to={`/quizzes/new?area=${w.area}&sub=${w.subarea}${
-                          w.topicId ? `&topic=${w.topicId}` : w.topic ? `&newTopic=${encodeURIComponent(w.topic)}` : ''
-                        }`}
-                        aria-label={`New quiz on ${name}`}
+                        to={`/quizzes/new?area=${w.area}&sub=${w.subarea}`}
+                        aria-label={`New ${name} quiz`}
                       >
                         New quiz
                       </Link>

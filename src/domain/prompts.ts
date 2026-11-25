@@ -7,7 +7,6 @@ import type { Area, Level } from './types';
 const QUIZ_SCHEMA = `{
   "questions": [
     {
-      "topic": "<short topic name>",
       "lang": "en | fil",
       "stem": "<question text>",
       "choices": [{"key":"A","text":"..."},{"key":"B","text":"..."},{"key":"C","text":"..."},{"key":"D","text":"..."}]
@@ -19,10 +18,10 @@ const QUIZ_SCHEMA = `{
 }`;
 
 /** The prompt that asks Claude for one quiz's questions. Its reply comes back through the paste box. */
-export function quizPrompt(o: { area: Area; subject: string; topic: string; level: Level; major: string; n: number }): string {
+export function quizPrompt(o: { area: Area; subject: string; level: Level; major: string; n: number }): string {
   const levelText = o.level === 'secondary' ? `Secondary${o.major ? `, ${o.major}` : ''}` : 'Elementary';
   return `Write ${o.n} LET-style multiple-choice questions (4 choices, exactly one correct) on:
-Part: ${PARTS[o.area].name}${o.area === 'Major' && o.major ? ` (${o.major})` : ''}  Subject: ${o.subject}${o.topic ? `  Topic: ${o.topic}` : ''}
+Part: ${PARTS[o.area].name}${o.area === 'Major' && o.major ? ` (${o.major})` : ''}  Subject: ${o.subject}
 Level: ${levelText}
 
 Mix: ~40% recall, ~40% application/scenario, ~20% analysis.

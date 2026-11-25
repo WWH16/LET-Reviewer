@@ -3,8 +3,8 @@ import { Page } from '../../ui/Page';
 import { useExams, useMeta } from '../../db/hooks';
 import { daysBetween } from '../../domain/dates';
 import { useStats } from '../progress/useStats';
-import { weakestTopics } from '../../domain/scoring';
-import { subareaName } from '../../domain/let-config';
+import { weakestSubjects } from '../../domain/scoring';
+import { PARTS, subareaName } from '../../domain/let-config';
 import { groupQuizzes } from '../../domain/quiz';
 import { FirstRun } from './FirstRun';
 import { WeekStrip } from './WeekStrip';
@@ -41,7 +41,7 @@ export function Home() {
   const remindBackup = sinceBackup >= 50 || (sinceBackup > 0 && (backupDays === null || backupDays >= 7));
   const name = settings.name.trim();
 
-  const weakest = weakestTopics(attempts, qmap)[0];
+  const weakest = weakestSubjects(attempts, qmap)[0];
   const quizzes = groupQuizzes(qmap.values()).length;
 
   // A new quiz leads: it is how questions come in, and on a wide screen it is the large tile.
@@ -62,7 +62,7 @@ export function Home() {
     },
     {
       name: 'Weakest subject',
-      line: weakest ? `${weakest.topic || subareaName(weakest.subarea)}, ${subareaName(weakest.subarea)}.` : 'Shows up after 3 answers in a topic.',
+      line: weakest ? `${subareaName(weakest.subarea)}, ${PARTS[weakest.area].name}.` : 'Shows up after 3 answers in a subject.',
       icon: 'target',
       to: weakest ? `/quizzes/${weakest.area}/${weakest.subarea}` : undefined,
     },
