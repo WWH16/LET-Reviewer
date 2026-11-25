@@ -22,9 +22,7 @@ const QUIZ_SCHEMA = `{
 export function quizPrompt(o: { area: Area; subject: string; topic: string; level: Level; major: string; n: number }): string {
   const levelText = o.level === 'secondary' ? `Secondary${o.major ? `, ${o.major}` : ''}` : 'Elementary';
   return `Write ${o.n} LET-style multiple-choice questions (4 choices, exactly one correct) on:
-Part: ${PARTS[o.area].name}${o.area === 'Major' && o.major ? ` (${o.major})` : ''}  ${
-    o.area === 'Major' ? `Topic: ${o.subject}` : `Subject: ${o.subject}${o.topic ? `  Topic: ${o.topic}` : ''}`
-  }
+Part: ${PARTS[o.area].name}${o.area === 'Major' && o.major ? ` (${o.major})` : ''}  Subject: ${o.subject}${o.topic ? `  Topic: ${o.topic}` : ''}
 Level: ${levelText}
 
 Mix: ~40% recall, ~40% application/scenario, ~20% analysis.

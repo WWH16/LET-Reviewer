@@ -5,10 +5,7 @@ export type Key = 'A' | 'B' | 'C' | 'D';
 export const KEYS: readonly Key[] = ['A', 'B', 'C', 'D'];
 export type Lang = 'en' | 'fil';
 
-/**
- * A subject in a part, named by her (in Major, where the part is her specialization, these are its topics).
- * A Gen Ed or Prof Ed subject can hold topics of its own. Ids are fixed when added; names can change.
- */
+/** A subject in a part, named by her, with topics of its own if she adds any. Ids are fixed when added; names can change. */
 export interface Subject {
   id: string;
   name: string;

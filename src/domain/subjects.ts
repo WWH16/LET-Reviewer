@@ -40,9 +40,6 @@ export function setSubjectNames(subjects: Subjects) {
   topicNames = new Map(all.flatMap((s) => (s.topics ?? []).map((t): [string, string] => [`${s.id}/${t.id}`, t.name])));
 }
 
-/** Major is her specialization, so what sits inside it is called a topic; Gen Ed and Prof Ed hold subjects. */
-export const itemWord = (area: Area) => (area === 'Major' ? 'topic' : 'subject');
-
 /** A topic's name inside its subject. */
 export const topicName = (subarea: string, topicId: string): string => topicNames.get(`${subarea}/${topicId}`) ?? readable(topicId);
 

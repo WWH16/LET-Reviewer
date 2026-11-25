@@ -5,7 +5,7 @@ import { useAnnounce } from '../../ui/Status';
 import { copyText } from '../../ui/clipboard';
 import { useQuestionMap, useSettings } from '../../db/hooks';
 import { importQuestions, nowIso, protectStorage, saveSettings } from '../../db/repo';
-import { itemWord, subjectId, subjectsOf } from '../../domain/subjects';
+import { subjectId, subjectsOf } from '../../domain/subjects';
 import { PARTS, partsFor } from '../../domain/let-config';
 import { quizPrompt } from '../../domain/prompts';
 import { newQuizId } from '../../domain/quiz';
@@ -20,15 +20,15 @@ const NEW = '__new';
 const MAX = 50;
 
 /**
- * Making a quiz is where questions come from: pick the part, the subject (or Major topic) and maybe a topic
- * inside it, copy the prompt to Claude, paste the reply.
+ * Making a quiz is where questions come from: pick the part, the subject and maybe a topic inside it,
+ * copy the prompt to Claude, paste the reply.
  * Nothing is saved until she confirms.
  */
 export function NewQuiz() {
   const settings = useSettings();
   const qmap = useQuestionMap();
   const [params] = useSearchParams();
-  // Linked picks: the part, then a subject in it (a topic, in Major), then optionally a topic in that subject.
+  // Linked picks: the part, then a subject in it, then optionally a topic in that subject.
   // Her lists start empty, so each pick can also name a new one here.
   const [pickedArea, setArea] = useState<Area | null>(null);
   const [subPick, setSubPick] = useState(() => params.get('sub') ?? '');
@@ -46,15 +46,12 @@ export function NewQuiz() {
 
   const parts = settings ? partsFor(settings.level) : [];
   const area = pickedArea ?? (parts.find((a) => a === params.get('area')) || parts[0]);
-  const word = area ? itemWord(area) : 'subject';
   const subs = area && settings && qmap ? subjectsOf(area, settings.subjects, qmap.values()) : [];
   const addingSub = subPick === NEW || !subs.length;
   const sub = addingSub ? null : (subs.find((s) => s.id === subPick) ?? subs[0]);
   const subjectName = sub?.name ?? newSub.trim();
-  // Major has no topics inside its topics; Gen Ed and Prof Ed subjects may.
-  const hasTopics = area !== 'Major';
-  const topics = hasTopics ? (sub?.topics ?? []) : [];
-  const addingTopic = hasTopics && topicPick === NEW;
+  const topics = sub?.topics ?? [];
+  const addingTopic = topicPick === NEW;
   const topic = addingTopic ? null : (topics.find((t) => t.id === topicPick) ?? null);
   const topicName = topic?.name ?? (addingTopic ? newTopic.trim() : '');
   const ready = !!subjectName && (!addingTopic || !!topicName);
@@ -66,7 +63,7 @@ export function NewQuiz() {
   );
 
   if (!settings || !qmap || !area) return <Page title="New quiz">{null}</Page>;
-  const prompt = quizPrompt({ area, subject: subjectName || `<${word}>`, topic: topicName, level: settings.level, major: settings.major, n });
+  const prompt = quizPrompt({ area, subject: subjectName || '<subject>', topic: topicName, level: settings.level, major: settings.major, n });
   const back = sub ? `/quizzes/${area}/${sub.id}` : '/quizzes';
 
   /** Adds a new subject or topic she named here to her list, reusing one with the same name. Returns the ids to file under. */
@@ -140,7 +137,7 @@ export function NewQuiz() {
           </div>
           {subs.length > 0 && (
             <div className="field">
-              <label htmlFor="nq-sub">{word === 'topic' ? 'Topic' : 'Subject'}</label>
+              <label htmlFor="nq-sub">Subject</label>
               <Select
                 id="nq-sub"
                 value={sub?.id ?? NEW}
@@ -154,30 +151,28 @@ export function NewQuiz() {
                     {x.name}
                   </option>
                 ))}
-                <option value={NEW}>Add a new {word}…</option>
+                <option value={NEW}>Add a new subject…</option>
               </Select>
             </div>
           )}
           {addingSub && (
             <div className="field">
-              <label htmlFor="nq-new">{subs.length ? `New ${word}` : `${word === 'topic' ? 'Topic' : 'Subject'} in ${PARTS[area].name}`}</label>
-              <input id="nq-new" type="text" placeholder={word === 'topic' ? 'e.g. Phonology' : 'e.g. English'} value={newSub} onChange={(e) => setNewSub(e.target.value)} />
+              <label htmlFor="nq-new">{subs.length ? 'New subject' : `Subject in ${PARTS[area].name}`}</label>
+              <input id="nq-new" type="text" placeholder="e.g. English" value={newSub} onChange={(e) => setNewSub(e.target.value)} />
             </div>
           )}
-          {hasTopics && (
-            <div className="field">
-              <label htmlFor="nq-topic">Topic in {subjectName || 'the subject'}</label>
-              <Select id="nq-topic" value={addingTopic ? NEW : (topic?.id ?? '')} onChange={(v) => setTopicPick(v)}>
-                <option value="">The whole subject</option>
-                {topics.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.name}
-                  </option>
-                ))}
-                <option value={NEW}>Add a new topic…</option>
-              </Select>
-            </div>
-          )}
+          <div className="field">
+            <label htmlFor="nq-topic">Topic in {subjectName || 'the subject'}</label>
+            <Select id="nq-topic" value={addingTopic ? NEW : (topic?.id ?? '')} onChange={(v) => setTopicPick(v)}>
+              <option value="">The whole subject</option>
+              {topics.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.name}
+                </option>
+              ))}
+              <option value={NEW}>Add a new topic…</option>
+            </Select>
+          </div>
           {addingTopic && (
             <div className="field">
               <label htmlFor="nq-new-topic">New topic</label>

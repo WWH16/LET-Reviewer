@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { useAnnounce } from '../../ui/Status';
 import { LEVEL_WEIGHTS, PARTS, partsFor, subareaName } from '../../domain/let-config';
-import { itemWord, subjectsOf } from '../../domain/subjects';
+import { subjectsOf } from '../../domain/subjects';
 import { pct, recentByArea, tallyBy, weakestTopics } from '../../domain/scoring';
 import { useStats } from './useStats';
 import { RatingCard } from './RatingCard';
@@ -98,14 +98,14 @@ export function Progress() {
                     {n ? `${Math.round(((p ?? 0) * n) / 100)} of your last ${n} correct.` : 'No answers yet.'}
                   </p>
                   <details>
-                    <summary className="label">{a === 'Major' ? 'Topics' : 'Subjects'}</summary>
+                    <summary className="label">Subjects</summary>
                     <table>
                       <caption className="sr-only">
-                        {PARTS[a].name} by {itemWord(a)}
+                        {PARTS[a].name} by subject
                       </caption>
                       <thead>
                         <tr>
-                          <th scope="col">{a === 'Major' ? 'Topic' : 'Subject'}</th>
+                          <th scope="col">Subject</th>
                           <th scope="col" className="num">
                             Accuracy
                           </th>
@@ -167,7 +167,7 @@ export function Progress() {
                       <Link
                         className={btn.quiet}
                         to={`/quizzes/new?area=${w.area}&sub=${w.subarea}${
-                          w.topicId ? `&topic=${w.topicId}` : w.topic && w.area !== 'Major' ? `&newTopic=${encodeURIComponent(w.topic)}` : ''
+                          w.topicId ? `&topic=${w.topicId}` : w.topic ? `&newTopic=${encodeURIComponent(w.topic)}` : ''
                         }`}
                         aria-label={`New quiz on ${name}`}
                       >

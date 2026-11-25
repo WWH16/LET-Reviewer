@@ -11,7 +11,7 @@ import type { Area, MockExam, Question } from '../../domain/types';
 import { RatingCard } from '../progress/RatingCard';
 import { shown } from '../../domain/choices';
 import { counts } from '../../domain/quiz';
-import { itemWord, subjectsOf } from '../../domain/subjects';
+import { subjectsOf } from '../../domain/subjects';
 import { shuffle } from '../../domain/examDraw';
 import { saveExam } from '../../db/repo';
 import { examLink, newExam } from './newExam';
@@ -168,11 +168,11 @@ export function MockResults() {
         </RatingCard>
 
         <section className="tile span-3" aria-labelledby="mr-subjects">
-          <h2 id="mr-subjects">By {itemWord(exam.part)}</h2>
+          <h2 id="mr-subjects">By subject</h2>
           <table>
             <thead>
               <tr>
-                <th scope="col">{exam.part === 'Major' ? 'Topic' : 'Subject'}</th>
+                <th scope="col">Subject</th>
                 <th scope="col" className="num">
                   Right
                 </th>
@@ -204,7 +204,7 @@ export function MockResults() {
         <section className="tile span-3" aria-labelledby="mr-retake">
           <h2 id="mr-retake">Retake</h2>
           <p className="meta">
-            The same questions in a new order, with the choices shuffled again.{bySubject.length > 1 && ` Pick the ${itemWord(exam.part)}s to take again.`}
+            The same questions in a new order, with the choices shuffled again.{bySubject.length > 1 && ' Pick the subjects to take again.'}
           </p>
           {/* One subject has nothing to pick. */}
           {bySubject.length > 1 && (

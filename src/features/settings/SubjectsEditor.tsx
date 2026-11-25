@@ -3,15 +3,14 @@ import { useQuestionMap } from '../../db/hooks';
 import { saveSettings } from '../../db/repo';
 import { PARTS, partsFor } from '../../domain/let-config';
 import { counts } from '../../domain/quiz';
-import { itemWord, subjectId, subjectsOf } from '../../domain/subjects';
+import { subjectId, subjectsOf } from '../../domain/subjects';
 import type { Area, Settings, Subject } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { MajorHint } from './MajorHint';
 
 /**
- * Her subjects in each part, and the topics inside each Gen Ed and Prof Ed subject. In Major, her
- * specialization, the list is its topics. Renaming keeps the id, so quizzes stay attached; anything that
- * still has questions cannot be removed.
+ * Her subjects in each part, and the topics inside each subject. Renaming keeps the id, so quizzes stay
+ * attached; anything that still has questions cannot be removed.
  */
 export function SubjectsEditor({ s }: { s: Settings }) {
   const qmap = useQuestionMap();
@@ -23,13 +22,12 @@ export function SubjectsEditor({ s }: { s: Settings }) {
   return (
     <>
       <p className="muted">
-        Name the subjects in General Education and Professional Education, and the topics inside any of them. Your major is
-        listed by topic. Quizzes, mock exams, Missed questions and Stats all follow this list.
+        Name the subjects in each part, and the topics inside any of them. Quizzes, mock exams, Missed questions and Stats
+        all follow this list.
       </p>
       <MajorHint level={s.level} />
       {partsFor(s.level).map((area) => {
         const list = subjectsOf(area, s.subjects, live);
-        const word = itemWord(area);
         return (
           <section key={area} className="tile stack-sm" aria-labelledby={`sj-${area}`}>
             <h2 id={`sj-${area}`}>
@@ -38,26 +36,22 @@ export function SubjectsEditor({ s }: { s: Settings }) {
             </h2>
             <NameList
               id={`sj-${area}`}
-              word={word}
+              word="subject"
               items={list}
               used={(x) => live.filter((q) => q.area === area && q.subarea === x.id).length}
               onChange={(next) => save(area, next)}
-              inside={
-                area === 'Major'
-                  ? undefined
-                  : (subject) => (
-                      <div className="topics">
-                        <NameList
-                          id={`sj-${area}-${subject.id}`}
-                          word="topic"
-                          small
-                          items={subject.topics ?? []}
-                          used={(t) => live.filter((q) => q.subarea === subject.id && q.topicId === t.id).length}
-                          onChange={(topics) => save(area, list.map((x) => (x.id === subject.id ? { ...x, topics } : x)))}
-                        />
-                      </div>
-                    )
-              }
+              inside={(subject) => (
+                <div className="topics">
+                  <NameList
+                    id={`sj-${area}-${subject.id}`}
+                    word="topic"
+                    small
+                    items={subject.topics ?? []}
+                    used={(t) => live.filter((q) => q.subarea === subject.id && q.topicId === t.id).length}
+                    onChange={(topics) => save(area, list.map((x) => (x.id === subject.id ? { ...x, topics } : x)))}
+                  />
+                </div>
+              )}
             />
           </section>
         );

@@ -3,12 +3,12 @@ import { Page } from '../../ui/Page';
 import { Empty } from '../../ui/Empty';
 import { useSettings } from '../../db/hooks';
 import { PARTS, subareaName } from '../../domain/let-config';
-import { itemWord, subjectsOf, topicName } from '../../domain/subjects';
+import { subjectsOf, topicName } from '../../domain/subjects';
 import type { Area } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { count, lastLine, quizDate, useQuizzes } from './useQuizzes';
 
-/** One subject (a topic, in Major): its topics, then its quizzes newest first, each ready to take again. */
+/** One subject: its topics, then its quizzes newest first, each ready to take again. */
 export function Subject() {
   const { area = '', sub = '' } = useParams();
   const data = useQuizzes();
@@ -17,9 +17,8 @@ export function Subject() {
   const title = part ? `${subareaName(sub)} quizzes` : 'Quizzes';
   if (!data || !settings) return <Page title={title}>{null}</Page>;
 
-  const word = itemWord(area as Area);
   const subject = part ? subjectsOf(area as Area, settings.subjects, data.qmap.values()).find((s) => s.id === sub) : undefined;
-  const topics = area === 'Major' ? [] : (subject?.topics ?? []);
+  const topics = subject?.topics ?? [];
   const mine = data.quizzes.filter((z) => z.area === area && z.subarea === sub).reverse();
   const newLink = `/quizzes/new?area=${area}&sub=${sub}`;
 
@@ -58,7 +57,7 @@ export function Subject() {
       )}
 
       {mine.length === 0 ? (
-        <Empty icon="practice" title={`No ${subareaName(sub)} quizzes yet`} text={`Make one: pick this ${word}${topics.length ? ' or one of its topics' : ''}, and Claude writes the questions.`}>
+        <Empty icon="practice" title={`No ${subareaName(sub)} quizzes yet`} text={`Make one: pick this subject${topics.length ? ' or one of its topics' : ''}, and Claude writes the questions.`}>
           <Link className={btn.primary} to={newLink}>
             Make the first quiz
           </Link>
