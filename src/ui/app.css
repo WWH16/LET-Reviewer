@@ -2598,3 +2598,11 @@ dialog.command input:focus-visible {
 .cal-grid td.is-later {
   color: var(--color-muted);
 }
+
+/* A quiz's timed take: the minutes field and its button on one line, the button level with the field. */
+.timed-take {
+  align-items: end;
+}
+.timed-take .field {
+  width: 12rem;
+}

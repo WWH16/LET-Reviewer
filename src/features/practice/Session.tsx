@@ -62,6 +62,7 @@ export function Session() {
           id: uuid(),
           quizId,
           timed: params.get('timed') === '1',
+          ...(Number(params.get('min')) > 0 && { limitMs: Number(params.get('min')) * 60000 }),
           items,
           orders: Object.fromEntries(items.map((id) => [id, choiceOrder(qmap.get(id)!)])),
           results: [],
@@ -90,7 +91,7 @@ export function Session() {
   const items = take?.items ?? null;
   const results: TakeResult[] = take?.results ?? [];
   const timed = !!take?.timed;
-  const limitMs = timed && items && qmap ? items.reduce((s, id) => s + paceMs(qmap.get(id)!.area), 0) : 0;
+  const limitMs = !timed || !items || !qmap ? 0 : (take?.limitMs ?? items.reduce((s, id) => s + paceMs(qmap.get(id)!.area), 0));
   const leftMs = limitMs - (now - startedAt);
   useEffect(() => {
     if (!timed || !items?.length || done) return;

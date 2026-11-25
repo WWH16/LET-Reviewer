@@ -5,7 +5,7 @@ import { Dialog } from '../../ui/Dialog';
 import { Empty } from '../../ui/Empty';
 import { useAnnounce } from '../../ui/Status';
 import { removeQuiz, restoreQuestions } from '../../db/repo';
-import { subareaName } from '../../domain/let-config';
+import { paceMs, subareaName } from '../../domain/let-config';
 import { btn } from '../../ui/btn';
 import { count, lastLine, quizDate, useQuizzes } from './useQuizzes';
 
@@ -14,6 +14,7 @@ export function QuizPage() {
   const { id = '' } = useParams();
   const data = useQuizzes();
   const [confirm, setConfirm] = useState(false);
+  const [minutes, setMinutes] = useState('');
   const navigate = useNavigate();
   const announce = useAnnounce();
   if (!data) return <Page title="Quiz">{null}</Page>;
@@ -32,6 +33,8 @@ export function QuizPage() {
 
   const subject = subareaName(z.subarea);
   const take = `/session?mode=quiz&quiz=${encodeURIComponent(z.id)}`;
+  // The real LET pace for these questions, rounded up to whole minutes.
+  const pace = Math.max(1, Math.ceil(z.questions.reduce((s, q) => s + paceMs(q.area), 0) / 60000));
   const back = `/quizzes/${z.area}/${z.subarea}`;
 
   return (
@@ -43,11 +46,25 @@ export function QuizPage() {
         <Link className={btn.primary} to={take}>
           Take quiz
         </Link>
-        <Link className={btn.secondary} to={`${take}&timed=1`}>
-          Take timed
-        </Link>
       </div>
-      <p className="meta">Every take shuffles the questions and their choices. Timed uses the real LET pace per item.</p>
+      {/* A timed take: she sets the minutes; the field starts at the real LET pace for these questions. */}
+      <form
+        className="row timed-take"
+        onSubmit={(e) => {
+          e.preventDefault();
+          const min = Math.max(1, Math.round(Number(minutes)) || pace);
+          navigate(`${take}&timed=1&min=${min}`);
+        }}
+      >
+        <div className="field">
+          <label htmlFor="qp-min">Minutes for a timed take</label>
+          <input id="qp-min" type="number" inputMode="numeric" min={1} placeholder={String(pace)} value={minutes} onChange={(e) => setMinutes(e.target.value)} />
+        </div>
+        <button type="submit" className={btn.secondary}>
+          Take timed
+        </button>
+      </form>
+      <p className="meta">Every take shuffles the questions and their choices. Blank minutes use the real LET pace, {pace} for this quiz.</p>
 
       <section className="stack-sm" aria-labelledby="qp-list">
         <h2 id="qp-list">Questions</h2>

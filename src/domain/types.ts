@@ -63,6 +63,8 @@ export interface QuizTake {
   id: string;
   quizId: string;
   timed: boolean;
+  /** The time she set for a timed take, in ms. Absent: the real LET pace per item. */
+  limitMs?: number;
   /** Question ids in this take's shuffled order. */
   items: string[];
   /** Each question's shown choice order, as original keys. */
