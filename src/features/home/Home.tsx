@@ -35,8 +35,6 @@ export function Home() {
     );
 
   const { days, today, settings, attempts, qmap } = stats;
-  const open = exams.find((e) => e.status === 'in-progress' && e.form === 'digital');
-  const printed = exams.find((e) => e.status === 'printed');
   const toExam = settings.examDate ? daysBetween(today, settings.examDate) : null;
   const sinceBackup = attempts.length - (lastBackup?.attempts ?? 0);
   const backupDays = lastBackup ? daysBetween(lastBackup.at.slice(0, 10), today) : null;
@@ -44,7 +42,8 @@ export function Home() {
   const name = settings.name.trim();
 
   const weakest = weakestSubjects(attempts, qmap)[0];
-  const quizzes = groupQuizzes(qmap.values()).length;
+  const quizList = groupQuizzes(qmap.values());
+  const quizzes = quizList.length;
   // Quiz takes left midway and mocks not graded yet.
   const unfinished = takes.length + exams.filter((e) => e.status !== 'graded').length;
 
@@ -73,7 +72,23 @@ export function Home() {
     { name: 'Mock exam', line: 'One part, the subjects you pick, on screen or printed.', icon: 'mock', to: '/mock' },
   ];
 
-  const side = Boolean(open || printed || remindBackup);
+  // The one card to pick up where she left off: the most recently touched quiz take or ungraded mock.
+  const resume = [
+    ...takes.flatMap((t) => {
+      const z = quizList.find((x) => x.id === t.quizId);
+      return z
+        ? [{ at: t.updatedAt, to: `/session?mode=quiz&quiz=${encodeURIComponent(t.quizId)}&take=${t.id}`, title: `Continue ${subareaName(z.subarea)}, ${z.name}`, line: `${t.results.length} of ${t.items.length} answered.` }]
+        : [];
+    }),
+    ...exams
+      .filter((e) => e.status !== 'graded')
+      .map((e) =>
+        e.status === 'printed'
+          ? { at: e.updatedAt, to: `/mock/${e.id}/entry`, title: `Enter answers for ${e.label}`, line: 'The printed exam is waiting to be graded.' }
+          : { at: e.updatedAt, to: `/mock/${e.id}`, title: `Continue exam ${e.label}`, line: `${Object.keys(e.answers).length} of ${e.itemIds.length} answered.` },
+      ),
+  ].sort((a, b) => (a.at < b.at ? 1 : -1))[0];
+  const side = Boolean(resume || remindBackup);
 
   return (
     <Page title="Study" titleHidden wide>
@@ -113,13 +128,11 @@ export function Home() {
 
         {side && (
           <div className="home-side span-2">
-            {(open || printed) && (
-              <Link className="resume" to={open ? `/mock/${open.id}` : `/mock/${printed!.id}/entry`}>
+            {resume && (
+              <Link className="resume" to={resume.to}>
                 <span className="stack-sm">
-                  <span className="resume-title">{open ? `Continue exam ${open.label}` : `Enter answers for ${printed!.label}`}</span>
-                  <span className="meta">
-                    {open ? `${Object.keys(open.answers).length} of ${open.itemIds.length} answered.` : 'The printed exam is waiting to be graded.'}
-                  </span>
+                  <span className="resume-title">{resume.title}</span>
+                  <span className="meta">{resume.line}</span>
                 </span>
                 <Icon name="caret" size={20} />
               </Link>
