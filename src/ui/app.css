@@ -640,10 +640,26 @@ a.brand {
   border-radius: 24px;
   box-shadow: 0 6px 0 var(--color-ink);
 }
-.auth-card h1 {
+.auth-card :is(h1, h2) {
   font-size: var(--text-xl);
   font-weight: 700;
   letter-spacing: -0.02em;
+}
+/* Signed in (Settings, Account): the address under the heading, then the actions in a row of full-size buttons */
+.auth-email {
+  font-size: var(--text-body);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.auth-card .row.auth-actions {
+  justify-content: flex-start;
+  gap: var(--space-xs);
+}
+.auth-actions > button {
+  min-height: 44px;
+  border-radius: var(--radius-card);
+  font-size: var(--text-body);
+  font-weight: 600;
 }
 .auth-card :is(input[type='email'], input[type='password'], input[type='text']) {
   min-height: 44px;
@@ -667,7 +683,7 @@ a.brand {
   .auth-card {
     padding: var(--space-xl);
   }
-  .auth-card h1 {
+  .auth-card :is(h1, h2) {
     font-size: var(--text-2xl);
   }
 }
@@ -865,6 +881,53 @@ a.brand {
 }
 .field input[aria-invalid='true']:focus-visible {
   outline-color: var(--color-error);
+}
+/* The code: six boxes, one digit each, like the code in the email. The real input lies over them, see-through,
+   so a tap anywhere on the row focuses it; the next box to fill shows the focus. */
+.otp {
+  position: relative;
+}
+.otp-boxes {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--space-xs);
+}
+.otp-box {
+  display: grid;
+  place-items: center;
+  height: 52px;
+  border: 2px solid var(--color-control);
+  border-radius: var(--radius-card);
+  background: var(--color-card);
+  font-family: var(--font-mono);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+/* (specific enough to beat the sign-in card's own input rule) */
+.otp > input.otp-input,
+.auth-card .otp > input.otp-input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: transparent;
+  caret-color: transparent;
+  outline: none;
+}
+.otp-input::selection {
+  background: transparent;
+}
+.otp:focus-within .otp-box.is-next {
+  border-color: var(--color-ink);
+}
+.otp:has(.otp-input[aria-invalid='true']) .otp-box {
+  border-color: var(--color-error);
 }
 /* Welcome: the way out stays in reach while she builds the face on a phone. */
 .welcome-action {
@@ -1077,6 +1140,35 @@ main.wide {
 }
 .btn[aria-busy='true'] {
   cursor: progress;
+}
+/* Working: a ring turns before the label while that button's request runs. A busy primary keeps its ink, so it
+   reads as working, not as unavailable. Under reduced motion the ring turns slower but still turns: it is the
+   only sign that something is happening. */
+.btn[aria-busy='true']::before {
+  content: '';
+  flex: none;
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: btn-spin 700ms linear infinite;
+}
+.btn-primary[aria-busy='true']:disabled {
+  --text-color-kumo-default: var(--color-button-ink);
+  background: var(--color-button);
+  box-shadow: inset 0 0 0 1px var(--color-button-deep);
+  cursor: progress;
+}
+@keyframes btn-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn[aria-busy='true']::before {
+    animation-duration: 1600ms;
+  }
 }
 @media (pointer: coarse) {
   .btn {

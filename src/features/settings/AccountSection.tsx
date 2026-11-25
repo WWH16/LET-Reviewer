@@ -16,6 +16,9 @@ type Outcome = { ok: true } | { ok: false; error?: string; field?: Field; needsC
 /** Errors on show: each under its own field, or `form` for one that belongs to no field (the service, the network). */
 type Errors = Partial<Record<Field | 'form', string>>;
 const INPUT: Record<Field, string> = { email: 'acc-email', password: 'acc-password', code: 'acc-code' };
+/** The request under way, so only the button that started it shows the spinner; every button waits for it. */
+type Busy = 'submit' | 'reset' | 'resend' | 'sync' | null;
+const CODE_LENGTH = 6;
 
 /** A field's error, under the field, tied to it with `aria-describedby` (`${input}-error`). */
 function FieldError({ input, text }: { input: string; text?: string }) {
@@ -45,7 +48,7 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
   const [password, setPassword] = useState('');
   const [code, setCode] = useState('');
   const [errors, setErrors] = useState<Errors>({});
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState<Busy>(null);
   const [other, setOther] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [signedInAs, setSignedInAs] = useState<string | null>(null);
@@ -109,8 +112,8 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
   };
 
   /** Runs one account call: one at a time, with its error shown on its field, or for the whole form. */
-  const run = async (call: (a: Awaited<ReturnType<typeof auth>>) => Promise<Outcome>, done: (r: Outcome) => void) => {
-    setBusy(true);
+  const run = async (kind: Busy, call: (a: Awaited<ReturnType<typeof auth>>) => Promise<Outcome>, done: (r: Outcome) => void) => {
+    setBusy(kind);
     setErrors({});
     try {
       const r = await call(await auth());
@@ -119,7 +122,7 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
     } catch {
       show({ form: 'Could not reach the account service. Try again.' });
     } finally {
-      setBusy(false);
+      setBusy(null);
     }
   };
   const afterSignIn = (r: Outcome) => {
@@ -142,38 +145,39 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
       code: step !== 'form' ? code : undefined,
     });
     if (show(found)) return;
-    if (step === 'form' && mode === 'up') run((a) => a.signUp(email, password), () => (setCode(''), setStep('confirm')));
-    else if (step === 'form') run((a) => a.signIn(email, password), afterSignIn);
-    else if (step === 'confirm') run((a) => a.confirmSignUp(email, code), afterSignIn);
-    else run((a) => a.finishReset(email, code, password), afterSignIn);
+    if (step === 'form' && mode === 'up') run('submit', (a) => a.signUp(email, password), () => (setCode(''), setStep('confirm')));
+    else if (step === 'form') run('submit', (a) => a.signIn(email, password), afterSignIn);
+    else if (step === 'confirm') run('submit', (a) => a.confirmSignUp(email, code), afterSignIn);
+    else run('submit', (a) => a.finishReset(email, code, password), afterSignIn);
   };
   const pick = (m: Mode) => (setMode(m), setErrors({}));
 
   return (
-    <section className={required ? 'tile auth-card' : 'tile span-3'}>
-
+    // In Settings it is the same clay card as on the sign-in screen, so the account looks one way wherever it is.
+    <section className={required ? 'tile auth-card' : 'tile span-3 auth-card'} aria-labelledby={signedIn ? 'acc-title' : undefined}>
       {signedIn ? (
         <>
           <div className="stack-sm">
-            <p>{signedInAs ?? 'Signed in'}</p>
+            <h2 id="acc-title">Signed in</h2>
+            <p className="auth-email">{signedInAs ?? 'Your account'}</p>
             <p className="meta" role="status">
               {sync.lastError
-                ? 'Could not sync. It will try again when you are online.'
+                ? 'Could not sync. It will try again later.'
                 : sync.lastSyncAt
                   ? `Last synced ${when(sync.lastSyncAt)}.`
                   : 'Syncing for the first time.'}
             </p>
           </div>
-          <div className="row">
+          <div className="row auth-actions">
             <button
               type="button"
-              className={btn.secondary}
-              aria-busy={busy}
-              disabled={busy}
+              className={btn.primary}
+              aria-busy={busy === 'sync'}
+              disabled={!!busy}
               onClick={async () => {
-                setBusy(true);
+                setBusy('sync');
                 await (await auth()).syncNow();
-                setBusy(false);
+                setBusy(null);
                 announce('Synced');
               }}
             >
@@ -209,10 +213,10 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
           )}
           {step === 'form' && (
             <div className="seg" role="group" aria-label="Account">
-              <button type="button" aria-pressed={mode === 'in'} disabled={busy} onClick={() => pick('in')}>
+              <button type="button" aria-pressed={mode === 'in'} disabled={!!busy} onClick={() => pick('in')}>
                 Sign in
               </button>
-              <button type="button" aria-pressed={mode === 'up'} disabled={busy} onClick={() => pick('up')}>
+              <button type="button" aria-pressed={mode === 'up'} disabled={!!busy} onClick={() => pick('up')}>
                 Create account
               </button>
             </div>
@@ -246,19 +250,38 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
           {step !== 'form' && (
             <div className="field">
               <label htmlFor="acc-code">Code</label>
-              <input
-                id="acc-code"
-                type="text"
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                pattern="[0-9]{6}"
-                maxLength={6}
-                required
-                aria-invalid={!!errors.code}
-                aria-describedby={errors.code ? 'acc-code-error' : undefined}
-                value={code}
-                onChange={(e) => (setCode(e.target.value.replace(/\D/g, '')), edited('code'))}
-              />
+              {/* One real input, so paste, the phone's code autofill and screen readers all work as usual; the six
+                  boxes over it only show the digits. Confirming sends itself once all six are in. */}
+              <div className="otp">
+                <input
+                  id="acc-code"
+                  className="otp-input"
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  pattern={`[0-9]{${CODE_LENGTH}}`}
+                  required
+                  aria-invalid={!!errors.code}
+                  aria-describedby={errors.code ? 'acc-code-error' : undefined}
+                  value={code}
+                  onChange={(e) => {
+                    // No maxLength on the input: a pasted "036 182" keeps all six digits once the space goes.
+                    const digits = e.target.value.replace(/\D/g, '').slice(0, CODE_LENGTH);
+                    setCode(digits);
+                    edited('code');
+                    if (step === 'confirm' && !busy && digits.length === CODE_LENGTH && digits !== code) {
+                      requestAnimationFrame(() => form.current?.requestSubmit());
+                    }
+                  }}
+                />
+                <div className="otp-boxes" aria-hidden="true">
+                  {Array.from({ length: CODE_LENGTH }, (_, i) => (
+                    <span key={i} className={i === Math.min(code.length, CODE_LENGTH - 1) ? 'otp-box is-next' : 'otp-box'}>
+                      {code[i] ?? ''}
+                    </span>
+                  ))}
+                </div>
+              </div>
               <FieldError input="acc-code" text={errors.code} />
             </div>
           )}
@@ -301,7 +324,7 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
             </p>
           )}
 
-          <button type="submit" className={`${btn.primary} auth-submit`} disabled={busy} aria-busy={busy}>
+          <button type="submit" className={`${btn.primary} auth-submit`} disabled={!!busy} aria-busy={busy === 'submit'}>
             {step === 'form' ? (mode === 'up' ? 'Create account' : 'Sign in') : step === 'confirm' ? 'Confirm' : 'Save password'}
           </button>
           <div className="row">
@@ -309,17 +332,24 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
               <button
                 type="button"
                 className={btn.quiet}
-                disabled={busy}
+                disabled={!!busy}
+                aria-busy={busy === 'reset'}
                 onClick={() => {
                   if (show(checkAccountFields({ email }))) return;
-                  run((a) => a.requestReset(email), () => (setCode(''), setPassword(''), setStep('reset')));
+                  run('reset', (a) => a.requestReset(email), () => (setCode(''), setPassword(''), setStep('reset')));
                 }}
               >
                 Forgot password?
               </button>
             )}
             {step === 'confirm' && (
-              <button type="button" className={btn.quiet} disabled={busy} onClick={() => run((a) => a.resendCode(email), () => announce('New code sent'))}>
+              <button
+                type="button"
+                className={btn.quiet}
+                disabled={!!busy}
+                aria-busy={busy === 'resend'}
+                onClick={() => run('resend', (a) => a.resendCode(email), () => announce('New code sent'))}
+              >
                 Send a new code
               </button>
             )}

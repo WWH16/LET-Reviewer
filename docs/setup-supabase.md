@@ -25,24 +25,30 @@ Under **Authentication → Sign In / Providers**:
 - **Email OTP length**: 6. The app's code field accepts exactly six digits.
 - **Allow anonymous sign-ins**: off.
 
-Under **Authentication → Emails → Templates**, change two templates so they show a code and no link. The app has no page for a link to open.
+Under **Authentication → Emails → Templates**, change two templates so they show a code and no link. The app has no page for a link to open. The code sits alone in a large box, the way GitHub's verification emails show it. Gmail recognises an email like this as a verification code and puts its own **Copy code** button above it; an email cannot carry a working copy button of its own, since email clients do not run scripts.
+
+Set each template's subject too: `Your LET Prep code` for both.
 
 **Confirm signup**
 
 ```html
-<h2>Confirm your email</h2>
-<p>Your LET Reviewer code is:</p>
-<p style="font-size:24px;letter-spacing:4px"><strong>{{ .Token }}</strong></p>
-<p>Type it into the app to finish creating your account.</p>
+<div style="max-width:480px;margin:0 auto;padding:24px;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#2b261d">
+  <h2 style="margin:0 0 8px">Confirm your email</h2>
+  <p style="margin:0 0 16px">Your LET Prep verification code is:</p>
+  <p style="margin:0 0 16px;padding:16px 20px;border-radius:12px;background:#eff1f5;text-align:center;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:32px;font-weight:700;letter-spacing:10px">{{ .Token }}</p>
+  <p style="margin:0;color:#5c564b">Type it into LET Prep to finish creating your account.</p>
+</div>
 ```
 
 **Reset password**
 
 ```html
-<h2>Reset your password</h2>
-<p>Your LET Reviewer code is:</p>
-<p style="font-size:24px;letter-spacing:4px"><strong>{{ .Token }}</strong></p>
-<p>Type it into the app with your new password. If you did not ask for this, ignore this email.</p>
+<div style="max-width:480px;margin:0 auto;padding:24px;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#2b261d">
+  <h2 style="margin:0 0 8px">Reset your password</h2>
+  <p style="margin:0 0 16px">Your LET Prep verification code is:</p>
+  <p style="margin:0 0 16px;padding:16px 20px;border-radius:12px;background:#eff1f5;text-align:center;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:32px;font-weight:700;letter-spacing:10px">{{ .Token }}</p>
+  <p style="margin:0;color:#5c564b">Type it into LET Prep with your new password. If you did not ask for this, ignore this email.</p>
+</div>
 ```
 
 ## 4. Give the app its two keys
