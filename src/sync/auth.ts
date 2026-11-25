@@ -2,12 +2,13 @@
 // Every email carries a 6-digit code typed into the app, never a link: the app uses hash routes,
 // which is also where a Supabase redirect link would put its tokens.
 
+import type { Field } from '../domain/account';
 import { remote, supabase } from './client';
 import { runSync } from './run';
 import { dexieStore as store } from './store';
 import { EMPTY_STATE, EPOCH } from './trigger';
 
-export type AuthResult = { ok: true } | { ok: false; error: string };
+export type AuthResult = { ok: true } | { ok: false; error: string; field?: Field };
 export type SignInResult = AuthResult | { ok: false; needsCode: true } | { ok: false; otherAccount: true };
 
 type Failure = { message?: string; code?: string; status?: number; name?: string };
@@ -23,16 +24,34 @@ const MESSAGES: Record<string, string> = {
   same_password: 'That is your current password. Choose a different one.',
   email_address_invalid: 'That email address does not look right.',
   validation_failed: 'Check the email address and try again.',
+  email_address_not_authorized: 'The app cannot send email to this address yet. Try again later.',
+  signup_disabled: 'Creating accounts is turned off right now.',
+};
+const FIELDS: Record<string, Field> = {
+  invalid_credentials: 'password',
+  user_already_exists: 'email',
+  email_exists: 'email',
+  otp_expired: 'code',
+  weak_password: 'password',
+  same_password: 'password',
+  email_address_invalid: 'email',
+  validation_failed: 'email',
+  email_address_not_authorized: 'email',
 };
 const isOffline = (e: Failure) => e.name === 'AuthRetryableFetchError' || /failed to fetch|networkerror|load failed/i.test(e.message ?? '');
 
 /** An account error in words the person can act on. */
 export function messageFor(error: Failure): string {
   if (error.code && MESSAGES[error.code]) return MESSAGES[error.code];
-  if (isOffline(error)) return 'You are offline. Try again when you are connected.';
+  // A request that never got an answer is "offline" only when the device says so; online, the service is the
+  // one out of reach (down, paused, or a wrong project address).
+  if (isOffline(error) && globalThis.navigator?.onLine === false) return 'You are offline. Try again when you are connected.';
   return 'Could not reach the account service. Try again.';
 }
-const fail = (error: Failure): AuthResult => ({ ok: false, error: messageFor(error) });
+const fail = (error: Failure): AuthResult => {
+  const field = error.code ? FIELDS[error.code] : undefined;
+  return field ? { ok: false, error: messageFor(error), field } : { ok: false, error: messageFor(error) };
+};
 
 /** After any successful sign-in: this device's data must belong to this account, or to no one yet. */
 async function finishSignIn(userId: string | undefined): Promise<SignInResult> {

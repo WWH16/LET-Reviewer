@@ -9,6 +9,7 @@ const h = vi.hoisted(() => ({
   push: vi.fn(async () => {}),
   getUser: vi.fn(async () => ({ data: { user: null as unknown }, error: null as unknown })),
   signInWithPassword: vi.fn(),
+  signUp: vi.fn(),
   cleared: 0,
 }));
 
@@ -19,6 +20,7 @@ vi.mock('./client', () => ({
       getSession: async () => ({ data: { session: h.session } }),
       getUser: h.getUser,
       signInWithPassword: h.signInWithPassword,
+      signUp: h.signUp,
       signOut: async () => ({ error: null }),
     },
   },
@@ -34,7 +36,7 @@ vi.mock('./store', () => ({
   },
 }));
 
-import { messageFor, replaceDeviceData, signIn, syncNow } from './auth';
+import { messageFor, replaceDeviceData, signIn, signUp, syncNow } from './auth';
 
 beforeEach(() => {
   h.state = { ...EMPTY_STATE };
@@ -44,6 +46,8 @@ beforeEach(() => {
   h.push.mockReset().mockResolvedValue(undefined);
   h.getUser.mockReset().mockResolvedValue({ data: { user: null }, error: null });
   h.signInWithPassword.mockReset();
+  h.signUp.mockReset();
+  vi.unstubAllGlobals();
 });
 
 describe('messageFor', () => {
@@ -53,10 +57,41 @@ describe('messageFor', () => {
     [{ code: 'otp_expired' }, 'That code is wrong or has expired. Send a new one.'],
     [{ code: 'over_email_send_rate_limit' }, 'Too many emails sent. Try again in a few minutes.'],
     [{ code: 'weak_password' }, 'Use 8 characters or more.'],
-    [{ name: 'AuthRetryableFetchError', message: 'Failed to fetch' }, 'You are offline. Try again when you are connected.'],
+    [{ name: 'AuthRetryableFetchError', message: 'Failed to fetch' }, 'Could not reach the account service. Try again.'],
     [{ message: 'something else' }, 'Could not reach the account service. Try again.'],
   ])('maps %j to its message', (error, text) => {
     expect(messageFor(error)).toBe(text);
+  });
+
+  it('says offline only when the device is offline', () => {
+    vi.stubGlobal('navigator', { onLine: false });
+    expect(messageFor({ name: 'AuthRetryableFetchError', message: 'Failed to fetch' })).toBe(
+      'You are offline. Try again when you are connected.',
+    );
+  });
+});
+
+describe('signUp', () => {
+  it('puts an email that already has an account on the email field', async () => {
+    h.signUp.mockResolvedValue({ data: { user: { id: 'X', identities: [] } }, error: null });
+    expect(await signUp('b@example.test', 'password1')).toEqual({
+      ok: false,
+      error: 'This email already has an account. Sign in instead.',
+      field: 'email',
+    });
+  });
+
+  it('puts a short password on the password field', async () => {
+    h.signUp.mockResolvedValue({ data: { user: null }, error: { code: 'weak_password' } });
+    expect(await signUp('b@example.test', 'short')).toEqual({ ok: false, error: 'Use 8 characters or more.', field: 'password' });
+  });
+
+  it('keeps a service error for the whole form', async () => {
+    h.signUp.mockResolvedValue({ data: { user: null }, error: { code: 'over_email_send_rate_limit' } });
+    expect(await signUp('b@example.test', 'password1')).toEqual({
+      ok: false,
+      error: 'Too many emails sent. Try again in a few minutes.',
+    });
   });
 });
 
@@ -96,7 +131,7 @@ describe('signIn', () => {
 
   it('reports a wrong password in plain words', async () => {
     h.signInWithPassword.mockResolvedValue({ data: { user: null }, error: { code: 'invalid_credentials' } });
-    expect(await signIn('b@example.test', 'nope')).toEqual({ ok: false, error: 'Wrong email or password.' });
+    expect(await signIn('b@example.test', 'nope')).toEqual({ ok: false, error: 'Wrong email or password.', field: 'password' });
   });
 });
 

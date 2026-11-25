@@ -5,13 +5,28 @@ import { useMeta } from '../../db/hooks';
 import { btn } from '../../ui/btn';
 import { Icon } from '../../ui/Icon';
 import { EMPTY_STATE, type SyncState } from '../../sync/trigger';
+import { checkAccountFields, type Field } from '../../domain/account';
 
 // The account code (and Supabase with it) loads when this section first needs it, not with the app.
 const auth = () => import('../../sync/auth');
 type Step = 'form' | 'confirm' | 'reset';
 /** On the form step: signing in to an account, or creating one. */
 type Mode = 'in' | 'up';
-type Outcome = { ok: true } | { ok: false; error?: string; needsCode?: true; otherAccount?: true };
+type Outcome = { ok: true } | { ok: false; error?: string; field?: Field; needsCode?: true; otherAccount?: true };
+/** Errors on show: each under its own field, or `form` for one that belongs to no field (the service, the network). */
+type Errors = Partial<Record<Field | 'form', string>>;
+const INPUT: Record<Field, string> = { email: 'acc-email', password: 'acc-password', code: 'acc-code' };
+
+/** A field's error, under the field, tied to it with `aria-describedby` (`${input}-error`). */
+function FieldError({ input, text }: { input: string; text?: string }) {
+  if (!text) return null;
+  return (
+    <p id={`${input}-error`} className="field-error">
+      <Icon name="alert" size={16} />
+      {text}
+    </p>
+  );
+}
 
 const when = (iso: string) =>
   new Date(iso).toLocaleString(undefined, { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
@@ -29,7 +44,7 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [code, setCode] = useState('');
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState<Errors>({});
   const [busy, setBusy] = useState(false);
   const [other, setOther] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -78,16 +93,31 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
 
   if (!sync) return null;
 
-  /** Runs one account call: one at a time, with its error shown in the form. */
+  /**
+   * Shows these errors and moves focus to the first field with one, so a screen reader reads its label and its
+   * error together. Returns whether there were any.
+   */
+  const show = (found: Errors) => {
+    setErrors(found);
+    const first = (['email', 'code', 'password'] as const).find((f) => found[f]);
+    if (first) requestAnimationFrame(() => document.getElementById(INPUT[first])?.focus());
+    return Object.keys(found).length > 0;
+  };
+  /** A field drops its error as soon as she changes it. */
+  const edited = (field: Field) => {
+    if (errors[field]) setErrors(({ [field]: _, ...rest }) => rest);
+  };
+
+  /** Runs one account call: one at a time, with its error shown on its field, or for the whole form. */
   const run = async (call: (a: Awaited<ReturnType<typeof auth>>) => Promise<Outcome>, done: (r: Outcome) => void) => {
     setBusy(true);
-    setError('');
+    setErrors({});
     try {
       const r = await call(await auth());
-      if (!r.ok && r.error) setError(r.error);
+      if (!r.ok && r.error) show({ [r.field ?? 'form']: r.error });
       else done(r);
     } catch {
-      setError('Could not reach the account service. Try again.');
+      show({ form: 'Could not reach the account service. Try again.' });
     } finally {
       setBusy(false);
     }
@@ -106,12 +136,18 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
   };
   const submit = (e: FormEvent) => {
     e.preventDefault();
+    const found = checkAccountFields({
+      email: step === 'form' ? email : undefined,
+      password: step !== 'confirm' ? password : undefined,
+      code: step !== 'form' ? code : undefined,
+    });
+    if (show(found)) return;
     if (step === 'form' && mode === 'up') run((a) => a.signUp(email, password), () => (setCode(''), setStep('confirm')));
     else if (step === 'form') run((a) => a.signIn(email, password), afterSignIn);
     else if (step === 'confirm') run((a) => a.confirmSignUp(email, code), afterSignIn);
     else run((a) => a.finishReset(email, code, password), afterSignIn);
   };
-  const pick = (m: Mode) => (setMode(m), setError(''));
+  const pick = (m: Mode) => (setMode(m), setErrors({}));
 
   return (
     <section className={required ? 'tile auth-card' : 'tile span-3'}>
@@ -157,9 +193,15 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
               Delete account
             </button>
           </div>
+          {errors.form && (
+            <p role="alert" className="form-error">
+              <Icon name="alert" size={16} />
+              {errors.form}
+            </p>
+          )}
         </>
       ) : (
-        <form ref={form} className="stack" onSubmit={submit} noValidate={false}>
+        <form ref={form} className="stack" onSubmit={submit} noValidate>
           {required && (
             <h1 ref={heading} tabIndex={-1}>
               {title}
@@ -188,7 +230,17 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
           {step === 'form' && (
             <div className="field">
               <label htmlFor="acc-email">Email</label>
-              <input id="acc-email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value.trim())} />
+              <input
+                id="acc-email"
+                type="email"
+                autoComplete="email"
+                required
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? 'acc-email-error' : undefined}
+                value={email}
+                onChange={(e) => (setEmail(e.target.value.trim()), edited('email'))}
+              />
+              <FieldError input="acc-email" text={errors.email} />
             </div>
           )}
           {step !== 'form' && (
@@ -202,9 +254,12 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
                 pattern="[0-9]{6}"
                 maxLength={6}
                 required
+                aria-invalid={!!errors.code}
+                aria-describedby={errors.code ? 'acc-code-error' : undefined}
                 value={code}
-                onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
+                onChange={(e) => (setCode(e.target.value.replace(/\D/g, '')), edited('code'))}
               />
+              <FieldError input="acc-code" text={errors.code} />
             </div>
           )}
           {step !== 'confirm' && (
@@ -217,9 +272,10 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
                   autoComplete={step === 'reset' || mode === 'up' ? 'new-password' : 'current-password'}
                   minLength={8}
                   required
-                  aria-describedby="acc-password-help"
+                  aria-invalid={!!errors.password}
+                  aria-describedby={errors.password ? 'acc-password-error acc-password-help' : 'acc-password-help'}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => (setPassword(e.target.value), edited('password'))}
                 />
                 <button
                   type="button"
@@ -231,16 +287,17 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
                   {showPassword ? 'Hide' : 'Show'}
                 </button>
               </div>
+              <FieldError input="acc-password" text={errors.password} />
               <span id="acc-password-help" className="meta">
                 8 characters or more.
               </span>
             </div>
           )}
 
-          {error && (
+          {errors.form && (
             <p role="alert" className="form-error">
               <Icon name="alert" size={16} />
-              {error}
+              {errors.form}
             </p>
           )}
 
@@ -254,8 +311,7 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
                 className={btn.quiet}
                 disabled={busy}
                 onClick={() => {
-                  const field = document.getElementById('acc-email') as HTMLInputElement;
-                  if (!field.reportValidity()) return;
+                  if (show(checkAccountFields({ email }))) return;
                   run((a) => a.requestReset(email), () => (setCode(''), setPassword(''), setStep('reset')));
                 }}
               >
@@ -268,7 +324,7 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
               </button>
             )}
             {step !== 'form' && (
-              <button type="button" className={btn.quiet} onClick={() => (setError(''), setStep('form'))}>
+              <button type="button" className={btn.quiet} onClick={() => (setErrors({}), setStep('form'))}>
                 Back
               </button>
             )}
@@ -326,7 +382,7 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
               setDeleting(false);
               const r = await (await auth()).deleteAccount();
               if (r.ok) announce('Account deleted');
-              else setError(r.error);
+              else setErrors({ form: r.error });
             }}
           >
             Delete account
