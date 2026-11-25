@@ -133,7 +133,7 @@ export function Settings() {
             {s.level === 'secondary' && (
               <div className="field">
                 <label htmlFor="s-major">Major</label>
-                <input id="s-major" type="text" placeholder="e.g. English" value={s.major} onChange={(e) => set({ major: e.target.value })} />
+                <input id="s-major" type="text" placeholder="e.g. Filipino" value={s.major} onChange={(e) => set({ major: e.target.value })} />
               </div>
             )}
             <div className="field">
@@ -236,8 +236,8 @@ export function Settings() {
         <section className="tile span-3" aria-labelledby="set-erase">
           <h2 id="set-erase">Erase this device</h2>
           <p className="muted">
-            Removes every quiz, answer, mock exam, subject and setting on this device and starts the app fresh. Export a backup first
-            if you might want them back.
+            Removes every quiz, answer, mock exam, subject and setting on this device. Your name, avatar, level and major stay
+            {sync?.signedIn ? ', and so does your sign-in' : ''}. Export a backup first if you might want them back.
           </p>
           <div>
             <AsyncButton className={btn.secondary} onClick={async () => setErase(await deviceCounts())}>
@@ -257,7 +257,7 @@ export function Settings() {
               <span className="num">{erase.attempts}</span> answer{erase.attempts === 1 ? '' : 's'},
               your mock exams, subjects and settings from this device. It cannot be undone.
             </p>
-            {sync?.signedIn && <p>This device also signs out. Your account keeps its own copy online; signing in again brings it back.</p>}
+            <p>Your name, avatar, level and major stay{sync?.signedIn ? ', and you stay signed in. The copy in your account is not touched' : ''}.</p>
             <div className="row">
               <button type="button" className={btn.primary} data-autofocus onClick={() => setErase(null)}>
                 Keep my data
@@ -266,7 +266,7 @@ export function Settings() {
                 className={btn.secondary}
                 onClick={async () => {
                   await eraseDevice();
-                  // Start over at the welcome screen with nothing in memory from before.
+                  // Start again on an empty Study, with nothing in memory from before.
                   window.location.replace(window.location.pathname);
                 }}
               >

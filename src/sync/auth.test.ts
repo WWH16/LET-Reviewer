@@ -10,6 +10,8 @@ const h = vi.hoisted(() => ({
   getUser: vi.fn(async () => ({ data: { user: null as unknown }, error: null as unknown })),
   signInWithPassword: vi.fn(),
   signUp: vi.fn(),
+  verifyOtp: vi.fn(),
+  saveSettings: vi.fn(async (_patch: unknown) => {}),
   cleared: 0,
 }));
 
@@ -21,10 +23,12 @@ vi.mock('./client', () => ({
       getUser: h.getUser,
       signInWithPassword: h.signInWithPassword,
       signUp: h.signUp,
+      verifyOtp: h.verifyOtp,
       signOut: async () => ({ error: null }),
     },
   },
 }));
+vi.mock('../db/repo', () => ({ saveSettings: h.saveSettings }));
 vi.mock('./store', () => ({
   dexieStore: {
     getState: async () => h.state,
@@ -36,7 +40,7 @@ vi.mock('./store', () => ({
   },
 }));
 
-import { messageFor, replaceDeviceData, signIn, signUp, syncNow } from './auth';
+import { confirmSignUp, messageFor, replaceDeviceData, signIn, signUp, syncNow } from './auth';
 
 beforeEach(() => {
   h.state = { ...EMPTY_STATE };
@@ -47,6 +51,8 @@ beforeEach(() => {
   h.getUser.mockReset().mockResolvedValue({ data: { user: null }, error: null });
   h.signInWithPassword.mockReset();
   h.signUp.mockReset();
+  h.verifyOtp.mockReset();
+  h.saveSettings.mockReset().mockResolvedValue(undefined);
   vi.unstubAllGlobals();
 });
 
@@ -92,6 +98,34 @@ describe('signUp', () => {
       ok: false,
       error: 'Too many emails sent. Try again in a few minutes.',
     });
+  });
+});
+
+describe('confirmSignUp', () => {
+  beforeEach(() => {
+    h.session = { user: { id: 'N', email: 'n@example.test' } };
+    h.verifyOtp.mockResolvedValue({ data: { user: { id: 'N' } }, error: null });
+  });
+
+  it('opens the welcome for a new account before the app shows', async () => {
+    let signedInWhenSaved: boolean | undefined;
+    h.saveSettings.mockImplementation(async () => void (signedInWhenSaved = h.state.signedIn));
+    expect(await confirmSignUp('n@example.test', '123456')).toEqual({ ok: true });
+    expect(h.saveSettings).toHaveBeenCalledWith({ onboarded: false });
+    expect(signedInWhenSaved).toBe(false);
+    expect(h.state.signedIn).toBe(true);
+  });
+
+  it('leaves the device alone when it holds another account', async () => {
+    h.state = { ...EMPTY_STATE, userId: 'A' };
+    expect(await confirmSignUp('n@example.test', '123456')).toEqual({ ok: false, otherAccount: true });
+    expect(h.saveSettings).not.toHaveBeenCalled();
+  });
+
+  it('does not open the welcome when signing in to an account she already has', async () => {
+    h.signInWithPassword.mockResolvedValue({ data: { user: { id: 'N' } }, error: null });
+    await signIn('n@example.test', 'password1');
+    expect(h.saveSettings).not.toHaveBeenCalled();
   });
 });
 

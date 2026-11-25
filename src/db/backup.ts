@@ -1,8 +1,8 @@
 // Backup file: one versioned envelope (plan §4). Restore replaces, it does not merge.
 
 import { db } from './db';
-import { nowIso, setMeta } from './repo';
-import { SCHEMA_VERSION, type Backup } from '../domain/types';
+import { getSettings, nowIso, setMeta } from './repo';
+import { SCHEMA_VERSION, settingsAfterErase, type Backup } from '../domain/types';
 import { upgradeQuestion } from '../domain/quiz';
 
 export async function exportBackup(): Promise<{ filename: string; text: string }> {
@@ -70,7 +70,16 @@ export async function restoreBackup(b: Backup) {
  * settings, sync position) and its local storage, which also holds the account sign-in. The caller
  * reloads, so the app starts over at the welcome screen. An account's copy online is not touched.
  */
+/**
+ * Erase this device: every quiz and question, answer, mock exam and subject, the settings, and the device-only
+ * notes (unfinished quizzes, last backup). Kept: who she is (name, avatar, level and major, see settingsAfterErase)
+ * and her sign-in with its sync place, so she lands on an empty Study, signed in, with no welcome and nothing
+ * pulled back from her account.
+ */
 export async function eraseDevice() {
-  await db.delete();
-  localStorage.clear();
+  const before = await getSettings();
+  await db.transaction('rw', [db.questions, db.attempts, db.mockExams, db.settings, db.meta], async () => {
+    await Promise.all([db.questions.clear(), db.attempts.clear(), db.mockExams.clear(), db.meta.where('key').notEqual('sync').delete()]);
+    await db.settings.put(settingsAfterErase(before));
+  });
 }

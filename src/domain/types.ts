@@ -157,6 +157,16 @@ export const DEFAULT_SETTINGS: Settings = {
   deleted: false,
 };
 
+/**
+ * Her settings after Erase this device: who she is (name, avatar, level and major, all set on the welcome) stays,
+ * so she does not go through the welcome again; everything else is back to the defaults. The date of her last
+ * change stays too, so the erase is not sent to her account and her other devices keep their settings.
+ */
+export function settingsAfterErase(s: Settings): Settings {
+  const { name, avatarBase, avatarParts, level, major, updatedAt } = s;
+  return { ...DEFAULT_SETTINGS, name, avatarBase, avatarParts, level, major, onboarded: true, updatedAt };
+}
+
 /** 2: questions carry `quizId`. Older backups are upgraded on restore. */
 export const SCHEMA_VERSION = 2;
 

@@ -3,6 +3,7 @@
 // which is also where a Supabase redirect link would put its tokens.
 
 import type { Field } from '../domain/account';
+import { saveSettings } from '../db/repo';
 import { remote, supabase } from './client';
 import { runSync } from './run';
 import { dexieStore as store } from './store';
@@ -53,12 +54,17 @@ const fail = (error: Failure): AuthResult => {
   return field ? { ok: false, error: messageFor(error), field } : { ok: false, error: messageFor(error) };
 };
 
-/** After any successful sign-in: this device's data must belong to this account, or to no one yet. */
-async function finishSignIn(userId: string | undefined): Promise<SignInResult> {
+/**
+ * After any successful sign-in: this device's data must belong to this account, or to no one yet. A new account
+ * (`fresh`) starts at the welcome, so she sets her name, avatar, level and major first, with whatever this device
+ * already had filled in. It is turned on before she counts as signed in, so the app never shows before it.
+ */
+async function finishSignIn(userId: string | undefined, { fresh = false } = {}): Promise<SignInResult> {
   if (!userId) return fail({});
   const state = await store.getState();
   // The session stays, so Replace can go ahead; nothing syncs until the person decides.
   if (state.userId && state.userId !== userId) return { ok: false, otherAccount: true };
+  if (fresh) await saveSettings({ onboarded: false });
   await store.setState({ signedIn: true, lastError: null });
   void syncNow();
   return { ok: true };
@@ -75,7 +81,7 @@ export async function signUp(email: string, password: string): Promise<AuthResul
 
 export async function confirmSignUp(email: string, code: string): Promise<SignInResult> {
   const { data, error } = await supabase.auth.verifyOtp({ email, token: code.trim(), type: 'signup' });
-  return error ? fail(error) : finishSignIn(data.user?.id);
+  return error ? fail(error) : finishSignIn(data.user?.id, { fresh: true });
 }
 
 export async function resendCode(email: string): Promise<AuthResult> {
