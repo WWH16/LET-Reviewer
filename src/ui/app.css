@@ -2499,4 +2499,7 @@ dialog.command input:focus-visible {
   .name-row > .row {
     flex: none;
   }
+  .name-row > .stack-sm {
+    min-width: 0;
+  }
 }

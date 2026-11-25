@@ -47,7 +47,10 @@ export function SubjectsEditor({ s }: { s: Settings }) {
   );
 }
 
-/** One editable list of names: add, rename on leaving the field, remove when nothing uses it. */
+/**
+ * One list of names, read as plain rows: each name with its count, Rename and Remove. Rename opens a field on
+ * that row only (Enter saves, Escape cancels); Remove is off while anything uses the name.
+ */
 function NameList({
   id,
   word,
@@ -62,6 +65,7 @@ function NameList({
   onChange: (next: Subject[]) => void;
 }) {
   const [draft, setDraft] = useState('');
+  const [editing, setEditing] = useState<string | null>(null);
   const [error, setError] = useState('');
   const taken = (name: string, except?: string) => items.some((x) => x.id !== except && x.name.toLowerCase() === name.toLowerCase());
 
@@ -74,9 +78,13 @@ function NameList({
     setDraft('');
     onChange([...items, { id: subjectId(name, new Set(items.map((x) => x.id))), name }]);
   };
-  const rename = (x: Subject, name: string) => {
-    const clean = name.trim();
-    if (clean && clean !== x.name && !taken(clean, x.id)) onChange(items.map((y) => (y.id === x.id ? { ...y, name: clean } : y)));
+  const rename = (e: FormEvent<HTMLFormElement>, x: Subject) => {
+    e.preventDefault();
+    const clean = String(new FormData(e.currentTarget).get('name') ?? '').trim();
+    if (clean && clean !== x.name && taken(clean, x.id)) return setError(`${clean} is already here.`);
+    setError('');
+    setEditing(null);
+    if (clean && clean !== x.name) onChange(items.map((y) => (y.id === x.id ? { ...y, name: clean } : y)));
   };
 
   return (
@@ -87,24 +95,49 @@ function NameList({
           {items.map((x) => {
             const n = used(x);
             return (
-              <li key={x.id} className="stack-sm">
-                <div className="spread name-row">
-                  {/* Saved when she leaves the field, so a half-typed name never renames anything. */}
-                  <input key={x.name} type="text" aria-label={`Name of ${word} ${x.name}`} defaultValue={x.name} onBlur={(e) => rename(x, e.target.value)} />
-                  <span className="row">
-                    <span className="meta">{n ? `${n} question${n === 1 ? '' : 's'}` : 'No quizzes'}</span>
-                    <button
-                      type="button"
-                      className={btn.quiet}
-                      disabled={n > 0}
-                      title={n > 0 ? 'Remove its quizzes first' : undefined}
-                      aria-label={`Remove ${word} ${x.name}`}
-                      onClick={() => onChange(items.filter((y) => y.id !== x.id))}
-                    >
-                      Remove
-                    </button>
-                  </span>
-                </div>
+              <li key={x.id}>
+                {editing === x.id ? (
+                  <form className="spread name-row" onSubmit={(e) => rename(e, x)}>
+                    <input
+                      name="name"
+                      type="text"
+                      aria-label={`New name for ${x.name}`}
+                      defaultValue={x.name}
+                      autoFocus
+                      onKeyDown={(e) => e.key === 'Escape' && setEditing(null)}
+                    />
+                    <span className="row">
+                      <button type="submit" className={btn.secondary}>
+                        Save
+                      </button>
+                      <button type="button" className={btn.quiet} onClick={() => setEditing(null)}>
+                        Cancel
+                      </button>
+                    </span>
+                  </form>
+                ) : (
+                  <div className="spread name-row">
+                    <span className="stack-sm">
+                      <span className="subject-name">{x.name}</span>
+                      <span className="meta">{n ? `${n} question${n === 1 ? '' : 's'}` : 'No quizzes yet'}</span>
+                    </span>
+                    <span className="row">
+                      <button type="button" className={btn.quiet} aria-label={`Rename ${x.name}`} onClick={() => setEditing(x.id)}>
+                        Rename
+                      </button>
+                      <button
+                        type="button"
+                        className={btn.quiet}
+                        disabled={n > 0}
+                        title={n > 0 ? 'Remove its quizzes first' : undefined}
+                        aria-label={`Remove ${x.name}`}
+                        onClick={() => onChange(items.filter((y) => y.id !== x.id))}
+                      >
+                        Remove
+                      </button>
+                    </span>
+                  </div>
+                )}
               </li>
             );
           })}
