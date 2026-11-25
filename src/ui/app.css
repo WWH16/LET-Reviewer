@@ -309,25 +309,19 @@ h1:not(.sr-only) + p {
 .score-tile .display {
   font-size: calc(var(--text-figure-lead) * 1.25);
 }
-/* A weak subject: its name and figures on the left, its two actions on the right, on one row at every width. */
-.weak-item {
+/* Stats, by subject: the name and its part on the left, the figure on the right, one row at every width. */
+.list-link.subject-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-sm);
 }
-.weak-item > .stack-sm {
+.subject-row > .stack-sm {
   gap: 1px;
   min-width: 0;
 }
-.weak-item > .row {
+.subject-row > .subject-pct {
   flex: none;
-  flex-wrap: nowrap;
-  gap: var(--space-2xs);
-}
-.weak-name {
-  font-size: var(--text-name);
-  font-weight: 600;
 }
 
 /* A note set in a bento takes the tiles' corners and padding, so the grid's edges line up. */
@@ -1798,7 +1792,7 @@ a.mode:focus-visible {
 .stats-count {
   font-weight: 600;
 }
-/* Subject scores: a name and its figure, a near-black bar, a line of detail. Only the figure takes the
+/* By part: a name and its figure, a near-black bar, a line of detail. Only the figure takes the
    LET's own lines: green at a passing 75%, orange from the 50% floor, red under it. */
 .subjects {
   display: grid;

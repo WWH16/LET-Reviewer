@@ -2,15 +2,13 @@ import { Link } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { useAnnounce } from '../../ui/Status';
 import { LEVEL_WEIGHTS, PARTS, partsFor, subareaName } from '../../domain/let-config';
-import { subjectsOf } from '../../domain/subjects';
-import { pct, recentByArea, tallyBy, weakestSubjects } from '../../domain/scoring';
+import { pct, recentByArea, weakestSubjects } from '../../domain/scoring';
 import { useStats } from './useStats';
 import { RatingCard } from './RatingCard';
 import { btn } from '../../ui/btn';
 import { Gauge, scoreTone } from '../../ui/Gauge';
 import { StreakCard } from '../home/StreakCard';
 import { Empty } from '../../ui/Empty';
-import { Icon } from '../../ui/Icon';
 import { loadDemoData } from '../../db/repo';
 
 const fmt = (p: number | null) => (p === null ? 'Not yet' : `${Math.round(p)}%`);
@@ -35,9 +33,9 @@ export function Progress() {
       </Page>
     );
 
-  // Subjects over the same recent window as each part's figure, so a tile's rows add up to its figure.
-  const bySub = tallyBy([...recentByArea(attempts, qmap).values()].flat(), qmap, (q) => q.subarea);
-  const weak = weakestSubjects(attempts, qmap);
+  // Subjects over the same recent window as each part's figure, so a part's subjects add up to its figure.
+  const recentAttempts = [...recentByArea(attempts, qmap).values()].flat();
+  const bySubject = weakestSubjects(recentAttempts, qmap, Infinity);
 
   const levelParts = partsFor(settings.level);
 
@@ -74,8 +72,10 @@ export function Progress() {
 
         <RatingCard rating={rating} className="span-2" />
 
+        {/* Two tiles that read as one table: each part's figure on the left, every subject behind it on the
+            right, weakest first, each row opening that subject's quizzes. */}
         <section className="tile span-3 align-start" aria-labelledby="pr-subjects">
-          <h2 id="pr-subjects">Subject scores</h2>
+          <h2 id="pr-subjects">By part</h2>
           <ul className="subjects">
             {levelParts.map((a) => {
               const p = parts[a]?.pct ?? null;
@@ -93,47 +93,6 @@ export function Progress() {
                     {Math.round(LEVEL_WEIGHTS[settings.level][a]! * 100)}% of your rating.{' '}
                     {n ? `${Math.round(((p ?? 0) * n) / 100)} of your last ${n} correct.` : 'No answers yet.'}
                   </p>
-                  <details>
-                    <summary className="label">Subjects</summary>
-                    <table>
-                      <caption className="sr-only">
-                        {PARTS[a].name} by subject
-                      </caption>
-                      <thead>
-                        <tr>
-                          <th scope="col">Subject</th>
-                          <th scope="col" className="num">
-                            Accuracy
-                          </th>
-                          <th scope="col" className="num">
-                            Answers
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {subjectsOf(a, settings.subjects, qmap.values()).map((s) => {
-                          const tally = bySub.get(s.id);
-                          const sp = pct(tally);
-                          return (
-                            <tr key={s.id}>
-                              <th scope="row">
-                                <span className="stack-sm">
-                                  {s.name}
-                                  {sp !== null && (
-                                    <span className="meter" aria-hidden="true">
-                                      <span style={{ width: `${sp}%` }} />
-                                    </span>
-                                  )}
-                                </span>
-                              </th>
-                              <td className="num">{fmt(sp)}</td>
-                              <td className="num">{tally?.total ?? 0}</td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </details>
                 </li>
               );
             })}
@@ -141,33 +100,24 @@ export function Progress() {
         </section>
 
         <section className="tile span-3 align-start" aria-labelledby="pr-weak">
-          <h2 id="pr-weak">Weakest subjects</h2>
-          {weak.length === 0 ? (
+          <h2 id="pr-weak">By subject, weakest first</h2>
+          {bySubject.length === 0 ? (
             <p className="muted">Subjects appear here after 3 or more answers each.</p>
           ) : (
             <ul className="list">
-              {weak.map((w) => {
-                const name = subareaName(w.subarea);
+              {bySubject.map((w) => {
+                const p = pct(w.tally)!;
                 return (
-                  <li key={`${w.area}-${w.subarea}`} className="weak-item">
-                    <span className="stack-sm">
-                      <span className="weak-name">{name}</span>
-                      <span className="meta">
-                        {PARTS[w.area].name}: {fmt(pct(w.tally))} over {w.tally.total} answers
+                  <li key={`${w.area}-${w.subarea}`}>
+                    <Link className="list-link subject-row" to={`/quizzes/${w.area}/${w.subarea}`}>
+                      <span className="stack-sm">
+                        <span className="subject-name">{subareaName(w.subarea)}</span>
+                        <span className="meta">
+                          {PARTS[w.area].name}, {w.tally.total} answers
+                        </span>
                       </span>
-                    </span>
-                    <span className="row">
-                      <Link className={btn.secondary} to={`/quizzes/${w.area}/${w.subarea}`} aria-label={`${name} quizzes`}>
-                        Quizzes
-                      </Link>
-                      <Link
-                        className={btn.quiet}
-                        to={`/quizzes/new?area=${w.area}&sub=${w.subarea}`}
-                        aria-label={`New ${name} quiz`}
-                      >
-                        New quiz
-                      </Link>
-                    </span>
+                      <span className={`subject-pct num ${scoreTone(p)}`}>{fmt(p)}</span>
+                    </Link>
                   </li>
                 );
               })}
