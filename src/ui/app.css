@@ -10,7 +10,7 @@
 /* Hallmark · dismissed 70 · "New code sent" follows a real request: run() in AccountSection awaits the resendCode request and announces only when it succeeds */
 /* Hallmark · finish-review: in-thread · audit after the quizzes rework (reviews/hallmark-audit-quizzes.md) · 16 findings · all resolved · gap: none */
 /* Hallmark · pre-emit critique: P4 H4 E4 S3 R4 V3 · weakest: S, the look follows a named reference by request; the golden greeting with the week and the New quiz tile are what Study is known by now, and the tiles keep the list's order on a phone */
-/* Hallmark · redesign: full (sign-in screen, 2026-11-25, brand kept, app renamed LET Prep) · the app's paper ground; the whole screen celebrates: gold and ink confetti falls once across it, and a crowd of nine cheering Avataaars reviewers stands on a golden arc along the bottom edge, behind the form (decorative, under 5s, still under reduced motion); type a step under the app's page titles (h1 20 to 24px, wordmark 16px); the mark and the name over the form on a clay card (2px ink edge, solid ink shadow); Sign in and Create account in one track, a yellow ink-edged pill sliding between them, the form below sliding in from the side of the tab picked (staggered, 240ms, none under reduced motion), one primary each; a Show button in the password field; account errors on the red tint with the alert icon · dropped the promise line and the what-is-stored line from the sign-in screen at the owner's request (Settings, Account keeps the what-is-stored line) */
+/* Hallmark · redesign: full (sign-in screen, 2026-11-25, brand kept, app renamed LET Prep) · the app's paper ground; a crowd of nine cheering Avataaars reviewers stands on a golden arc along the bottom edge, behind the form (decorative, under 5s, still under reduced motion); pointing at or tapping a reviewer lifts them a little; type a step under the app's page titles (h1 20 to 24px, wordmark 16px); the mark and the name over the form on a clay card (2px ink edge, solid ink shadow); Sign in and Create account in one track, a yellow ink-edged pill sliding between them, the form below sliding in from the side of the tab picked (staggered, 240ms, none under reduced motion), one primary each; a Show button in the password field; account errors on the red tint with the alert icon · dropped the promise line and the what-is-stored line from the sign-in screen at the owner's request (Settings, Account keeps the what-is-stored line) */
 @import '@cloudflare/kumo/styles/kumo-standalone';
 @import url('./tokens.css');
 @import url('./base.css');
@@ -591,8 +591,7 @@ a.brand {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
-/* Sign in: the whole screen celebrates. Confetti in the brand's golds and ink comes down once across the full
-   screen, and a crowd of fellow reviewers cheers from a golden rise along the bottom edge. The form stands
+/* Sign in: a crowd of fellow reviewers cheers from a golden rise along the bottom edge. The form stands
    above them on a clay card (a thick ink edge and a solid ink shadow, so it reads as something to press).
    The party is one layer behind the form, decorative, clipped to the screen. --crowd is one face's width. */
 .auth {
@@ -681,36 +680,6 @@ a.brand {
   overflow: clip;
   pointer-events: none;
 }
-.confetti {
-  position: absolute;
-  top: var(--y);
-  left: var(--x);
-  width: 16px;
-  height: 16px;
-  border-radius: 3px;
-  transform: translateX(var(--drift)) rotate(var(--turn));
-}
-.confetti.is-strip {
-  width: 10px;
-  height: 30px;
-}
-.confetti.is-dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-}
-.confetti.is-gold {
-  background: var(--color-inverse);
-}
-.confetti.is-ink {
-  background: var(--color-ink);
-}
-.confetti.is-deep {
-  background: var(--color-gold);
-}
-.confetti.is-butter {
-  background: var(--color-inverse-tint);
-}
 /* the golden rise the crowd stands on: a wide arc, wider than the screen so only its crown shows */
 .auth-rise {
   position: absolute;
@@ -743,22 +712,20 @@ a.brand {
   background: transparent;
   box-shadow: none;
 }
+/* Point at (or tap) a reviewer and they rise a little. The party layer ignores the pointer; the faces take it
+   back. The rise uses the translate property, apart from the cheer's transform, so the two never fight. */
+.auth-fan {
+  pointer-events: auto;
+}
 @media (prefers-reduced-motion: no-preference) {
-  .confetti {
-    animation: confetti-fall var(--fall) var(--delay) cubic-bezier(0.22, 0.61, 0.36, 1) backwards;
-  }
   /* two cheers, from the middle out, then still: the whole party is over inside five seconds */
   .auth-fan > .avatar {
     animation: fan-cheer 1000ms calc(500ms + var(--i) * 110ms) var(--ease-out) 2 backwards;
     transform-origin: 50% 100%;
+    transition: translate 320ms var(--ease-out);
   }
-}
-@keyframes confetti-fall {
-  from {
-    transform: translate(0, calc(-1 * var(--y) - 48px)) rotate(0deg);
-  }
-  to {
-    transform: translateX(var(--drift)) rotate(var(--turn));
+  .auth-fan:hover > .avatar {
+    translate: 0 -10%;
   }
 }
 @keyframes fan-cheer {

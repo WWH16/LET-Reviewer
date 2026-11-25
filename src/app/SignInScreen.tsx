@@ -29,39 +29,16 @@ const ROW = [...CROWD.keys()]
   .map((i) => CROWD[i]);
 const MIDDLE = ROW.indexOf(CROWD[0]);
 
-// Confetti: spread by the golden ratio so it scatters evenly without a random seed. Each piece falls once from
-// above the screen to where it rests; the resting places are the still picture under reduced motion.
-const SHAPES = ['strip', 'square', 'dot'];
-const TONES = ['gold', 'ink', 'deep', 'butter'];
-const CONFETTI = Array.from({ length: 72 }, (_, i) => {
-  const f = (n: number) => (i * n) % 1;
-  return {
-    shape: SHAPES[i % 3],
-    tone: TONES[i % 4],
-    style: {
-      '--x': `${(f(0.618034) * 100).toFixed(1)}%`,
-      '--y': `${(2 + f(0.414214) * 74).toFixed(1)}vh`,
-      '--turn': `${Math.round(f(0.732051) * 540 - 270)}deg`,
-      '--drift': `${Math.round(f(0.236068) * 80 - 40)}px`,
-      '--delay': `${Math.round(f(0.302776) * 900)}ms`,
-      '--fall': `${Math.round(1900 + f(0.570796) * 1300)}ms`,
-    } as CSSProperties,
-  };
-});
-
 /**
- * The first screen of a build with an account service, until she signs in. The whole screen celebrates: confetti
- * comes down once across it, and a crowd of fellow reviewers cheers from a golden rise along the bottom edge,
- * behind the form. All of it is decoration, hidden from screen readers; the motion runs under five seconds and
- * not at all under reduced motion.
+ * The first screen of a build with an account service, until she signs in. A crowd of fellow reviewers cheers
+ * from a golden rise along the bottom edge, behind the form; point at (or tap) one and they rise a little. All of
+ * it is decoration, hidden from screen readers; the cheer runs under five seconds, and nothing moves under
+ * reduced motion.
  */
 export function SignInScreen() {
   return (
     <main id="main" className="auth">
       <div className="auth-party" aria-hidden="true">
-        {CONFETTI.map((c, i) => (
-          <i key={i} className={`confetti is-${c.shape} is-${c.tone}`} style={c.style} />
-        ))}
         <div className="auth-rise" />
         <div className="auth-crowd">
           {ROW.map((who, i) => (
