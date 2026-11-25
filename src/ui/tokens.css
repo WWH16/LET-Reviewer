@@ -21,10 +21,12 @@
   --font-sans: var(--font-body); --font-mono: var(--font-num); --default-font-family: var(--font-body); --default-mono-font-family: var(--font-num);
   --tracking-display: -0.03em;
   /* Type and spacing roles that change with screen size. Phone values here; wider screens below. */
-  /* Compact scale with clear steps: meta 13, reading text 15, names 16 (semibold), section heads 18,
+  /* Compact scale with clear steps: meta 14, reading text 16, names 17 (semibold), section heads 18,
      page titles 22. Figures come in two sizes: the lead figure a screen exists for (the ring, a score) and
      the secondary ones beside it (the rating, the streak), so the lead is always the largest number. */
-  --text-body: 0.9375rem; --text-name: 1rem; --text-h1: 1.375rem; --text-h2: 1.125rem;
+  --text-body: 1rem; --text-name: 1.0625rem;
+  /* Helper text, labels and the side menu's settings pages: one step under the body, never Kumo's 13px. */
+  --text-meta: 0.875rem; --text-h1: 1.375rem; --text-h2: 1.125rem;
   --text-figure: 1.75rem; --text-figure-lead: 2rem; --text-stat: 1.125rem;
   --pad-card: 14px; --gap-tile: var(--space-sm); --gap-section: var(--space-md); --pad-page-top: var(--space-md);
   --radius-control: 8px; --radius-card: 12px; --radius-tile: 14px; --radius-pill: 999px;

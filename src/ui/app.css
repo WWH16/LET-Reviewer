@@ -30,7 +30,7 @@
   white-space: nowrap;
 }
 .label {
-  font-size: var(--text-sm);
+  font-size: var(--text-meta);
   font-weight: 600;
   line-height: 1.4;
   color: var(--color-ink);
@@ -39,12 +39,12 @@ h2.label,
 summary.label {
   max-width: none;
   font-family: var(--font-body);
-  font-size: var(--text-sm);
+  font-size: var(--text-meta);
   font-weight: 600;
   letter-spacing: 0;
 }
 .meta {
-  font-size: var(--text-sm);
+  font-size: var(--text-meta);
   line-height: 1.4;
   color: var(--color-muted);
 }
@@ -52,7 +52,7 @@ summary.label {
 p.muted,
 form [role='status'],
 form [role='status'] p {
-  font-size: var(--text-sm);
+  font-size: var(--text-meta);
   line-height: 1.45;
 }
 /* The measure holds the line, not the box: a status well still spans its card. */
@@ -79,7 +79,7 @@ h1:not(.sr-only) + p {
 }
 .mono {
   font-family: var(--font-num);
-  font-size: var(--text-sm);
+  font-size: var(--text-meta);
   font-variant-numeric: tabular-nums;
 }
 .display {
@@ -172,7 +172,7 @@ h1:not(.sr-only) + p {
   padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-control);
   background: var(--color-paper-2);
-  font-size: var(--text-sm);
+  font-size: var(--text-meta);
 }
 .tile-inverse {
   background: var(--color-inverse);
@@ -341,7 +341,7 @@ h1:not(.sr-only) + p {
   background: var(--color-info-tint);
   box-shadow: inset 0 0 0 1px var(--color-line);
   color: var(--color-ink);
-  font-size: var(--text-sm);
+  font-size: var(--text-meta);
 }
 /* Page-level notices share the tiles' corners. Inside a tile a notice becomes a well: no ring, so it is
    never a box drawn inside a card. */
@@ -410,7 +410,7 @@ a.brand {
   align-items: center;
   gap: var(--space-xs);
   border-radius: var(--radius-control);
-  font-size: var(--text-sm);
+  font-size: var(--text-meta);
   font-weight: 500;
   color: var(--color-ink);
   white-space: nowrap;
@@ -517,7 +517,7 @@ a.brand {
   inline-size: 4.75rem;
   padding: var(--space-2xs);
   scroll-snap-align: center;
-  font-size: var(--text-sm);
+  font-size: var(--text-meta);
   line-height: 1.25;
   text-align: center;
   color: var(--color-muted);
@@ -778,7 +778,7 @@ main.wide {
 }
 .field > label,
 .field > .label {
-  font-size: var(--text-sm);
+  font-size: var(--text-meta);
   font-weight: 600;
   color: var(--color-ink);
 }
@@ -970,7 +970,7 @@ legend {
   border-radius: 6px;
   box-shadow: inset 0 0 0 1px var(--color-control);
   color: var(--color-ink);
-  font-size: var(--text-sm);
+  font-size: var(--text-meta);
   font-weight: 600;
 }
 .choice-text {
@@ -981,7 +981,7 @@ legend {
 .choice-note {
   display: block;
   margin-top: var(--space-2xs);
-  font-size: var(--text-sm);
+  font-size: var(--text-meta);
   font-weight: 500;
 }
 .choice:has(input:checked) {
@@ -1070,7 +1070,7 @@ legend {
 }
 .kbd-hint {
   color: var(--color-muted);
-  font-size: var(--text-sm);
+  font-size: var(--text-meta);
 }
 @media (pointer: coarse) {
   .kbd-hint {
@@ -1108,7 +1108,7 @@ legend {
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: var(--text-sm);
+  font-size: var(--text-meta);
 }
 th,
 td {
@@ -1282,7 +1282,7 @@ dialog::backdrop {
   border-radius: var(--radius-card);
   background: var(--color-card);
   color: var(--color-ink);
-  font-size: var(--text-sm);
+  font-size: var(--text-meta);
   transform: translateX(-50%);
   box-shadow: var(--shadow-pop);
 }
@@ -1326,7 +1326,7 @@ dialog::backdrop {
   padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-control);
   background: var(--color-paper-2);
-  font-size: var(--text-sm);
+  font-size: var(--text-meta);
 }
 .rating-warn svg {
   margin-top: var(--space-3xs);
@@ -1342,7 +1342,7 @@ dialog::backdrop {
   min-height: 44px;
   margin-block: calc(-1 * var(--space-sm));
   color: var(--color-accent-text);
-  font-size: var(--text-sm);
+  font-size: var(--text-meta);
   font-weight: 600;
 }
 a.back {
@@ -1473,7 +1473,7 @@ a.back {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: var(--text-sm);
+  font-size: var(--text-meta);
 }
 .week-streak svg {
   color: var(--color-ink);
@@ -1888,7 +1888,7 @@ a.mode:focus-visible {
 }
 .quiz-count {
   font-family: var(--font-body);
-  font-size: var(--text-sm);
+  font-size: var(--text-meta);
   font-weight: 600;
   text-align: center;
 }
@@ -2032,7 +2032,7 @@ a.mode:focus-visible {
   border-radius: var(--radius-pill);
   background: var(--color-card);
   color: var(--color-ink);
-  font-size: var(--text-sm);
+  font-size: var(--text-meta);
   font-weight: 600;
   cursor: pointer;
   box-shadow: inset 0 0 0 1px var(--color-control);
@@ -2250,7 +2250,7 @@ kbd {
   background: var(--color-paper-2);
   color: var(--color-muted);
   font: inherit;
-  font-size: var(--text-sm);
+  font-size: var(--text-meta);
   cursor: pointer;
 }
 .top-jump:hover {
