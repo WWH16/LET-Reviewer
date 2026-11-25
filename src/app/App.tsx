@@ -3,7 +3,7 @@ import { Page } from '../ui/Page';
 import { StatusProvider } from '../ui/Status';
 import { Icon } from '../ui/Icon';
 import { Home } from '../features/home/Home';
-import { useSettings } from '../db/hooks';
+import { useMeta, useSettings } from '../db/hooks';
 import { CommandMenu } from './CommandMenu';
 import { PLACES, SETTINGS_PAGES } from './nav';
 import { Welcome } from '../features/home/Welcome';
@@ -30,7 +30,8 @@ const Unfinished = lazy(() => import('../features/practice/Unfinished').then((m)
 const States = lazy(() => import('../features/states/States').then((m) => ({ default: m.States })));
 import { Empty } from '../ui/Empty';
 import { btn } from '../ui/btn';
-import { requestSync } from '../sync/trigger';
+import { EMPTY_STATE, requestSync, syncAvailable, type SyncState } from '../sync/trigger';
+import { AccountSection } from '../features/settings/AccountSection';
 
 function NotFound() {
   return (
@@ -59,7 +60,20 @@ export function App() {
     return () => window.removeEventListener('online', sync);
   }, []);
 
-  // First launch: name and avatar before the app itself. The shell stays out of the way until she is done.
+  // Signing in comes first: the app opens on the account form until she signs in or creates an account.
+  // A build with no account service (no Supabase project) skips it and works on this device alone.
+  const sync = useMeta<SyncState>('sync', EMPTY_STATE);
+  if (syncAvailable && sync === undefined) return null;
+  if (syncAvailable && !sync?.signedIn)
+    return (
+      <StatusProvider>
+        <Page title="Sign in to LET Reviewer">
+          <AccountSection required />
+        </Page>
+      </StatusProvider>
+    );
+
+  // Then, once: name, avatar, level and major, before the app itself. The shell stays out of the way until she is done.
   if (settings && !settings.onboarded)
     return (
       <StatusProvider>

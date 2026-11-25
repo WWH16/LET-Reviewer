@@ -14,10 +14,10 @@ const when = (iso: string) =>
   new Date(iso).toLocaleString(undefined, { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
 
 /**
- * Settings, Account: optional sign-in that keeps questions and answers the same on every device.
- * Signed out, the app works exactly as before; this section is the only place that says otherwise.
+ * Signing in, creating an account, and the account once signed in. The app opens on it (`required`) until
+ * she signs in, then it lives in Settings, Account.
  */
-export function AccountSection() {
+export function AccountSection({ required }: { required?: boolean } = {}) {
   const sync = useMeta<SyncState>('sync', EMPTY_STATE);
   const announce = useAnnounce();
   const [step, setStep] = useState<Step>('form');
@@ -120,7 +120,9 @@ export function AccountSection() {
         <form className="stack" onSubmit={submit} noValidate={false}>
           <p className="muted">
             {step === 'form'
-              ? 'Sign in to keep your questions and answers on all your devices. The app works the same without an account.'
+              ? required
+                ? 'Sign in, or create an account, to start. Your quizzes and answers stay the same on every device.'
+                : 'Sign in to keep your questions and answers on all your devices.'
               : step === 'confirm'
                 ? `Enter the 6-digit code sent to ${email}.`
                 : `Enter the 6-digit code sent to ${email}, and a new password.`}
