@@ -111,18 +111,24 @@ export function App() {
               })}
             </ul>
             {/* Wide screens list the Settings pages themselves; phones reach them from the Settings tab. */}
-            <h2 className="nav-group only-wide" id="nav-settings">
-              Settings
-            </h2>
-            <ul className="only-wide" aria-labelledby="nav-settings">
-              {SETTINGS_PAGES.map((pg) => (
-                <li key={pg.id}>
-                  <Link to={`/settings/${pg.id}`} aria-current={pathname === `/settings/${pg.id}` ? 'page' : undefined}>
-                    {pg.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            {/* As in Cloudflare's dashboard: Settings is one item with a chevron; its pages fold out beneath it,
+                indented, and it opens by itself on a settings page. */}
+            <details className="nav-group only-wide" open={pathname.startsWith('/settings') || undefined}>
+              <summary>
+                <Icon name="settings" size={18} filled={pathname.startsWith('/settings')} />
+                Settings
+                <Icon name="caret" size={14} />
+              </summary>
+              <ul>
+                {SETTINGS_PAGES.map((pg) => (
+                  <li key={pg.id}>
+                    <Link to={`/settings/${pg.id}`} aria-current={pathname === `/settings/${pg.id}` ? 'page' : undefined}>
+                      {pg.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </details>
           </nav>
           <CommandMenu />
         </div>

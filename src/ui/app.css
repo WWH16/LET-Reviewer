@@ -631,31 +631,51 @@ a.brand {
     flex-direction: column;
     gap: var(--space-3xs);
   }
-  /* The places she studies in read at body size on 40px rows; the Settings pages below are a step quieter
-     (smaller, regular weight, 32px rows), so the menu reads as two groups at a glance. */
-  .nav a {
-    min-height: 40px;
+  /* Compact like Cloudflare's dashboard: 14px labels, 18px icons, 34px rows, no group headings. */
+  .nav a,
+  .nav-group > summary {
+    min-height: 34px;
     padding-inline: var(--space-sm);
-    font-size: var(--text-body);
-  }
-  /* The Settings pages, under their own small heading below the main places. They carry no icons, so the
-     heading and the pages start where the main places' labels do (past a 20px icon and its gap): one left edge. */
-  .nav-group {
-    margin: var(--space-lg) 0 var(--space-2xs);
-    padding-inline: calc(var(--space-sm) + 20px + var(--space-xs)) var(--space-sm);
     font-size: var(--text-meta);
-    font-weight: 600;
+  }
+  .nav a svg {
+    width: 18px;
+    height: 18px;
+  }
+  /* Settings: one item whose chevron turns as its pages fold out beneath it, indented to its label. */
+  .nav-group > summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    border-radius: var(--radius-control);
+    font-weight: 500;
+    color: var(--color-ink);
+    list-style: none;
+    cursor: pointer;
+  }
+  .nav-group > summary::-webkit-details-marker {
+    display: none;
+  }
+  .nav-group > summary svg {
     color: var(--color-muted);
   }
-  .nav-group + ul a {
-    min-height: 32px;
-    padding-inline-start: calc(var(--space-sm) + 20px + var(--space-xs));
-    font-size: var(--text-meta);
+  .nav-group > summary svg:last-child {
+    margin-inline-start: auto;
+    transition: transform var(--dur-micro) var(--ease-out);
+  }
+  .nav-group[open] > summary svg:last-child {
+    transform: rotate(90deg);
+  }
+  .nav-group > summary:hover {
+    background: var(--color-paper-2);
+  }
+  .nav-group > ul {
+    margin-top: var(--space-3xs);
+  }
+  .nav-group a {
+    padding-inline-start: calc(var(--space-sm) + 18px + var(--space-xs));
     font-weight: 400;
     color: var(--color-ink-2);
-  }
-  .nav-group + ul a[aria-current='page'] {
-    font-weight: 600;
   }
 }
 @media (max-width: 59.99rem) {
@@ -1646,7 +1666,7 @@ a.mode:focus-visible {
   }
   .modes > li:first-child .mode-name {
     font-family: var(--font-display);
-    font-size: var(--text-h1);
+    font-size: 1.375rem;
     letter-spacing: var(--tracking-display);
   }
   .modes > li:first-child .meta {
