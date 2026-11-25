@@ -2482,3 +2482,17 @@ dialog.command input:focus-visible {
     break-after: auto;
   }
 }
+
+/* ---------- Settings, Subjects: a subject's name field grows; its count and Remove stay on its line ---------- */
+@media (min-width: 30rem) {
+  .name-row {
+    flex-wrap: nowrap;
+  }
+  .name-row > input {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .name-row > .row {
+    flex: none;
+  }
+}

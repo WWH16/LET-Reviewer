@@ -88,7 +88,7 @@ function NameList({
             const n = used(x);
             return (
               <li key={x.id} className="stack-sm">
-                <div className="spread">
+                <div className="spread name-row">
                   {/* Saved when she leaves the field, so a half-typed name never renames anything. */}
                   <input key={x.name} type="text" aria-label={`Name of ${word} ${x.name}`} defaultValue={x.name} onBlur={(e) => rename(x, e.target.value)} />
                   <span className="row">
