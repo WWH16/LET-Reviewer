@@ -80,3 +80,12 @@ export function formatClock(ms: number): string {
   const sec = s % 60;
   return `${h}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
 }
+
+/** A month as weeks of seven days, Sunday first, as 'YYYY-MM-DD'; the days before the 1st and after the last are null. */
+export function monthWeeks(year: number, month: number): (string | null)[][] {
+  const lead = new Date(year, month, 1).getDay();
+  const length = new Date(year, month + 1, 0).getDate();
+  const cells = [...Array<null>(lead).fill(null), ...Array.from({ length }, (_, i) => isoDay(new Date(year, month, i + 1)))];
+  while (cells.length % 7) cells.push(null);
+  return Array.from({ length: cells.length / 7 }, (_, w) => cells.slice(w * 7, w * 7 + 7));
+}

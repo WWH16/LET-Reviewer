@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { parsePasted, previewImport, previewQuiz, validateItem } from './validate';
 import { examLabel } from './ids';
-import { dayKey, heatWeeks, streak } from './dates';
+import { dayKey, heatWeeks, monthWeeks, streak } from './dates';
 import { drawMock, quotas } from './examDraw';
 import { PARTS } from './let-config';
 import { lastResults, projectedRating, recentByArea, recentPartScores, tallyBy, weakestSubjects } from './scoring';
@@ -107,6 +107,37 @@ describe('ids and import', () => {
     const p = previewImport(sample, new Set(), opts);
     expect(p.invalid.map((r) => `${r.label}: ${r.errors.join(' ')}`)).toEqual([]);
     expect(p.ready).toHaveLength(sample.length);
+  });
+});
+
+describe('days and streaks', () => {
+  it('counts 00:30 as the night before, and streaks across days', () => {
+    expect(dayKey(new Date(2026, 10, 16, 0, 30))).toBe('2026-11-15');
+    expect(streak(new Set(['2026-11-13', '2026-11-14', '2026-11-15']), '2026-11-15')).toBe(3);
+  });
+  it('keeps a streak alive until tonight, across a month end', () => {
+    const days = ['2026-10-30', '2026-10-31', '2026-11-01', '2026-11-02', '2026-11-14', '2026-11-15'];
+    expect(streak(new Set(days), '2026-11-16')).toBe(2);
+    expect(streak(new Set(days), '2026-11-17')).toBe(0);
+  });
+  it('lays the activity grid out in Sunday-first weeks that stop at today', () => {
+    // 2026-11-16 is a Monday: this week holds Sunday and Monday only.
+    const weeks = heatWeeks(new Map([['2026-11-16', 12], ['2026-11-08', 150]]), '2026-11-16', 3);
+    expect(weeks.map((w) => w.length)).toEqual([7, 7, 2]);
+    expect(weeks[0][0].day).toBe('2026-11-01');
+    expect(weeks[1][0]).toEqual({ day: '2026-11-08', count: 150, level: 4 });
+    expect(weeks[2][1]).toEqual({ day: '2026-11-16', count: 12, level: 2 });
+    expect(weeks[2][0].level).toBe(0);
+  });
+  it('lays a month out in Sunday-first weeks with blanks around it', () => {
+    // November 2026 starts on a Sunday and has 30 days: five weeks, the last holding the 29th and 30th.
+    const nov = monthWeeks(2026, 10);
+    expect(nov).toHaveLength(5);
+    expect(nov[0][0]).toBe('2026-11-01');
+    expect(nov[4].filter(Boolean)).toEqual(['2026-11-29', '2026-11-30']);
+    // February 2026 starts on a Sunday and fills exactly four weeks; December 2026 starts on a Tuesday.
+    expect(monthWeeks(2026, 1)).toHaveLength(4);
+    expect(monthWeeks(2026, 11)[0].slice(0, 3)).toEqual([null, null, '2026-12-01']);
   });
 });
 

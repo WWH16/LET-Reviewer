@@ -51,6 +51,11 @@ describe('tokens', () => {
     ['color-accent-ink', 'color-accent-deep', 4.5],
     ['color-on-soft', 'color-accent-soft', 4.5],
     ['color-ink', 'color-paper-3', 4.5],
+    // The streak calendar sets day numbers in ink on each activity shade.
+    ['color-ink', 'heat-1', 4.5],
+    ['color-ink', 'heat-2', 4.5],
+    ['color-ink', 'heat-3', 4.5],
+    ['color-ink', 'heat-4', 4.5],
     ['color-paper', 'color-ink', 4.5],
     ['color-accent-text', 'color-paper', 4.5],
     ['color-accent-text', 'color-card', 4.5],
