@@ -10,6 +10,7 @@ import { KEYS, type Key, type Question } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { Empty } from '../../ui/Empty';
 import { Select } from '../../ui/Select';
+import { AsyncButton } from '../../ui/AsyncButton';
 
 export function EditQuestion() {
   const { id = '' } = useParams();
@@ -151,8 +152,7 @@ export function EditQuestion() {
           <button type="button" className={btn.primary} data-autofocus onClick={() => setConfirm(false)}>
             Keep it
           </button>
-          <button
-            type="button"
+          <AsyncButton
             className={btn.secondary}
             onClick={async () => {
               await removeQuestion(q.id);
@@ -161,7 +161,7 @@ export function EditQuestion() {
             }}
           >
             Remove question
-          </button>
+          </AsyncButton>
         </div>
       </Dialog>
     </Page>

@@ -80,7 +80,7 @@ export function NewQuiz() {
   };
 
   const save = async (start: boolean) => {
-    if (parsed.kind !== 'questions' || !ready) return;
+    if (parsed.kind !== 'questions' || !ready || busy) return;
     setBusy(true);
     const subarea = await fileUnder();
     const now = nowIso();

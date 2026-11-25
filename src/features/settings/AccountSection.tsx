@@ -6,6 +6,7 @@ import { btn } from '../../ui/btn';
 import { Icon } from '../../ui/Icon';
 import { EMPTY_STATE, type SyncState } from '../../sync/trigger';
 import { checkAccountFields, type Field } from '../../domain/account';
+import { AsyncButton } from '../../ui/AsyncButton';
 
 // The account code (and Supabase with it) loads when this section first needs it, not with the app.
 const auth = () => import('../../sync/auth');
@@ -139,6 +140,7 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
   };
   const submit = (e: FormEvent) => {
     e.preventDefault();
+    if (busy) return; // Enter or a pasted code while a request runs must not send it again
     const found = checkAccountFields({
       email: step === 'form' ? email : undefined,
       password: step !== 'confirm' ? password : undefined,
@@ -183,8 +185,7 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
             >
               Sync now
             </button>
-            <button
-              type="button"
+            <AsyncButton
               className={btn.quiet}
               onClick={async () => {
                 await (await auth()).signOut();
@@ -192,7 +193,7 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
               }}
             >
               Sign out
-            </button>
+            </AsyncButton>
             <button type="button" className={btn.quiet} onClick={() => setDeleting(true)}>
               Delete account
             </button>
@@ -405,18 +406,18 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
           <button type="button" className={btn.primary} data-autofocus onClick={() => setDeleting(false)}>
             Keep my account
           </button>
-          <button
-            type="button"
+          {/* The dialog stays open, the button turning, until the account is gone. */}
+          <AsyncButton
             className={btn.secondary}
             onClick={async () => {
-              setDeleting(false);
               const r = await (await auth()).deleteAccount();
+              setDeleting(false);
               if (r.ok) announce('Account deleted');
               else setErrors({ form: r.error });
             }}
           >
             Delete account
-          </button>
+          </AsyncButton>
         </div>
       </Dialog>
     </section>

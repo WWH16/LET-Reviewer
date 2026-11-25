@@ -18,6 +18,7 @@ import { AccountSection } from './AccountSection';
 import { SubjectsEditor } from './SubjectsEditor';
 import { EMPTY_STATE, requestSync, syncAvailable, type SyncState } from '../../sync/trigger';
 import { SETTINGS_PAGES } from '../../app/nav';
+import { AsyncButton } from '../../ui/AsyncButton';
 
 const fmtDate = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -195,9 +196,9 @@ export function Settings() {
               . The browser {protectedStore ? 'will not' : 'may'} clear it when space runs low.
             </p>
             {protectedStore === false && (
-              <button type="button" className={btn.secondary} onClick={async () => setProtected(await protectStorage())}>
+              <AsyncButton className={btn.secondary} onClick={async () => setProtected(await protectStorage())}>
                 Protect storage
-              </button>
+              </AsyncButton>
             )}
           </div>
         </section>
@@ -213,8 +214,7 @@ export function Settings() {
           </p>
           <div className="row">
             {demo ? (
-              <button
-                type="button"
+              <AsyncButton
                 className={btn.secondary}
                 onClick={async () => {
                   await clearDemoData();
@@ -222,11 +222,11 @@ export function Settings() {
                 }}
               >
                 Remove sample answers
-              </button>
+              </AsyncButton>
             ) : (
-              <button type="button" className={btn.secondary} onClick={async () => announce(`Added ${await loadDemoData()} sample answers`)}>
+              <AsyncButton className={btn.secondary} onClick={async () => announce(`Added ${await loadDemoData()} sample answers`)}>
                 Add sample answers
-              </button>
+              </AsyncButton>
             )}
           </div>
         </section>
@@ -240,9 +240,9 @@ export function Settings() {
             if you might want them back.
           </p>
           <div>
-            <button type="button" className={btn.secondary} onClick={async () => setErase(await deviceCounts())}>
+            <AsyncButton className={btn.secondary} onClick={async () => setErase(await deviceCounts())}>
               Erase everything on this device
-            </button>
+            </AsyncButton>
           </div>
         </section>
         )}
@@ -262,8 +262,7 @@ export function Settings() {
               <button type="button" className={btn.primary} data-autofocus onClick={() => setErase(null)}>
                 Keep my data
               </button>
-              <button
-                type="button"
+              <AsyncButton
                 className={btn.secondary}
                 onClick={async () => {
                   await eraseDevice();
@@ -272,7 +271,7 @@ export function Settings() {
                 }}
               >
                 Erase everything
-              </button>
+              </AsyncButton>
             </div>
           </>
         )}
@@ -293,8 +292,7 @@ export function Settings() {
               <button type="button" className={btn.primary} data-autofocus onClick={() => setRestore(null)}>
                 Cancel
               </button>
-              <button
-                type="button"
+              <AsyncButton
                 className={btn.secondary}
                 onClick={async () => {
                   await restoreBackup(restore.backup);
@@ -305,7 +303,7 @@ export function Settings() {
                 }}
               >
                 Replace with backup
-              </button>
+              </AsyncButton>
             </div>
           </>
         )}

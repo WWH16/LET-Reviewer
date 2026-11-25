@@ -8,6 +8,7 @@ import { removeQuiz, restoreQuestions } from '../../db/repo';
 import { paceMs, subareaName } from '../../domain/let-config';
 import { btn } from '../../ui/btn';
 import { count, lastLine, quizDate, useQuizzes } from './useQuizzes';
+import { AsyncButton } from '../../ui/AsyncButton';
 
 /** One quiz: take it, timed or not, fix a question, or remove the whole quiz. */
 export function QuizPage() {
@@ -96,8 +97,7 @@ export function QuizPage() {
           <button type="button" className={btn.primary} data-autofocus onClick={() => setConfirm(false)}>
             Keep it
           </button>
-          <button
-            type="button"
+          <AsyncButton
             className={btn.secondary}
             onClick={async () => {
               const ids = await removeQuiz(z.id);
@@ -106,7 +106,7 @@ export function QuizPage() {
             }}
           >
             Remove quiz
-          </button>
+          </AsyncButton>
         </div>
       </Dialog>
     </Page>

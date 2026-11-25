@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useAnnounce } from '../../ui/Status';
 import { loadSampleQuestions } from '../../db/repo';
 import { btn } from '../../ui/btn';
+import { AsyncButton } from '../../ui/AsyncButton';
 
 /** Study before any questions (DX R11): one job, make the first quiz. */
 export function FirstRun() {
@@ -26,13 +27,12 @@ export function FirstRun() {
         <h2 id="fr-try">Just looking?</h2>
         <p className="muted">Load 16 sample questions to try the app. They arrive as quizzes you can remove later.</p>
         <div>
-          <button
-            type="button"
+          <AsyncButton
             className={btn.secondary}
             onClick={async () => announce(`Loaded ${await loadSampleQuestions()} sample questions`)}
           >
             Load sample questions
-          </button>
+          </AsyncButton>
         </div>
       </section>
     </div>

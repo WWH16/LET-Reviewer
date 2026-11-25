@@ -9,6 +9,7 @@ import type { QuizTake } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { useQuizzes } from '../quizzes/useQuizzes';
 import { examLink } from '../mock/newExam';
+import { AsyncButton } from '../../ui/AsyncButton';
 
 const when = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
 
@@ -63,8 +64,7 @@ export function Unfinished() {
                     <Link className={btn.secondary} to={to} aria-label={`Continue ${name}`}>
                       Continue
                     </Link>
-                    <button
-                      type="button"
+                    <AsyncButton
                       className={btn.quiet}
                       aria-label={`Discard ${name}`}
                       onClick={async () => {
@@ -74,7 +74,7 @@ export function Unfinished() {
                       }}
                     >
                       Discard
-                    </button>
+                    </AsyncButton>
                   </span>
                 </li>
               );

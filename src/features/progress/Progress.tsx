@@ -10,6 +10,7 @@ import { Gauge, scoreTone } from '../../ui/Gauge';
 import { StreakCard } from '../home/StreakCard';
 import { Empty } from '../../ui/Empty';
 import { loadDemoData } from '../../db/repo';
+import { AsyncButton } from '../../ui/AsyncButton';
 
 const fmt = (p: number | null) => (p === null ? 'Not yet' : `${Math.round(p)}%`);
 
@@ -26,9 +27,9 @@ export function Progress() {
           <Link className={btn.primary} to="/quizzes">
             Take a quiz
           </Link>
-          <button type="button" className={btn.secondary} onClick={async () => announce(`Added ${await loadDemoData()} sample answers`)}>
+          <AsyncButton className={btn.secondary} onClick={async () => announce(`Added ${await loadDemoData()} sample answers`)}>
             Fill with sample answers
-          </button>
+          </AsyncButton>
         </Empty>
       </Page>
     );
