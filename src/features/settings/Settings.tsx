@@ -3,14 +3,13 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { Dialog } from '../../ui/Dialog';
 import { useAnnounce } from '../../ui/Status';
-import { copyText, downloadText } from '../../ui/clipboard';
+import { downloadText } from '../../ui/clipboard';
 import { useDemoCount, useMeta, useSettings } from '../../db/hooks';
 import { clearDemoData, loadDemoData, protectStorage, saveSettings } from '../../db/repo';
 import { checkBackup, deviceCounts, eraseDevice, exportBackup, restoreBackup, type Counts } from '../../db/backup';
 import { db } from '../../db/db';
 import { parsePasted } from '../../domain/validate';
-import { SCHEMA_VERSION, type Backup, type Settings as S } from '../../domain/types';
-import { version } from '../../../package.json';
+import type { Backup, Settings as S } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { Select } from '../../ui/Select';
 import { DateField } from '../../ui/DateField';
@@ -161,22 +160,6 @@ export function Settings() {
         </section>
         )}
 
-        {show('display') && (
-        <section className="tile span-3">
-          <div className="field">
-            <label htmlFor="s-size">Text size</label>
-            <Select id="s-size" value={s.textSize} onChange={(v) => set({ textSize: Number(v) as S['textSize'] })}>
-              <option value={100}>100%</option>
-              <option value={115}>115%</option>
-              <option value={130}>130%</option>
-            </Select>
-          </div>
-          <label className="check">
-            <input type="checkbox" checked={s.shortcuts} onChange={(e) => set({ shortcuts: e.target.checked })} />
-            Single-key shortcuts (A to D, 1 to 4, Enter, F)
-          </label>
-        </section>
-        )}
 
         {show('account') && syncAvailable && <AccountSection />}
 
@@ -264,33 +247,6 @@ export function Settings() {
         </section>
         )}
 
-        {show('about') && (
-        <section className="tile span-3">
-          <p className="muted num">
-            Version {version}, data format v{SCHEMA_VERSION}
-          </p>
-          <div className="row">
-            <button
-              type="button"
-              className={btn.quiet}
-              onClick={async () => {
-                const c = await deviceCounts();
-                await copyText(
-                  `LET Reviewer ${version}, data v${SCHEMA_VERSION}\nQuestions: ${c.questions}, answers: ${c.attempts}\nLast backup: ${lastBackup?.at ?? 'never'}\nStorage protected: ${protectedStore}\n${navigator.userAgent}`,
-                );
-                announce('Debug info copied');
-              }}
-            >
-              Copy debug info
-            </button>
-            {import.meta.env.DEV && (
-              <Link className={btn.quiet} to="/states">
-                Visual states
-              </Link>
-            )}
-          </div>
-        </section>
-        )}
       </div>
 
       <Dialog open={!!erase} onClose={() => setErase(null)} title="Erase everything on this device?">
