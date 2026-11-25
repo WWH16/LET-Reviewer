@@ -1,13 +1,16 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Dialog } from '../../ui/Dialog';
 import { useAnnounce } from '../../ui/Status';
 import { useMeta } from '../../db/hooks';
 import { btn } from '../../ui/btn';
+import { Icon } from '../../ui/Icon';
 import { EMPTY_STATE, type SyncState } from '../../sync/trigger';
 
 // The account code (and Supabase with it) loads when this section first needs it, not with the app.
 const auth = () => import('../../sync/auth');
 type Step = 'form' | 'confirm' | 'reset';
+/** On the form step: signing in to an account, or creating one. */
+type Mode = 'in' | 'up';
 type Outcome = { ok: true } | { ok: false; error?: string; needsCode?: true; otherAccount?: true };
 
 const when = (iso: string) =>
@@ -21,6 +24,8 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
   const sync = useMeta<SyncState>('sync', EMPTY_STATE);
   const announce = useAnnounce();
   const [step, setStep] = useState<Step>('form');
+  const [mode, setMode] = useState<Mode>('in');
+  const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [code, setCode] = useState('');
@@ -30,6 +35,42 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
   const [deleting, setDeleting] = useState(false);
   const [signedInAs, setSignedInAs] = useState<string | null>(null);
   const signedIn = !!sync?.signedIn;
+  const heading = useRef<HTMLHeadingElement>(null);
+  const title =
+    step === 'confirm' ? 'Check your email' : step === 'reset' ? 'Set a new password' : mode === 'up' ? 'Create your account' : 'Sign in to LET Prep';
+
+  // On the sign-in screen the heading names the step and the tab title follows it. Focus lands on it when the
+  // step changes; a switch between Sign in and Create account leaves focus on the tab she pressed.
+  useEffect(() => {
+    if (!required) return;
+    document.title = `${title} · LET Prep`;
+  }, [required, title]);
+  useEffect(() => {
+    if (required) heading.current?.focus();
+  }, [required, step]);
+
+  // A switch slides the form in from the side of the tab picked (Create account from the right, Sign in from
+  // the left), each part a beat after the one above; a new step slides in from the right. Transform and
+  // opacity only, cancelled if she switches again mid-slide, and skipped under reduced motion.
+  const form = useRef<HTMLFormElement>(null);
+  const shown = useRef(`${mode}-${step}`);
+  useEffect(() => {
+    const now = `${mode}-${step}`;
+    if (shown.current === now) return;
+    shown.current = now;
+    if (!form.current || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const dx = step === 'form' && mode === 'in' ? -16 : 16;
+    const parts = [...form.current.children].filter((el) => !el.classList.contains('seg'));
+    const runs = parts.map((el, i) =>
+      el.animate([{ opacity: 0, transform: `translateX(${dx}px)` }, { opacity: 1, transform: 'none' }], {
+        duration: 240,
+        delay: i * 35,
+        easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        fill: 'backwards',
+      }),
+    );
+    return () => runs.forEach((r) => r.cancel());
+  }, [mode, step]);
 
   useEffect(() => {
     if (signedIn) auth().then((a) => a.currentEmail()).then(setSignedInAs);
@@ -65,14 +106,15 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
   };
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    if (step === 'form') run((a) => a.signIn(email, password), afterSignIn);
+    if (step === 'form' && mode === 'up') run((a) => a.signUp(email, password), () => (setCode(''), setStep('confirm')));
+    else if (step === 'form') run((a) => a.signIn(email, password), afterSignIn);
     else if (step === 'confirm') run((a) => a.confirmSignUp(email, code), afterSignIn);
     else run((a) => a.finishReset(email, code, password), afterSignIn);
   };
-  const formOk = (e: { currentTarget: HTMLButtonElement }) => e.currentTarget.form?.reportValidity() ?? false;
+  const pick = (m: Mode) => (setMode(m), setError(''));
 
   return (
-    <section className="tile span-3">
+    <section className={required ? 'tile auth-card' : 'tile span-3'}>
 
       {signedIn ? (
         <>
@@ -117,16 +159,31 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
           </div>
         </>
       ) : (
-        <form className="stack" onSubmit={submit} noValidate={false}>
-          <p className="muted">
-            {step === 'form'
-              ? required
-                ? 'Sign in, or create an account, to start. Your quizzes and answers stay the same on every device.'
-                : 'Sign in to keep your questions and answers on all your devices.'
-              : step === 'confirm'
-                ? `Enter the 6-digit code sent to ${email}.`
-                : `Enter the 6-digit code sent to ${email}, and a new password.`}
-          </p>
+        <form ref={form} className="stack" onSubmit={submit} noValidate={false}>
+          {required && (
+            <h1 ref={heading} tabIndex={-1}>
+              {title}
+            </h1>
+          )}
+          {step === 'form' && (
+            <div className="seg" role="group" aria-label="Account">
+              <button type="button" aria-pressed={mode === 'in'} disabled={busy} onClick={() => pick('in')}>
+                Sign in
+              </button>
+              <button type="button" aria-pressed={mode === 'up'} disabled={busy} onClick={() => pick('up')}>
+                Create account
+              </button>
+            </div>
+          )}
+          {(step !== 'form' || !required) && (
+            <p className="muted">
+              {step === 'form'
+                ? 'Sign in to keep your questions and answers on all your devices.'
+                : step === 'confirm'
+                  ? `Enter the 6-digit code sent to ${email}.`
+                  : `Enter the 6-digit code sent to ${email}, and a new password.`}
+            </p>
+          )}
 
           {step === 'form' && (
             <div className="field">
@@ -153,51 +210,57 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
           {step !== 'confirm' && (
             <div className="field">
               <label htmlFor="acc-password">{step === 'reset' ? 'New password' : 'Password'}</label>
-              <input
-                id="acc-password"
-                type="password"
-                autoComplete={step === 'reset' ? 'new-password' : 'current-password'}
-                minLength={8}
-                required
-                aria-describedby="acc-password-help"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <div className="pw">
+                <input
+                  id="acc-password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete={step === 'reset' || mode === 'up' ? 'new-password' : 'current-password'}
+                  minLength={8}
+                  required
+                  aria-describedby="acc-password-help"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="pw-toggle"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  aria-controls="acc-password"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
               <span id="acc-password-help" className="meta">
                 8 characters or more.
               </span>
             </div>
           )}
 
-          {error && <p role="alert">{error}</p>}
+          {error && (
+            <p role="alert" className="form-error">
+              <Icon name="alert" size={16} />
+              {error}
+            </p>
+          )}
 
+          <button type="submit" className={`${btn.primary} auth-submit`} disabled={busy} aria-busy={busy}>
+            {step === 'form' ? (mode === 'up' ? 'Create account' : 'Sign in') : step === 'confirm' ? 'Confirm' : 'Save password'}
+          </button>
           <div className="row">
-            <button type="submit" className={btn.primary} disabled={busy} aria-busy={busy}>
-              {step === 'form' ? 'Sign in' : step === 'confirm' ? 'Confirm' : 'Save password'}
-            </button>
-            {step === 'form' && (
-              <>
-                <button
-                  type="button"
-                  className={btn.secondary}
-                  disabled={busy}
-                  onClick={(e) => formOk(e) && run((a) => a.signUp(email, password), () => (setCode(''), setStep('confirm')))}
-                >
-                  Create account
-                </button>
-                <button
-                  type="button"
-                  className={btn.quiet}
-                  disabled={busy}
-                  onClick={() => {
-                    const field = document.getElementById('acc-email') as HTMLInputElement;
-                    if (!field.reportValidity()) return;
-                    run((a) => a.requestReset(email), () => (setCode(''), setPassword(''), setStep('reset')));
-                  }}
-                >
-                  Forgot password?
-                </button>
-              </>
+            {step === 'form' && mode === 'in' && (
+              <button
+                type="button"
+                className={btn.quiet}
+                disabled={busy}
+                onClick={() => {
+                  const field = document.getElementById('acc-email') as HTMLInputElement;
+                  if (!field.reportValidity()) return;
+                  run((a) => a.requestReset(email), () => (setCode(''), setPassword(''), setStep('reset')));
+                }}
+              >
+                Forgot password?
+              </button>
             )}
             {step === 'confirm' && (
               <button type="button" className={btn.quiet} disabled={busy} onClick={() => run((a) => a.resendCode(email), () => announce('New code sent'))}>
@@ -210,7 +273,7 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
               </button>
             )}
           </div>
-          <p className="meta">What is stored: your questions, answers, mock exams and settings. Only you can read them.</p>
+          {!required && <p className="meta">What is stored: your questions, answers, mock exams and settings. Only you can read them.</p>}
         </form>
       )}
 

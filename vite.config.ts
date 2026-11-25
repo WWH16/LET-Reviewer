@@ -11,8 +11,8 @@ export default defineConfig({
       registerType: 'prompt',
       includeAssets: ['icon-180.png'],
       manifest: {
-        name: 'LET Reviewer',
-        short_name: 'LET Reviewer',
+        name: 'LET Prep',
+        short_name: 'LET Prep',
         description: 'Offline practice for the Licensure Examination for Teachers',
         display: 'standalone',
         start_url: '.',

@@ -81,7 +81,7 @@ export function Settings() {
     const file = new File([text], filename, { type: 'application/json' });
     try {
       if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], title: 'LET Reviewer backup' });
+        await navigator.share({ files: [file], title: 'LET Prep backup' });
         announce('Backup ready to save');
         return;
       }

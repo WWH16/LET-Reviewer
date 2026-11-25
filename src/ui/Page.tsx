@@ -26,7 +26,7 @@ export function Page({
 }) {
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
-    document.title = `${title} · LET Reviewer`;
+    document.title = `${title} · LET Prep`;
     heading.current?.focus();
   }, [title]);
   return (

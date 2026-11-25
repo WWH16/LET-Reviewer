@@ -31,7 +31,7 @@ const States = lazy(() => import('../features/states/States').then((m) => ({ def
 import { Empty } from '../ui/Empty';
 import { btn } from '../ui/btn';
 import { EMPTY_STATE, requestSync, syncAvailable, type SyncState } from '../sync/trigger';
-import { AccountSection } from '../features/settings/AccountSection';
+import { SignInScreen } from './SignInScreen';
 
 function NotFound() {
   return (
@@ -67,9 +67,7 @@ export function App() {
   if (syncAvailable && !sync?.signedIn)
     return (
       <StatusProvider>
-        <Page title="Sign in to LET Reviewer">
-          <AccountSection required />
-        </Page>
+        <SignInScreen />
       </StatusProvider>
     );
 
@@ -88,9 +86,9 @@ export function App() {
       </a>
       <header className={inExam ? 'shell-top in-exam' : 'shell-top'}>
         <div className="top">
-          <Link className="brand" to="/" aria-label="LET Reviewer, home">
+          <Link className="brand" to="/" aria-label="LET Prep, home">
             <span className="brand-mark" aria-hidden="true" />
-            LET Reviewer
+            LET Prep
           </Link>
           <nav className="nav" aria-label="Main">
             <ul>

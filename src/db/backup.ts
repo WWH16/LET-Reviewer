@@ -23,7 +23,7 @@ export async function exportBackup(): Promise<{ filename: string; text: string }
   };
   await setMeta('lastBackup', { at: backup.exportedAt, attempts: attempts.length });
   const day = backup.exportedAt.slice(0, 10);
-  return { filename: `let-reviewer-backup-${day}.json`, text: JSON.stringify(backup) };
+  return { filename: `let-prep-backup-${day}.json`, text: JSON.stringify(backup) };
 }
 
 export interface Counts {
