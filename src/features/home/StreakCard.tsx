@@ -18,12 +18,15 @@ export function StreakCard({
   today,
   todayCount,
   todayCorrect,
+  className,
 }: {
   /** Answers per study day. */
   days: ReadonlyMap<string, number>;
   today: string;
   todayCount: number;
   todayCorrect: number;
+  /** Its place in a bento (Stats: a half under the parts). */
+  className?: string;
 }) {
   const run = streak(days, today);
   const weeks = useMemo(() => heatWeeks(days, today, WEEKS), [days, today]);
@@ -38,7 +41,7 @@ export function StreakCard({
         : 'Answer one question to start a streak.';
 
   return (
-    <section className="tile streak" aria-labelledby="streak-title">
+    <section className={`tile streak ${className ?? ''}`} aria-labelledby="streak-title">
       <h2 id="streak-title" className="label">
         Streak
       </h2>

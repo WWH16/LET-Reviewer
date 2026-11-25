@@ -73,7 +73,8 @@ export function Progress() {
         <RatingCard rating={rating} className="span-2" />
 
         {/* Two tiles that read as one table: each part's figure on the left, every subject behind it on the
-            right, weakest first, each row opening that subject's quizzes. */}
+            right, weakest first, each row opening that subject's quizzes. On wide screens the subject list runs
+            two rows tall and the streak fills the space under the parts, so no half of the screen stands empty. */}
         <section className="tile span-3 align-start" aria-labelledby="pr-subjects">
           <h2 id="pr-subjects">By part</h2>
           <ul className="subjects">
@@ -99,7 +100,7 @@ export function Progress() {
           </ul>
         </section>
 
-        <section className="tile span-3 align-start" aria-labelledby="pr-weak">
+        <section className="tile span-3 rows-2 align-start" aria-labelledby="pr-weak">
           <h2 id="pr-weak">By subject, weakest first</h2>
           {bySubject.length === 0 ? (
             <p className="muted">Subjects appear here after 3 or more answers each.</p>
@@ -125,7 +126,7 @@ export function Progress() {
           )}
         </section>
 
-        <StreakCard days={days} today={today} todayCount={todayAttempts.length} todayCorrect={todayCorrect} />
+        <StreakCard days={days} today={today} todayCount={todayAttempts.length} todayCorrect={todayCorrect} className="span-3 align-start" />
       </div>
     </Page>
   );

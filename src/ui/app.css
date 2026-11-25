@@ -260,6 +260,11 @@ h1:not(.sr-only) + p {
   .bento > .rows-2 {
     grid-row: span 2;
   }
+  /* A half that follows a two-row tile fills the space beside that tile's second row, so it keeps its half
+     instead of taking the whole last row (Stats: the streak under the parts, beside the subject list). */
+  .bento > .rows-2 + .span-3:nth-child(odd of :is(.span-2, .span-3, .span-4)):last-child {
+    grid-column: span 3;
+  }
   /* Settings pairs its halves; one left alone on the last row takes the row, so no cell stands empty. */
   .bento.pairs > .span-3:nth-child(odd of .span-3):last-child {
     grid-column: 1 / -1;
