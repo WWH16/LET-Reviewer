@@ -240,6 +240,21 @@ h1:not(.sr-only) + p {
   .bento > :is(.span-2, .span-3, .span-4):nth-child(odd of :is(.span-2, .span-3, .span-4)):last-child {
     grid-column: 1 / -1;
   }
+  .bento > .rows-2 {
+    grid-row: span 2;
+  }
+  /* A half that follows a two-row tile fills the space beside that tile's second row, so it keeps its half
+     instead of taking the whole last row (Stats: the streak beside the subject list, from tablets up). */
+  .bento > .rows-2 + .span-3:nth-child(odd of :is(.span-2, .span-3, .span-4)):last-child {
+    grid-column: span 3;
+  }
+}
+/* Tablets only: the Stats score tile holds a ring and its figures side by side, too much for half a tablet,
+   so it takes the row; the rating and the parts pair up below it. */
+@media (min-width: 48rem) and (max-width: 59.99rem) {
+  .bento > .stats-hero {
+    grid-column: 1 / -1;
+  }
 }
 @media (min-width: 60rem) {
   .bento {
@@ -256,14 +271,6 @@ h1:not(.sr-only) + p {
   }
   .bento > .span-4 {
     grid-column: span 4;
-  }
-  .bento > .rows-2 {
-    grid-row: span 2;
-  }
-  /* A half that follows a two-row tile fills the space beside that tile's second row, so it keeps its half
-     instead of taking the whole last row (Stats: the streak under the parts, beside the subject list). */
-  .bento > .rows-2 + .span-3:nth-child(odd of :is(.span-2, .span-3, .span-4)):last-child {
-    grid-column: span 3;
   }
   /* Settings pairs its halves; one left alone on the last row takes the row, so no cell stands empty. */
   .bento.pairs > .span-3:nth-child(odd of .span-3):last-child {
@@ -2534,6 +2541,8 @@ dialog.command input:focus-visible {
    ink ring; days still ahead stay blank. */
 .cal {
   display: grid;
+  /* A month reads as a calendar, not a strip: on a wide tile it stops at a phone's width. */
+  max-width: 30rem;
   gap: var(--space-xs);
   margin-top: var(--space-xs);
 }
