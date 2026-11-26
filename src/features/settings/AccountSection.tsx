@@ -325,8 +325,9 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
                   aria-controls="acc-password"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  {/* An open eye shows the password; the closed eye, lashes down, hides it again. */}
-                  <Icon name={showPassword ? 'eye-closed' : 'eye'} size={20} />
+                  {/* The eye matches the password: closed (lashes down) while it is hidden, open while it shows.
+                      The label says what a press does next. */}
+                  <Icon name={showPassword ? 'eye' : 'eye-closed'} size={20} />
                 </button>
               </div>
               <FieldError input="acc-password" text={errors.password} />
