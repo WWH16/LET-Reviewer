@@ -13,6 +13,7 @@ import type { Backup, Settings as S } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { Select } from '../../ui/Select';
 import { DateField } from '../../ui/DateField';
+import { isoDay } from '../../domain/dates';
 import { ProfileEditor } from './ProfileEditor';
 import { AccountSection } from './AccountSection';
 import { SubjectsEditor } from './SubjectsEditor';
@@ -143,7 +144,7 @@ export function Settings() {
             )}
             <div className="field">
               <label htmlFor="s-date">Target exam date</label>
-              <DateField id="s-date" value={s.examDate} onChange={(examDate) => set({ examDate })} />
+              <DateField id="s-date" value={s.examDate} min={isoDay(new Date())} onChange={(examDate) => set({ examDate })} />
             </div>
             <div className="field">
               <label htmlFor="s-timer">Mock exam timer</label>
