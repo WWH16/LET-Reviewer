@@ -20,7 +20,9 @@
   --font-num: "DM Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --font-sans: var(--font-body); --font-mono: var(--font-num); --default-font-family: var(--font-body); --default-mono-font-family: var(--font-num);
   --tracking-display: -0.03em;
-  /* Type and spacing roles that change with screen size. Phone values here; wider screens below. */
+  /* Type and spacing roles that grow smoothly with the screen: the phone value at 360px, the laptop value at
+     1440px, no jumps between. Past 1440px the whole app grows a little with the root size (base.css), so a
+     big monitor is not a small app in a sea of margin. Body, names and meta stay put below 1440px. */
   /* A calm app scale: meta 12.5, body 14, names 15, sections 16 to 17, page titles 21 to 26. Each step is one
      size and one weight up, never a jump: page titles 650, sections 600, names and buttons 550, body 400,
      meta 400 in the muted tone. Figures come in two sizes: the lead figure a screen exists for (the ring,
@@ -28,9 +30,12 @@
   --weight-title: 650; --weight-head: 600; --weight-strong: 550; --weight-medium: 500; --weight-figure: 600;
   --text-body: 0.875rem; --text-name: 0.9375rem;
   /* Helper text, labels and the side menu's settings pages: one step under the body, never Kumo's 13px. */
-  --text-meta: 0.78125rem; --text-h1: 1.3125rem; --text-h2: 1rem;
-  --text-figure: 1.375rem; --text-figure-lead: 1.875rem; --text-stat: 1rem;
-  --pad-card: 14px; --gap-tile: var(--space-sm); --gap-section: var(--space-md); --pad-page-top: var(--space-md);
+  --text-meta: 0.78125rem;
+  --text-h1: clamp(1.312rem, 1.208rem + 0.463vw, 1.625rem); --text-h2: clamp(1rem, 0.9792rem + 0.09259vw, 1.062rem);
+  --text-figure: clamp(1.375rem, 1.25rem + 0.5556vw, 1.75rem); --text-figure-lead: clamp(1.875rem, 1.708rem + 0.7407vw, 2.375rem);
+  --text-stat: clamp(1rem, 0.9583rem + 0.1852vw, 1.125rem);
+  --pad-card: clamp(0.875rem, 0.75rem + 0.5556vw, 1.25rem); --gap-tile: clamp(0.75rem, 0.6667rem + 0.3704vw, 1rem);
+  --gap-section: clamp(1rem, 0.9167rem + 0.3704vw, 1.25rem); --pad-page-top: clamp(1rem, 0.6667rem + 1.481vw, 2rem);
   --radius-control: 8px; --radius-card: 12px; --radius-tile: 20px; --radius-pill: 999px;
   /* The activity grid: five steps from empty (paper-3) to busiest, butter to deep gold. */
   --heat-cell: 0.6875rem; --heat-gap: 3px;
@@ -81,13 +86,3 @@
 }
 
 /* Laptop and up: one step up on headings and figures, a little more room in cards and between sections. */
-@media (min-width: 60rem) {
-  :root {
-    --text-h1: 1.5rem; --text-h2: 1.0625rem; --text-figure: 1.625rem; --text-figure-lead: 2.125rem; --text-stat: 1.125rem;
-    --pad-card: 20px; --gap-tile: var(--space-md); --gap-section: 20px; --pad-page-top: var(--space-lg);
-  }
-}
-/* Large desktop: one more step on the page title and the big figure only. */
-@media (min-width: 90rem) {
-  :root { --text-h1: 1.625rem; --text-figure: 1.75rem; --text-figure-lead: 2.375rem; --pad-page-top: var(--space-xl); }
-}

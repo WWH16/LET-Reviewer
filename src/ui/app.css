@@ -1057,7 +1057,10 @@ a.brand {
     box-shadow: var(--shadow-bar-up);
     padding-bottom: env(safe-area-inset-bottom);
   }
+  /* On a tablet the five tabs stay together in the middle instead of spreading edge to edge. */
   .nav ul {
+    max-width: 36rem;
+    margin-inline: auto;
     justify-content: space-around;
   }
   .nav li {
@@ -1544,7 +1547,7 @@ legend {
    as body copy at a book measure. The last paragraph is the question itself and carries the weight. */
 .stem {
   max-width: 65ch;
-  font-size: clamp(0.9375rem, 0.92rem + 0.1vw, 1rem);
+  font-size: clamp(0.9375rem, 0.9167rem + 0.0926vw, 1rem); /* 15px at 360, 16px at 1440 */
   line-height: 1.55;
   white-space: pre-wrap;
 }
