@@ -145,6 +145,12 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
   const submit = (e: FormEvent) => {
     e.preventDefault();
     if (busy) return; // Enter or a pasted code while a request runs must not send it again
+    // Sent from Email with no password yet (Enter, or a phone keyboard's Go key, which may send no Enter key):
+    // go on to Password, as Tab would, instead of showing errors. The Sign in button still checks both fields.
+    if (step === 'form' && !password && document.activeElement?.id === INPUT.email) {
+      document.getElementById(INPUT.password)?.focus();
+      return;
+    }
     const found = checkAccountFields({
       email: step === 'form' ? email : undefined,
       password: step !== 'confirm' ? password : undefined,
@@ -240,13 +246,6 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
                 aria-describedby={errors.email ? 'acc-email-error' : undefined}
                 value={email}
                 onChange={(e) => (setEmail(e.target.value.trim()), edited('email'))}
-                // Enter in Email with no password yet goes on to Password, as Tab would, instead of sending an
-                // empty form. The Sign in button itself still checks both fields.
-                onKeyDown={(e) => {
-                  if (e.key !== 'Enter' || password) return;
-                  e.preventDefault();
-                  document.getElementById(INPUT.password)?.focus();
-                }}
               />
               <FieldError input="acc-email" text={errors.email} />
             </div>
