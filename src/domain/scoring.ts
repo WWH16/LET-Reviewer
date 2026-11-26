@@ -1,7 +1,23 @@
 // Accuracy and the projected LET rating (plan §3, §6.6, §8.4).
 
 import { LEVEL_WEIGHTS, PART_FLOOR, PASSING_AVERAGE } from './let-config';
-import type { Area, Attempt, Level, Question } from './types';
+import { shown } from './choices';
+import type { Area, Attempt, Level, MockExam, Question } from './types';
+
+/** Item i of an exam as it was shown, with the exam's choice order. */
+export const examItem = (e: MockExam, i: number, qmap: ReadonlyMap<string, Question>) => {
+  const q = qmap.get(e.itemIds[i]);
+  return q && shown(q, e.orders?.[i]);
+};
+
+export function examScore(e: MockExam, qmap: ReadonlyMap<string, Question>) {
+  let correct = 0;
+  e.itemIds.forEach((_, i) => {
+    const q = examItem(e, i, qmap);
+    if (q && q.answer !== null && e.answers[String(i + 1)] === q.answer) correct++;
+  });
+  return { correct, total: e.itemIds.length, pct: e.itemIds.length ? (correct / e.itemIds.length) * 100 : 0 };
+}
 
 /** `null` when the question has no key or is gone, so the attempt cannot be scored. */
 export function isCorrect(a: Attempt, q: Question | undefined): boolean | null {

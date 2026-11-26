@@ -21,6 +21,7 @@ const Settings = lazy(() => import('../features/settings/Settings').then((m) => 
 const Progress = lazy(() => import('../features/progress/Progress').then((m) => ({ default: m.Progress })));
 const MockSetup = lazy(() => import('../features/mock/MockSetup').then((m) => ({ default: m.MockSetup })));
 const MockExam = lazy(() => import('../features/mock/MockExam').then((m) => ({ default: m.MockExam })));
+const MockHistory = lazy(() => import('../features/mock/MockHistory').then((m) => ({ default: m.MockHistory })));
 const MockResults = lazy(() => import('../features/mock/MockResults').then((m) => ({ default: m.MockResults })));
 const MockPrint = lazy(() => import('../features/mock/MockPrint').then((m) => ({ default: m.MockPrint })));
 const MockEntry = lazy(() => import('../features/mock/MockEntry').then((m) => ({ default: m.MockEntry })));
@@ -152,6 +153,7 @@ export function App() {
           <Route path="/session" element={<Session />} />
           <Route path="/unfinished" element={<Unfinished />} />
           <Route path="/mock" element={<MockSetup />} />
+          <Route path="/mock/results" element={<MockHistory />} />
           <Route path="/mock/:id" element={<MockExam />} />
           <Route path="/mock/:id/print" element={<MockPrint />} />
           <Route path="/mock/:id/entry" element={<MockEntry />} />

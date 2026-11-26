@@ -2248,6 +2248,11 @@ a.mode:focus-visible {
   padding-top: var(--space-sm);
   border-top: 1px solid var(--color-inverse-tint);
 }
+/* Alone in its tile (Mock results), nothing sits above it to rule off. */
+.tile > .stat-row:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
 .stat-row > div {
   display: grid;
   flex: 1;

@@ -3,8 +3,8 @@ import { Page } from '../../ui/Page';
 import { useExams, useMeta } from '../../db/hooks';
 import { daysBetween } from '../../domain/dates';
 import { useStats } from '../progress/useStats';
-import { weakestSubjects } from '../../domain/scoring';
-import { PARTS, subareaName } from '../../domain/let-config';
+import { subareaName } from '../../domain/let-config';
+import { examScore } from '../../domain/scoring';
 import { groupQuizzes } from '../../domain/quiz';
 import type { QuizTake } from '../../domain/types';
 import { FirstRun } from './FirstRun';
@@ -36,7 +36,9 @@ export function Home() {
   const toExam = settings.examDate ? daysBetween(today, settings.examDate) : null;
   const name = settings.name.trim();
 
-  const weakest = weakestSubjects(attempts, qmap)[0];
+  // Newest first, as useExams orders them.
+  const graded = exams.filter((e) => e.status === 'graded');
+  const latest = graded[0];
   const quizList = groupQuizzes(qmap.values());
   const quizzes = quizList.length;
   // Quiz takes left midway and mocks not graded yet.
@@ -59,10 +61,12 @@ export function Home() {
       to: '/quizzes',
     },
     {
-      name: 'Weakest subject',
-      line: weakest ? `${subareaName(weakest.subarea)}, ${PARTS[weakest.area].name}.` : 'Shows up after 3 answers in a subject.',
-      icon: 'target',
-      to: weakest ? `/quizzes/${weakest.area}/${weakest.subarea}` : undefined,
+      name: 'Mock results',
+      line: latest
+        ? `${graded.length} ${graded.length === 1 ? 'exam' : 'exams'}. Latest ${latest.label}, ${Math.round(examScore(latest, qmap).pct)}%.`
+        : 'Scores from your mock exams show up here.',
+      icon: 'stats',
+      to: latest ? '/mock/results' : undefined,
     },
     { name: 'Mock exam', line: 'One part, the subjects you pick, on screen or printed.', icon: 'mock', to: '/mock' },
   ];
