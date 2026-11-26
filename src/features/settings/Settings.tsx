@@ -38,7 +38,7 @@ export function Settings() {
   const sync = useMeta<SyncState>('sync', EMPTY_STATE);
   const restoreInput = useRef<HTMLInputElement>(null);
   const announce = useAnnounce();
-  // A link elsewhere ("Set your exam date", "Back up now") names the control it came for.
+  // A link elsewhere ("Set your exam date") names the control it came for.
   const focus = (useLocation().state as { focus?: string } | null)?.focus;
   const loaded = !!s;
 

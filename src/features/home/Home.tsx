@@ -9,7 +9,6 @@ import { groupQuizzes } from '../../domain/quiz';
 import type { QuizTake } from '../../domain/types';
 import { FirstRun } from './FirstRun';
 import { WeekStrip } from './WeekStrip';
-import { btn } from '../../ui/btn';
 import { Avatar } from '../../ui/Avatar';
 import { Icon, type IconName } from '../../ui/Icon';
 
@@ -23,10 +22,9 @@ type Mode = { name: string; line: string; icon: IconName; to?: string; count?: n
 export function Home() {
   const stats = useStats();
   const exams = useExams();
-  const lastBackup = useMeta<{ at: string; attempts: number } | null>('lastBackup', null);
   const takes = useMeta<QuizTake[]>('quizTakes', []);
 
-  if (!stats || !exams || lastBackup === undefined || !takes) return <Page title="Study" titleHidden>{null}</Page>;
+  if (!stats || !exams || !takes) return <Page title="Study" titleHidden>{null}</Page>;
   if (!stats.hasQuestions)
     return (
       <Page title="Study">
@@ -36,9 +34,6 @@ export function Home() {
 
   const { days, today, settings, attempts, qmap } = stats;
   const toExam = settings.examDate ? daysBetween(today, settings.examDate) : null;
-  const sinceBackup = attempts.length - (lastBackup?.attempts ?? 0);
-  const backupDays = lastBackup ? daysBetween(lastBackup.at.slice(0, 10), today) : null;
-  const remindBackup = sinceBackup >= 50 || (sinceBackup > 0 && (backupDays === null || backupDays >= 7));
   const name = settings.name.trim();
 
   const weakest = weakestSubjects(attempts, qmap)[0];
@@ -88,7 +83,7 @@ export function Home() {
           : { at: e.updatedAt, to: `/mock/${e.id}`, title: `Continue exam ${e.label}`, line: `${Object.keys(e.answers).length} of ${e.itemIds.length} answered.` },
       ),
   ].sort((a, b) => (a.at < b.at ? 1 : -1))[0];
-  const side = Boolean(resume || remindBackup);
+  const side = Boolean(resume);
 
   return (
     <Page title="Study" titleHidden wide>
@@ -136,18 +131,6 @@ export function Home() {
                 </span>
                 <Icon name="caret" size={20} />
               </Link>
-            )}
-
-            {remindBackup && (
-              <p className="notice spread">
-                <span>
-                  {sinceBackup} {sinceBackup === 1 ? 'answer' : 'answers'} since your{' '}
-                  {lastBackup ? `last backup on ${new Date(lastBackup.at).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}` : 'first session, with no backup yet'}.
-                </span>
-                <Link className={btn.secondary} to="/settings/data" state={{ focus: 's-export' }}>
-                  Back up now
-                </Link>
-              </p>
             )}
           </div>
         )}
