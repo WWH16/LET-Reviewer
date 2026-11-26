@@ -66,7 +66,8 @@ The masters come from `build.py`, so change the geometry there, not in the SVGs.
 python brand/build.py
 ```
 
-The variants and web icons were exported with the `logo-design` skill's `export_variants.py`. Use the full symbol for the app icons and the small cut for favicons. Then copy `web/apple-touch-icon.png` to `public/icon-180.png`, and `web/icon-192.png`, `icon-512.png`, `maskable-512.png`, `favicon.ico` and `favicon.svg` to `public/`.
+The variants and web icons were exported with the `logo-design` skill's `export_variants.py`. Use the full symbol for the app icons and the small cut for favicons. Then copy `web/apple-touch-icon.png` to `public/icon-180.png`, and `web/icon-192.png`, `icon-512.png`, `maskable-512.png`, `favicon.ico` and `favicon.svg` to `public/`. The side menu uses a copy of `logo/let-prep-symbol-favicon.svg` at `src/ui/mark.svg`, so copy that file again too.
+
 ## Open items
 
 - **Trademark.** No trademark search has been done. Run one (IPOPHL for the Philippines) before a public launch.

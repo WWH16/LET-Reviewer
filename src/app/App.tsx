@@ -6,6 +6,7 @@ import { Home } from '../features/home/Home';
 import { useMeta, useSettings } from '../db/hooks';
 import { CommandMenu } from './CommandMenu';
 import { PLACES, SETTINGS_PAGES } from './nav';
+import mark from '../ui/mark.svg';
 import { Welcome } from '../features/home/Welcome';
 import { lazy, Suspense, useEffect } from 'react';
 import { Skeleton } from '../ui/Skeleton';
@@ -87,7 +88,7 @@ export function App() {
       <header className={inExam ? 'shell-top in-exam' : 'shell-top'}>
         <div className="top">
           <Link className="brand" to="/" aria-label="LET Prep, home">
-            <span className="brand-mark" aria-hidden="true" />
+            <img className="brand-mark" src={mark} alt="" width={24} height={24} />
             LET Prep
           </Link>
           {/* Wide screens: the jump box sits under the name, like a search field, above the menu. */}

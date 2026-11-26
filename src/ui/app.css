@@ -406,11 +406,11 @@ h1:not(.sr-only) + p {
 a.brand {
   text-decoration: none;
 }
+/* The logo's small-size cut on its pencil-yellow tile (brand/logo/let-prep-symbol-favicon.svg). */
 .brand-mark {
-  width: 20px;
-  height: 20px;
-  border-radius: 5px;
-  background: var(--color-inverse);
+  flex: none;
+  width: 24px;
+  height: 24px;
 }
 .nav a {
   display: flex;
