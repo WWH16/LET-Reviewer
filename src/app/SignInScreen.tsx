@@ -30,10 +30,9 @@ const ROW = [...CROWD.keys()]
 const MIDDLE = ROW.indexOf(CROWD[0]);
 
 /**
- * The first screen of a build with an account service, until she signs in. A crowd of fellow reviewers cheers
- * from a golden rise along the bottom edge, behind the form; point at (or tap) one and they rise a little. All of
- * it is decoration, hidden from screen readers; the cheer runs under five seconds, and nothing moves under
- * reduced motion.
+ * The first screen of a build with an account service, until she signs in. A crowd of fellow reviewers stands
+ * on a golden rise along the bottom edge, behind the form; point at (or tap) one and they rise a little. All of
+ * it is decoration, hidden from screen readers, and nothing moves under reduced motion.
  */
 export function SignInScreen() {
   return (

@@ -591,7 +591,7 @@ a.brand {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
-/* Sign in: a crowd of fellow reviewers cheers from a golden rise along the bottom edge. The form stands
+/* Sign in: a crowd of fellow reviewers stands on a golden rise along the bottom edge. The form stands
    above them on a clay card (a thick ink edge and a solid ink shadow, so it reads as something to press).
    The party is one layer behind the form, decorative, clipped to the screen. --crowd is one face's width. */
 .auth {
@@ -711,35 +711,17 @@ a.brand {
   background: transparent;
   box-shadow: none;
 }
-/* Point at (or tap) a reviewer and they rise a little. The party layer ignores the pointer; the faces take it
-   back. The rise uses the translate property, apart from the cheer's transform, so the two never fight. */
+/* The crowd stands still. Point at (or tap) a reviewer and they rise a little. The party layer ignores the
+   pointer; the faces take it back. */
 .auth-fan {
   pointer-events: auto;
 }
 @media (prefers-reduced-motion: no-preference) {
-  /* two cheers, from the middle out, then still: the whole party is over inside five seconds */
   .auth-fan > .avatar {
-    animation: fan-cheer 1000ms calc(500ms + var(--i) * 110ms) var(--ease-out) 2 backwards;
-    transform-origin: 50% 100%;
     transition: translate 320ms var(--ease-out);
   }
   .auth-fan:hover > .avatar {
     translate: 0 -10%;
-  }
-}
-@keyframes fan-cheer {
-  0%,
-  100% {
-    transform: none;
-  }
-  35% {
-    transform: translateY(-14%) rotate(-3deg);
-  }
-  62% {
-    transform: none;
-  }
-  80% {
-    transform: translateY(-5%) rotate(2deg);
   }
 }
 
