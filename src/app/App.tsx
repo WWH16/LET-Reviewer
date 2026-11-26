@@ -41,7 +41,7 @@ function NotFound() {
     <Page title="Not found">
       <Empty icon="study" title="This page does not exist" text="The link may be old or mistyped.">
         <Link className={btn.primary} to="/">
-          Back to Study
+          Back to Home
         </Link>
       </Empty>
     </Page>

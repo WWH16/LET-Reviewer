@@ -8,7 +8,7 @@ import { Skeleton } from './Skeleton';
  * so keyboard and screen-reader users land at the top of the new content.
  * A screen still loading passes `null` children and gets a skeleton.
  * `titleHidden` keeps the h1 for screen readers but hides it where the screen's first
- * block already says where you are (the Study greeting, the quiz bar).
+ * block already says where you are (the Home greeting, the quiz bar).
  * `crumbs` are the screens above this one, top first, shown as a breadcrumb trail over the title.
  */
 export function Page({

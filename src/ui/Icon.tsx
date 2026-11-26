@@ -4,6 +4,7 @@ import {
   ArrowCounterClockwiseIcon,
   ArrowUpIcon,
   BookOpenIcon,
+  HouseIcon,
   CaretRightIcon,
   ChartLineUpIcon,
   BookOpenTextIcon,
@@ -41,9 +42,10 @@ const ICONS = {
   calendar: CalendarBlankIcon,
   // tabs
   study: BookOpenIcon,
+  home: HouseIcon,
   stats: ChartLineUpIcon,
   review: ListChecksIcon,
-  // Study tiles
+  // Home tiles
   lightning: LightningIcon,
   retry: ArrowCounterClockwiseIcon,
   target: TargetIcon,

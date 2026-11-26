@@ -25,10 +25,10 @@ export function Home() {
   const takes = useMeta<QuizTake[]>('quizTakes', []);
   const unfinished = useUnfinishedCount();
 
-  if (!stats || !exams || !takes || unfinished === undefined) return <Page title="Study" titleHidden>{null}</Page>;
+  if (!stats || !exams || !takes || unfinished === undefined) return <Page title="Home" titleHidden>{null}</Page>;
   if (!stats.hasQuestions)
     return (
-      <Page title="Study">
+      <Page title="Home">
         <FirstRun />
       </Page>
     );
@@ -89,7 +89,7 @@ export function Home() {
   const side = Boolean(resume);
 
   return (
-    <Page title="Study" titleHidden wide>
+    <Page title="Home" titleHidden wide>
       <div className="bento">
         <section className={`greet tile-inverse ${side ? 'span-4' : ''}`} aria-labelledby="greet-title">
           <div className="greet-head">
@@ -139,7 +139,7 @@ export function Home() {
         )}
 
         <section className="stack-sm" aria-labelledby="modes-title">
-          <h2 id="modes-title">Study</h2>
+          <h2 id="modes-title">Home</h2>
           <ul className="modes">
             {modes.map((m) => {
               const body = (

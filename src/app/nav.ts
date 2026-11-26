@@ -11,7 +11,7 @@ export interface Place {
   icon: IconName;
   /** True on the screens it leads to, so the tab stays lit there. */
   here: (path: string, search: string) => boolean;
-  /** Sidebar only: on phones it is reached from Study instead. */
+  /** Sidebar only: on phones it is reached from Home instead. */
   wideOnly?: boolean;
   /** Phone tab bar only: the sidebar lists the Settings pages themselves. */
   narrowOnly?: boolean;
@@ -20,7 +20,7 @@ export interface Place {
 const session = (path: string, search: string, mode: string) => path === '/session' && new URLSearchParams(search).get('mode') === mode;
 
 export const PLACES: Place[] = [
-  { to: '/', label: 'Study', icon: 'study', here: (p) => p === '/' },
+  { to: '/', label: 'Home', icon: 'home', here: (p) => p === '/' },
   {
     to: '/quizzes',
     label: 'Quizzes',
