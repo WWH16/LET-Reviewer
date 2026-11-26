@@ -942,9 +942,22 @@ a.brand {
   .brand {
     padding-inline: var(--space-xs);
   }
+  /* The menu fills the side bar's height, so Settings can sit at its foot. */
+  .nav {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+    overflow-y: auto;
+  }
   .nav ul {
     flex-direction: column;
     gap: var(--space-3xs);
+  }
+  .nav-group {
+    margin-top: auto;
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--color-rule);
   }
   /* Compact like Cloudflare's dashboard: 14px labels, 18px icons, 34px rows, no group headings. */
   .nav a,
@@ -1604,6 +1617,23 @@ th.num {
 }
 a.list-link {
   text-decoration: none;
+}
+/* The Settings list: each page's name over its line, with a chevron so the row reads as a way in. */
+.list-link.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+.settings-row > .stack-sm {
+  gap: 2px;
+}
+.settings-row-name {
+  font-weight: 600;
+}
+.settings-row > svg {
+  flex: none;
+  color: var(--color-muted);
 }
 .list-link:hover {
   background: var(--color-paper-2);

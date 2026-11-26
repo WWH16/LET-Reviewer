@@ -90,6 +90,8 @@ export function App() {
             <span className="brand-mark" aria-hidden="true" />
             LET Prep
           </Link>
+          {/* Wide screens: the jump box sits under the name, like a search field, above the menu. */}
+          <CommandMenu />
           <nav className="nav" aria-label="Main">
             <ul>
               {PLACES.map((item) => {
@@ -113,10 +115,11 @@ export function App() {
             </ul>
             {/* Wide screens list the Settings pages themselves; phones reach them from the Settings tab. */}
             {/* As in Cloudflare's dashboard: Settings is one item with a chevron; its pages fold out beneath it,
-                indented, and it opens by itself on a settings page. */}
+                indented, and it opens by itself on a settings page. It sits apart at the foot of the menu. The
+                page you are on carries the highlight, so the gear stays an outline. */}
             <details className="nav-group only-wide" open={pathname.startsWith('/settings') || undefined}>
               <summary>
-                <Icon name="settings" size={18} filled={pathname.startsWith('/settings')} />
+                <Icon name="settings" size={18} />
                 Settings
                 <Icon name="caret" size={14} />
               </summary>
@@ -131,7 +134,6 @@ export function App() {
               </ul>
             </details>
           </nav>
-          <CommandMenu />
         </div>
       </header>
       <Suspense

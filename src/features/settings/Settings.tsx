@@ -19,6 +19,7 @@ import { SubjectsEditor } from './SubjectsEditor';
 import { EMPTY_STATE, requestSync, syncAvailable, type SyncState } from '../../sync/trigger';
 import { SETTINGS_PAGES } from '../../app/nav';
 import { AsyncButton } from '../../ui/AsyncButton';
+import { Icon } from '../../ui/Icon';
 
 const fmtDate = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -62,11 +63,12 @@ export function Settings() {
         <ul className="list">
           {SETTINGS_PAGES.map((x) => (
             <li key={x.id}>
-              <Link className="list-link" to={`/settings/${x.id}`}>
+              <Link className="list-link settings-row" to={`/settings/${x.id}`}>
                 <span className="stack-sm">
-                  <span>{x.label}</span>
+                  <span className="settings-row-name">{x.label}</span>
                   <span className="meta">{x.line}</span>
                 </span>
+                <Icon name="caret" size={16} />
               </Link>
             </li>
           ))}
