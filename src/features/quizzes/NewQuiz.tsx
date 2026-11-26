@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Page } from '../../ui/Page';
+import { Dialog } from '../../ui/Dialog';
 import { useAnnounce } from '../../ui/Status';
 import { copyText } from '../../ui/clipboard';
 import { useQuestionMap, useSettings } from '../../db/hooks';
@@ -34,7 +35,10 @@ export function NewQuiz() {
   // Her lists start empty, so each pick can also name a new one here.
   const [pickedArea, setArea] = useState<Area | null>(null);
   const [subPick, setSubPick] = useState(() => params.get('sub') ?? '');
-  const [newSub, setNewSub] = useState('');
+  // Adding a subject happens in a small dialog: its name, then Add. Cancel keeps the subject she had.
+  const [adding, setAdding] = useState(false);
+  const [draft, setDraft] = useState('');
+  const [draftError, setDraftError] = useState('');
   // Digits only, never above MAX while she types; below MIN it is read as MIN and set to it when she leaves the field.
   const [nText, setNText] = useState(String(MIN));
   const n = Math.min(MAX, Math.max(MIN, Number(nText) || MIN));
@@ -50,10 +54,9 @@ export function NewQuiz() {
   const parts = settings ? partsFor(settings.level) : [];
   const area = pickedArea ?? (parts.find((a) => a === params.get('area')) || parts[0]);
   const subs = area && settings && qmap ? subjectsOf(area, settings.subjects, qmap.values()) : [];
-  const addingSub = subPick === NEW || !subs.length;
-  const sub = addingSub ? null : (subs.find((s) => s.id === subPick) ?? subs[0]);
-  const subjectName = sub?.name ?? newSub.trim();
-  const ready = !!subjectName;
+  const sub = subs.find((s) => s.id === subPick) ?? subs[0] ?? null;
+  const subjectName = sub?.name ?? '';
+  const ready = !!sub;
 
   const parsed = useMemo(() => parsePasted(text), [text]);
   const preview = useMemo(
@@ -65,14 +68,24 @@ export function NewQuiz() {
   const prompt = quizPrompt({ area, subject: subjectName || '<subject>', level: settings.level, major: settings.major, n });
   const back = sub ? `/quizzes/${area}/${sub.id}` : '/quizzes';
 
-  /** Adds a subject she named here to her list, reusing one with the same name. Returns its id. */
-  const fileUnder = async (): Promise<string> => {
-    if (sub) return sub.id;
-    const same = subs.find((x) => x.name.toLowerCase() === subjectName.toLowerCase());
-    if (same) return same.id;
-    const subject = { id: subjectId(subjectName, new Set(subs.map((x) => x.id))), name: subjectName };
-    await saveSettings({ subjects: { ...settings.subjects, [area]: [...settings.subjects[area], subject] } });
-    return subject.id;
+  const openAdd = () => (setDraft(''), setDraftError(''), setAdding(true));
+  /** Adds the subject named in the dialog to this part and picks it. A name she already has picks that one. */
+  const addSubject = async (e: FormEvent) => {
+    e.preventDefault();
+    const name = draft.trim();
+    if (!name) {
+      setDraftError('Type the subject’s name.');
+      return;
+    }
+    const same = subs.find((x) => x.name.toLowerCase() === name.toLowerCase());
+    if (same) setSubPick(same.id);
+    else {
+      const subject = { id: subjectId(name, new Set(subs.map((x) => x.id))), name };
+      await saveSettings({ subjects: { ...settings.subjects, [area]: [...settings.subjects[area], subject] } });
+      setSubPick(subject.id);
+      announce(`${name} added to ${PARTS[area].name}`);
+    }
+    setAdding(false);
   };
 
   const pasteClipboard = async () => {
@@ -85,10 +98,10 @@ export function NewQuiz() {
   };
 
   const save = async (start: boolean) => {
-    if (parsed.kind !== 'questions' || !ready || busy) return;
+    if (parsed.kind !== 'questions' || !sub || busy) return;
     setBusy(start ? 'take' : 'only');
     try {
-      const subarea = await fileUnder();
+      const subarea = sub.id;
       const now = nowIso();
       const id = newQuizId(now);
       const { ready: qs } = previewQuiz(parsed.items, { id, area, subarea }, now);
@@ -125,14 +138,11 @@ export function NewQuiz() {
               ))}
             </Select>
           </div>
-          {subs.length > 0 && (
+          {sub ? (
             <div className="field">
               <label htmlFor="nq-sub">Subject</label>
-              <Select
-                id="nq-sub"
-                value={sub?.id ?? NEW}
-                onChange={(v) => setSubPick(v)}
-              >
+              {/* The last option opens the Add a subject dialog; the picked subject stays until she adds one. */}
+              <Select id="nq-sub" value={sub.id} onChange={(v) => (v === NEW ? openAdd() : setSubPick(v))}>
                 {subs.map((x) => (
                   <option key={x.id} value={x.id}>
                     {x.name}
@@ -141,11 +151,15 @@ export function NewQuiz() {
                 <option value={NEW}>Add a new subject…</option>
               </Select>
             </div>
-          )}
-          {addingSub && (
+          ) : (
             <div className="field">
-              <label htmlFor="nq-new">{subs.length ? 'New subject' : `Subject in ${PARTS[area].name}`}</label>
-              <input id="nq-new" type="text" placeholder="e.g. English" value={newSub} onChange={(e) => setNewSub(e.target.value)} />
+              <span className="label">Subject</span>
+              <p className="meta">No subjects in {PARTS[area].name} yet.</p>
+              <div>
+                <button type="button" className={btn.secondary} onClick={openAdd}>
+                  Add a subject
+                </button>
+              </div>
             </div>
           )}
           <div className="field">
@@ -299,6 +313,46 @@ export function NewQuiz() {
           </Link>
         </div>
       </section>
+
+      {/* The dropdown's option that opened the dialog is gone once it closes, so focus goes back to the dropdown. */}
+      <Dialog
+        open={adding}
+        onClose={() => (setAdding(false), requestAnimationFrame(() => document.getElementById('nq-sub')?.focus()))}
+        title={`Add a subject to ${PARTS[area].name}`}
+      >
+        <form className="stack" onSubmit={addSubject} noValidate>
+          <div className="field">
+            <label htmlFor="nq-new">Subject name</label>
+            <input
+              id="nq-new"
+              type="text"
+              placeholder="e.g. English"
+              data-autofocus
+              aria-invalid={!!draftError}
+              aria-describedby={draftError ? 'nq-new-error nq-new-help' : 'nq-new-help'}
+              value={draft}
+              onChange={(e) => (setDraft(e.target.value), setDraftError(''))}
+            />
+            {draftError && (
+              <p id="nq-new-error" className="field-error">
+                <Icon name="alert" size={16} />
+                {draftError}
+              </p>
+            )}
+            <span id="nq-new-help" className="meta">
+              It joins your {PARTS[area].name} subjects. Rename or remove it later in Settings, Subjects.
+            </span>
+          </div>
+          <div className="row">
+            <button type="submit" className={btn.primary}>
+              Add subject
+            </button>
+            <button type="button" className={btn.quiet} onClick={() => setAdding(false)}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      </Dialog>
     </Page>
   );
 }
