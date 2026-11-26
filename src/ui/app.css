@@ -2694,10 +2694,30 @@ kbd {
   content-visibility: auto;
   contain-intrinsic-size: auto 20rem;
 }
-/* A rule between checked items, so each item's explanation reads as the end of it. */
+/* Same bleed as the booklet: without it content-visibility clips the cards' 2px side rings. */
+.result-item {
+  margin-inline: calc(-1 * var(--space-xs));
+  padding-inline: var(--space-xs);
+}
+/* A rule between checked items, so each item's explanation reads as the end of it. Inset back to the text column. */
 .result-item + .result-item {
   padding-top: var(--space-md);
-  border-top: 1px solid var(--color-rule);
+  background: linear-gradient(var(--color-rule) 0 0) var(--space-xs) 0 / calc(100% - 2 * var(--space-xs)) 1px no-repeat;
+}
+/* Back to top on the long results page, clear of the phone tab bar. */
+.to-top {
+  position: fixed;
+  right: max(var(--space-md), var(--safe-right));
+  bottom: var(--space-lg);
+  z-index: var(--z-raised);
+  justify-content: center;
+  width: 44px;
+  padding: 0;
+}
+@media (max-width: 59.99rem) {
+  .to-top {
+    bottom: calc(var(--tabbar-h) + var(--space-md) + var(--safe-bottom));
+  }
 }
 /* The item number is the landmark in a 150-item paper: the one display-face mark per item. */
 .booklet h2 {

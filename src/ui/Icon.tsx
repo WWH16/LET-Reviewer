@@ -2,6 +2,7 @@
 // every icon sits next to words that say the same thing, or in a button whose aria-label says it.
 import {
   ArrowCounterClockwiseIcon,
+  ArrowUpIcon,
   BookOpenIcon,
   CaretRightIcon,
   ChartLineUpIcon,
@@ -48,6 +49,7 @@ const ICONS = {
   target: TargetIcon,
   timer: TimerIcon,
   caret: CaretRightIcon,
+  'arrow-up': ArrowUpIcon,
   // the password field's show and hide button
   eye: EyeIcon,
   'eye-closed': EyeClosedIcon,

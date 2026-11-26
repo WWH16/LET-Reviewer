@@ -16,6 +16,7 @@ import { shuffle } from '../../domain/examDraw';
 import { saveExam } from '../../db/repo';
 import { examLink, newExam } from './newExam';
 import { btn } from '../../ui/btn';
+import { Icon } from '../../ui/Icon';
 
 type Filter = 'all' | 'wrong' | 'flagged' | 'unanswered';
 
@@ -50,6 +51,17 @@ export function MockResults() {
   useEffect(() => {
     if (timeUp) scoreRef.current?.focus();
   }, [timeUp]);
+
+  // Back to top shows once the score is out of view.
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 600);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  const toTop = () =>
+    window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
 
   const latestByPart = useMemo(() => {
     if (!exams || !qmap) return {};
@@ -301,6 +313,11 @@ export function MockResults() {
           Home
         </Link>
       </div>
+      {scrolled && (
+        <button type="button" className={`${btn.primary} to-top`} aria-label="Back to top" title="Back to top" onClick={toTop}>
+          <Icon name="arrow-up" size={20} />
+        </button>
+      )}
     </Page>
   );
 }
