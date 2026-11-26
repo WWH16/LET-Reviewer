@@ -444,6 +444,18 @@ a.brand {
 .nav a[aria-current='page'] svg {
   color: var(--color-accent-text);
 }
+/* Wide screens: the current place is the sign-in tab's pill, yellow with an ink edge. */
+@media (min-width: 60rem) {
+  .nav a[aria-current='page'] {
+    background: var(--color-inverse);
+    color: var(--color-inverse-ink);
+    font-weight: 700;
+    box-shadow: inset 0 0 0 2px var(--color-ink), 0 2px 0 var(--color-ink);
+  }
+  .nav a[aria-current='page'] svg {
+    color: var(--color-inverse-ink);
+  }
+}
 /* Avataaars are the one place with colour: her skin tone and hair are who she is. A paper disc keeps
    them readable on the inverted Today card. */
 .avatar {
@@ -1099,6 +1111,12 @@ main.wide {
   position: relative;
   text-decoration: none;
 }
+/* Buttons as on the sign-in card: 44px tall, the card's rounding, a firm label. min-height beats Kumo's fixed height. */
+.btn {
+  min-height: 44px;
+  border-radius: var(--radius-card);
+  font-weight: 600;
+}
 /* Hit slop: a 36px Kumo button gets a 40px tall target without changing its look. */
 .btn::after {
   content: '';
@@ -1143,10 +1161,18 @@ main.wide {
   box-shadow: none;
   cursor: not-allowed;
 }
+/* Secondary buttons get the inputs' 2px edge in place of Kumo's hairline ring (quiet buttons have no ring). */
+.btn.ring:not(.btn-primary):not([aria-pressed='true']) {
+  box-shadow: inset 0 0 0 2px var(--color-control);
+}
+.btn.ring:not(.btn-primary):not([aria-pressed='true']):hover:not(:disabled) {
+  box-shadow: inset 0 0 0 2px var(--color-muted);
+}
+/* A pressed toggle is the sign-in tab's pill: yellow with an ink edge. */
 .btn[aria-pressed='true'] {
-  background: var(--color-accent-soft);
-  color: var(--color-on-soft);
-  box-shadow: inset 0 0 0 1.5px var(--color-accent-edge);
+  background: var(--color-inverse);
+  color: var(--color-inverse-ink);
+  box-shadow: inset 0 0 0 2px var(--color-ink), 0 2px 0 var(--color-ink);
 }
 .btn[aria-busy='true'] {
   cursor: progress;
@@ -1244,10 +1270,11 @@ input[type='password'],
 select,
 textarea {
   width: 100%;
-  min-height: 36px;
+  /* as on the sign-in card: 44px tall, a 2px edge, the card's rounding */
+  min-height: 44px;
   padding: var(--space-2xs) var(--space-sm);
-  border: 1px solid var(--color-control);
-  border-radius: var(--radius-control);
+  border: 2px solid var(--color-control);
+  border-radius: var(--radius-card);
   background: var(--color-card);
   color: var(--color-ink);
   font: inherit;
@@ -1261,6 +1288,15 @@ textarea {
 .select {
   width: 100%;
   font-size: var(--text-body);
+}
+/* Kumo's select and the date button, drawn like the inputs: 44px, a 2px edge, the card's rounding. */
+.select {
+  min-height: 44px;
+  border-radius: var(--radius-card);
+  box-shadow: inset 0 0 0 2px var(--color-control);
+}
+.select:hover {
+  box-shadow: inset 0 0 0 2px var(--color-muted);
 }
 select {
   appearance: auto;
@@ -2311,6 +2347,7 @@ a.mode:focus-visible {
   border-radius: var(--radius-tile);
   background: var(--color-inverse);
   color: var(--color-inverse-ink);
+  box-shadow: var(--shadow-card);
 }
 .quiz-steps {
   display: flex;

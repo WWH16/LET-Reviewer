@@ -30,7 +30,7 @@
   --text-meta: 0.8125rem; --text-h1: 1.5rem; --text-h2: 1.0625rem;
   --text-figure: 1.625rem; --text-figure-lead: 2.125rem; --text-stat: 1.125rem;
   --pad-card: 14px; --gap-tile: var(--space-sm); --gap-section: var(--space-md); --pad-page-top: var(--space-md);
-  --radius-control: 8px; --radius-card: 12px; --radius-tile: 14px; --radius-pill: 999px;
+  --radius-control: 8px; --radius-card: 12px; --radius-tile: 20px; --radius-pill: 999px;
   /* The activity grid: five steps from empty (paper-3) to busiest, butter to deep gold. */
   --heat-cell: 0.6875rem; --heat-gap: 3px;
   --heat-0: var(--color-paper-3); --heat-1: oklch(94% 0.07 95); --heat-2: oklch(88% 0.13 92); --heat-3: oklch(80% 0.16 85); --heat-4: oklch(63% 0.13 70);
@@ -56,10 +56,12 @@
   --color-gold: oklch(63% 0.13 78);
   /* the primary button: near-black with a white label */
   --color-button: oklch(24% 0.015 80); --color-button-deep: oklch(15% 0.01 80); --color-button-ink: oklch(100% 0 0);
-  --shadow-card: 0 0 0 1px var(--color-line), 0 1px 2px oklch(24% 0.015 80 / 0.06), 0 4px 12px -4px oklch(24% 0.015 80 / 0.08);
+  /* The clay look of the sign-in card, everywhere: a 2px ink outline and a solid ink shadow under it, no blur.
+     Drawn with box-shadow, so the outline takes no layout space. */
+  --shadow-card: 0 0 0 2px var(--color-ink), 0 4px 0 var(--color-ink);
   /* an action tile sits one step higher than a tile: you press it */
-  --shadow-raised: 0 0 0 1px var(--color-line), 0 2px 4px oklch(0% 0 0 / 0.06), 0 14px 28px -12px oklch(0% 0 0 / 0.08);
-  --shadow-pop: 0 0 0 1px var(--color-line), 0 12px 32px -8px oklch(0% 0 0 / 0.07);
+  --shadow-raised: 0 0 0 2px var(--color-ink), 0 6px 0 var(--color-ink);
+  --shadow-pop: 0 0 0 2px var(--color-ink), 0 6px 0 var(--color-ink);
   --shadow-bar: 0 1px 3px oklch(0% 0 0 / 0.06), 0 4px 12px -6px oklch(0% 0 0 / 0.06);
   --shadow-bar-up: 0 -1px 3px oklch(0% 0 0 / 0.06), 0 -4px 12px -6px oklch(0% 0 0 / 0.06);
   --shadow-side: 1px 0 3px oklch(0% 0 0 / 0.06), 4px 0 12px -6px oklch(0% 0 0 / 0.06);
