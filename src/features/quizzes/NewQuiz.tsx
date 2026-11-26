@@ -117,10 +117,10 @@ export function NewQuiz() {
 
   return (
     <Page title="New quiz" back={{ to: back, label: sub ? `${sub.name} quizzes` : 'Quizzes' }}>
-      <section className="tile stack" aria-labelledby="nq-1">
+      <section className="tile stack quiz-pick" aria-labelledby="nq-1">
         <h2 id="nq-1">1. Pick the subject</h2>
         <MajorHint level={settings.level} />
-        <div className="grid-2">
+        <div className="quiz-pick-fields">
           <div className="field">
             <label htmlFor="nq-area">Part</label>
             <Select
@@ -154,12 +154,15 @@ export function NewQuiz() {
           ) : (
             <div className="field">
               <span className="label">Subject</span>
-              <p className="meta">No subjects in {PARTS[area].name} yet.</p>
+              {/* The button sits where the select would, so it lines up with Part; the note hangs below like a help line. */}
               <div>
-                <button type="button" className={btn.secondary} onClick={openAdd}>
+                <button type="button" className={btn.secondary} onClick={openAdd} aria-describedby="nq-sub-help">
                   Add a subject
                 </button>
               </div>
+              <span id="nq-sub-help" className="meta">
+                No subjects in {PARTS[area].name} yet.
+              </span>
             </div>
           )}
           <div className="field">
@@ -192,7 +195,7 @@ export function NewQuiz() {
               ))}
             </datalist>
             <span id="nq-n-help" className="meta">
-              Type any number from {MIN} to {MAX}, or pick a usual size.
+              From {MIN} to {MAX}.
             </span>
           </div>
         </div>

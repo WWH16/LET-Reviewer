@@ -144,6 +144,29 @@ h1:not(.sr-only) + p {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
   gap: var(--space-sm);
 }
+/* New quiz, step 1: sized by the tile, not the screen, since the sidebar comes and goes.
+   One column on a phone; Part and Subject side by side; then all three, Subject widest for long names.
+   Fields sit at the top so the controls line up and the help lines hang below them. */
+.quiz-pick {
+  container-type: inline-size;
+}
+.quiz-pick-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: var(--space-sm);
+}
+@container (min-width: 28rem) {
+  .quiz-pick-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+/* A count needs only a few digits, so Number takes the narrow track. */
+@container (min-width: 38rem) {
+  .quiz-pick-fields {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(8rem, 0.6fr);
+  }
+}
 .card {
   padding: var(--pad-card);
   border-radius: var(--radius-card);
@@ -1285,8 +1308,22 @@ textarea {
   justify-content: space-between;
   font-weight: 400;
 }
-.select {
+/* Touch screens: a field under 16px makes iPhone Safari zoom the page in when it is tapped, and it stays
+   zoomed. Fields keep 16px there; buttons and the rest of the text keep the app's own sizes. */
+@media (pointer: coarse) {
+  input,
+  select,
+  textarea {
+    font-size: max(1rem, var(--text-body));
+  }
+}
+/* button.select, not .select: Kumo's trigger carries w-max, which would otherwise win and let a long
+   subject name push the select past its column. min-width: 0 lets the name truncate instead. */
+button.select {
   width: 100%;
+  min-width: 0;
+}
+.select {
   font-size: var(--text-body);
 }
 /* Kumo's select and the date button, drawn like the inputs: 44px, a 2px edge, the card's rounding. */
@@ -1769,7 +1806,7 @@ dialog {
   margin: auto;
   padding: 20px;
   border: 0;
-  border-radius: var(--radius-card);
+  border-radius: var(--radius-tile);
   background: var(--color-card);
   color: var(--color-ink);
   box-shadow: var(--shadow-pop);
