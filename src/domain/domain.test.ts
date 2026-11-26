@@ -45,6 +45,30 @@ describe('parsePasted', () => {
     const p = parsePasted('Here you go:\n```json\n[' + JSON.stringify(item()) + ']\n```\nLet me know!');
     expect(p.kind).toBe('questions');
   });
+  // A chat once wrote 55 questions and 50 answers, skipping four and numbering the last one 50: question 50
+  // would have been saved with question 55's key. Each answer repeats its choice's text, so the app sees it.
+  it('leaves out a question whose answer text is not the choice its letter names', () => {
+    const { answer, ...bare } = item(); // choices one, two, three, four; answer B is "two"
+    const reply = {
+      questions: [bare, { ...bare, stem: 'Second?' }, { ...bare, stem: 'Third?' }],
+      answers: [
+        { n: 1, answer, answerText: 'two' },
+        { n: 2, answer: 'C', answerText: 'An answer from another question' },
+        { n: 3, answer: 'D', answerText: 'Four.' }, // case and a full stop do not count
+      ],
+    };
+    const p = parsePasted(JSON.stringify(reply));
+    const r = p.kind === 'questions' ? previewQuiz(p.items, { id: 'quiz-x', area: 'GenEd', subarea: 'english' }, opts.now) : null;
+    expect(r?.ready.map((q) => q.stem)).toEqual(['Which of the following?', 'Third?']);
+    expect(r?.invalid).toEqual([{ n: 2, errors: [expect.stringMatching(/not choice C/)] }]);
+  });
+  it('counts the answers so a short list can be pointed out', () => {
+    const { answer, ...bare } = item();
+    const p = parsePasted(JSON.stringify({ questions: [bare, bare, bare], answers: [{ n: 1, answer }] }));
+    expect(p.kind === 'questions' && p.answerCount).toBe(1);
+    const list = parsePasted(JSON.stringify([item()]));
+    expect(list.kind === 'questions' && list.answerCount).toBeUndefined();
+  });
   // The prompt's own shape, as a chat sends it: one ```json block, sometimes with words around it anyway.
   it('reads the questions-then-answers reply from a code block with chat words around it', () => {
     const { answer, ...bare } = item();

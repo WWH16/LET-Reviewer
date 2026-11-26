@@ -250,6 +250,14 @@ export function NewQuiz() {
               {preview.repeats > 0 && `, ${preview.repeats} repeated and kept once`}.
             </p>
           )}
+          {parsed.kind === 'questions' && parsed.answerCount !== undefined && parsed.answerCount !== parsed.items.length && (
+            <p className="notice">
+              The chat wrote {parsed.items.length} questions but {parsed.answerCount} answers, so some answers may sit on the wrong
+              question. Any with no answer, or an answer that does not match its choices, is left out below. For a clean quiz, ask
+              the chat: &ldquo;Write exactly one answer for every
+              question, with answerText copied from its choice.&rdquo;
+            </p>
+          )}
         </div>
         {parsed.kind === 'questions' && parsed.truncatedAfter !== null && (
           <p className="notice">

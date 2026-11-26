@@ -4,6 +4,7 @@ import { PARTS } from './let-config';
 import type { Area, Level } from './types';
 
 // The answers come last, after every question, so copying the reply never shows question 1's answer.
+// Each answer repeats its choice's text, so the app can tell when an answer landed on the wrong question.
 const QUIZ_SCHEMA = `{
   "questions": [
     {
@@ -13,7 +14,7 @@ const QUIZ_SCHEMA = `{
     }
   ],
   "answers": [
-    { "n": 1, "answer": "A | B | C | D", "explanation": "<why the answer is right>" }
+    { "n": 1, "answer": "A | B | C | D", "answerText": "<the text of that choice, copied exactly>", "explanation": "<why the answer is right>" }
   ]
 }`;
 
@@ -39,10 +40,14 @@ ${QUIZ_SCHEMA}
 Keep the answers hidden until the end: never put an answer or explanation inside "questions".
 After the last question, list every answer and its explanation in "answers", numbered from 1
 in the same order as the questions.
+Write exactly ${o.n} questions and exactly ${o.n} answers: one answer for every question, none skipped.
+For each answer, look back at that question's choices: "answer" is the letter of the correct choice,
+and "answerText" is that same choice's text, copied word for word. The correct answer must be one of
+the four choices; if it is not, rewrite the question.
 
 Reply with the JSON only, inside one code block that starts with \`\`\`json, and write nothing
 before or after the code block: no greeting, no notes, no summary. The whole reply is copied
 with the code block's Copy button and pasted into an app that reads only JSON.
-Finish the JSON completely. If ${o.n} questions would not fit in one reply, write fewer questions
-and still close every bracket.`;
+Finish the JSON completely. If ${o.n} questions would not fit in one reply, write fewer questions,
+the same number of answers, and still close every bracket.`;
 }

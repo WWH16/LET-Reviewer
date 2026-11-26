@@ -10,7 +10,8 @@ import { KEYS, type Area, type Choice, type Key, type Question } from './types';
 export type Parsed =
   | { kind: 'empty' }
   | { kind: 'not-json' }
-  | { kind: 'questions'; items: unknown[]; truncatedAfter: number | null; unreadable: number[] }
+  /** `answerCount`: how many answers a questions-then-answers reply listed, to point out a short list. */
+  | { kind: 'questions'; items: unknown[]; truncatedAfter: number | null; unreadable: number[]; answerCount?: number }
   | { kind: 'backup'; value: Record<string, unknown> }
   | { kind: 'unknown' };
 
@@ -26,7 +27,8 @@ function withAnswers(items: unknown[], answers: unknown): unknown[] {
   return items.map((q, i) => {
     const a = byN.get(i + 1);
     if (!isObj(q) || !a) return q;
-    return { ...q, answer: q.answer ?? a.answer, explanation: q.explanation ?? a.explanation };
+    // answerText rides along to validateItem, which checks it against the choice the letter names.
+    return { ...q, answer: q.answer ?? a.answer, answerText: q.answerText ?? a.answerText, explanation: q.explanation ?? a.explanation };
   });
 }
 
@@ -36,7 +38,14 @@ function classify(v: unknown): Parsed {
   if (v.type === 'backup' || ('schemaVersion' in v && Array.isArray(v.questions) && Array.isArray(v.attempts)))
     return { kind: 'backup', value: v };
   for (const k of ['questions', 'items', 'data']) {
-    if (Array.isArray(v[k])) return { kind: 'questions', items: withAnswers(v[k] as unknown[], v.answers), truncatedAfter: null, unreadable: [] };
+    if (Array.isArray(v[k]))
+      return {
+        kind: 'questions',
+        items: withAnswers(v[k] as unknown[], v.answers),
+        truncatedAfter: null,
+        unreadable: [],
+        ...(Array.isArray(v.answers) && { answerCount: v.answers.length }),
+      };
   }
   if ('stem' in v) return { kind: 'questions', items: [v], truncatedAfter: null, unreadable: [] };
   return { kind: 'unknown' };
@@ -178,6 +187,15 @@ export function validateItem(raw: unknown, n: number, opts: { now: string; batch
 
   const answer = toAnswer(o.answer);
   if (answer === 'bad') errors.push(`answer is "${String(o.answer)}". It must be A, B, C, D, or empty.`);
+  // The answer list repeats the correct choice's text. When it is not the choice the letter names, the
+  // answer belongs to another question (a chat that skipped or misnumbered answers): never save that key.
+  const answerText = str(o.answerText);
+  if (answerText && answer && answer !== 'bad' && choices) {
+    const picked = norm(choices.find((c) => c.key === answer)?.text ?? '');
+    const said = norm(answerText);
+    if (!picked || !(picked.includes(said) || said.includes(picked)))
+      errors.push(`the answer list says "${answerText.slice(0, 60)}", which is not choice ${answer}. The answers may be numbered wrong.`);
+  }
 
 
   let media: Question['media'] = null;
