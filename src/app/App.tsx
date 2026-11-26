@@ -3,7 +3,7 @@ import { Page } from '../ui/Page';
 import { StatusProvider } from '../ui/Status';
 import { Icon } from '../ui/Icon';
 import { Home } from '../features/home/Home';
-import { useMeta, useSettings } from '../db/hooks';
+import { useMeta, useSettings, useUnfinishedCount } from '../db/hooks';
 import { CommandMenu } from './CommandMenu';
 import { PLACES, SETTINGS_PAGES } from './nav';
 import mark from '../ui/mark.svg';
@@ -50,6 +50,7 @@ function NotFound() {
 
 export function App() {
   const settings = useSettings();
+  const unfinished = useUnfinishedCount();
   // A running mock exam (finished and printed ones redirect away from this route).
   const inExam = useMatch('/mock/:id') !== null;
   // A tab stays lit on the screens it leads to (Quizzes on a quiz session and a question's edit).
@@ -111,6 +112,12 @@ export function App() {
                       ) : (
                         item.label
                       )}
+                      {item.to === '/unfinished' && unfinished ? (
+                        <span className="nav-count num">
+                          {unfinished}
+                          <span className="sr-only"> to continue</span>
+                        </span>
+                      ) : null}
                     </Link>
                   </li>
                 );

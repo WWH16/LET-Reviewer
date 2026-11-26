@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Page } from '../../ui/Page';
-import { useExams, useMeta } from '../../db/hooks';
+import { useExams, useMeta, useUnfinishedCount } from '../../db/hooks';
 import { daysBetween } from '../../domain/dates';
 import { useStats } from '../progress/useStats';
 import { subareaName } from '../../domain/let-config';
@@ -23,8 +23,9 @@ export function Home() {
   const stats = useStats();
   const exams = useExams();
   const takes = useMeta<QuizTake[]>('quizTakes', []);
+  const unfinished = useUnfinishedCount();
 
-  if (!stats || !exams || !takes) return <Page title="Study" titleHidden>{null}</Page>;
+  if (!stats || !exams || !takes || unfinished === undefined) return <Page title="Study" titleHidden>{null}</Page>;
   if (!stats.hasQuestions)
     return (
       <Page title="Study">
@@ -41,8 +42,6 @@ export function Home() {
   const latest = graded[0];
   const quizList = groupQuizzes(qmap.values());
   const quizzes = quizList.length;
-  // Quiz takes left midway and mocks not graded yet.
-  const unfinished = takes.length + exams.filter((e) => e.status !== 'graded').length;
 
   // A new quiz leads: it is how questions come in, and on a wide screen it is the large tile.
   const modes: Mode[] = [

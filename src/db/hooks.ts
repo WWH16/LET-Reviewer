@@ -4,7 +4,7 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from './db';
 import { getMeta, getSettings } from './repo';
-import type { MockExam, Question } from '../domain/types';
+import type { MockExam, Question, QuizTake } from '../domain/types';
 import { DEMO_PREFIX } from '../domain/demo';
 import { shown } from '../domain/choices';
 
@@ -38,3 +38,12 @@ export const useMeta = <T>(key: string, fallback: T) => useLiveQuery(() => getMe
 
 /** How many sample answers (Settings, Sample data) are on this device. */
 export const useDemoCount = () => useLiveQuery(() => db.attempts.where('id').startsWith(DEMO_PREFIX).count());
+
+/** What Unfinished lists: quiz takes whose quiz is still there, and mock exams not graded yet. */
+export const useUnfinishedCount = () =>
+  useLiveQuery(async () => {
+    const takes = await getMeta<QuizTake[]>('quizTakes', []);
+    const quizzes = new Set((await db.questions.toArray()).filter((q) => !q.deleted).map((q) => q.quizId));
+    const mocks = await db.mockExams.filter((e) => !e.deleted && e.status !== 'graded').count();
+    return takes.filter((t) => quizzes.has(t.quizId)).length + mocks;
+  });
