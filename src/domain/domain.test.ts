@@ -45,6 +45,15 @@ describe('parsePasted', () => {
     const p = parsePasted('Here you go:\n```json\n[' + JSON.stringify(item()) + ']\n```\nLet me know!');
     expect(p.kind).toBe('questions');
   });
+  // The prompt's own shape, as a chat sends it: one ```json block, sometimes with words around it anyway.
+  it('reads the questions-then-answers reply from a code block with chat words around it', () => {
+    const { answer, ...bare } = item();
+    const reply = JSON.stringify({ questions: [bare, { ...bare, stem: 'Second?' }], answers: [{ n: 1, answer }, { n: 2, answer: 'C' }] }, null, 2);
+    const p = parsePasted(`Sure! Here is your quiz:\n\`\`\`json\n${reply}\n\`\`\`\nGood luck on the LET!`);
+    const r = p.kind === 'questions' ? previewQuiz(p.items, { id: 'quiz-x', area: 'GenEd', subarea: 'english' }, opts.now) : null;
+    expect(r?.ready.map((q) => q.answer)).toEqual(['B', 'C']);
+    expect(r?.invalid).toEqual([]);
+  });
   it('keeps the complete items of a cut-off list', () => {
     const one = JSON.stringify(item());
     const p = parsePasted(`[${one},${one},{"area":"Prof`);

@@ -38,5 +38,11 @@ ${QUIZ_SCHEMA}
 
 Keep the answers hidden until the end: never put an answer or explanation inside "questions".
 After the last question, list every answer and its explanation in "answers", numbered from 1
-in the same order as the questions.`;
+in the same order as the questions.
+
+Reply with the JSON only, inside one code block that starts with \`\`\`json, and write nothing
+before or after the code block: no greeting, no notes, no summary. The whole reply is copied
+with the code block's Copy button and pasted into an app that reads only JSON.
+Finish the JSON completely. If ${o.n} questions would not fit in one reply, write fewer questions
+and still close every bracket.`;
 }

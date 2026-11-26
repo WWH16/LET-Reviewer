@@ -185,10 +185,13 @@ export function NewQuiz() {
       </section>
 
       <section className="tile stack" aria-labelledby="nq-2">
-        <h2 id="nq-2">2. Ask Claude</h2>
+        <h2 id="nq-2">2. Ask Claude or ChatGPT</h2>
         <div className="field">
           <label htmlFor="nq-prompt">Prompt</label>
-          <textarea id="nq-prompt" className="mono" readOnly rows={8} value={prompt} />
+          <textarea id="nq-prompt" className="mono" readOnly rows={8} value={prompt} aria-describedby="nq-prompt-help" />
+          <span id="nq-prompt-help" className="meta">
+            Press Copy prompt, then paste it into a new chat and send it. The reply comes back as one code block.
+          </span>
         </div>
         <div>
           <button
@@ -199,7 +202,7 @@ export function NewQuiz() {
               await copyText(prompt);
               setCopiedPrompt(prompt);
               setTimeout(() => setCopiedPrompt((p) => (p === prompt ? null : p)), 2000);
-              announce('Prompt copied. Send it to Claude, then paste the reply below.');
+              announce('Prompt copied. Send it in a new chat, then paste the reply below.');
             }}
           >
             {copiedPrompt === prompt ? (
@@ -216,6 +219,10 @@ export function NewQuiz() {
 
       <section className="tile stack" aria-labelledby="nq-3">
         <h2 id="nq-3">3. Paste the reply</h2>
+        {/* Selecting the text by hand misses brackets or picks up the chat's own words; the code block's button copies exactly the JSON. */}
+        <p className="meta">
+          In the chat, press <strong>Copy</strong> at the top right of the code block. Do not select the text by hand.
+        </p>
         <div className="row">
           <button type="button" className={btn.secondary} onClick={pasteClipboard}>
             Paste from clipboard
@@ -223,13 +230,17 @@ export function NewQuiz() {
         </div>
         {clipError && <p role="alert">{clipError}</p>}
         <div className="field">
-          <label htmlFor="nq-paste">Claude&rsquo;s reply</label>
+          <label htmlFor="nq-paste">The chat&rsquo;s reply</label>
           <textarea id="nq-paste" value={text} spellCheck={false} onChange={(e) => setText(e.target.value)} />
         </div>
 
         <div role="status" className="stack-sm">
-          {parsed.kind === 'not-json' && <p>No question list found. In Claude, tap Copy on the code block, then paste here.</p>}
-          {(parsed.kind === 'unknown' || parsed.kind === 'backup') && <p>This is not a question list. A question list starts with [.</p>}
+          {parsed.kind === 'not-json' && (
+            <p>No question list found. In the chat, press Copy at the top of the code block, then paste here again.</p>
+          )}
+          {(parsed.kind === 'unknown' || parsed.kind === 'backup') && (
+            <p>This is not a question list. Send the prompt above in a new chat and paste that reply.</p>
+          )}
           {preview && (
             <p>
               <strong>
