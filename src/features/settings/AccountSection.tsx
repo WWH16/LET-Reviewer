@@ -288,7 +288,23 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
           )}
           {step !== 'confirm' && (
             <div className="field">
-              <label htmlFor="acc-password">{step === 'reset' ? 'New password' : 'Password'}</label>
+              <div className="field-head">
+                <label htmlFor="acc-password">{step === 'reset' ? 'New password' : 'Password'}</label>
+                {step === 'form' && mode === 'in' && (
+                  <button
+                    type="button"
+                    className="text-btn"
+                    disabled={!!busy}
+                    aria-busy={busy === 'reset'}
+                    onClick={() => {
+                      if (show(checkAccountFields({ email }))) return;
+                      run('reset', (a) => a.requestReset(email), () => (setCode(''), setPassword(''), setStep('reset')));
+                    }}
+                  >
+                    {busy === 'reset' ? 'Sending code…' : 'Forgot password?'}
+                  </button>
+                )}
+              </div>
               <div className="pw">
                 <input
                   id="acc-password"
@@ -328,21 +344,8 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
           <button type="submit" className={`${btn.primary} auth-submit`} disabled={!!busy} aria-busy={busy === 'submit'}>
             {step === 'form' ? (mode === 'up' ? 'Create account' : 'Sign in') : step === 'confirm' ? 'Confirm' : 'Save password'}
           </button>
+          {step !== 'form' && (
           <div className="row">
-            {step === 'form' && mode === 'in' && (
-              <button
-                type="button"
-                className={btn.quiet}
-                disabled={!!busy}
-                aria-busy={busy === 'reset'}
-                onClick={() => {
-                  if (show(checkAccountFields({ email }))) return;
-                  run('reset', (a) => a.requestReset(email), () => (setCode(''), setPassword(''), setStep('reset')));
-                }}
-              >
-                Forgot password?
-              </button>
-            )}
             {step === 'confirm' && (
               <button
                 type="button"
@@ -354,12 +357,11 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
                 Send a new code
               </button>
             )}
-            {step !== 'form' && (
-              <button type="button" className={btn.quiet} onClick={() => (setErrors({}), setStep('form'))}>
-                Back
-              </button>
-            )}
+            <button type="button" className={btn.quiet} onClick={() => (setErrors({}), setStep('form'))}>
+              Back
+            </button>
           </div>
+          )}
           {!required && <p className="meta">What is stored: your questions, answers, mock exams and settings. Only you can read them.</p>}
         </form>
       )}

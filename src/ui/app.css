@@ -616,22 +616,14 @@ a.brand {
   width: 100%;
   max-width: 24rem;
 }
+/* The logo lockup (brand/logo/let-prep-horizontal.svg), ink on the paper ground. */
 .auth-brand {
   display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  font-family: var(--font-display);
-  font-size: var(--text-lg);
-  font-weight: 700;
-  letter-spacing: var(--tracking-display);
 }
-/* The mark: an ink tile with a yellow square set in it. */
-.auth-mark {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-control);
-  background: var(--color-inverse-ink);
-  box-shadow: inset 0 0 0 9px var(--color-inverse-ink), inset 0 0 0 16px var(--color-inverse);
+.auth-brand > img {
+  display: block;
+  height: 44px;
+  width: auto;
 }
 .auth-card {
   gap: var(--space-md);
@@ -1189,10 +1181,41 @@ main.wide {
   gap: 6px;
 }
 .field > label,
-.field > .label {
+.field > .label,
+.field-head > label {
   font-size: var(--text-meta);
   font-weight: 600;
   color: var(--color-ink);
+}
+/* A label with a small action at its end, such as Forgot password? */
+.field-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-xs);
+}
+/* A button that reads as a link: meta size, underlined, with a 40px tall hit area, the same as the buttons. */
+.text-btn {
+  position: relative;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--text-meta);
+  font-weight: 600;
+  color: var(--color-accent-text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.text-btn::after {
+  content: '';
+  position: absolute;
+  inset: -12px -8px -6px; /* only into the gaps: never over the inputs above and below */
+}
+.text-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 input[type='text'],
 input[type='number'],
