@@ -116,7 +116,7 @@ export function NewQuiz() {
   };
 
   return (
-    <Page title="New quiz" back={{ to: back, label: sub ? `${sub.name} quizzes` : 'Quizzes' }}>
+    <Page title="New quiz" crumbs={[{ to: '/quizzes', label: 'Quizzes' }, ...(sub ? [{ to: back, label: `${sub.name} quizzes` }] : [])]}>
       <section className="tile stack quiz-pick" aria-labelledby="nq-1">
         <h2 id="nq-1">1. Pick the subject</h2>
         <MajorHint level={settings.level} />

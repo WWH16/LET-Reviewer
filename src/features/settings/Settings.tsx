@@ -115,7 +115,7 @@ export function Settings() {
   const since = lastBackup ? attempts - lastBackup.attempts : attempts;
 
   return (
-    <Page title={page.label} back={{ to: '/settings', label: 'Settings' }}>
+    <Page title={page.label} crumbs={[{ to: '/settings', label: 'Settings' }]}>
       <div className="stack">
         {show('subjects') && <SubjectsEditor s={s} />}
         {show('profile') && (

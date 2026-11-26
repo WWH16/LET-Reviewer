@@ -49,7 +49,11 @@ export function EditQuestion() {
   };
 
   return (
-    <Page title="Edit question" back={{ to: quiz, label: `${subareaName(q.subarea)} quiz` }}>
+    <Page title="Edit question" crumbs={[
+        { to: '/quizzes', label: 'Quizzes' },
+        { to: `/quizzes/${q.area}/${q.subarea}`, label: `${subareaName(q.subarea)} quizzes` },
+        { to: quiz, label: 'Quiz' },
+      ]}>
       <p className="muted">
         {PARTS[q.area].name}, {subareaName(q.subarea)}
       </p>

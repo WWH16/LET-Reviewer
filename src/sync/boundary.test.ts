@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join, relative, sep } from 'node:path';
-import { expect, it } from 'vitest';
+import { expect, it, vi } from 'vitest';
 
 // The local-first rule, enforced: Supabase lives in src/sync, and screens reach it only through the trigger.
 const SRC = fileURLToPath(new URL('..', import.meta.url));
@@ -23,8 +23,16 @@ it('lets the rest of the app import only the trigger statically', () => {
   expect(names.filter((n) => !n.endsWith(': trigger'))).toEqual([]);
 });
 
+// The env is blanked here, so a developer's own .env with Supabase keys does not turn sync on.
 it('is off when the env is missing', async () => {
-  expect((await import('./trigger')).syncAvailable).toBe(false);
+  vi.stubEnv('VITE_SUPABASE_URL', '');
+  vi.stubEnv('VITE_SUPABASE_PUBLISHABLE_KEY', '');
+  vi.resetModules();
+  try {
+    expect((await import('./trigger')).syncAvailable).toBe(false);
+  } finally {
+    vi.unstubAllEnvs();
+  }
 });
 
 it('every sync trigger site calls requestSync', () => {

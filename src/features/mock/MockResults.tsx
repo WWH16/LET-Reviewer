@@ -12,10 +12,13 @@ import { RatingCard } from '../progress/RatingCard';
 import { counts } from '../../domain/quiz';
 import { subjectsOf } from '../../domain/subjects';
 import { shuffle } from '../../domain/examDraw';
-import { saveExam } from '../../db/repo';
+import { saveExam, updateExam } from '../../db/repo';
 import { examLink, newExam } from './newExam';
 import { btn } from '../../ui/btn';
 import { Icon } from '../../ui/Icon';
+import { Dialog } from '../../ui/Dialog';
+import { AsyncButton } from '../../ui/AsyncButton';
+import { useAnnounce } from '../../ui/Status';
 
 type Filter = 'all' | 'wrong' | 'flagged' | 'unanswered';
 
@@ -28,6 +31,8 @@ export function MockResults() {
   const location = useLocation();
   const [filter, setFilter] = useState<Filter>('all');
   const [retakeSubs, setRetakeSubs] = useState<string[] | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const announce = useAnnounce();
   const navigate = useNavigate();
   const scoreRef = useRef<HTMLParagraphElement>(null);
   const timeUp = (location.state as { timeUp?: boolean } | null)?.timeUp;
@@ -55,6 +60,14 @@ export function MockResults() {
   }, [exams, qmap]);
 
   if (!exam || !qmap || !settings || !exams) return <Page title="Exam results">{null}</Page>;
+  if (exam.deleted)
+    return (
+      <Page title="Exam deleted">
+        <p>
+          {exam.label} was deleted. <Link to="/mock/results">See all mock results</Link>
+        </p>
+      </Page>
+    );
   if (exam.status !== 'graded')
     return (
       <Page title="Not graded yet">
@@ -111,13 +124,18 @@ export function MockResults() {
     const q = qmap.get(id);
     return q && counts(q) && again.includes(q.subarea);
   });
-  const retake = async () => {
+  // Items not answered right: wrong or left blank, and still in her quizzes.
+  const missedIds = exam.itemIds.filter((id, i) => {
+    const q = examItem(exam, i, qmap);
+    return q && counts(q) && exam.answers[String(i + 1)] !== q.answer;
+  });
+  const retake = async (ids: string[]) => {
     const next = newExam({
       part: exam.part,
       form: exam.form,
-      itemIds: shuffle(againIds),
+      itemIds: shuffle(ids),
       qmap,
-      subjects: again,
+      subjects: [...new Set(ids.map((id) => qmap.get(id)!.subarea))],
       paper: exam.paper,
       settings,
       labels: exams.map((e) => e.label),
@@ -127,7 +145,14 @@ export function MockResults() {
   };
 
   return (
-    <Page title={`${exam.label} results`} wide>
+    <Page
+      title={`${exam.label} results`}
+      wide
+      crumbs={[
+        { to: '/mock', label: 'Mock exams' },
+        { to: '/mock/results', label: 'Mock results' },
+      ]}
+    >
       {timeUp && <p className="notice">Time is up. Your answers were submitted.</p>}
       {/* The score is the screen's dark mass; the rating and the pacing sit beside it. */}
       <div className="bento">
@@ -217,9 +242,14 @@ export function MockResults() {
           </fieldset>
           )}
           <div className="row">
-            <button type="button" className={btn.primary} disabled={!againIds.length} onClick={retake}>
+            <button type="button" className={btn.primary} disabled={!againIds.length} onClick={() => retake(againIds)}>
               Retake {againIds.length} items
             </button>
+            {missedIds.length > 0 && missedIds.length < againIds.length && (
+              <button type="button" className={btn.secondary} onClick={() => retake(missedIds)}>
+                Only the {missedIds.length} missed
+              </button>
+            )}
             <Link className={btn.secondary} to="/mock">
               New mock, new questions
             </Link>
@@ -296,7 +326,29 @@ export function MockResults() {
         <Link className={btn.secondary} to="/">
           Home
         </Link>
+        <button type="button" className={btn.quiet} onClick={() => setConfirmDelete(true)}>
+          Delete exam
+        </button>
       </div>
+
+      <Dialog open={confirmDelete} onClose={() => setConfirmDelete(false)} title={`Delete ${exam.label}?`}>
+        <p>It leaves your mock results. Your answers stay in Stats.</p>
+        <div className="row">
+          <button type="button" className={btn.primary} data-autofocus onClick={() => setConfirmDelete(false)}>
+            Keep it
+          </button>
+          <AsyncButton
+            className={btn.secondary}
+            onClick={async () => {
+              await updateExam(exam.id, { deleted: true });
+              announce('Exam deleted', () => updateExam(exam.id, { deleted: false }));
+              navigate('/mock/results');
+            }}
+          >
+            Delete exam
+          </AsyncButton>
+        </div>
+      </Dialog>
       {scrolled && (
         <button type="button" className={`${btn.primary} to-top`} aria-label="Back to top" title="Back to top" onClick={toTop}>
           <Icon name="arrow-up" size={20} />

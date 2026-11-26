@@ -20,7 +20,7 @@ export function Subject() {
   const newLink = `/quizzes/new?area=${area}&sub=${sub}`;
 
   return (
-    <Page title={title} back={{ to: '/quizzes', label: 'Quizzes' }}>
+    <Page title={title} crumbs={[{ to: '/quizzes', label: 'Quizzes' }]}>
       <div className="spread">
         <p className="muted">
           {part?.name}

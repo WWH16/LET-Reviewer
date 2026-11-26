@@ -23,7 +23,7 @@ export function QuizPage() {
   const z = data.quizzes.find((x) => x.id === id);
   if (!z)
     return (
-      <Page title="Quiz not found" back={{ to: '/quizzes', label: 'Quizzes' }}>
+      <Page title="Quiz not found" crumbs={[{ to: '/quizzes', label: 'Quizzes' }]}>
         <Empty icon="practice" title="This quiz is not on this device" text="It may have been removed.">
           <Link className={btn.primary} to="/quizzes">
             Back to Quizzes
@@ -39,7 +39,7 @@ export function QuizPage() {
   const back = `/quizzes/${z.area}/${z.subarea}`;
 
   return (
-    <Page title={`${subject}, ${z.name}`} back={{ to: back, label: `${subject} quizzes` }}>
+    <Page title={`${subject}, ${z.name}`} crumbs={[{ to: '/quizzes', label: 'Quizzes' }, { to: back, label: `${subject} quizzes` }]}>
       <p className="muted">
         {count(z.questions.length, 'question')}, made {quizDate(z.createdAt)}. {lastLine(z.questions.map((q) => q.id), data.last)}.
       </p>

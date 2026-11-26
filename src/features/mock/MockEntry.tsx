@@ -100,7 +100,7 @@ export function MockEntry() {
   };
 
   return (
-    <Page title={`Enter answers for ${exam.label}`} back={{ to: '/mock', label: 'Mock exams' }}>
+    <Page title={`Enter answers for ${exam.label}`} crumbs={[{ to: '/mock', label: 'Mock exams' }]}>
       <p className="muted">Scan the sheet, or tap what is shaded on it. Tapping moves to the next item by itself.</p>
       {total <= MAX_SCAN_ITEMS && (
         <div className="stack-sm">

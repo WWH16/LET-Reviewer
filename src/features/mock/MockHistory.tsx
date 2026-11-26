@@ -31,7 +31,7 @@ export function MockHistory() {
   const best = Math.max(...graded.map((x) => x.s.pct));
 
   return (
-    <Page title="Mock results" wide>
+    <Page title="Mock results" wide crumbs={[{ to: '/mock', label: 'Mock exams' }]}>
       <div className="bento">
         <section className="tile tile-inverse" aria-label="All mock exams">
           <dl className="stat-row">

@@ -9,19 +9,19 @@ import { Skeleton } from './Skeleton';
  * A screen still loading passes `null` children and gets a skeleton.
  * `titleHidden` keeps the h1 for screen readers but hides it where the screen's first
  * block already says where you are (the Study greeting, the quiz bar).
- * `back` puts a way up above the title on a screen reached from a tab (a quiz mode, an import).
+ * `crumbs` are the screens above this one, top first, shown as a breadcrumb trail over the title.
  */
 export function Page({
   title,
   wide,
   titleHidden,
-  back,
+  crumbs,
   children,
 }: {
   title: string;
   wide?: boolean;
   titleHidden?: boolean;
-  back?: { to: string; label: string };
+  crumbs?: { to: string; label: string }[];
   children: ReactNode;
 }) {
   const heading = useRef<HTMLHeadingElement>(null);
@@ -32,11 +32,17 @@ export function Page({
   return (
     <main id="main" className={wide ? 'wide' : undefined}>
       <div className="stack-lg">
-        {back && (
-          <Link className="back" to={back.to}>
-            <Icon name="caret" size={16} />
-            {back.label}
-          </Link>
+        {crumbs && (
+          <nav className="back" aria-label="Breadcrumb">
+            <ol>
+              {crumbs.map((c) => (
+                <li key={c.to}>
+                  <Link to={c.to}>{c.label}</Link>
+                  <Icon name="caret" size={14} />
+                </li>
+              ))}
+            </ol>
+          </nav>
         )}
         <h1 ref={heading} tabIndex={-1} className={titleHidden ? 'sr-only' : undefined}>
           {title}

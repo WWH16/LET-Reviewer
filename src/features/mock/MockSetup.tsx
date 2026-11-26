@@ -12,6 +12,8 @@ import type { Area, MockExam, PaperSize } from '../../domain/types';
 import { examLink, newExam } from './newExam';
 import { btn } from '../../ui/btn';
 import { Select } from '../../ui/Select';
+import { scoreTone } from '../../ui/Gauge';
+import { examScore } from '../../domain/scoring';
 
 type Length = 'full' | 'half' | 'short';
 const SHORT = 25;
@@ -263,18 +265,25 @@ export function MockSetup() {
           <section className="stack-sm" aria-labelledby="mk-done">
             <h2 id="mk-done">Past exams</h2>
             <ul className="list">
-              {done.map((e) => (
-                <li key={e.id}>
-                  <Link className="list-link spread" to={`/mock/${e.id}/results`}>
-                    <span className="mono">{e.label}</span>
-                    <span className="row">
-                      <Chip>{e.form === 'digital' ? 'Digital' : 'Printed'}</Chip>
-                      <span className="meta">{PARTS[e.part].name}</span>
-                    </span>
-                  </Link>
-                </li>
-              ))}
+              {done.map((e) => {
+                const p = examScore(e, qmap).pct;
+                return (
+                  <li key={e.id}>
+                    <Link className="list-link subject-row" to={`/mock/${e.id}/results`}>
+                      <span className="stack-sm">
+                        <span className="mono">{e.label}</span>
+                        <span className="row">
+                          <Chip>{e.form === 'digital' ? 'Digital' : 'Printed'}</Chip>
+                          <span className="meta">{PARTS[e.part].name}</span>
+                        </span>
+                      </span>
+                      <span className={`subject-pct num ${scoreTone(p)}`}>{Math.round(p)}%</span>
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
+            <Link to="/mock/results">See all mock results</Link>
           </section>
         )}
       </div>
