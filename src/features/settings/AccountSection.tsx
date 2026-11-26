@@ -321,10 +321,12 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
                   type="button"
                   className="pw-toggle"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  title={showPassword ? 'Hide password' : 'Show password'}
                   aria-controls="acc-password"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword ? 'Hide' : 'Show'}
+                  {/* An open eye shows the password; the closed eye, lashes down, hides it again. */}
+                  <Icon name={showPassword ? 'eye-closed' : 'eye'} size={20} />
                 </button>
               </div>
               <FieldError input="acc-password" text={errors.password} />

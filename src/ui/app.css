@@ -798,24 +798,24 @@ a.brand {
   transition: none;
 }
 
-/* A password field with its Show button inside the box, on the right. */
+/* A password field with its eye button inside the box, on the right. */
 .pw {
   position: relative;
 }
 .pw > input {
-  padding-inline-end: 72px;
+  padding-inline-end: 52px;
 }
 .pw-toggle {
   position: absolute;
   inset-block: 4px;
   inset-inline-end: 4px;
-  min-width: 60px;
+  display: grid;
+  place-items: center;
+  width: 40px;
   border: 0;
   border-radius: var(--radius-control);
   background: transparent;
   color: var(--color-ink);
-  font-size: var(--text-meta);
-  font-weight: 600;
   cursor: pointer;
   transition: background-color var(--dur-micro) var(--ease-out);
 }

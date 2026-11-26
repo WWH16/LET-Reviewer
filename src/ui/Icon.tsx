@@ -1,5 +1,5 @@
 // Phosphor icons, Kumo's icon set, drawn in the current text color. Always decorative:
-// every icon sits next to words that say the same thing.
+// every icon sits next to words that say the same thing, or in a button whose aria-label says it.
 import {
   ArrowCounterClockwiseIcon,
   BookOpenIcon,
@@ -10,6 +10,8 @@ import {
   CheckIcon,
   ClockIcon,
   ExamIcon,
+  EyeClosedIcon,
+  EyeIcon,
   FireIcon,
   FlagIcon,
   GearSixIcon,
@@ -45,6 +47,9 @@ const ICONS = {
   target: TargetIcon,
   timer: TimerIcon,
   caret: CaretRightIcon,
+  // the password field's show and hide button
+  eye: EyeIcon,
+  'eye-closed': EyeClosedIcon,
 } satisfies Record<string, PhosphorIcon>;
 
 export type IconName = keyof typeof ICONS;
