@@ -21,14 +21,15 @@
   --font-sans: var(--font-body); --font-mono: var(--font-num); --default-font-family: var(--font-body); --default-mono-font-family: var(--font-num);
   --tracking-display: -0.03em;
   /* Type and spacing roles that change with screen size. Phone values here; wider screens below. */
-  /* A wide-ratio scale, as on an editorial product site: small quiet text (meta 13, reading 15) under
-     firm headings (sections 17 to 18, page titles 24 to 30). Size and weight do the work together:
-     page titles 750, sections 650, names 600, meta 400 in the muted tone. Figures come in two sizes: the
-     lead figure a screen exists for (the ring, a score) and the secondary ones beside it. */
-  --text-body: 0.9375rem; --text-name: 1rem;
+  /* A calm app scale: meta 12.5, body 14, names 15, sections 16 to 17, page titles 21 to 26. Each step is one
+     size and one weight up, never a jump: page titles 650, sections 600, names and buttons 550, body 400,
+     meta 400 in the muted tone. Figures come in two sizes: the lead figure a screen exists for (the ring,
+     a score) and the secondary ones beside it, both 600. */
+  --weight-title: 650; --weight-head: 600; --weight-strong: 550; --weight-medium: 500; --weight-figure: 600;
+  --text-body: 0.875rem; --text-name: 0.9375rem;
   /* Helper text, labels and the side menu's settings pages: one step under the body, never Kumo's 13px. */
-  --text-meta: 0.8125rem; --text-h1: 1.5rem; --text-h2: 1.0625rem;
-  --text-figure: 1.625rem; --text-figure-lead: 2.125rem; --text-stat: 1.125rem;
+  --text-meta: 0.78125rem; --text-h1: 1.3125rem; --text-h2: 1rem;
+  --text-figure: 1.375rem; --text-figure-lead: 1.875rem; --text-stat: 1rem;
   --pad-card: 14px; --gap-tile: var(--space-sm); --gap-section: var(--space-md); --pad-page-top: var(--space-md);
   --radius-control: 8px; --radius-card: 12px; --radius-tile: 20px; --radius-pill: 999px;
   /* The activity grid: five steps from empty (paper-3) to busiest, butter to deep gold. */
@@ -82,11 +83,11 @@
 /* Laptop and up: one step up on headings and figures, a little more room in cards and between sections. */
 @media (min-width: 60rem) {
   :root {
-    --text-h1: 1.75rem; --text-h2: 1.125rem; --text-figure: 1.875rem; --text-figure-lead: 2.5rem; --text-stat: 1.25rem;
+    --text-h1: 1.5rem; --text-h2: 1.0625rem; --text-figure: 1.625rem; --text-figure-lead: 2.125rem; --text-stat: 1.125rem;
     --pad-card: 20px; --gap-tile: var(--space-md); --gap-section: 20px; --pad-page-top: var(--space-lg);
   }
 }
 /* Large desktop: one more step on the page title and the big figure only. */
 @media (min-width: 90rem) {
-  :root { --text-h1: 1.875rem; --text-figure: 2rem; --text-figure-lead: 2.75rem; --pad-page-top: var(--space-xl); }
+  :root { --text-h1: 1.625rem; --text-figure: 1.75rem; --text-figure-lead: 2.375rem; --pad-page-top: var(--space-xl); }
 }
