@@ -1,7 +1,6 @@
 import type { CSSProperties } from 'react';
 import { AccountSection } from '../features/settings/AccountSection';
 import { Avatar } from '../ui/Avatar';
-import logo from '../ui/logo.svg';
 import type { Settings } from '../domain/types';
 
 type Who = Pick<Settings, 'avatarBase' | 'avatarParts'>;
@@ -50,9 +49,6 @@ export function SignInScreen() {
         </div>
       </div>
       <div className="auth-col">
-        <p className="auth-brand">
-          <img src={logo} alt="LET Prep" width={141} height={44} />
-        </p>
         <AccountSection required />
       </div>
     </main>

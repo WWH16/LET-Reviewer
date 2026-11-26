@@ -616,15 +616,6 @@ a.brand {
   width: 100%;
   max-width: 24rem;
 }
-/* The logo lockup (brand/logo/let-prep-horizontal.svg), ink on the paper ground. */
-.auth-brand {
-  display: flex;
-}
-.auth-brand > img {
-  display: block;
-  height: 44px;
-  width: auto;
-}
 .auth-card {
   gap: var(--space-md);
   padding: var(--space-lg);
