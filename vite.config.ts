@@ -9,7 +9,7 @@ export default defineConfig({
       // 'prompt' with no prompt UI: a new version waits until the app is closed,
       // so an update never swaps the app in the middle of a mock exam.
       registerType: 'prompt',
-      includeAssets: ['icon-180.png'],
+      includeAssets: ['icon-180.png', 'favicon.ico', 'favicon.svg'],
       manifest: {
         name: 'LET Prep',
         short_name: 'LET Prep',
@@ -21,6 +21,7 @@ export default defineConfig({
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'icon-512.png', sizes: '512x512', type: 'image/png' },
+          { src: 'maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
       // Latin-ext font files are left out of the offline cache: English and Filipino need only latin.

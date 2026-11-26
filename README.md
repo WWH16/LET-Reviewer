@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="brand/logo/let-prep-horizontal-white-1200.png">
+    <img src="brand/logo/let-prep-horizontal-black-1200.png" alt="LET Prep" width="360">
+  </picture>
+</p>
+
 # LET Prep
 
 An offline-first practice app for the Philippine **Licensure Examination for Teachers (LET)**. It keeps one question bank, offers several ways to practise, and reports progress the way the LET is scored.
@@ -103,6 +110,7 @@ src/
   features/   Screens: home, quizzes, practice, mock, progress, settings
   sync/       Supabase client, auth and sync (the only place that imports Supabase)
 supabase/     SQL migrations
+brand/        Logo masters, variants, web icons and usage guide
 docs/         Product plan, design specs and audits
 ```
 

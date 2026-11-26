@@ -1,0 +1,33 @@
+<svg fill="#ffffff" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 243.6 284.87" role="img"><title>LET Prep</title>
+  
+  <g transform="translate(-7.2 -30) scale(1)">
+    <path fill="#ffffff" fill-rule="evenodd" d="M42 69H82V183H178V223H42Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M171.45 98.16A50 50 0 1 1 146.84 73.55L135.98 84.41A36 36 0 1 0 160.59 109.02Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M92.89 100.35L100.78 99.44L99.6 109.57L109.74 108.39L108.56 118.53L118.69 117.35L117.51 127.49L127.65 126.31L126.47 136.44L136.61 135.26L135.43 145.4L145.56 144.22L144.65 152.11A38 38 0 0 1 92.89 100.35Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M125.29 119.71L129.28 110.25L134.75 115.72Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M131.27 105.53L136.04 92.84L152.16 108.96L139.47 113.73Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M139.4 89.48L170.97 57.91L187.09 74.03L155.52 105.6Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M174.33 54.55L180.38 48.5A11.4 11.4 0 0 1 196.5 64.62L190.45 70.67Z"/>
+  </g>
+  <g transform="translate(0 241) scale(0.44)">
+    <path fill="#ffffff" fill-rule="evenodd" d="M0 0H21V100H0Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M0 79H60V100H0Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M69 0H90V100H69Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M69 0H126V21H69Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M69 39.5H120V60.5H69Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M69 79H126V100H69Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M134 0H198V21H134Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M155.5 0H176.5V100H155.5Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M242 0H263V100H242Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M242 0H279A31 31 0 0 1 279 62H242ZM263 21V41H279A10 10 0 0 0 279 21Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M324 0H345V100H324Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M324 0H361A31 31 0 0 1 361 62H324ZM345 21V41H361A10 10 0 0 0 361 21Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M354 58H378L402.25 100H378.25Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M416.25 0H437.25V100H416.25Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M416.25 0H473.25V21H416.25Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M416.25 39.5H467.25V60.5H416.25Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M416.25 79H473.25V100H416.25Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M487.25 0H508.25V100H487.25Z"/>
+    <path fill="#ffffff" fill-rule="evenodd" d="M487.25 0H524.25A31 31 0 0 1 524.25 62H487.25ZM508.25 21V41H524.25A10 10 0 0 0 524.25 21Z"/>
+  </g>
+</svg>
