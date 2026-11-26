@@ -959,6 +959,38 @@ a.brand {
     padding-top: var(--space-sm);
     border-top: 1px solid var(--color-rule);
   }
+  /* Sign out under Settings: a row like the others, a button because it does something rather than go somewhere. */
+  .nav-signout {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    width: 100%;
+    min-height: 34px;
+    margin-top: var(--space-3xs);
+    padding-inline: var(--space-sm);
+    border: 0;
+    border-radius: var(--radius-control);
+    background: transparent;
+    color: var(--color-ink);
+    font: inherit;
+    font-size: var(--text-meta);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color var(--dur-micro) var(--ease-out);
+  }
+  .nav-signout svg {
+    color: var(--color-muted);
+  }
+  .nav-signout:hover {
+    background: var(--color-paper-2);
+  }
+  .nav-signout:active {
+    background: var(--color-paper-3);
+  }
+  .nav-signout:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: -2px;
+  }
   /* Compact like Cloudflare's dashboard: 14px labels, 18px icons, 34px rows, no group headings. */
   .nav a,
   .nav-group > summary {
@@ -1630,6 +1662,9 @@ a.list-link {
 }
 .settings-row-name {
   font-weight: 600;
+}
+.settings-signout {
+  margin-top: var(--space-md);
 }
 .settings-row > svg {
   flex: none;

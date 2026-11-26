@@ -7,6 +7,7 @@ import { useMeta, useSettings } from '../db/hooks';
 import { CommandMenu } from './CommandMenu';
 import { PLACES, SETTINGS_PAGES } from './nav';
 import mark from '../ui/mark.svg';
+import { SignOutButton } from '../features/settings/SignOutButton';
 import { Welcome } from '../features/home/Welcome';
 import { lazy, Suspense, useEffect } from 'react';
 import { Skeleton } from '../ui/Skeleton';
@@ -134,6 +135,8 @@ export function App() {
                 ))}
               </ul>
             </details>
+            {/* Sign out under Settings, always one click away on wide screens. */}
+            {syncAvailable && <SignOutButton className="nav-signout only-wide" />}
           </nav>
         </div>
       </header>

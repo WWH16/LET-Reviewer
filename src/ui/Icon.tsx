@@ -17,6 +17,7 @@ import {
   GearSixIcon,
   LightningIcon,
   ListChecksIcon,
+  SignOutIcon,
   TargetIcon,
   TextStrikethroughIcon,
   TimerIcon,
@@ -50,6 +51,7 @@ const ICONS = {
   // the password field's show and hide button
   eye: EyeIcon,
   'eye-closed': EyeClosedIcon,
+  'sign-out': SignOutIcon,
 } satisfies Record<string, PhosphorIcon>;
 
 export type IconName = keyof typeof ICONS;

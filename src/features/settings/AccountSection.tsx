@@ -7,6 +7,7 @@ import { Icon } from '../../ui/Icon';
 import { EMPTY_STATE, type SyncState } from '../../sync/trigger';
 import { checkAccountFields, type Field } from '../../domain/account';
 import { AsyncButton } from '../../ui/AsyncButton';
+import { SignOutButton } from './SignOutButton';
 
 // The account code (and Supabase with it) loads when this section first needs it, not with the app.
 const auth = () => import('../../sync/auth');
@@ -52,6 +53,9 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
   const [busy, setBusy] = useState<Busy>(null);
   const [other, setOther] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleteError, setDeleteError] = useState('');
+  const closeDelete = () => (setDeleting(false), setDeletePassword(''), setDeleteError(''));
   const [signedInAs, setSignedInAs] = useState<string | null>(null);
   const signedIn = !!sync?.signedIn;
   const heading = useRef<HTMLHeadingElement>(null);
@@ -185,15 +189,7 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
             >
               Sync now
             </button>
-            <AsyncButton
-              className={btn.quiet}
-              onClick={async () => {
-                await (await auth()).signOut();
-                announce('Signed out');
-              }}
-            >
-              Sign out
-            </AsyncButton>
+            <SignOutButton className={btn.secondary} />
             <button type="button" className={btn.quiet} onClick={() => setDeleting(true)}>
               Delete account
             </button>
@@ -244,6 +240,13 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
                 aria-describedby={errors.email ? 'acc-email-error' : undefined}
                 value={email}
                 onChange={(e) => (setEmail(e.target.value.trim()), edited('email'))}
+                // Enter in Email with no password yet goes on to Password, as Tab would, instead of sending an
+                // empty form. The Sign in button itself still checks both fields.
+                onKeyDown={(e) => {
+                  if (e.key !== 'Enter' || password) return;
+                  e.preventDefault();
+                  document.getElementById(INPUT.password)?.focus();
+                }}
               />
               <FieldError input="acc-email" text={errors.email} />
             </div>
@@ -405,20 +408,39 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
         </div>
       </Dialog>
 
-      <Dialog open={deleting} onClose={() => setDeleting(false)} title="Delete your account?">
-        <p>This removes the copy stored online. The data on this device stays.</p>
+      <Dialog open={deleting} onClose={closeDelete} title="Delete your account?">
+        <p>
+          This deletes your account and the copy of your questions and answers stored online. It cannot be undone.
+          The data on this device stays.
+        </p>
+        <div className="field">
+          <label htmlFor="acc-delete-password">Type your password to confirm</label>
+          <input
+            id="acc-delete-password"
+            type="password"
+            autoComplete="current-password"
+            aria-invalid={!!deleteError}
+            aria-describedby={deleteError ? 'acc-delete-password-error' : undefined}
+            value={deletePassword}
+            onChange={(e) => (setDeletePassword(e.target.value), setDeleteError(''))}
+          />
+          <FieldError input="acc-delete-password" text={deleteError} />
+        </div>
         <div className="row">
-          <button type="button" className={btn.primary} data-autofocus onClick={() => setDeleting(false)}>
+          <button type="button" className={btn.primary} data-autofocus onClick={closeDelete}>
             Keep my account
           </button>
-          {/* The dialog stays open, the button turning, until the account is gone. */}
+          {/* Only with a password typed. The dialog stays open, the button turning, until the account is gone. */}
           <AsyncButton
             className={btn.secondary}
+            disabled={!deletePassword}
             onClick={async () => {
-              const r = await (await auth()).deleteAccount();
-              setDeleting(false);
-              if (r.ok) announce('Account deleted');
-              else setErrors({ form: r.error });
+              const r = await (await auth()).deleteAccount(deletePassword);
+              if (r.ok) return closeDelete(), announce('Account deleted');
+              if (r.field === 'password') {
+                setDeleteError(r.error);
+                document.getElementById('acc-delete-password')?.focus();
+              } else closeDelete(), setErrors({ form: r.error });
             }}
           >
             Delete account

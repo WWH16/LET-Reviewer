@@ -20,6 +20,7 @@ import { EMPTY_STATE, requestSync, syncAvailable, type SyncState } from '../../s
 import { SETTINGS_PAGES } from '../../app/nav';
 import { AsyncButton } from '../../ui/AsyncButton';
 import { Icon } from '../../ui/Icon';
+import { SignOutButton } from './SignOutButton';
 
 const fmtDate = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -73,6 +74,8 @@ export function Settings() {
             </li>
           ))}
         </ul>
+        {/* Phones: Sign out under the list. Wide screens have it at the foot of the side menu. */}
+        {syncAvailable && <SignOutButton className={`${btn.secondary} settings-signout only-narrow`} />}
       </Page>
     );
   const show = (id: string) => page.id === id;

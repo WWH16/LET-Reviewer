@@ -12,6 +12,7 @@ const h = vi.hoisted(() => ({
   signInWithPassword: vi.fn(),
   signUp: vi.fn(),
   verifyOtp: vi.fn(),
+  rpc: vi.fn(async (_name: string) => ({ error: null as unknown })),
   saveSettings: vi.fn(async (_patch: unknown) => {}),
   cleared: 0,
 }));
@@ -27,6 +28,7 @@ vi.mock('./client', () => ({
       verifyOtp: h.verifyOtp,
       signOut: async () => ({ error: null }),
     },
+    rpc: h.rpc,
   },
 }));
 vi.mock('../db/repo', () => ({ saveSettings: h.saveSettings }));
@@ -41,7 +43,7 @@ vi.mock('./store', () => ({
   },
 }));
 
-import { confirmSignUp, messageFor, replaceDeviceData, signIn, signUp, syncNow } from './auth';
+import { confirmSignUp, deleteAccount, messageFor, replaceDeviceData, signIn, signUp, syncNow } from './auth';
 
 beforeEach(() => {
   h.state = { ...EMPTY_STATE };
@@ -54,6 +56,7 @@ beforeEach(() => {
   h.signInWithPassword.mockReset();
   h.signUp.mockReset();
   h.verifyOtp.mockReset();
+  h.rpc.mockReset().mockResolvedValue({ error: null });
   h.saveSettings.mockReset().mockResolvedValue(undefined);
   vi.unstubAllGlobals();
 });
@@ -225,5 +228,30 @@ describe('syncNow', () => {
     h.state = { ...EMPTY_STATE, userId: 'A', signedIn: true, pulledAt: '2026-11-01T00:00:00.000Z', pulledId: 'x', pushedAt: '2026-11-01T00:00:00.000Z' };
     await syncNow({ full: true });
     expect(h.pull).toHaveBeenCalledWith({ at: EMPTY_STATE.pulledAt, id: '' }, 1000);
+  });
+});
+
+// Deleting asks for the password again, so a phone left signed in cannot delete the account.
+describe('deleteAccount', () => {
+  beforeEach(() => {
+    h.session = { user: { id: 'A', email: 'a@example.test' } };
+    h.state = { ...EMPTY_STATE, userId: 'A', signedIn: true };
+  });
+
+  it('keeps the account when the password is wrong', async () => {
+    h.signInWithPassword.mockResolvedValue({ data: {}, error: { code: 'invalid_credentials', message: 'Invalid login credentials' } });
+    const r = await deleteAccount('wrong-pass');
+    expect(r).toEqual({ ok: false, error: 'That password is not right.', field: 'password' });
+    expect(h.rpc).not.toHaveBeenCalled();
+    expect(h.state.signedIn).toBe(true);
+  });
+
+  it('checks the password against the signed-in email, then deletes', async () => {
+    h.signInWithPassword.mockResolvedValue({ data: { user: { id: 'A' } }, error: null });
+    const r = await deleteAccount('right-pass');
+    expect(h.signInWithPassword).toHaveBeenCalledWith({ email: 'a@example.test', password: 'right-pass' });
+    expect(h.rpc).toHaveBeenCalledWith('delete_my_account');
+    expect(r).toEqual({ ok: true });
+    expect(h.state.signedIn).toBe(false);
   });
 });

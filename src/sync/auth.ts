@@ -128,7 +128,14 @@ export async function signOut(): Promise<void> {
 }
 
 /** Removes the account and its online copy. The device keeps its data, now belonging to no account. */
-export async function deleteAccount(): Promise<AuthResult> {
+export async function deleteAccount(password: string): Promise<AuthResult> {
+  // The password first, checked against the signed-in email, so a phone left signed in cannot delete the account.
+  const { data } = await supabase.auth.getSession();
+  const email = data.session?.user.email;
+  if (!email) return { ok: false, error: 'Sign in again, then try once more.' };
+  const check = await supabase.auth.signInWithPassword({ email, password });
+  if (check.error?.code === 'invalid_credentials') return { ok: false, error: 'That password is not right.', field: 'password' };
+  if (check.error) return fail(check.error);
   const { error } = await supabase.rpc('delete_my_account');
   if (error) return fail(error);
   await supabase.auth.signOut({ scope: 'local' });
