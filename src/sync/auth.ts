@@ -154,9 +154,14 @@ export function syncNow(opts: { full?: boolean } = {}): Promise<void> {
     try {
       const state = await store.getState();
       if (!state.signedIn) return;
-      const { data } = await supabase.auth.getSession();
+      const { data, error } = await supabase.auth.getSession();
       const userId = data.session?.user.id;
-      if (!userId) return void (await store.setState({ signedIn: false }));
+      if (!userId) {
+        // Offline after the access token expired (about an hour): Supabase could not renew it, but the session is
+        // still stored. Stay signed in so studying goes on; a sync once the network is back renews it.
+        if (error && isOffline(error)) return;
+        return void (await store.setState({ signedIn: false }));
+      }
       if (opts.full) await store.setState({ pulledAt: EPOCH, pulledId: '', pushedAt: EPOCH });
       if (await runSync(remote, store, userId)) return;
       // A failed run is either no network (try again later) or a session the server no longer accepts.

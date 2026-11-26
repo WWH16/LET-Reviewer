@@ -5,6 +5,7 @@ import { EMPTY_STATE, type SyncState } from './trigger';
 const h = vi.hoisted(() => ({
   state: {} as SyncState,
   session: null as { user: { id: string; email: string } } | null,
+  sessionError: null as unknown,
   pull: vi.fn(async () => [] as unknown[]),
   push: vi.fn(async () => {}),
   getUser: vi.fn(async () => ({ data: { user: null as unknown }, error: null as unknown })),
@@ -19,7 +20,7 @@ vi.mock('./client', () => ({
   remote: { pull: h.pull, push: h.push },
   supabase: {
     auth: {
-      getSession: async () => ({ data: { session: h.session } }),
+      getSession: async () => ({ data: { session: h.session }, error: h.sessionError }),
       getUser: h.getUser,
       signInWithPassword: h.signInWithPassword,
       signUp: h.signUp,
@@ -45,6 +46,7 @@ import { confirmSignUp, messageFor, replaceDeviceData, signIn, signUp, syncNow }
 beforeEach(() => {
   h.state = { ...EMPTY_STATE };
   h.session = null;
+  h.sessionError = null;
   h.cleared = 0;
   h.pull.mockReset().mockResolvedValue([]);
   h.push.mockReset().mockResolvedValue(undefined);
@@ -200,6 +202,22 @@ describe('syncNow', () => {
     await syncNow();
     expect(h.state.signedIn).toBe(true);
     expect(h.state.lastError).toMatch(/Failed to fetch/);
+  });
+
+  // Offline with an expired access token, Supabase cannot renew it and returns no session, with a
+  // network error. That is not a sign-out: studying offline goes on, and the next sync renews it.
+  it('stays signed in when the session cannot be renewed offline', async () => {
+    h.state = { ...EMPTY_STATE, userId: 'A', signedIn: true };
+    h.sessionError = { name: 'AuthRetryableFetchError', message: 'Failed to fetch' };
+    await syncNow();
+    expect(h.state.signedIn).toBe(true);
+    expect(h.pull).not.toHaveBeenCalled();
+  });
+
+  it('turns signed out when the session is gone', async () => {
+    h.state = { ...EMPTY_STATE, userId: 'A', signedIn: true };
+    await syncNow();
+    expect(h.state.signedIn).toBe(false);
   });
 
   it('starts over from the beginning after a restore', async () => {
