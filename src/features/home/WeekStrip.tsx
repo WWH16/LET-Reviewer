@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { addDays, parseDay, streak } from '../../domain/dates';
 import { Icon } from '../../ui/Icon';
 
@@ -33,12 +34,23 @@ export function WeekStrip({ days, today }: { days: ReadonlyMap<string, number>; 
           );
         })}
       </ol>
-      <p className="week-streak">
-        <Icon name="fire" size={18} filled={doneToday} />
-        <span>
-          <strong className="num">{run}</strong> {run === 1 ? 'day' : 'days'} in a row
-        </span>
-      </p>
+      {/* Loss aversion: a streak not yet kept today is framed as about to be lost, and leads to a quiz. */}
+      {run > 0 && !doneToday ? (
+        <Link className="week-streak is-at-risk" to="/quizzes">
+          <Icon name="fire" size={18} />
+          <span>
+            Your <strong className="num">{run}</strong>-day streak ends tonight. Keep it
+          </span>
+          <Icon name="caret" size={14} />
+        </Link>
+      ) : (
+        <p className="week-streak">
+          <Icon name="fire" size={18} filled={doneToday} />
+          <span>
+            <strong className="num">{run}</strong> {run === 1 ? 'day' : 'days'} in a row
+          </span>
+        </p>
+      )}
     </div>
   );
 }

@@ -2052,6 +2052,21 @@ dialog::backdrop {
 .week-streak svg {
   color: var(--color-ink);
 }
+/* Not studied yet today: the streak turns into a dark pill on the yellow, the loudest thing on the card. */
+a.week-streak.is-at-risk {
+  min-height: 36px;
+  padding: 0 var(--space-sm);
+  border-radius: var(--radius-pill);
+  background: var(--color-ink);
+  color: var(--color-accent-ink);
+  text-decoration: none;
+}
+a.week-streak.is-at-risk svg {
+  color: var(--color-inverse);
+}
+a.week-streak.is-at-risk:hover {
+  background: var(--color-accent-deep);
+}
 /* An exam left open: a raised action tile beside the greeting, so the way back in is the first thing seen. */
 .resume {
   display: flex;
