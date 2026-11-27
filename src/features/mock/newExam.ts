@@ -32,7 +32,6 @@ export function newExam(o: {
     answers: {},
     answeredAt: {},
     flags: [],
-    drawNote: null,
     status: o.form === 'digital' ? 'in-progress' : 'printed',
     createdAt: now,
     elapsedMs: 0,

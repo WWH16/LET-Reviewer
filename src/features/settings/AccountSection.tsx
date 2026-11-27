@@ -163,6 +163,10 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
     else run('submit', (a) => a.finishReset(email, code, password), afterSignIn);
   };
   const pick = (m: Mode) => (setMode(m), setErrors({}));
+  const cancelOther = async () => {
+    setOther(false);
+    await (await auth()).signOut();
+  };
 
   return (
     // In Settings it is the same clay card as on the sign-in screen, so the account looks one way wherever it is.
@@ -371,25 +375,10 @@ export function AccountSection({ required }: { required?: boolean } = {}) {
         </form>
       )}
 
-      <Dialog
-        open={other}
-        onClose={async () => {
-          setOther(false);
-          await (await auth()).signOut();
-        }}
-        title="This device has another account’s data"
-      >
+      <Dialog open={other} onClose={cancelOther} title="This device has another account’s data">
         <p>Replace it with the data from {email}, or cancel and stay signed out.</p>
         <div className="row">
-          <button
-            type="button"
-            className={btn.primary}
-            data-autofocus
-            onClick={async () => {
-              setOther(false);
-              await (await auth()).signOut();
-            }}
-          >
+          <button type="button" className={btn.primary} data-autofocus onClick={cancelOther}>
             Cancel
           </button>
           <button

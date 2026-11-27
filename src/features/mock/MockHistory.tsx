@@ -6,8 +6,7 @@ import { btn } from '../../ui/btn';
 import { useExams, useQuestionMap } from '../../db/hooks';
 import { PARTS, PART_FLOOR } from '../../domain/let-config';
 import { examScore } from '../../domain/scoring';
-
-const when = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+import { fmtDate } from '../../domain/dates';
 
 /** Every graded mock exam, newest first, with the totals across them. Each row opens that exam's results. */
 export function MockHistory() {
@@ -59,7 +58,7 @@ export function MockHistory() {
                   <span className="stack-sm">
                     <span className="mono">{e.label}</span>
                     <span className="meta">
-                      {PARTS[e.part].name}, {e.form}, {when(e.submittedAt ?? e.updatedAt)}. {s.correct} of {s.total} right
+                      {PARTS[e.part].name}, {e.form}, {fmtDate(e.submittedAt ?? e.updatedAt)}. {s.correct} of {s.total} right
                       {s.pct < PART_FLOOR ? `, below the ${PART_FLOOR}% floor` : ''}.
                     </span>
                   </span>

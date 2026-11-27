@@ -91,7 +91,7 @@ describe('parsePasted', () => {
 describe('validateItem', () => {
   it('names the item, field, and allowed values', () => {
     const r = validateItem(item({ answer: 'E' }), 7, opts);
-    expect(r.label).toBe('Item 7');
+    expect(r.n).toBe(7);
     expect(r.errors).toEqual(['answer is "E". It must be A, B, C, D, or empty.']);
   });
   it('takes any subject name as its id, and needs one', () => {
@@ -138,7 +138,7 @@ describe('ids and import', () => {
   });
   it('accepts every sample question', () => {
     const p = previewImport(sample, new Set(), opts);
-    expect(p.invalid.map((r) => `${r.label}: ${r.errors.join(' ')}`)).toEqual([]);
+    expect(p.invalid.map((r) => `Item ${r.n}: ${r.errors.join(' ')}`)).toEqual([]);
     expect(p.ready).toHaveLength(sample.length);
   });
 });
@@ -181,23 +181,19 @@ describe('exam draw', () => {
     Array.from({ length: i === 0 ? 2 : 20 }, (_, k) => ({ ...q({ subarea: name, sourceRef: `${name} ${k}` }) })),
   );
   it('splits evenly across the picked subjects and never repeats an item', () => {
-    expect(quotas([1, 1, 2], 8)).toEqual([2, 2, 4]);
-    expect(quotas([], 25)).toEqual([]);
-    const r = drawMock(pool, subs.slice(1, 4), 30, new Set(), () => 0.5);
-    expect(r.ok && new Set(r.itemIds).size).toBe(30);
+    expect(quotas(3, 8)).toEqual([3, 3, 2]);
+    expect(quotas(0, 25)).toEqual([]);
+    const ids = drawMock(pool, subs.slice(1, 4), 30, new Set(), () => 0.5);
+    expect(new Set(ids).size).toBe(30);
     const per = new Map<string, number>();
-    if (r.ok) for (const id of r.itemIds) per.set(pool.find((x) => x.id === id)!.subarea, (per.get(pool.find((x) => x.id === id)!.subarea) ?? 0) + 1);
+    for (const id of ids) per.set(pool.find((x) => x.id === id)!.subarea, (per.get(pool.find((x) => x.id === id)!.subarea) ?? 0) + 1);
     expect([...per.values()]).toEqual([10, 10, 10]);
   });
   it('takes questions not in an earlier mock first', () => {
     const sub = subs[1];
     const group = pool.filter((x) => x.subarea === sub);
     const used = new Set(group.slice(0, 15).map((x) => x.id));
-    const r = drawMock(pool, [sub], 5, used);
-    expect(r.ok && r.itemIds.every((id) => !used.has(id))).toBe(true);
-  });
-  it('refuses when a subject is short, and says how short', () => {
-    expect(drawMock(pool, subs.slice(0, 2), 30, new Set())).toEqual({ ok: false, short: [{ subarea: subs[0], have: 2, need: 15 }] });
+    expect(drawMock(pool, [sub], 5, used).every((id) => !used.has(id))).toBe(true);
   });
 });
 

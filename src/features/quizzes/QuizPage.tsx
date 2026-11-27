@@ -5,10 +5,12 @@ import { Dialog } from '../../ui/Dialog';
 import { Empty } from '../../ui/Empty';
 import { useAnnounce } from '../../ui/Status';
 import { removeQuiz, restoreQuestions } from '../../db/repo';
-import { paceMs, subareaName } from '../../domain/let-config';
+import { paceMs } from '../../domain/let-config';
 import { btn } from '../../ui/btn';
-import { count, lastLine, quizDate, useQuizzes } from './useQuizzes';
+import { count, lastLine, useQuizzes } from './useQuizzes';
+import { fmtDate } from '../../domain/dates';
 import { AsyncButton } from '../../ui/AsyncButton';
+import { subareaName } from '../../domain/subjects';
 
 /** One quiz: take it, timed or not, fix a question, or remove the whole quiz. */
 export function QuizPage() {
@@ -41,7 +43,7 @@ export function QuizPage() {
   return (
     <Page title={`${subject}, ${z.name}`} crumbs={[{ to: '/quizzes', label: 'Quizzes' }, { to: back, label: `${subject} quizzes` }]}>
       <p className="muted">
-        {count(z.questions.length, 'question')}, made {quizDate(z.createdAt)}. {lastLine(z.questions.map((q) => q.id), data.last)}.
+        {count(z.questions.length, 'question')}, made {fmtDate(z.createdAt)}. {lastLine(z.questions.map((q) => q.id), data.last)}.
       </p>
       <div className="row">
         <Link className={btn.primary} to={take}>

@@ -126,7 +126,6 @@ const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
 export interface ItemResult {
   /** 1-based position in the pasted list. */
   n: number;
-  label: string;
   question: Question | null;
   errors: string[];
   duplicate: boolean;
@@ -161,8 +160,7 @@ const str = (v: unknown) => (typeof v === 'string' ? v.trim() : '');
 export function validateItem(raw: unknown, n: number, opts: { now: string; batchId: string }): ItemResult {
   const errors: string[] = [];
   const o = isObj(raw) ? raw : {};
-  const label = `Item ${n}`;
-  const base = { n, label, duplicate: false };
+  const base = { n, duplicate: false };
   if (!isObj(raw)) return { ...base, question: null, errors: ['is not a question object.'] };
 
   const areaRaw = str(o.area);
@@ -243,13 +241,11 @@ export function previewImport(
   items: unknown[],
   existingIds: ReadonlySet<string>,
   opts: { now: string; batchId: string },
-  overrides: Record<number, { subarea?: string }> = {},
 ): ImportPreview {
   const seen = new Set<string>();
   const results = items.map((raw, i) => {
     const n = i + 1;
-    const patched = overrides[n] && isObj(raw) ? { ...raw, ...overrides[n] } : raw;
-    const r = validateItem(patched, n, opts);
+    const r = validateItem(raw, n, opts);
     if (r.question) {
       if (existingIds.has(r.question.id) || seen.has(r.question.id)) r.duplicate = true;
       seen.add(r.question.id);

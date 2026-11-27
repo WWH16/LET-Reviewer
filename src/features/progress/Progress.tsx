@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { useAnnounce } from '../../ui/Status';
-import { LEVEL_WEIGHTS, PARTS, partsFor, subareaName } from '../../domain/let-config';
+import { LEVEL_WEIGHTS, PARTS, partsFor } from '../../domain/let-config';
 import { pct, recentByArea, weakestSubjects } from '../../domain/scoring';
 import { useStats } from './useStats';
 import { RatingCard } from './RatingCard';
@@ -11,6 +11,7 @@ import { StreakCard } from '../home/StreakCard';
 import { Empty } from '../../ui/Empty';
 import { loadDemoData } from '../../db/repo';
 import { AsyncButton } from '../../ui/AsyncButton';
+import { subareaName } from '../../domain/subjects';
 
 const fmt = (p: number | null) => (p === null ? 'Not yet' : `${Math.round(p)}%`);
 
@@ -36,7 +37,7 @@ export function Progress() {
 
   // Subjects over the same recent window as each part's figure, so a part's subjects add up to its figure.
   const recentAttempts = [...recentByArea(attempts, qmap).values()].flat();
-  const bySubject = weakestSubjects(recentAttempts, qmap, Infinity);
+  const bySubject = weakestSubjects(recentAttempts, qmap);
 
   const levelParts = partsFor(settings.level);
 

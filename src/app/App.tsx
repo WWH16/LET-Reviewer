@@ -1,6 +1,5 @@
 import { Link, Route, Routes, useLocation, useMatch } from 'react-router-dom';
 import { Page } from '../ui/Page';
-import { StatusProvider } from '../ui/Status';
 import { Icon } from '../ui/Icon';
 import { Home } from '../features/home/Home';
 import { useMeta, useSettings, useUnfinishedCount } from '../db/hooks';
@@ -30,7 +29,6 @@ const Subject = lazy(() => import('../features/quizzes/Subject').then((m) => ({ 
 const QuizPage = lazy(() => import('../features/quizzes/QuizPage').then((m) => ({ default: m.QuizPage })));
 const NewQuiz = lazy(() => import('../features/quizzes/NewQuiz').then((m) => ({ default: m.NewQuiz })));
 const Unfinished = lazy(() => import('../features/practice/Unfinished').then((m) => ({ default: m.Unfinished })));
-const States = lazy(() => import('../features/states/States').then((m) => ({ default: m.States })));
 import { Empty } from '../ui/Empty';
 import { btn } from '../ui/btn';
 import { EMPTY_STATE, requestSync, syncAvailable, type SyncState } from '../sync/trigger';
@@ -68,23 +66,13 @@ export function App() {
   // A build with no account service (no Supabase project) skips it and works on this device alone.
   const sync = useMeta<SyncState>('sync', EMPTY_STATE);
   if (syncAvailable && sync === undefined) return null;
-  if (syncAvailable && !sync?.signedIn)
-    return (
-      <StatusProvider>
-        <SignInScreen />
-      </StatusProvider>
-    );
+  if (syncAvailable && !sync?.signedIn) return <SignInScreen />;
 
   // Then, once: name, avatar, level and major, before the app itself. The shell stays out of the way until she is done.
-  if (settings && !settings.onboarded)
-    return (
-      <StatusProvider>
-        <Welcome settings={settings} />
-      </StatusProvider>
-    );
+  if (settings && !settings.onboarded) return <Welcome settings={settings} />;
 
   return (
-    <StatusProvider>
+    <>
       <a className="skip" href="#main">
         Skip to main content
       </a>
@@ -173,10 +161,9 @@ export function App() {
           <Route path="/progress" element={<Progress />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/settings/:section" element={<Settings />} />
-          <Route path="/states" element={<States />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
-    </StatusProvider>
+    </>
   );
 }

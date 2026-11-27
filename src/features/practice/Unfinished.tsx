@@ -4,12 +4,13 @@ import { Empty } from '../../ui/Empty';
 import { useAnnounce } from '../../ui/Status';
 import { useExams, useMeta } from '../../db/hooks';
 import { dropTake, saveTake } from '../../db/repo';
-import { PARTS, subareaName } from '../../domain/let-config';
+import { PARTS } from '../../domain/let-config';
 import type { QuizTake } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { useQuizzes } from '../quizzes/useQuizzes';
 import { examLink } from '../mock/newExam';
 import { AsyncButton } from '../../ui/AsyncButton';
+import { subareaName } from '../../domain/subjects';
 
 const when = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
 

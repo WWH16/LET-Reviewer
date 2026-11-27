@@ -4,10 +4,10 @@ import { Page } from '../../ui/Page';
 import { Chip } from '../../ui/Chip';
 import { useExams, useQuestionMap, useSettings } from '../../db/hooks';
 import { saveExam } from '../../db/repo';
-import { PARTS, partsFor, subareaName, timeLimit } from '../../domain/let-config';
+import { PARTS, partsFor, timeLimit } from '../../domain/let-config';
 import { drawMock, quotas } from '../../domain/examDraw';
 import { counts } from '../../domain/quiz';
-import { subjectsOf } from '../../domain/subjects';
+import { subjectsOf, subareaName } from '../../domain/subjects';
 import type { Area, MockExam, PaperSize } from '../../domain/types';
 import { examLink, newExam } from './newExam';
 import { btn } from '../../ui/btn';
@@ -46,7 +46,7 @@ export function MockSetup() {
   const all = subjectsOf(part, settings.subjects, pool);
   const subjects = pickedSubjects ?? all.filter((s) => have.has(s.id)).map((s) => s.id);
   const n = lengthOf(part, length);
-  const need = quotas(subjects.map(() => 1), n);
+  const need = quotas(subjects.length, n);
   const short = subjects.map((id, i) => ({ id, have: have.get(id) ?? 0, need: need[i] })).filter((x) => x.have < x.need);
   const ready = subjects.length > 0 && short.length === 0;
   const defaultLimit = timeLimit(part, settings.timer, n);
@@ -59,9 +59,8 @@ export function MockSetup() {
 
   const start = async () => {
     const used = new Set(exams.flatMap((e) => e.itemIds));
-    const r = drawMock(pool, subjects, n, used);
-    if (!r.ok) return;
-    const exam = newExam({ part, form, itemIds: r.itemIds, qmap, subjects, paper, settings, labels: exams.map((e) => e.label), timeLimitMin: limit });
+    const itemIds = drawMock(pool, subjects, n, used);
+    const exam = newExam({ part, form, itemIds, qmap, subjects, paper, settings, labels: exams.map((e) => e.label), timeLimitMin: limit });
     await saveExam(exam);
     navigate(examLink(exam));
   };

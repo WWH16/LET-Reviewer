@@ -13,7 +13,7 @@ import type { Backup, Settings as S } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { Select } from '../../ui/Select';
 import { DateField } from '../../ui/DateField';
-import { isoDay } from '../../domain/dates';
+import { fmtDate, isoDay } from '../../domain/dates';
 import { ProfileEditor } from './ProfileEditor';
 import { AccountSection } from './AccountSection';
 import { SubjectsEditor } from './SubjectsEditor';
@@ -23,7 +23,6 @@ import { AsyncButton } from '../../ui/AsyncButton';
 import { Icon } from '../../ui/Icon';
 import { SignOutButton } from './SignOutButton';
 
-const fmtDate = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
 
 export function Settings() {
   const { section } = useParams();
@@ -80,8 +79,6 @@ export function Settings() {
       </Page>
     );
   const show = (id: string) => page.id === id;
-  const set = (patch: Partial<S>) => saveSettings(patch);
-
 
   const doExport = async () => {
     const { filename, text } = await exportBackup();
@@ -130,7 +127,7 @@ export function Settings() {
           <div className="grid-2">
             <div className="field">
               <label htmlFor="s-level">Level</label>
-              <Select id="s-level" value={s.level} onChange={(v) => set({ level: v as S['level'] })}>
+              <Select id="s-level" value={s.level} onChange={(v) => saveSettings({ level: v as S['level'] })}>
                 <option value="elementary">Elementary</option>
                 <option value="secondary">Secondary</option>
               </Select>
@@ -139,16 +136,16 @@ export function Settings() {
             {s.level === 'secondary' && (
               <div className="field">
                 <label htmlFor="s-major">Major</label>
-                <input id="s-major" type="text" placeholder="e.g. Filipino" value={s.major} onChange={(e) => set({ major: e.target.value })} />
+                <input id="s-major" type="text" placeholder="e.g. Filipino" value={s.major} onChange={(e) => saveSettings({ major: e.target.value })} />
               </div>
             )}
             <div className="field">
               <label htmlFor="s-date">Target exam date</label>
-              <DateField id="s-date" value={s.examDate} min={isoDay(new Date())} onChange={(examDate) => set({ examDate })} />
+              <DateField id="s-date" value={s.examDate} min={isoDay(new Date())} onChange={(examDate) => saveSettings({ examDate })} />
             </div>
             <div className="field">
               <label htmlFor="s-timer">Mock exam timer</label>
-              <Select id="s-timer" value={s.timer} onChange={(v) => set({ timer: v as S['timer'] })}>
+              <Select id="s-timer" value={s.timer} onChange={(v) => saveSettings({ timer: v as S['timer'] })}>
                 <option value="real">Real LET time</option>
                 <option value="1.5">1.5× time</option>
                 <option value="2">2× time</option>
@@ -157,11 +154,11 @@ export function Settings() {
             </div>
           </div>
           <label className="check">
-            <input type="checkbox" checked={s.strictSheet} onChange={(e) => set({ strictSheet: e.target.checked })} />
+            <input type="checkbox" checked={s.strictSheet} onChange={(e) => saveSettings({ strictSheet: e.target.checked })} />
             Strict answer sheet: in digital mocks, answer on the bubble sheet only
           </label>
           <label className="check">
-            <input type="checkbox" checked={s.oneAtATime} onChange={(e) => set({ oneAtATime: e.target.checked })} />
+            <input type="checkbox" checked={s.oneAtATime} onChange={(e) => saveSettings({ oneAtATime: e.target.checked })} />
             One question at a time: in digital mocks, show one item per screen
           </label>
         </section>
@@ -171,6 +168,7 @@ export function Settings() {
         {show('account') && syncAvailable && <AccountSection />}
 
         {show('data') && (
+        <>
         <section className="tile span-3" aria-labelledby="set-backup">
           <h2 id="set-backup">Backup</h2>
           <p className="muted">
@@ -208,9 +206,7 @@ export function Settings() {
             )}
           </div>
         </section>
-        )}
 
-        {show('data') && (
         <section className="tile span-3" aria-labelledby="set-demo">
           <h2 id="set-demo">Sample data</h2>
           <p className="muted">
@@ -236,9 +232,7 @@ export function Settings() {
             )}
           </div>
         </section>
-        )}
 
-        {show('data') && (
         <section className="tile span-3" aria-labelledby="set-erase">
           <h2 id="set-erase">Erase this device</h2>
           <p className="muted">
@@ -251,8 +245,8 @@ export function Settings() {
             </AsyncButton>
           </div>
         </section>
+        </>
         )}
-
       </div>
 
       <Dialog open={!!erase} onClose={() => setErase(null)} title="Erase everything on this device?">

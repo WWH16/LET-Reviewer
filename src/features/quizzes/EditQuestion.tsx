@@ -5,12 +5,13 @@ import { Dialog } from '../../ui/Dialog';
 import { useAnnounce } from '../../ui/Status';
 import { db } from '../../db/db';
 import { removeQuestion, restoreQuestions, saveQuestion } from '../../db/repo';
-import { PARTS, subareaName } from '../../domain/let-config';
+import { PARTS } from '../../domain/let-config';
 import { KEYS, type Key, type Question } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { Empty } from '../../ui/Empty';
 import { Select } from '../../ui/Select';
 import { AsyncButton } from '../../ui/AsyncButton';
+import { subareaName } from '../../domain/subjects';
 
 export function EditQuestion() {
   const { id = '' } = useParams();

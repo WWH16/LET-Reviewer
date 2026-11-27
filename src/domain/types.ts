@@ -96,8 +96,6 @@ export interface MockExam {
   /** Item number to the exam time (ms) when it was last answered. Used for pacing. */
   answeredAt: Record<string, number>;
   flags: number[];
-  /** Set when a short sub-area was filled from others at draw time. */
-  drawNote: string | null;
   status: 'in-progress' | 'printed' | 'graded';
   createdAt: string;
   /** Time spent with the exam open. The clock stops while the app is closed. */
@@ -128,8 +126,6 @@ export interface Settings {
   subjects: Subjects;
   examDate: string | null;
   timer: TimerSetting;
-  /** No longer applied: text is always the default size (the Display page is gone). Kept so older settings still read. */
-  textSize: 100 | 115 | 130;
   shortcuts: boolean;
   strictSheet: boolean;
   /** Digital mocks: show one item per screen instead of the whole booklet. */
@@ -149,7 +145,6 @@ export const DEFAULT_SETTINGS: Settings = {
   subjects: { GenEd: [], ProfEd: [], Major: [] },
   examDate: null,
   timer: 'real',
-  textSize: 100,
   shortcuts: true,
   strictSheet: false,
   oneAtATime: false,

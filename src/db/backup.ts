@@ -66,11 +66,6 @@ export async function restoreBackup(b: Backup) {
 }
 
 /**
- * Erases everything this app keeps on this device: the whole database (questions, answers, mocks,
- * settings, sync position) and its local storage, which also holds the account sign-in. The caller
- * reloads, so the app starts over at the welcome screen. An account's copy online is not touched.
- */
-/**
  * Erase this device: every quiz and question, answer, mock exam and subject, the settings, and the device-only
  * notes (unfinished quizzes, last backup). Kept: who she is (name, avatar, level and major, see settingsAfterErase)
  * and her sign-in with its sync place, so she lands on an empty Study, signed in, with no welcome and nothing

@@ -24,4 +24,3 @@ export function lastLine(ids: readonly string[], last: ReadonlyMap<string, boole
 /** "1 question", "3 questions". */
 export const count = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : word.endsWith('z') ? 'zes' : 's'}`;
 
-export const quizDate = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });

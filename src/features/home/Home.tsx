@@ -3,7 +3,6 @@ import { Page } from '../../ui/Page';
 import { useExams, useMeta, useUnfinishedCount } from '../../db/hooks';
 import { daysBetween } from '../../domain/dates';
 import { useStats } from '../progress/useStats';
-import { subareaName } from '../../domain/let-config';
 import { examScore } from '../../domain/scoring';
 import { groupQuizzes } from '../../domain/quiz';
 import type { QuizTake } from '../../domain/types';
@@ -11,6 +10,7 @@ import { FirstRun } from './FirstRun';
 import { WeekStrip } from './WeekStrip';
 import { Avatar } from '../../ui/Avatar';
 import { Icon, type IconName } from '../../ui/Icon';
+import { subareaName } from '../../domain/subjects';
 
 type Mode = { name: string; line: string; icon: IconName; to?: string; count?: number };
 

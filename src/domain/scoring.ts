@@ -137,18 +137,16 @@ export interface WeakSubject {
   tally: Tally;
 }
 
-/** Her lowest-scoring subjects, each with at least `minAttempts` answers. */
+/** Her subjects, lowest-scoring first, each with at least `minAttempts` answers. */
 export function weakestSubjects(
   attempts: readonly Attempt[],
   questions: ReadonlyMap<string, Question>,
-  n = 5,
   minAttempts = 3,
 ): WeakSubject[] {
   const tallies = tallyBy(attempts, questions, (q) => `${q.area}/${q.subarea}`);
   return [...tallies]
     .filter(([, t]) => t.total >= minAttempts)
     .sort(([, a], [, b]) => pct(a)! - pct(b)! || b.total - a.total)
-    .slice(0, n)
     .map(([k, tally]) => {
       const [area, subarea] = k.split('/') as [Area, string];
       return { area, subarea, tally };

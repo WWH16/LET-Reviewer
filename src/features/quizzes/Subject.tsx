@@ -2,10 +2,12 @@ import { Link, useParams } from 'react-router-dom';
 import { Page } from '../../ui/Page';
 import { Empty } from '../../ui/Empty';
 import { useSettings } from '../../db/hooks';
-import { PARTS, subareaName } from '../../domain/let-config';
+import { PARTS } from '../../domain/let-config';
 import type { Area } from '../../domain/types';
 import { btn } from '../../ui/btn';
-import { count, lastLine, quizDate, useQuizzes } from './useQuizzes';
+import { count, lastLine, useQuizzes } from './useQuizzes';
+import { fmtDate } from '../../domain/dates';
+import { subareaName } from '../../domain/subjects';
 
 /** One subject's quizzes, newest first, each ready to take again. */
 export function Subject() {
@@ -48,7 +50,7 @@ export function Subject() {
                   <span className="stack-sm">
                     <span>{z.name}</span>
                     <span className="meta">
-                      {count(z.questions.length, 'question')}, made {quizDate(z.createdAt)}. {lastLine(z.questions.map((q) => q.id), data.last)}.
+                      {count(z.questions.length, 'question')}, made {fmtDate(z.createdAt)}. {lastLine(z.questions.map((q) => q.id), data.last)}.
                     </span>
                   </span>
                 </Link>

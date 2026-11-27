@@ -14,43 +14,34 @@ export type SignInResult = AuthResult | { ok: false; needsCode: true } | { ok: f
 
 type Failure = { message?: string; code?: string; status?: number; name?: string };
 
-const MESSAGES: Record<string, string> = {
-  invalid_credentials: 'Wrong email or password.',
-  user_already_exists: 'This email already has an account. Sign in instead.',
-  email_exists: 'This email already has an account. Sign in instead.',
-  otp_expired: 'That code is wrong or has expired. Send a new one.',
-  over_email_send_rate_limit: 'Too many emails sent. Try again in a few minutes.',
-  over_request_rate_limit: 'Too many tries. Wait a minute, then try again.',
-  weak_password: 'Use 8 characters or more.',
-  same_password: 'That is your current password. Choose a different one.',
-  email_address_invalid: 'That email address does not look right.',
-  validation_failed: 'Check the email address and try again.',
-  email_address_not_authorized: 'The app cannot send email to this address yet. Try again later.',
-  signup_disabled: 'Creating accounts is turned off right now.',
-};
-const FIELDS: Record<string, Field> = {
-  invalid_credentials: 'password',
-  user_already_exists: 'email',
-  email_exists: 'email',
-  otp_expired: 'code',
-  weak_password: 'password',
-  same_password: 'password',
-  email_address_invalid: 'email',
-  validation_failed: 'email',
-  email_address_not_authorized: 'email',
-};
+/** Each Supabase error code: its message, and the form field it belongs to (none: the whole form). */
+const ERRORS = new Map<string, [string, Field?]>([
+  ['invalid_credentials', ['Wrong email or password.', 'password']],
+  ['user_already_exists', ['This email already has an account. Sign in instead.', 'email']],
+  ['email_exists', ['This email already has an account. Sign in instead.', 'email']],
+  ['otp_expired', ['That code is wrong or has expired. Send a new one.', 'code']],
+  ['over_email_send_rate_limit', ['Too many emails sent. Try again in a few minutes.']],
+  ['over_request_rate_limit', ['Too many tries. Wait a minute, then try again.']],
+  ['weak_password', ['Use 8 characters or more.', 'password']],
+  ['same_password', ['That is your current password. Choose a different one.', 'password']],
+  ['email_address_invalid', ['That email address does not look right.', 'email']],
+  ['validation_failed', ['Check the email address and try again.', 'email']],
+  ['email_address_not_authorized', ['The app cannot send email to this address yet. Try again later.', 'email']],
+  ['signup_disabled', ['Creating accounts is turned off right now.']],
+]);
 const isOffline = (e: Failure) => e.name === 'AuthRetryableFetchError' || /failed to fetch|networkerror|load failed/i.test(e.message ?? '');
 
 /** An account error in words the person can act on. */
 export function messageFor(error: Failure): string {
-  if (error.code && MESSAGES[error.code]) return MESSAGES[error.code];
+  const known = error.code && ERRORS.get(error.code);
+  if (known) return known[0];
   // A request that never got an answer is "offline" only when the device says so; online, the service is the
   // one out of reach (down, paused, or a wrong project address).
   if (isOffline(error) && globalThis.navigator?.onLine === false) return 'You are offline. Try again when you are connected.';
   return 'Could not reach the account service. Try again.';
 }
 const fail = (error: Failure): AuthResult => {
-  const field = error.code ? FIELDS[error.code] : undefined;
+  const field = error.code ? ERRORS.get(error.code)?.[1] : undefined;
   return field ? { ok: false, error: messageFor(error), field } : { ok: false, error: messageFor(error) };
 };
 

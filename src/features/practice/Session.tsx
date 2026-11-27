@@ -10,11 +10,12 @@ import { dropTake, getTakes, nowIso, recordAttempt, saveTake, uuid } from '../..
 import { shuffle } from '../../domain/examDraw';
 import { counts } from '../../domain/quiz';
 import { choiceOrder, originalKey, shown } from '../../domain/choices';
-import { paceMs, subareaName } from '../../domain/let-config';
+import { paceMs } from '../../domain/let-config';
 import { KEYS, type Key, type QuizTake, type TakeResult } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { Empty } from '../../ui/Empty';
 import { requestSync } from '../../sync/trigger';
+import { subareaName } from '../../domain/subjects';
 
 const title = 'Quiz';
 /** mm:ss for the timed quiz's clock. */
