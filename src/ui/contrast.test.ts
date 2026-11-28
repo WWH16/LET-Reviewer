@@ -77,7 +77,7 @@ describe('tokens', () => {
     // The at-risk streak pill and the side menu's current place: butter on chocolate.
     ['color-inverse', 'color-accent', 4.5],
     ['color-inverse', 'color-ink', 4.5],
-    // Cobalt is kept for the primary button and the focus ring.
+    // The chocolate focus ring on the white cards.
     ['color-focus', 'color-card', 3],
     // Light checks, crosses and flags (the canvas cream) sit on the state fills.
     ['color-paper', 'color-success-fill', 3],

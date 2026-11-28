@@ -1,6 +1,6 @@
 /* Role tokens, by the 60-30-10 rule: 60 light (the Claude app's whites: a #faf9f5 ground and white, hairline-edged cards), 30 butter yellow
-   #FDD77A (the header block on each screen, butter tints for the current place and a choice), 10 cobalt
-   #0047AB, kept sparing: the one primary button per screen and the focus ring. Chocolate #421E0E is the
+   #FDD77A (the header block on each screen, butter tints for the current place and a choice), 10 chocolate
+   #421E0E (no cool blue, as DESIGN-claude.md says): the one primary button per screen and the focus ring. Chocolate is also the
    ink, the clay outlines, the rings and the current place in the side menu. Three state colours always mean the same thing: green is right,
    red is wrong, orange is flagged or middling. State is never colour alone: a right
    answer also carries a check, a wrong one a cross, a flag the flag icon. Kumo's --color-kumo-* tokens
@@ -56,8 +56,8 @@
   /* chocolate for rings, badges and checks with butter type on them; a warm brown for links; a butter tint for the current tab and a selection */
   --color-accent: oklch(28.3% 0.062 43.5); --color-accent-deep: oklch(20% 0.045 43); --color-accent-ink: oklch(89.3% 0.12 87.7);
   --color-accent-text: oklch(45% 0.1 55); --color-accent-edge: oklch(28.3% 0.062 43.5); --color-accent-soft: oklch(95.5% 0.06 92); --color-on-soft: oklch(28.3% 0.062 43.5);
-  /* the 10: cobalt #0047AB, only for the focus ring and the primary button (below) */
-  --color-focus: oklch(42.8% 0.172 259.7);
+  /* the 10: chocolate for the focus ring and the primary button (below) */
+  --color-focus: oklch(28.3% 0.062 43.5);
   /* right, wrong, flagged: text, fill (rings and icons) and tint (backgrounds) */
   --color-success: oklch(51.5% 0.109 160.6); --color-success-fill: oklch(62.1% 0.132 160); --color-success-tint: oklch(95% 0.024 163.1);
   --color-error: oklch(53.1% 0.172 25.2); --color-error-fill: oklch(59.7% 0.182 24.5); --color-error-tint: oklch(94.4% 0.022 17.5);
@@ -67,8 +67,8 @@
   --color-inverse: oklch(89.3% 0.12 87.7); --color-inverse-ink: oklch(28.3% 0.062 43.5); --color-inverse-muted: oklch(40% 0.06 55); --color-inverse-tint: oklch(81% 0.14 82);
   /* deep gold for a large figure on a cream card (the projected rating): large text only */
   --color-gold: oklch(60% 0.13 70);
-  /* the primary button: cobalt with a white label */
-  --color-button: oklch(42.8% 0.172 259.7); --color-button-deep: oklch(34% 0.15 262); --color-button-ink: oklch(100% 0 0);
+  /* the primary button: chocolate with a white label, a step darker when pressed */
+  --color-button: oklch(28.3% 0.062 43.5); --color-button-deep: oklch(20% 0.045 43); --color-button-ink: oklch(100% 0 0);
   /* Flat: a card is the canvas white with a 1px hairline edge, no shadow. A tile you tap lifts a little on hover;
      dialogs, toasts and drawers float on a soft shadow with a hairline edge. */
   --shadow-card: 0 0 0 1px var(--color-rule);

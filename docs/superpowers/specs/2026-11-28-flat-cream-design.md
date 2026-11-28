@@ -9,7 +9,7 @@
 **Anti-goals:** text that fails contrast on the darker cream cards; white checks and crosses on the state fills that drop under 3:1.
 
 **Constraints:**
-- The palette stays: butter yellow `#FDD77A` header block, chocolate `#421E0E` ink and pills, cobalt `#0047AB` only on the primary button and the focus ring.
+- The palette stays: butter yellow `#FDD77A` header block, chocolate `#421E0E` ink and pills, and (since 2026-11-28, following the doc's no-cool-blue rule) chocolate in place of cobalt on the primary button and the focus ring.
 - Every text pair keeps passing `src/ui/contrast.test.ts`.
 - The doc's fonts (Copernicus, StyreneB) are licensed, so a free serif stands in.
 
@@ -23,7 +23,7 @@
 - Big tiles go from 20px to 16px corners. Cards (12px) and buttons (8px) stay.
 - The side-menu pill, pressed toggles and the sign-in tab lose their outline; their chocolate or butter fill carries them.
 - Page titles, the greeting and big figures use Newsreader (free, `@fontsource-variable/newsreader`) at a regular weight with slight negative tracking. Card headings and body stay in Instrument Sans; timers and scores stay in DM Mono.
-- Hover effects stay (the doc drops them; they help in an app). Cobalt stays (the doc avoids blue; the owner chose it).
+- Hover effects stay (the doc drops them; they help in an app). Cobalt was later removed by the owner, per the doc's no-cool-blue rule.
 - The browser theme colour and the PWA manifest colour become `#faf9f5`.
 
 **Left to the builder:** the exact soft-shadow values, the serif's weight and tracking per size, and what light colour carries the white checks on the state fills if the cream cards push them under 3:1.
