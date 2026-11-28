@@ -14,6 +14,7 @@ import { paceMs } from '../../domain/let-config';
 import { KEYS, type Key, type QuizTake, type TakeResult } from '../../domain/types';
 import { btn } from '../../ui/btn';
 import { Empty } from '../../ui/Empty';
+import { Dialog } from '../../ui/Dialog';
 import { requestSync } from '../../sync/trigger';
 import { subareaName } from '../../domain/subjects';
 
@@ -39,6 +40,8 @@ export function Session() {
   const [checked, setChecked] = useState(false);
   const [eliminated, setEliminated] = useState<Set<string>>(new Set());
   const [done, setDone] = useState(false);
+  // The X asks first once she has answered something, as Duolingo and Pocket Prep do; a stray tap ended it before.
+  const [ending, setEnding] = useState(false);
   const [run, setRun] = useState(0);
   // Timed quiz: the clock runs at the LET's own pace per item, and only while the take is open.
   const [startedAt, setStartedAt] = useState(0);
@@ -281,7 +284,7 @@ export function Session() {
             </ol>
           )}
           <div className="quiz-row">
-            <button type="button" className="quiz-close" aria-label="End session" title="End session" onClick={() => setDone(true)}>
+            <button type="button" className="quiz-close" aria-label="End quiz" title="End quiz" onClick={() => (results.length ? setEnding(true) : setDone(true))}>
               <Icon name="cross" size={20} />
             </button>
             <h2 ref={qHeading} tabIndex={-1} className="quiz-count">
@@ -375,6 +378,26 @@ export function Session() {
           </p>
         )}
       </div>
+      <Dialog open={ending} onClose={() => setEnding(false)} title="End this quiz?">
+        <p>
+          You have answered {results.length} of {items.length}. Ending shows your results now.
+        </p>
+        <div className="row">
+          <button type="button" className={btn.primary} data-autofocus onClick={() => setEnding(false)}>
+            Keep going
+          </button>
+          <button
+            type="button"
+            className={btn.secondary}
+            onClick={() => {
+              setEnding(false);
+              setDone(true);
+            }}
+          >
+            End quiz
+          </button>
+        </div>
+      </Dialog>
     </Page>
   );
 }
