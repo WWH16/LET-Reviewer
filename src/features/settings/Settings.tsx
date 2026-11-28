@@ -18,6 +18,7 @@ import { ProfileEditor } from './ProfileEditor';
 import { AccountSection } from './AccountSection';
 import { SubjectsEditor } from './SubjectsEditor';
 import { EMPTY_STATE, requestSync, syncAvailable, type SyncState } from '../../sync/trigger';
+import { ThemeControl } from '../../ui/ThemeControl';
 import { SETTINGS_PAGES } from '../../app/nav';
 import { AsyncButton } from '../../ui/AsyncButton';
 import { Icon } from '../../ui/Icon';
@@ -61,6 +62,9 @@ export function Settings() {
   if (!page)
     return (
       <Page title="Settings">
+        <section className="tile" aria-label="Appearance">
+          <ThemeControl />
+        </section>
         <ul className="list">
           {SETTINGS_PAGES.map((x) => (
             <li key={x.id}>

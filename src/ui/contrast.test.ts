@@ -35,7 +35,7 @@ const ratio = (x: [number, number, number], y: [number, number, number]) => {
 
 const light = block(':root {');
 // The dark theme only redefines what changes, so it reads as the light tokens with its own on top.
-const darkOwn = block('@media (prefers-color-scheme: dark)');
+const darkOwn = block(":root[data-theme='dark'] {");
 const dark = { ...light, ...darkOwn };
 
 it('reads the dark theme', () => {

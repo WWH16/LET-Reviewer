@@ -10,6 +10,7 @@ import {
   BookOpenTextIcon,
   CalendarBlankIcon,
   CheckIcon,
+  CircleHalfIcon,
   ClockIcon,
   ExamIcon,
   EyeClosedIcon,
@@ -19,7 +20,9 @@ import {
   GearSixIcon,
   LightningIcon,
   ListChecksIcon,
+  MoonIcon,
   SignOutIcon,
+  SunIcon,
   TargetIcon,
   TextStrikethroughIcon,
   TimerIcon,
@@ -56,6 +59,10 @@ const ICONS = {
   eye: EyeIcon,
   'eye-closed': EyeClosedIcon,
   'sign-out': SignOutIcon,
+  // the theme choice
+  'theme-system': CircleHalfIcon,
+  sun: SunIcon,
+  moon: MoonIcon,
 } satisfies Record<string, PhosphorIcon>;
 
 export type IconName = keyof typeof ICONS;
