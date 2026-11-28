@@ -14,18 +14,18 @@
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --dur-micro: 120ms; --dur-short: 200ms;
   --z-raised: 10; --z-sticky: 200; --z-sticky-nav: 300; --z-modal: 400; --z-toast: 500;
-  /* the faces, bundled: Newsreader (a free editorial serif, with optical sizes) for page titles and big figures,
-     Instrument Sans for everything else, DM Mono for timers, scores and IDs. Kumo's own font tokens point at them too. */
-  --font-display: "Newsreader Variable", "Newsreader", ui-serif, Georgia, serif;
+  /* the faces, bundled: Schibsted Grotesk for headings, the wordmark and big figures, Instrument Sans for
+     everything else, DM Mono for timers, scores and IDs. Kumo's own font tokens point at them too. */
+  --font-display: "Schibsted Grotesk Variable", "Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-body: "Instrument Sans Variable", "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
   --font-num: "DM Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --font-sans: var(--font-body); --font-mono: var(--font-num); --default-font-family: var(--font-body); --default-mono-font-family: var(--font-num);
-  --tracking-display: -0.015em;
+  --tracking-display: -0.03em;
   /* Type and spacing roles that grow smoothly with the screen: the phone value at 360px, the laptop value at
      1440px, no jumps between. Past 1440px the whole app grows a little with the root size (base.css), so a
      big monitor is not a small app in a sea of margin. Body, names and meta stay put below 1440px. */
   /* An app scale, not the doc's marketing-page sizes: captions 13, body 16 at 1.55, names 16 at 550, card
-     headings 17 at 600, page titles 22 to 26 in the serif at 650. Figures come in two sizes, both 600: the lead
+     headings 17 at 600, page titles 22 to 26 at 650. Figures come in two sizes, both 600: the lead
      figure a screen exists for (the ring, a score) at 30 to 38, the others 22 to 28. */
   --weight-title: 650; --weight-head: 600; --weight-strong: 550; --weight-medium: 500; --weight-figure: 600;
   --text-body: 1rem; --text-name: 1rem;

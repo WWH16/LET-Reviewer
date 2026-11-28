@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
-import '@fontsource-variable/newsreader/opsz.css';
+import '@fontsource-variable/schibsted-grotesk/wght.css';
 import '@fontsource-variable/instrument-sans/wght.css';
 import '@fontsource/dm-mono/400.css';
 import '../ui/app.css';
