@@ -1728,6 +1728,56 @@ legend {
   background: var(--color-error-tint);
   color: var(--color-error);
 }
+/* Phones: the quiz's actions pin to the bottom of the screen. Check sits in a bar; after checking, the verdict,
+   the explanation and Next rise as a sheet in the right or wrong tint, as on Duolingo. Wide screens keep them
+   in the flow under the choices. */
+@media (max-width: 47.99rem) {
+  .quiz-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: var(--z-sticky);
+    margin-inline: calc(-1 * max(var(--space-md), var(--safe-left))) calc(-1 * max(var(--space-md), var(--safe-right)));
+    padding: var(--space-sm) var(--space-md) calc(var(--space-sm) + var(--safe-bottom));
+    background: var(--color-card);
+    border-top: 1px solid var(--color-rule);
+  }
+  .quiz-actions .row > .btn-primary {
+    flex: 1;
+  }
+  .quiz-actions:has(.feedback) {
+    padding: 0;
+    border-top: 0;
+    background: none;
+  }
+  .quiz-actions .feedback {
+    max-height: 60dvh;
+    overflow-y: auto;
+    padding: var(--space-md) var(--space-md) calc(var(--space-md) + var(--safe-bottom));
+    border-radius: var(--radius-tile) var(--radius-tile) 0 0;
+    border-top: 2px solid var(--color-success-fill);
+    background: var(--color-success-tint);
+    box-shadow: none;
+  }
+  .quiz-actions .feedback.is-wrong {
+    border-top-color: var(--color-error-fill);
+    background: var(--color-error-tint);
+  }
+  /* The tab bar is hidden during a quiz, so the page needs no room for it under the bar. */
+  #root:has(.quiz-bar) main {
+    padding-bottom: 0;
+  }
+}
+@media (max-width: 47.99rem) and (prefers-reduced-motion: no-preference) {
+  .quiz-actions .feedback {
+    animation: sheet-up var(--dur-short) var(--ease-out);
+  }
+}
+@keyframes sheet-up {
+  from {
+    transform: translateY(24px);
+    opacity: 0.6;
+  }
+}
 
 /* ---------- Tables, lists, meters: Kumo's table ---------- */
 

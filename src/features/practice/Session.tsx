@@ -335,34 +335,6 @@ export function Session() {
           }
         />
 
-        {!checked ? (
-          <div className="row">
-            <button type="button" className={btn.primary} disabled={!chosen} onClick={check} aria-keyshortcuts={settings.shortcuts ? 'Enter' : undefined}>
-              Check answer
-              {settings.shortcuts && <kbd className="kbd-inline" aria-hidden="true">Enter</kbd>}
-            </button>
-          </div>
-        ) : (
-          <div className="feedback stack">
-            <h3 ref={fbHeading} tabIndex={-1} className={correct ? "stamp" : "stamp is-miss"}>
-              <Icon name={correct ? 'check' : 'cross'} size={20} />
-              {correct ? 'Correct' : `Incorrect. The answer is ${q.answer}.`}
-            </h3>
-            <p lang={q.lang}>{q.explanation || 'No explanation saved for this question.'}</p>
-            <p className="sr-only">The choices are locked.</p>
-            <div className="row">
-              <button type="button" className={btn.primary} onClick={next} aria-keyshortcuts={settings.shortcuts ? 'Enter' : undefined}>
-                {isLast ? 'See results' : 'Next'}
-                {settings.shortcuts && <kbd className="kbd-inline" aria-hidden="true">Enter</kbd>}
-              </button>
-              {/* A wrong key from Claude would mark every retake wrong, so the fix is one tap away. */}
-              <Link className={btn.quiet} to={`/question/${encodeURIComponent(q.id)}`}>
-                Fix this question
-              </Link>
-            </div>
-          </div>
-        )}
-
         {i === 0 && !checked && (
           <p className="muted">
             The{' '}
@@ -377,6 +349,37 @@ export function Session() {
             <kbd>A</kbd> to <kbd>D</kbd> or <kbd>1</kbd> to <kbd>4</kbd> choose. <kbd>Enter</kbd> checks, then goes next.
           </p>
         )}
+        {/* The answer's actions come last: on phones they pin to the bottom of the screen, Check turning into the
+            verdict and Next, as Duolingo and Pocket Prep keep their main button in one place. */}
+        <div className="quiz-actions">
+          {!checked ? (
+            <div className="row">
+              <button type="button" className={btn.primary} disabled={!chosen} onClick={check} aria-keyshortcuts={settings.shortcuts ? 'Enter' : undefined}>
+                Check answer
+                {settings.shortcuts && <kbd className="kbd-inline" aria-hidden="true">Enter</kbd>}
+              </button>
+            </div>
+          ) : (
+            <div className={correct ? 'feedback stack is-right' : 'feedback stack is-wrong'}>
+              <h3 ref={fbHeading} tabIndex={-1} className={correct ? "stamp" : "stamp is-miss"}>
+                <Icon name={correct ? 'check' : 'cross'} size={20} />
+                {correct ? 'Correct' : `Incorrect. The answer is ${q.answer}.`}
+              </h3>
+              <p lang={q.lang}>{q.explanation || 'No explanation saved for this question.'}</p>
+              <p className="sr-only">The choices are locked.</p>
+              <div className="row">
+                <button type="button" className={btn.primary} onClick={next} aria-keyshortcuts={settings.shortcuts ? 'Enter' : undefined}>
+                  {isLast ? 'See results' : 'Next'}
+                  {settings.shortcuts && <kbd className="kbd-inline" aria-hidden="true">Enter</kbd>}
+                </button>
+                {/* A wrong key from Claude would mark every retake wrong, so the fix is one tap away. */}
+                <Link className={btn.quiet} to={`/question/${encodeURIComponent(q.id)}`}>
+                  Fix this question
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
       <Dialog open={ending} onClose={() => setEnding(false)} title="End this quiz?">
         <p>
