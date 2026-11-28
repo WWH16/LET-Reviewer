@@ -24,16 +24,16 @@
   /* Type and spacing roles that grow smoothly with the screen: the phone value at 360px, the laptop value at
      1440px, no jumps between. Past 1440px the whole app grows a little with the root size (base.css), so a
      big monitor is not a small app in a sea of margin. Body, names and meta stay put below 1440px. */
-  /* The editorial sizes (DESIGN-claude.md), sized for an app, with the original firm weights: captions 13, body
-     16 at 1.55, names 16 at 550, card headings 18 at 600, page titles 28 to 36 in the serif at 650. Figures come
-     in two sizes, both 600: the lead figure a screen exists for (the ring, a score) at 36 to 48, the others 24 to 28. */
+  /* An app scale, not the doc's marketing-page sizes: captions 13, body 16 at 1.55, names 16 at 550, card
+     headings 17 at 600, page titles 22 to 26 in the serif at 650. Figures come in two sizes, both 600: the lead
+     figure a screen exists for (the ring, a score) at 30 to 38, the others 22 to 28. */
   --weight-title: 650; --weight-head: 600; --weight-strong: 550; --weight-medium: 500; --weight-figure: 600;
   --text-body: 1rem; --text-name: 1rem;
   /* Captions: helper text, labels and the side menu's settings pages */
   --text-meta: 0.8125rem;
-  --text-h1: clamp(1.75rem, 1.5833rem + 0.7407vw, 2.25rem); --text-h2: 1.125rem;
-  --text-figure: clamp(1.5rem, 1.4167rem + 0.3704vw, 1.75rem); --text-figure-lead: clamp(2.25rem, 2rem + 1.111vw, 3rem);
-  --text-stat: clamp(1.125rem, 1.0417rem + 0.3704vw, 1.375rem);
+  --text-h1: clamp(1.375rem, 1.2917rem + 0.3704vw, 1.625rem); --text-h2: 1.0625rem;
+  --text-figure: clamp(1.375rem, 1.25rem + 0.5556vw, 1.75rem); --text-figure-lead: clamp(1.875rem, 1.708rem + 0.7407vw, 2.375rem);
+  --text-stat: clamp(1.0625rem, 1.0208rem + 0.1852vw, 1.1875rem);
   /* roomy cards, 20px on a phone to 32px on a laptop, with 24px between tiles */
   --pad-card: clamp(1.25rem, 1rem + 1.111vw, 2rem); --gap-tile: clamp(1rem, 0.9167rem + 0.3704vw, 1.25rem);
   --gap-section: clamp(1.25rem, 1.1667rem + 0.3704vw, 1.5rem); --pad-page-top: clamp(1rem, 0.6667rem + 1.481vw, 2rem);
