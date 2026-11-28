@@ -1,16 +1,15 @@
 import { Link } from 'react-router-dom';
 import { Page } from '../../ui/Page';
-import { useExams, useMeta, useUnfinishedCount } from '../../db/hooks';
+import { useExams, useUnfinishedCount } from '../../db/hooks';
 import { daysBetween } from '../../domain/dates';
 import { useStats } from '../progress/useStats';
 import { examScore } from '../../domain/scoring';
 import { groupQuizzes } from '../../domain/quiz';
-import type { QuizTake } from '../../domain/types';
 import { FirstRun } from './FirstRun';
 import { WeekStrip } from './WeekStrip';
+import { StreakCard } from './StreakCard';
 import { Avatar } from '../../ui/Avatar';
 import { Icon, type IconName } from '../../ui/Icon';
-import { subareaName } from '../../domain/subjects';
 
 type Mode = { name: string; line: string; icon: IconName; to?: string; count?: number };
 
@@ -22,10 +21,9 @@ type Mode = { name: string; line: string; icon: IconName; to?: string; count?: n
 export function Home() {
   const stats = useStats();
   const exams = useExams();
-  const takes = useMeta<QuizTake[]>('quizTakes', []);
   const unfinished = useUnfinishedCount();
 
-  if (!stats || !exams || !takes || unfinished === undefined) return <Page title="Home" titleHidden>{null}</Page>;
+  if (!stats || !exams || unfinished === undefined) return <Page title="Home" titleHidden>{null}</Page>;
   if (!stats.hasQuestions)
     return (
       <Page title="Home">
@@ -33,7 +31,7 @@ export function Home() {
       </Page>
     );
 
-  const { days, today, settings, attempts, qmap } = stats;
+  const { days, today, settings, qmap, todayAttempts, todayCorrect } = stats;
   const toExam = settings.examDate ? daysBetween(today, settings.examDate) : null;
   const name = settings.name.trim();
 
@@ -70,28 +68,11 @@ export function Home() {
     { name: 'Mock exam', line: 'One part, the subjects you pick, on screen or printed.', icon: 'mock', to: '/mock' },
   ];
 
-  // The one card to pick up where she left off: the most recently touched quiz take or ungraded mock.
-  const resume = [
-    ...takes.flatMap((t) => {
-      const z = quizList.find((x) => x.id === t.quizId);
-      return z
-        ? [{ at: t.updatedAt, to: `/session?mode=quiz&quiz=${encodeURIComponent(t.quizId)}&take=${t.id}`, title: `Continue ${subareaName(z.subarea)}, ${z.name}`, line: `${t.results.length} of ${t.items.length} answered.` }]
-        : [];
-    }),
-    ...exams
-      .filter((e) => e.status !== 'graded')
-      .map((e) =>
-        e.status === 'printed'
-          ? { at: e.updatedAt, to: `/mock/${e.id}/entry`, title: `Enter answers for ${e.label}`, line: 'The printed exam is waiting to be graded.' }
-          : { at: e.updatedAt, to: `/mock/${e.id}`, title: `Continue exam ${e.label}`, line: `${Object.keys(e.answers).length} of ${e.itemIds.length} answered.` },
-      ),
-  ].sort((a, b) => (a.at < b.at ? 1 : -1))[0];
-  const side = Boolean(resume);
 
   return (
     <Page title="Home" titleHidden wide>
       <div className="bento">
-        <section className={`greet tile-inverse ${side ? 'span-4' : ''}`} aria-labelledby="greet-title">
+        <section className="greet tile-inverse" aria-labelledby="greet-title">
           <div className="greet-head">
             <div className="stack-sm">
               <h2 id="greet-title" className="greet-title">
@@ -124,20 +105,6 @@ export function Home() {
           <WeekStrip days={days} today={today} />
         </section>
 
-        {side && (
-          <div className="home-side span-2">
-            {resume && (
-              <Link className="resume" to={resume.to}>
-                <span className="stack-sm">
-                  <span className="resume-title">{resume.title}</span>
-                  <span className="meta">{resume.line}</span>
-                </span>
-                <Icon name="caret" size={20} />
-              </Link>
-            )}
-          </div>
-        )}
-
         <section className="stack-sm" aria-labelledby="modes-title">
           <h2 id="modes-title">Home</h2>
           <ul className="modes">
@@ -169,6 +136,9 @@ export function Home() {
             })}
           </ul>
         </section>
+
+        {/* Study days: the streak, and the Year and Month views of every day she answered. */}
+        <StreakCard days={days} today={today} todayCount={todayAttempts.length} todayCorrect={todayCorrect} />
       </div>
     </Page>
   );

@@ -33,7 +33,7 @@ export function StreakCard({
   today: string;
   todayCount: number;
   todayCorrect: number;
-  /** Its place in a bento (Stats: a half under the parts). */
+  /** Its place in a bento (Home: the full row under the ways to study, the default). */
   className?: string;
 }) {
   const run = streak(days, today);

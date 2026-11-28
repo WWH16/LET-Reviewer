@@ -7,7 +7,6 @@ import { useStats } from './useStats';
 import { RatingCard } from './RatingCard';
 import { btn } from '../../ui/btn';
 import { Gauge, scoreTone } from '../../ui/Gauge';
-import { StreakCard } from '../home/StreakCard';
 import { Empty } from '../../ui/Empty';
 import { loadDemoData } from '../../db/repo';
 import { AsyncButton } from '../../ui/AsyncButton';
@@ -19,7 +18,7 @@ export function Progress() {
   const stats = useStats();
   const announce = useAnnounce();
   if (!stats) return <Page title="Stats">{null}</Page>;
-  const { attempts, qmap, settings, rating, parts, days, today, todayAttempts, todayCorrect } = stats;
+  const { attempts, qmap, settings, rating, parts, days } = stats;
 
   if (!attempts.length)
     return (
@@ -75,8 +74,8 @@ export function Progress() {
         <RatingCard rating={rating} className="span-2" />
 
         {/* Two tiles that read as one table: each part's figure on the left, every subject behind it on the
-            right, weakest first, each row opening that subject's quizzes. On wide screens the subject list runs
-            two rows tall and the streak fills the space under the parts, so no half of the screen stands empty. */}
+            right, weakest first, each row opening that subject's quizzes. Both top-align, so the shorter parts
+            tile never carries an empty stretch. */}
         <section className="tile span-3 align-start" aria-labelledby="pr-subjects">
           <h2 id="pr-subjects">By part</h2>
           <ul className="subjects">
@@ -102,7 +101,7 @@ export function Progress() {
           </ul>
         </section>
 
-        <section className="tile span-3 rows-2 align-start" aria-labelledby="pr-weak">
+        <section className="tile span-3 align-start" aria-labelledby="pr-weak">
           <h2 id="pr-weak">By subject, weakest first</h2>
           {bySubject.length === 0 ? (
             <p className="muted">Subjects appear here after 3 or more answers each.</p>
@@ -128,7 +127,6 @@ export function Progress() {
           )}
         </section>
 
-        <StreakCard days={days} today={today} todayCount={todayAttempts.length} todayCorrect={todayCorrect} className="span-3 align-start" />
       </div>
     </Page>
   );
