@@ -1,6 +1,4 @@
-import { useMemo } from 'react';
-import { createAvatar } from '@dicebear/core';
-import * as avataaars from '@dicebear/avataaars';
+import { useEffect, useState } from 'react';
 import type { Settings } from '../domain/types';
 
 type Who = Pick<Settings, 'avatarBase' | 'avatarParts'>;
@@ -85,24 +83,48 @@ export function partValue(who: Who, p: AvatarPart): string {
 // ponytail: unbounded, but one person makes at most a few hundred faces in a session.
 const drawn = new Map<string, string>();
 
-/** The reviewer's face. Decorative, so her name sits beside it in text. */
+// The Avataaars renderer is most of a megabyte of drawings, so it loads on first use instead of with the app.
+type Draw = (options: Record<string, unknown>) => string;
+let renderer: Promise<Draw> | undefined;
+const loadRenderer = () =>
+  (renderer ??= Promise.all([import('@dicebear/core'), import('@dicebear/avataaars')]).then(
+    ([core, style]) => (options) => core.createAvatar(style, options).toDataUri(),
+  ));
+
+function optionsFor(who: Who): Record<string, unknown> {
+  const options: Record<string, unknown> = { seed: 'LET', backgroundColor: ['transparent'] };
+  for (const p of AVATAR_PARTS) {
+    const v = partValue(who, p);
+    if (p.choices[0] === 'none') options[`${p.key}Probability`] = v === 'none' ? 0 : 100;
+    if (v !== 'none') options[p.key] = [v];
+  }
+  options.facialHairColor = options.hairColor;
+  return options;
+}
+
+/** The reviewer's face. Decorative, so her name sits beside it in text. A blank disc holds its place while the
+    renderer loads the first time. */
 export function Avatar({ who, size = 32 }: { who: Who; size?: number }) {
   const parts = JSON.stringify(who.avatarParts);
-  const src = useMemo(() => {
-    const key = `${who.avatarBase} ${parts}`;
+  const key = `${who.avatarBase} ${parts}`;
+  const [src, setSrc] = useState(() => drawn.get(key));
+  useEffect(() => {
     const hit = drawn.get(key);
-    if (hit) return hit;
-    const w: Who = { avatarBase: who.avatarBase, avatarParts: JSON.parse(parts) };
-    const options: Record<string, unknown> = { seed: 'LET', backgroundColor: ['transparent'] };
-    for (const p of AVATAR_PARTS) {
-      const v = partValue(w, p);
-      if (p.choices[0] === 'none') options[`${p.key}Probability`] = v === 'none' ? 0 : 100;
-      if (v !== 'none') options[p.key] = [v];
-    }
-    options.facialHairColor = options.hairColor;
-    const uri = createAvatar(avataaars, options).toDataUri();
-    drawn.set(key, uri);
-    return uri;
-  }, [who.avatarBase, parts]);
-  return <img className="avatar" src={src} width={size} height={size} alt="" />;
+    if (hit) return setSrc(hit);
+    let live = true;
+    const options = optionsFor({ avatarBase: who.avatarBase, avatarParts: JSON.parse(parts) });
+    loadRenderer().then((draw) => {
+      const uri = drawn.get(key) ?? draw(options);
+      drawn.set(key, uri);
+      if (live) setSrc(uri);
+    });
+    return () => {
+      live = false;
+    };
+  }, [key, who.avatarBase, parts]);
+  return src ? (
+    <img className="avatar" src={src} width={size} height={size} alt="" />
+  ) : (
+    <span className="avatar" style={{ display: 'inline-block', width: size, height: size }} />
+  );
 }
