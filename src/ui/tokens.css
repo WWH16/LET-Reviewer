@@ -1,4 +1,4 @@
-/* Role tokens, by the 60-30-10 rule: 60 light (the Claude app's whites: a #faf9f5 ground and white, hairline-edged cards), 30 butter yellow
+/* Role tokens, by the 60-30-10 rule: 60 light (the Claude app's whites: a #faf9f5 ground and white cards in the clay look: a 2px chocolate outline and a solid chocolate shadow), 30 butter yellow
    #FDD77A (the header block on each screen, butter tints for the current place and a choice), 10 chocolate
    #421E0E (no cool blue, as DESIGN-claude.md says): the one primary button per screen and the focus ring. Chocolate is also the
    ink, the clay outlines, the rings and the current place in the side menu. Three state colours always mean the same thing: green is right,
@@ -24,11 +24,10 @@
   /* Type and spacing roles that grow smoothly with the screen: the phone value at 360px, the laptop value at
      1440px, no jumps between. Past 1440px the whole app grows a little with the root size (base.css), so a
      big monitor is not a small app in a sea of margin. Body, names and meta stay put below 1440px. */
-  /* The editorial scale (DESIGN-claude.md), sized for an app: captions 13, body 16 at 1.55, names 16, card
-     headings 18, page titles 28 to 36 in the serif. Two weights only: 400 for body and every serif title or
-     figure, 500 for card headings, names, labels and buttons; nothing bolder. Figures come in two sizes: the
-     lead figure a screen exists for (the ring, a score) at 36 to 48, and the secondary ones at 24 to 28. */
-  --weight-title: 400; --weight-head: 500; --weight-strong: 500; --weight-medium: 500; --weight-figure: 400;
+  /* The editorial sizes (DESIGN-claude.md), sized for an app, with the original firm weights: captions 13, body
+     16 at 1.55, names 16 at 550, card headings 18 at 600, page titles 28 to 36 in the serif at 650. Figures come
+     in two sizes, both 600: the lead figure a screen exists for (the ring, a score) at 36 to 48, the others 24 to 28. */
+  --weight-title: 650; --weight-head: 600; --weight-strong: 550; --weight-medium: 500; --weight-figure: 600;
   --text-body: 1rem; --text-name: 1rem;
   /* Captions: helper text, labels and the side menu's settings pages */
   --text-meta: 0.8125rem;
@@ -45,8 +44,8 @@
   --measure-app: 48rem; --container-app: 72rem; --sidebar-w: 15rem; --header-h: 48px; --tabbar-h: 56px; --sticky-offset: env(safe-area-inset-top, 0px);
   --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px); --safe-left: env(safe-area-inset-left, 0px); --safe-right: env(safe-area-inset-right, 0px);
 
-  /* the 60, the Claude app's whites: #faf9f5 for the ground, pure white cards and fields set apart by a 1px
-     neutral hairline (#e5e3dc), #f5f4ed for wells and a tile's hover, #f0eee6 one step darker */
+  /* the 60, the Claude app's whites: #faf9f5 for the ground, pure white cards and fields; a 1px
+     neutral hairline (#e5e3dc) for rules and dividers, #f5f4ed for wells and a tile's hover, #f0eee6 one step darker */
   --color-paper: oklch(98.2% 0.005 95.1); --color-paper-soft: oklch(96.6% 0.009 100);
   --color-paper-2: oklch(96.6% 0.009 100); --color-paper-3: oklch(94.8% 0.011 95.2);
   --color-card: oklch(100% 0 0);
@@ -69,11 +68,11 @@
   --color-gold: oklch(60% 0.13 70);
   /* the primary button: chocolate with a white label, a step darker when pressed */
   --color-button: oklch(28.3% 0.062 43.5); --color-button-deep: oklch(20% 0.045 43); --color-button-ink: oklch(100% 0 0);
-  /* Flat: a card is the canvas white with a 1px hairline edge, no shadow. A tile you tap lifts a little on hover;
-     dialogs, toasts and drawers float on a soft shadow with a hairline edge. */
-  --shadow-card: 0 0 0 1px var(--color-rule);
-  --shadow-raised: 0 1px 3px oklch(28.3% 0.062 43.5 / 0.08), 0 4px 12px -6px oklch(28.3% 0.062 43.5 / 0.1);
-  --shadow-pop: 0 0 0 1px var(--color-rule), 0 16px 48px -8px oklch(28.3% 0.062 43.5 / 0.16);
+  /* The clay look, everywhere: a 2px chocolate outline and a solid chocolate shadow under it, no blur. Drawn with
+     box-shadow, so the outline takes no layout space. A tile you tap rises one step on hover. */
+  --shadow-card: 0 0 0 2px var(--color-ink), 0 4px 0 var(--color-ink);
+  --shadow-raised: 0 0 0 2px var(--color-ink), 0 6px 0 var(--color-ink);
+  --shadow-pop: 0 0 0 2px var(--color-ink), 0 6px 0 var(--color-ink);
   --shadow-bar: 0 1px 3px oklch(0% 0 0 / 0.06), 0 4px 12px -6px oklch(0% 0 0 / 0.06);
   --shadow-bar-up: 0 -1px 3px oklch(0% 0 0 / 0.06), 0 -4px 12px -6px oklch(0% 0 0 / 0.06);
   --shadow-side: 1px 0 3px oklch(0% 0 0 / 0.06), 4px 0 12px -6px oklch(0% 0 0 / 0.06);
