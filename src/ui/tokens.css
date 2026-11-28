@@ -1,5 +1,5 @@
 /* Role tokens, by the 60-30-10 rule: 60 light (the Claude app's whites: a #faf9f5 ground and white cards in the clay look: a 2px chocolate outline and a solid chocolate shadow), 30 butter yellow
-   #FDD77A (the header block on each screen, butter tints for the current place and a choice), 10 chocolate
+   #FDCA3A, golden (the header block on each screen, pale butter #FDF1C3 tints for the current place and a choice), 10 chocolate
    #421E0E (no cool blue, as DESIGN-claude.md says): the one primary button per screen and the focus ring. Chocolate is also the
    ink, the clay outlines, the rings and the current place in the side menu. Three state colours always mean the same thing: green is right,
    red is wrong, orange is flagged or middling. State is never colour alone: a right
@@ -40,7 +40,7 @@
   --radius-control: 8px; --radius-card: 12px; --radius-tile: 16px; --radius-pill: 999px;
   /* The activity grid: five steps from empty (paper-3) to busiest, butter to deep gold. */
   --heat-cell: 0.6875rem; --heat-gap: 3px;
-  --heat-0: var(--color-paper-3); --heat-1: oklch(87% 0.13 88); --heat-2: oklch(81% 0.15 82); --heat-3: oklch(74% 0.15 72); --heat-4: oklch(67% 0.14 62);
+  --heat-0: var(--color-paper-3); --heat-1: oklch(94% 0.07 95); --heat-2: oklch(88% 0.13 92); --heat-3: oklch(80% 0.16 85); --heat-4: oklch(67% 0.13 72);
   --measure-app: 48rem; --container-app: 72rem; --sidebar-w: 15rem; --header-h: 48px; --tabbar-h: 56px; --sticky-offset: env(safe-area-inset-top, 0px);
   --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px); --safe-left: env(safe-area-inset-left, 0px); --safe-right: env(safe-area-inset-right, 0px);
 
@@ -54,18 +54,18 @@
   --color-rule: oklch(91.5% 0.01 93.6); --color-line: oklch(28.3% 0.062 43.5 / 0.15); --color-control: oklch(60% 0.06 60);
   /* chocolate for rings, badges and checks with butter type on them; a warm brown for links; a butter tint for the current tab and a selection */
   --color-accent: oklch(28.3% 0.062 43.5); --color-accent-deep: oklch(20% 0.045 43); --color-accent-ink: oklch(89.3% 0.12 87.7);
-  --color-accent-text: oklch(45% 0.1 55); --color-accent-edge: oklch(28.3% 0.062 43.5); --color-accent-soft: oklch(95.5% 0.06 92); --color-on-soft: oklch(28.3% 0.062 43.5);
+  --color-accent-text: oklch(45% 0.1 55); --color-accent-edge: oklch(28.3% 0.062 43.5); --color-accent-soft: oklch(95.5% 0.06 95); --color-on-soft: oklch(28.3% 0.062 43.5);
   /* the 10: chocolate for the focus ring and the primary button (below) */
   --color-focus: oklch(28.3% 0.062 43.5);
   /* right, wrong, flagged: text, fill (rings and icons) and tint (backgrounds) */
   --color-success: oklch(51.5% 0.109 160.6); --color-success-fill: oklch(62.1% 0.132 160); --color-success-tint: oklch(95% 0.024 163.1);
   --color-error: oklch(53.1% 0.172 25.2); --color-error-fill: oklch(59.7% 0.182 24.5); --color-error-tint: oklch(94.4% 0.022 17.5);
-  --color-warning: oklch(46% 0.12 50); --color-warning-fill: oklch(62% 0.16 45); --color-warning-tint: oklch(95.5% 0.022 65); --color-info-tint: oklch(96% 0.04 92);
+  --color-warning: oklch(46% 0.12 50); --color-warning-fill: oklch(62% 0.16 45); --color-warning-tint: oklch(95.5% 0.022 65); --color-info-tint: oklch(96% 0.04 95);
   --color-shade: oklch(28.3% 0.062 43.5 / 0.45);
-  /* the 30: the butter yellow header block, one per screen, holding its figure (the quiz bar, the Stats gauge, the score), in chocolate type */
-  --color-inverse: oklch(89.3% 0.12 87.7); --color-inverse-ink: oklch(28.3% 0.062 43.5); --color-inverse-muted: oklch(40% 0.06 55); --color-inverse-tint: oklch(81% 0.14 82);
-  /* deep gold for a large figure on a cream card (the projected rating): large text only */
-  --color-gold: oklch(60% 0.13 70);
+  /* the 30: the golden yellow header block, one per screen, holding its figure (the quiz bar, the Stats gauge, the score), in chocolate type */
+  --color-inverse: oklch(86% 0.16 88); --color-inverse-ink: oklch(28.3% 0.062 43.5); --color-inverse-muted: oklch(40% 0.06 55); --color-inverse-tint: oklch(80% 0.15 84);
+  /* deep gold for a large figure on a white card (the projected rating): large text only */
+  --color-gold: oklch(63% 0.13 78);
   /* the primary button: chocolate with a white label, a step darker when pressed */
   --color-button: oklch(28.3% 0.062 43.5); --color-button-deep: oklch(20% 0.045 43); --color-button-ink: oklch(100% 0 0);
   /* The clay look, everywhere: a 2px chocolate outline and a solid chocolate shadow under it, no blur. Drawn with
