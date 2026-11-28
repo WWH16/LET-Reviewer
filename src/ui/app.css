@@ -2030,10 +2030,12 @@ dialog::backdrop {
   color: var(--color-inverse-ink);
   box-shadow: var(--shadow-card);
 }
+/* The exam-date link is a 44px target; the negative margin keeps the line's own height. */
 .greet .meta a {
-  display: inline-block;
-  padding-block: var(--space-xs);
-  margin-block: calc(-1 * var(--space-xs));
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-block: -12px;
 }
 .greet .week-day[aria-current] .week-dot {
   box-shadow: 0 0 0 2px var(--color-inverse), 0 0 0 4px var(--color-inverse-ink);
@@ -2066,8 +2068,13 @@ dialog::backdrop {
   overflow-wrap: break-word;
   min-width: 0;
 }
+/* A 44px target around the 40px avatar. */
 .greet-avatar {
+  display: grid;
   flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
 }
 .week {
