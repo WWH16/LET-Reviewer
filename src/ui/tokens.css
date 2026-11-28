@@ -1,6 +1,7 @@
 /* Role tokens, by the 60-30-10 rule: 60 light (a warm off-white ground and white cards), 30 butter yellow
    #FDD77A (the header block on each screen, butter tints for the current place and a choice), 10 cobalt
-   #0047AB (primary buttons, links, rings, focus). Chocolate #421E0E is the ink and the clay outlines. Three state colours always mean the same thing: green is right,
+   #0047AB, kept sparing: the one primary button per screen and the focus ring. Chocolate #421E0E is the
+   ink, the clay outlines, the rings and the current place in the side menu. Three state colours always mean the same thing: green is right,
    red is wrong, orange is flagged or middling. State is never colour alone: a right
    answer also carries a check, a wrong one a cross, a flag the flag icon. Kumo's --color-kumo-* tokens
    point at these, so its components follow. Every text pair is checked in contrast.test.ts. */
@@ -49,9 +50,10 @@
   /* the ink: chocolate #421E0E, and browns stepped from it */
   --color-ink: oklch(28.3% 0.062 43.5); --color-ink-2: oklch(35% 0.06 45); --color-muted: oklch(43% 0.06 50);
   --color-rule: oklch(91% 0.015 85); --color-line: oklch(28.3% 0.062 43.5 / 0.15); --color-control: oklch(60% 0.06 60);
-  /* the 10: cobalt #0047AB for primary buttons, links, rings and focus; a butter tint for the current tab and a selection */
-  --color-accent: oklch(42.8% 0.172 259.7); --color-accent-deep: oklch(34% 0.15 262); --color-accent-ink: oklch(100% 0 0);
-  --color-accent-text: oklch(42.8% 0.172 259.7); --color-accent-edge: oklch(42.8% 0.172 259.7); --color-accent-soft: oklch(95.5% 0.06 92); --color-on-soft: oklch(28.3% 0.062 43.5);
+  /* chocolate for rings, badges and checks with butter type on them; a warm brown for links; a butter tint for the current tab and a selection */
+  --color-accent: oklch(28.3% 0.062 43.5); --color-accent-deep: oklch(20% 0.045 43); --color-accent-ink: oklch(89.3% 0.12 87.7);
+  --color-accent-text: oklch(45% 0.1 55); --color-accent-edge: oklch(28.3% 0.062 43.5); --color-accent-soft: oklch(95.5% 0.06 92); --color-on-soft: oklch(28.3% 0.062 43.5);
+  /* the 10: cobalt #0047AB, only for the focus ring and the primary button (below) */
   --color-focus: oklch(42.8% 0.172 259.7);
   /* right, wrong, flagged: text, fill (rings and icons) and tint (backgrounds) */
   --color-success: oklch(51.5% 0.109 160.6); --color-success-fill: oklch(62.1% 0.132 160); --color-success-tint: oklch(95% 0.024 163.1);

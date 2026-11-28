@@ -1,6 +1,6 @@
 /* Hallmark · shape: app screen · genre: modern-minimal · theme: exam-prep light, after the Pocket Prep apps (by request: their structure, flows and look; our own name, mark and palette) on Kumo components 2.18.1, the Dose faces kept · redesign: polish (quizzes rework, 2026-11-24, brand kept)
- * nav: a side menu at 60rem and up (Study, Quizzes, Mock exams, Missed questions, Stats, then the Settings pages) and a five-tab bottom bar on phones (Study, Quizzes, Mock, Stats, Settings) · screen: a six-column bento from 60rem (Study: the butter greeting beside resume and backup, the ways to study as tiles with New quiz large on butter; Quizzes: one tile per part listing the subjects with quizzes; Stats: the ring beside the rating, subjects beside the weakest subjects, the streak across; Mock setup: the form beside the open and past exams; mock results: the score beside the rating, the subject breakdown and the retake), one column below · signature: the butter greeting on Study holding the countdown and the week; one butter block per screen holding its figure (the greeting, the quiz bar, the Stats ring, the score) · answers: a cobalt ring on butter when chosen, green with a check when right, red with a cross when wrong · states: loading, empty, full
- * axes: light/grotesk-sans/60 white, 30 butter yellow, 10 cobalt, chocolate ink, with green, red and orange for state · posture: friendly-quiet · contrast: pass · modes: light · v2.0.0 */
+ * nav: a side menu at 60rem and up (Study, Quizzes, Mock exams, Missed questions, Stats, then the Settings pages) and a five-tab bottom bar on phones (Study, Quizzes, Mock, Stats, Settings) · screen: a six-column bento from 60rem (Study: the butter greeting beside resume and backup, the ways to study as tiles with New quiz large on butter; Quizzes: one tile per part listing the subjects with quizzes; Stats: the ring beside the rating, subjects beside the weakest subjects, the streak across; Mock setup: the form beside the open and past exams; mock results: the score beside the rating, the subject breakdown and the retake), one column below · signature: the butter greeting on Study holding the countdown and the week; one butter block per screen holding its figure (the greeting, the quiz bar, the Stats ring, the score) · answers: a chocolate ring on butter when chosen, green with a check when right, red with a cross when wrong · states: loading, empty, full
+ * axes: light/grotesk-sans/60 white, 30 butter yellow, 10 cobalt (primary button and focus only), chocolate ink and rings, with green, red and orange for state · posture: friendly-quiet · contrast: pass · modes: light · v2.0.0 */
 /* Hallmark · waive 7b · surface: absolute on --print-ink and --print-paper only, used inside .paper and @media print · the printed booklet and answer sheet need pure black toner on white bond, and the corner markers must scan */
 /* Hallmark · dismissed 41 · the state fills (green, red, orange) carry icons in --color-card, never text in ink; every text pair is in contrast.test.ts */
 /* Hallmark · answered F4 · buttons are Kumo's own classes (src/ui/btn.ts): one primary per screen, secondary for the rest, ghost for quiet links; aria-pressed is a toggle on the secondary */
@@ -303,7 +303,7 @@ h1:not(.sr-only) + p {
 }
 
 /* Option cards: a radio choice that needs a sentence to explain each side (the mock's form). Flat grey
-   at rest, a butter tint with a cobalt ring when chosen. */
+   at rest, a butter tint with a chocolate ring when chosen. */
 .options {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
@@ -480,16 +480,16 @@ a.brand {
 .nav a[aria-current='page'] svg {
   color: var(--color-accent-text);
 }
-/* Wide screens: the current place is the sign-in tab's pill, butter with an ink edge. */
+/* Wide screens: the current place is a chocolate pill with butter type. */
 @media (min-width: 60rem) {
   .nav a[aria-current='page'] {
-    background: var(--color-inverse);
-    color: var(--color-inverse-ink);
+    background: var(--color-ink);
+    color: var(--color-inverse);
     font-weight: var(--weight-strong);
-    box-shadow: inset 0 0 0 2px var(--color-ink), 0 2px 0 var(--color-ink);
+    box-shadow: 0 2px 0 var(--color-accent-deep);
   }
   .nav a[aria-current='page'] svg {
-    color: var(--color-inverse-ink);
+    color: var(--color-inverse);
   }
 }
 /* Avataaars are the one place with colour: her skin tone and hair are who she is. A paper disc keeps
@@ -2053,7 +2053,7 @@ dialog::backdrop {
 .week-streak svg {
   color: var(--color-ink);
 }
-/* Not studied yet today: the streak turns into a cobalt pill on the butter, the loudest thing on the card. */
+/* Not studied yet today: the streak turns into a chocolate pill on the butter, the loudest thing on the card. */
 a.week-streak.is-at-risk {
   min-height: 36px;
   padding: 0 var(--space-sm);
@@ -2384,7 +2384,7 @@ a.mode:focus-visible {
 .stats-count {
   font-weight: var(--weight-strong);
 }
-/* By part: a name and its figure, a cobalt bar, a line of detail. Only the figure takes the
+/* By part: a name and its figure, a chocolate bar, a line of detail. Only the figure takes the
    LET's own lines: green at a passing 75%, orange from the 50% floor, red under it. */
 .subjects {
   display: grid;

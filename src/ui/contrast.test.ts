@@ -69,8 +69,11 @@ describe('tokens', () => {
     ['color-warning', 'color-inverse', 4.5],
     ['color-success', 'color-inverse', 3],
     ['color-error', 'color-inverse', 3],
-    // The at-risk streak pill: a butter flame on cobalt.
-    ['color-inverse', 'color-accent', 3],
+    // The at-risk streak pill and the side menu's current place: butter on chocolate.
+    ['color-inverse', 'color-accent', 4.5],
+    ['color-inverse', 'color-ink', 4.5],
+    // Cobalt is kept for the primary button and the focus ring.
+    ['color-focus', 'color-card', 3],
     // White checks, crosses and flags sit on the state fills.
     ['color-card', 'color-success-fill', 3],
     ['color-card', 'color-error-fill', 3],
