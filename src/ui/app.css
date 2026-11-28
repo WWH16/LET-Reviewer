@@ -1852,6 +1852,12 @@ details > summary {
   cursor: pointer;
   border-radius: var(--radius-control);
 }
+/* Touch screens: a 44px target, as the checkbox rows get. */
+@media (pointer: coarse) {
+  details > summary {
+    min-block-size: 44px;
+  }
+}
 summary.label {
   display: flex;
   align-items: center;
