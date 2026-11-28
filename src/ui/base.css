@@ -1,8 +1,6 @@
 /* Base, on top of Kumo's reset (Tailwind preflight, inside kumo-standalone.css). Unlayered, so it wins over Kumo's layers. */
 *, *::before, *::after { box-sizing: border-box; }
 html, body { overflow-x: clip; }
-/* Past 1440px the whole app grows with the screen, up to 112.5% at 2560px; below, the browser's own size. */
-html { font-size: clamp(100%, 100% + (100vw - 90rem) * 0.0018, 112.5%); }
 html { scrollbar-gutter: stable; scrollbar-color: var(--color-control) var(--color-paper); scroll-padding-top: var(--space-2xl); }
 body { margin: 0; background: var(--color-paper); color: var(--color-ink-2); font-family: var(--font-body); font-size: var(--text-body); line-height: 1.55; -webkit-font-smoothing: antialiased; caret-color: var(--color-accent-text); }
 #root { isolation: isolate; }
