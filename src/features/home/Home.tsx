@@ -65,7 +65,7 @@ export function Home() {
       icon: 'stats',
       to: latest ? '/mock/results' : undefined,
     },
-    { name: 'Mock exam', line: 'Timed like the real LET, and graded only when you submit.', icon: 'mock', to: '/mock' },
+    { name: 'Mock exam', line: 'Timed, and graded only when you submit.', icon: 'mock', to: '/mock' },
   ];
 
 
