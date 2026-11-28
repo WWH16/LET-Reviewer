@@ -171,7 +171,7 @@ h1:not(.sr-only) + p {
   padding: var(--pad-card);
   border-radius: var(--radius-card);
   background: var(--color-card);
-  color: var(--color-ink);
+  color: var(--color-ink-2);
   box-shadow: var(--shadow-card);
 }
 /* ---------- Surfaces: ground, tile, action tile, well, inverse ----------
@@ -186,7 +186,7 @@ h1:not(.sr-only) + p {
   padding: var(--pad-card);
   border-radius: var(--radius-tile);
   background: var(--color-card);
-  color: var(--color-ink);
+  color: var(--color-ink-2);
   box-shadow: var(--shadow-card);
 }
 .tile > h2 {
@@ -224,6 +224,24 @@ h1:not(.sr-only) + p {
 }
 .tile-inverse :focus-visible {
   outline-color: var(--color-inverse-ink);
+}
+/* Two text tones: running text in the softer brown (--color-ink-2), titles, names and labels in chocolate. */
+.mode-name, .resume-title, .subject-name, .option-title {
+  color: var(--color-ink);
+}
+/* A tag beside a row (a mock's form): a cream pill in small capitals. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-2xs) var(--space-sm);
+  border-radius: var(--radius-pill);
+  background: var(--color-paper-2);
+  color: var(--color-ink);
+  font-size: 0.75rem;
+  font-weight: var(--weight-medium);
+  line-height: 1.4;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 /* A list inside a tile gives up its own surface: the tile is the card. */
 .tile .list {
@@ -908,7 +926,7 @@ a.brand {
   background: var(--color-paper);
   font-family: var(--font-mono);
   font-size: var(--text-xl);
-  font-weight: 600;
+  font-weight: 500;
   color: var(--color-ink);
 }
 /* (specific enough to beat the sign-in card's own input rule) */
@@ -1602,7 +1620,7 @@ legend {
   margin-top: 0.75em;
 }
 .stem > p:last-child {
-  font-weight: 550;
+  font-weight: 500;
 }
 .kbd-hint {
   color: var(--color-muted);
@@ -1631,7 +1649,7 @@ legend {
   background: var(--color-success-tint);
   color: var(--color-success);
   font-size: var(--text-base);
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.4;
 }
 .stamp.is-miss {
@@ -1817,7 +1835,7 @@ dialog {
   border: 0;
   border-radius: var(--radius-tile);
   background: var(--color-card);
-  color: var(--color-ink);
+  color: var(--color-ink-2);
   box-shadow: var(--shadow-pop);
 }
 dialog h2 {
@@ -2075,7 +2093,7 @@ a.week-streak.is-at-risk:hover {
   padding: var(--pad-card);
   border-radius: var(--radius-tile);
   background: var(--color-card);
-  color: var(--color-ink);
+  color: var(--color-ink-2);
   box-shadow: var(--shadow-card);
   text-decoration: none;
 }
@@ -2113,7 +2131,7 @@ a.mode {
   gap: var(--space-sm);
   min-height: 3.5rem;
   padding: var(--space-xs) var(--pad-card);
-  color: var(--color-ink);
+  color: var(--color-ink-2);
   text-decoration: none;
 }
 a.mode:hover {
@@ -2618,7 +2636,7 @@ a.mode:focus-visible {
 }
 .bubble-row.is-flagged .num {
   color: var(--color-accent-text);
-  font-weight: 600;
+  font-weight: 500;
 }
 .bubble {
   width: 36px;
@@ -2630,7 +2648,7 @@ a.mode:focus-visible {
   background: var(--color-card);
   color: var(--color-ink);
   font-size: var(--text-meta);
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   box-shadow: inset 0 0 0 1px var(--color-control);
   transition: background-color var(--dur-micro) var(--ease-out);
@@ -2772,7 +2790,7 @@ kbd {
 /* The item number is the landmark in a 150-item paper: the one display-face mark per item. */
 .booklet h2 {
   font-size: var(--text-lg);
-  font-weight: 600;
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
 }
 .item-nav {
@@ -3135,7 +3153,7 @@ dialog.command input:focus-visible {
 }
 .cal-head h3 {
   font-size: var(--text-body);
-  font-weight: 600;
+  font-weight: 500;
 }
 .flip {
   display: inline-flex;
@@ -3179,7 +3197,7 @@ dialog.command input:focus-visible {
 }
 .cal-grid td[data-level='4'] {
   background: var(--heat-4);
-  font-weight: 600;
+  font-weight: 500;
 }
 .cal-grid td.is-today {
   box-shadow: inset 0 0 0 2px var(--color-ink);

@@ -20,23 +20,24 @@
   --font-body: "Instrument Sans Variable", "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
   --font-num: "DM Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --font-sans: var(--font-body); --font-mono: var(--font-num); --default-font-family: var(--font-body); --default-mono-font-family: var(--font-num);
-  --tracking-display: -0.02em;
+  --tracking-display: -0.015em;
   /* Type and spacing roles that grow smoothly with the screen: the phone value at 360px, the laptop value at
      1440px, no jumps between. Past 1440px the whole app grows a little with the root size (base.css), so a
      big monitor is not a small app in a sea of margin. Body, names and meta stay put below 1440px. */
-  /* A calm app scale: meta 12.5, body 14, names 15, sections 16 to 17, page titles 21 to 26. Each step is one
-     size and one weight up, never a jump: page titles 650, sections 600, names and buttons 550, body 400,
-     meta 400 in the muted tone. Figures come in two sizes: the lead figure a screen exists for (the ring,
-     a score) and the secondary ones beside it, both 600. */
-  --weight-title: 450; --weight-head: 600; --weight-strong: 550; --weight-medium: 500; --weight-figure: 500;
-  --text-body: 0.875rem; --text-name: 0.9375rem;
-  /* Helper text, labels and the side menu's settings pages: one step under the body, never Kumo's 13px. */
-  --text-meta: 0.78125rem;
-  --text-h1: clamp(1.312rem, 1.208rem + 0.463vw, 1.625rem); --text-h2: clamp(1rem, 0.9792rem + 0.09259vw, 1.062rem);
-  --text-figure: clamp(1.375rem, 1.25rem + 0.5556vw, 1.75rem); --text-figure-lead: clamp(1.875rem, 1.708rem + 0.7407vw, 2.375rem);
-  --text-stat: clamp(1rem, 0.9583rem + 0.1852vw, 1.125rem);
-  --pad-card: clamp(0.875rem, 0.75rem + 0.5556vw, 1.25rem); --gap-tile: clamp(0.75rem, 0.6667rem + 0.3704vw, 1rem);
-  --gap-section: clamp(1rem, 0.9167rem + 0.3704vw, 1.25rem); --pad-page-top: clamp(1rem, 0.6667rem + 1.481vw, 2rem);
+  /* The editorial scale (DESIGN-claude.md), sized for an app: captions 13, body 16 at 1.55, names 16, card
+     headings 18, page titles 28 to 36 in the serif. Two weights only: 400 for body and every serif title or
+     figure, 500 for card headings, names, labels and buttons; nothing bolder. Figures come in two sizes: the
+     lead figure a screen exists for (the ring, a score) at 36 to 48, and the secondary ones at 24 to 28. */
+  --weight-title: 400; --weight-head: 500; --weight-strong: 500; --weight-medium: 500; --weight-figure: 400;
+  --text-body: 1rem; --text-name: 1rem;
+  /* Captions: helper text, labels and the side menu's settings pages */
+  --text-meta: 0.8125rem;
+  --text-h1: clamp(1.75rem, 1.5833rem + 0.7407vw, 2.25rem); --text-h2: 1.125rem;
+  --text-figure: clamp(1.5rem, 1.4167rem + 0.3704vw, 1.75rem); --text-figure-lead: clamp(2.25rem, 2rem + 1.111vw, 3rem);
+  --text-stat: clamp(1.125rem, 1.0417rem + 0.3704vw, 1.375rem);
+  /* roomy cards, 20px on a phone to 32px on a laptop, with 24px between tiles */
+  --pad-card: clamp(1.25rem, 1rem + 1.111vw, 2rem); --gap-tile: clamp(1rem, 0.9167rem + 0.3704vw, 1.25rem);
+  --gap-section: clamp(1.25rem, 1.1667rem + 0.3704vw, 1.5rem); --pad-page-top: clamp(1rem, 0.6667rem + 1.481vw, 2rem);
   --radius-control: 8px; --radius-card: 12px; --radius-tile: 16px; --radius-pill: 999px;
   /* The activity grid: five steps from empty (paper-3) to busiest, butter to deep gold. */
   --heat-cell: 0.6875rem; --heat-gap: 3px;
@@ -49,8 +50,8 @@
   --color-paper: oklch(98.2% 0.005 95.1); --color-paper-soft: oklch(95.7% 0.012 79.8);
   --color-paper-2: oklch(90.9% 0.021 81.8); --color-paper-3: oklch(87.5% 0.025 80);
   --color-card: oklch(93.6% 0.016 82.8);
-  /* the ink: chocolate #421E0E, and browns stepped from it */
-  --color-ink: oklch(28.3% 0.062 43.5); --color-ink-2: oklch(35% 0.06 45); --color-muted: oklch(43% 0.06 50);
+  /* the ink: chocolate #421E0E for titles and names, a softer brown for running text, browns stepped from it */
+  --color-ink: oklch(28.3% 0.062 43.5); --color-ink-2: oklch(38% 0.05 47); --color-muted: oklch(43% 0.06 50);
   --color-rule: oklch(90.7% 0.012 67.7); --color-line: oklch(28.3% 0.062 43.5 / 0.15); --color-control: oklch(60% 0.06 60);
   /* chocolate for rings, badges and checks with butter type on them; a warm brown for links; a butter tint for the current tab and a selection */
   --color-accent: oklch(28.3% 0.062 43.5); --color-accent-deep: oklch(20% 0.045 43); --color-accent-ink: oklch(89.3% 0.12 87.7);
@@ -90,4 +91,3 @@
   --print-ink: #000; --print-paper: #fff; --font-print: var(--font-body);
 }
 
-/* Laptop and up: one step up on headings and figures, a little more room in cards and between sections. */

@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
-import { Badge } from '@cloudflare/kumo/components/badge';
 
-/** A small neutral label beside a row, such as a mock's form (Digital, Printed). */
+/** A small tag beside a row, such as a mock's form (Digital, Printed): a cream pill in small capitals. */
 export function Chip({ children }: { children: ReactNode }) {
-  return <Badge variant="secondary">{children}</Badge>;
+  return <span className="chip">{children}</span>;
 }

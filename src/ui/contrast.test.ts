@@ -60,6 +60,9 @@ describe('tokens', () => {
     ['color-accent-text', 'color-paper', 4.5],
     ['color-accent-text', 'color-card', 4.5],
     ['color-focus', 'color-paper', 3],
+    // Running text is the softer brown, on the canvas and on the cream cards.
+    ['color-ink-2', 'color-paper', 4.5],
+    ['color-ink-2', 'color-card', 4.5],
     // Meta text and a field's edge sit on the cream cards.
     ['color-muted', 'color-card', 4.5],
     ['color-control', 'color-card', 3],

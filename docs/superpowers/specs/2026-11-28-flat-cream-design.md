@@ -27,3 +27,13 @@
 - The browser theme colour and the PWA manifest colour become `#faf9f5`.
 
 **Left to the builder:** the exact soft-shadow values, the serif's weight and tracking per size, and what light colour carries the white checks on the state fills if the cream cards push them under 3:1.
+
+## Type and spacing (follow-up, same day)
+
+The owner asked for the doc's whole hierarchy, sized for an app (the 64px hero and 96px section gaps are marketing-only and stay out):
+- Body 16px at 1.55 in a softer brown (`--color-ink-2`); titles, names and labels in chocolate.
+- Captions 13px; names 16px; card headings 18px at 500 in Instrument Sans; page titles 28 to 36px in Newsreader at 400 with -0.015em; lead figures 36 to 48px, secondary figures 24 to 28px, both 400.
+- Two weights only: 400 and 500. Nothing at 550 or above.
+- Cards pad 20px on a phone to 32px on a laptop; 24px between tiles.
+- Tags (a mock's Digital or Printed) are cream pills in 12px small capitals with 0.12em tracking.
+- This reverses the earlier 14px body ("Type: a smaller, calmer scale"), by the owner's choice.
