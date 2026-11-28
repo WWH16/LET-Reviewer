@@ -10,7 +10,6 @@ import {
   BookOpenTextIcon,
   CalendarBlankIcon,
   CheckIcon,
-  CircleHalfIcon,
   ClockIcon,
   ExamIcon,
   EyeClosedIcon,
@@ -59,8 +58,7 @@ const ICONS = {
   eye: EyeIcon,
   'eye-closed': EyeClosedIcon,
   'sign-out': SignOutIcon,
-  // the theme choice
-  'theme-system': CircleHalfIcon,
+  // the theme toggle
   sun: SunIcon,
   moon: MoonIcon,
 } satisfies Record<string, PhosphorIcon>;

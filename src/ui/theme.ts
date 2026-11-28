@@ -1,8 +1,9 @@
 import { useSyncExternalStore } from 'react';
 
 /**
- * Light or dark, chosen per device: System follows the phone or computer, Light and Dark pin it. index.html sets
- * the theme before the first paint (the same rules as below), so the page never flashes the other one.
+ * Light or dark, per device: until she picks one with the toggle (System) the page follows the phone or computer;
+ * a pick is kept. index.html sets the theme before the first paint (the same rules as below), so the page never
+ * flashes the other one.
  */
 export type ThemePref = 'system' | 'light' | 'dark';
 
@@ -13,6 +14,8 @@ const systemDark = () => canMatch && window.matchMedia('(prefers-color-scheme: d
 
 export const parseTheme = (v: string | null): ThemePref => (v === 'light' || v === 'dark' ? v : 'system');
 export const resolveTheme = (p: ThemePref, dark: boolean) => (p === 'system' ? (dark ? 'dark' : 'light') : p);
+
+const listeners = new Set<() => void>();
 
 function read(): ThemePref {
   try {
@@ -29,13 +32,13 @@ function apply(p: ThemePref, fade: boolean) {
   const set = () => {
     document.documentElement.dataset.theme = theme;
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', BAR[theme]);
+    listeners.forEach((l) => l());
   };
   if (fade && document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches)
     document.startViewTransition(set);
   else set();
 }
 
-const listeners = new Set<() => void>();
 let pref = read();
 
 export function setTheme(p: ThemePref) {
@@ -47,19 +50,18 @@ export function setTheme(p: ThemePref) {
     /* private mode: the choice lasts until the page closes */
   }
   apply(p, true);
-  listeners.forEach((l) => l());
 }
 
 // Under System, follow the device when it switches (sunset, a quick-settings toggle) while the app is open.
 if (canMatch) window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => pref === 'system' && apply(pref, true));
 
-/** The current choice, kept in step across every control that shows it. */
-export function useTheme(): ThemePref {
+/** The theme on the page now, light or dark, kept in step as it changes. */
+export function useTheme(): 'light' | 'dark' {
   return useSyncExternalStore(
     (l) => {
       listeners.add(l);
       return () => listeners.delete(l);
     },
-    () => pref,
+    () => (document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'),
   );
 }

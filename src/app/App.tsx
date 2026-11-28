@@ -2,7 +2,7 @@ import { Link, Route, Routes, useLocation, useMatch } from 'react-router-dom';
 import { Page } from '../ui/Page';
 import { Avatar } from '../ui/Avatar';
 import { Icon } from '../ui/Icon';
-import { ThemeControl } from '../ui/ThemeControl';
+import { ThemeToggle } from '../ui/ThemeToggle';
 import { Home } from '../features/home/Home';
 import { useMeta, useSettings, useUnfinishedCount } from '../db/hooks';
 import { CommandMenu } from './CommandMenu';
@@ -80,10 +80,14 @@ export function App() {
       </a>
       <header className={inExam ? 'shell-top in-exam' : 'shell-top'}>
         <div className="top">
-          <Link className="brand" to="/" aria-label="LET Prep, home">
-            <img className="brand-mark" src={mark} alt="" width={24} height={24} />
-            LET Prep
-          </Link>
+          {/* The name, and the theme toggle at the far end of its row: the phone's top bar, the side menu's top. */}
+          <div className="top-row">
+            <Link className="brand" to="/" aria-label="LET Prep, home">
+              <img className="brand-mark" src={mark} alt="" width={24} height={24} />
+              LET Prep
+            </Link>
+            <ThemeToggle />
+          </div>
           {/* Wide screens: the jump box sits under the name, like a search field, above the menu. */}
           <CommandMenu />
           <nav className="nav" aria-label="Main">
@@ -148,8 +152,6 @@ export function App() {
             {/* Sign out under Settings, always one click away on wide screens. */}
             {syncAvailable && <SignOutButton className="nav-signout only-wide" />}
           </nav>
-          {/* Wide screens: the theme sits at the foot of the side menu, one click from anywhere. */}
-          <ThemeControl className="nav-theme only-wide" hint={false} />
         </div>
       </header>
       <Suspense
