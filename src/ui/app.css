@@ -217,11 +217,22 @@ h1:not(.sr-only) + p {
   --color-kumo-line: color-mix(in oklab, var(--color-inverse-ink) 35%, transparent);
   --text-color-kumo-default: var(--color-inverse-ink);
 }
-/* The fills wash out on butter, so the quiz bar segments and the low timer take the stronger text tones there. */
+/* The golden block keeps chocolate on gold in both themes: its ink, pills and focus ring stay chocolate, and the
+   fills, which wash out on gold, take the stronger tones that read there (the quiz bar segments, the low timer). */
 :is(.tile-inverse, .quiz-bar) {
-  --color-success-fill: var(--color-success);
-  --color-error-fill: var(--color-error);
-  --color-warning-fill: var(--color-warning);
+  --color-ink: var(--chocolate);
+  --color-ink-2: var(--chocolate);
+  --color-accent: var(--chocolate);
+  --color-accent-deep: var(--chocolate-deep);
+  --color-accent-ink: var(--butter);
+  --color-focus: var(--chocolate);
+  --color-edge: var(--chocolate);
+  --color-success: var(--on-gold-success);
+  --color-error: var(--on-gold-error);
+  --color-warning: var(--on-gold-warning);
+  --color-success-fill: var(--on-gold-success);
+  --color-error-fill: var(--on-gold-error);
+  --color-warning-fill: var(--on-gold-warning);
 }
 .tile-inverse :is(.muted, .meta, .display-unit, .label) {
   color: var(--color-inverse-muted);
@@ -500,13 +511,13 @@ a.brand {
 /* Wide screens: the current place is a chocolate pill with butter type. */
 @media (min-width: 60rem) {
   .nav a[aria-current='page'] {
-    background: var(--color-ink);
-    color: var(--color-inverse);
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
     font-weight: var(--weight-strong);
     box-shadow: 0 2px 0 var(--color-accent-deep);
   }
   .nav a[aria-current='page'] svg {
-    color: var(--color-inverse);
+    color: var(--color-accent-ink);
   }
 }
 /* Avataaars are the one place with colour: her skin tone and hair are who she is. A paper disc keeps
@@ -710,9 +721,9 @@ a.brand {
 .auth-card {
   gap: var(--space-md);
   padding: var(--space-lg);
-  border: 2px solid var(--color-ink);
+  border: 2px solid var(--color-edge);
   border-radius: 24px;
-  box-shadow: 0 6px 0 var(--color-ink);
+  box-shadow: 0 6px 0 var(--color-edge-drop);
 }
 .auth-card :is(h1, h2) {
   font-family: var(--font-display);
@@ -832,7 +843,7 @@ a.brand {
   width: calc(50% - var(--space-2xs));
   border-radius: var(--radius-pill);
   background: var(--color-inverse);
-  box-shadow: inset 0 0 0 2px var(--color-ink), 0 2px 0 var(--color-ink);
+  box-shadow: inset 0 0 0 2px var(--chocolate), 0 2px 0 var(--color-edge-drop);
   transition: transform var(--dur-short) var(--ease-out);
 }
 .seg:has(> button:last-child[aria-pressed='true'])::before {
@@ -1257,7 +1268,7 @@ main:not(.wide) > .stack-lg {
   background: var(--color-inverse);
   color: var(--color-inverse-ink);
   --text-color-kumo-default: var(--color-inverse-ink);
-  box-shadow: inset 0 0 0 2px var(--color-ink), 0 2px 0 var(--color-ink);
+  box-shadow: inset 0 0 0 2px var(--chocolate), 0 2px 0 var(--color-edge-drop);
 }
 .btn[aria-busy='true'] {
   cursor: progress;
@@ -2239,7 +2250,7 @@ a.week-streak.is-at-risk {
   text-decoration: none;
 }
 a.week-streak.is-at-risk svg {
-  color: var(--color-inverse);
+  color: var(--color-accent-ink);
 }
 a.week-streak.is-at-risk:hover {
   background: var(--color-accent-deep);

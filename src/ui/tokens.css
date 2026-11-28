@@ -68,11 +68,16 @@
   --color-gold: oklch(54% 0.115 72);
   /* the primary button: chocolate with a white label, a step darker when pressed */
   --color-button: oklch(28.3% 0.062 43.5); --color-button-deep: oklch(20% 0.045 43); --color-button-ink: oklch(100% 0 0);
-  /* The clay look, everywhere: a 2px chocolate outline and a solid chocolate shadow under it, no blur. Drawn with
-     box-shadow, so the outline takes no layout space. A tile you tap rises one step on hover. */
-  --shadow-card: 0 0 0 2px var(--color-ink), 0 4px 0 var(--color-ink);
-  --shadow-raised: 0 0 0 2px var(--color-ink), 0 6px 0 var(--color-ink);
-  --shadow-pop: 0 0 0 2px var(--color-ink), 0 6px 0 var(--color-ink);
+  /* Fixed colours for the golden block, which stays golden with chocolate on it in both themes: its ink, its
+     chocolate pills with butter type, and the right/wrong/flag tones that read on gold. */
+  --chocolate: oklch(28.3% 0.062 43.5); --chocolate-deep: oklch(20% 0.045 43); --butter: oklch(89.3% 0.12 87.7);
+  --on-gold-success: oklch(51.5% 0.109 160.6); --on-gold-error: oklch(53.1% 0.172 25.2); --on-gold-warning: oklch(46% 0.12 50);
+  /* The clay look, everywhere: a 2px outline and a solid shadow under it, no blur, chocolate in the light theme.
+     Drawn with box-shadow, so the outline takes no layout space. A tile you tap rises one step on hover. */
+  --color-edge: oklch(28.3% 0.062 43.5); --color-edge-drop: oklch(28.3% 0.062 43.5);
+  --shadow-card: 0 0 0 2px var(--color-edge), 0 4px 0 var(--color-edge-drop);
+  --shadow-raised: 0 0 0 2px var(--color-edge), 0 6px 0 var(--color-edge-drop);
+  --shadow-pop: 0 0 0 2px var(--color-edge), 0 6px 0 var(--color-edge-drop);
   --shadow-bar: 0 1px 3px oklch(0% 0 0 / 0.06), 0 4px 12px -6px oklch(0% 0 0 / 0.06);
   --shadow-bar-up: 0 -1px 3px oklch(0% 0 0 / 0.06), 0 -4px 12px -6px oklch(0% 0 0 / 0.06);
   --shadow-side: 1px 0 3px oklch(0% 0 0 / 0.06), 4px 0 12px -6px oklch(0% 0 0 / 0.06);
@@ -88,5 +93,34 @@
 
   /* print: pure black toner on white bond (plan section 8.3) */
   --print-ink: #000; --print-paper: #fff; --font-print: var(--font-body);
+}
+
+/* Dark theme, following the phone or computer's own setting, as iOS, Android and most apps do. The same palette at
+   night: dark chocolate grounds and cards, cream type, golden for the main button, focus, rings and links, and the
+   golden block unchanged. Every pair is checked in contrast.test.ts, for both themes. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --color-paper: oklch(19% 0.012 45); --color-paper-soft: oklch(25% 0.016 45);
+    --color-paper-2: oklch(25% 0.016 45); --color-paper-3: oklch(29% 0.02 45);
+    --color-card: oklch(23% 0.015 45);
+    --color-ink: oklch(94% 0.018 80); --color-ink-2: oklch(86% 0.022 75); --color-muted: oklch(76% 0.03 70);
+    --color-rule: oklch(33% 0.02 45); --color-line: oklch(94% 0.018 80 / 0.14); --color-control: oklch(60% 0.04 60);
+    --color-edge: oklch(45% 0.035 50); --color-edge-drop: oklch(10% 0.01 45);
+    --color-accent: oklch(86% 0.16 88); --color-accent-deep: oklch(80% 0.15 84); --color-accent-ink: oklch(28.3% 0.062 43.5);
+    --color-accent-text: oklch(85% 0.13 86); --color-accent-edge: oklch(86% 0.16 88); --color-accent-soft: oklch(31% 0.05 75); --color-on-soft: oklch(94% 0.018 80);
+    --color-focus: oklch(86% 0.16 88);
+    --color-success: oklch(80% 0.12 160); --color-success-tint: oklch(28% 0.045 160);
+    --color-error: oklch(78% 0.12 25); --color-error-tint: oklch(28% 0.05 25);
+    --color-warning: oklch(82% 0.11 65); --color-warning-tint: oklch(29% 0.045 60); --color-info-tint: oklch(29% 0.04 85);
+    --color-shade: oklch(5% 0 0 / 0.6);
+    --color-gold: oklch(84% 0.13 85);
+    --color-button: oklch(86% 0.16 88); --color-button-deep: oklch(80% 0.15 84); --color-button-ink: oklch(28.3% 0.062 43.5);
+    /* the activity grid deepens in colour rather than lightness, so cream day numbers keep 4.5:1 */
+    --heat-1: oklch(31% 0.04 70); --heat-2: oklch(35% 0.07 72); --heat-3: oklch(39% 0.1 75); --heat-4: oklch(43% 0.12 78);
+    --shadow-bar: 0 1px 3px oklch(0% 0 0 / 0.3), 0 4px 12px -6px oklch(0% 0 0 / 0.3);
+    --shadow-bar-up: 0 -1px 3px oklch(0% 0 0 / 0.3), 0 -4px 12px -6px oklch(0% 0 0 / 0.3);
+    --shadow-side: 1px 0 3px oklch(0% 0 0 / 0.3), 4px 0 12px -6px oklch(0% 0 0 / 0.3);
+  }
 }
 

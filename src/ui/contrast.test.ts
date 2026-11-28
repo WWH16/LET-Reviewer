@@ -33,9 +33,20 @@ const ratio = (x: [number, number, number], y: [number, number, number]) => {
   return (hi + 0.05) / (lo + 0.05);
 };
 
-const t = block(':root {');
+const light = block(':root {');
+// The dark theme only redefines what changes, so it reads as the light tokens with its own on top.
+const darkOwn = block('@media (prefers-color-scheme: dark)');
+const dark = { ...light, ...darkOwn };
 
-describe('tokens', () => {
+it('reads the dark theme', () => {
+  expect(Object.keys(darkOwn).length).toBeGreaterThan(25);
+  expect(darkOwn['color-paper'][0]).toBeLessThan(0.3);
+});
+
+describe.each([
+  ['light', light],
+  ['dark', dark],
+] as const)('%s theme', (_, t) => {
   const pairs: [string, string, number][] = [
     ['color-ink', 'color-paper', 4.5],
     ['color-ink', 'color-card', 4.5],
@@ -70,15 +81,16 @@ describe('tokens', () => {
     ['color-accent-edge', 'color-paper', 3],
     ['color-accent-edge', 'color-accent-soft', 3],
     ['color-accent-text', 'color-accent-soft', 4.5],
-    // On the butter block the state colours stand in for their fills (app.css), and the low timer is text.
-    ['color-warning', 'color-inverse', 4.5],
-    ['color-success', 'color-inverse', 3],
-    ['color-error', 'color-inverse', 3],
-    // The at-risk streak pill and the side menu's current place: butter on chocolate.
-    ['color-inverse', 'color-accent', 4.5],
-    ['color-inverse', 'color-ink', 4.5],
-    // The chocolate focus ring on the white cards.
+    // On the golden block the right/wrong/flag tones stand in for their fills (app.css), and the low timer is text.
+    ['on-gold-warning', 'color-inverse', 4.5],
+    ['on-gold-success', 'color-inverse', 3],
+    ['on-gold-error', 'color-inverse', 3],
+    // The golden block's own pills: butter on chocolate (the at-risk streak), and chocolate on gold.
+    ['butter', 'chocolate', 4.5],
+    ['chocolate', 'color-inverse', 4.5],
+    // The focus ring on cards, and the clay outline against the ground.
     ['color-focus', 'color-card', 3],
+    ['color-edge', 'color-paper', 1.5],
     // Light checks, crosses and flags (the canvas cream) sit on the state fills.
     ['color-paper', 'color-success-fill', 3],
     ['color-paper', 'color-error-fill', 3],
