@@ -132,6 +132,15 @@ describe('confirmSignUp', () => {
     await signIn('n@example.test', 'password1');
     expect(h.saveSettings).not.toHaveBeenCalled();
   });
+
+  it('pulls an existing account before it counts as signed in on a new device', async () => {
+    let signedInWhenPulled: boolean | undefined;
+    h.pull.mockImplementation(async () => ((signedInWhenPulled = h.state.signedIn), []));
+    h.signInWithPassword.mockResolvedValue({ data: { user: { id: 'N' } }, error: null });
+    await signIn('n@example.test', 'password1');
+    expect(signedInWhenPulled).toBe(false);
+    expect(h.state.signedIn).toBe(true);
+  });
 });
 
 describe('signIn', () => {

@@ -56,6 +56,9 @@ async function finishSignIn(userId: string | undefined, { fresh = false } = {}):
   // The session stays, so Replace can go ahead; nothing syncs until the person decides.
   if (state.userId && state.userId !== userId) return { ok: false, otherAccount: true };
   if (fresh) await saveSettings({ onboarded: false });
+  // An existing account on a device that never synced: pull its settings first, or the welcome flashes until they
+  // arrive. A failed pull (offline) goes ahead anyway; the welcome then shows, as it would with no account data.
+  else if (!state.lastSyncAt) await runSync(remote, store, userId);
   await store.setState({ signedIn: true, lastError: null });
   void syncNow();
   return { ok: true };
