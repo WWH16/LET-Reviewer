@@ -1,6 +1,6 @@
-/* Role tokens, by the 60-30-10 rule: 60 white (a warm off-white ground and white cards), 30 yellow (the
-   golden header block on each screen, butter tints for the current place and a choice), 10 warm
-   near-black (ink, buttons, rings). Three state colours always mean the same thing: green is right,
+/* Role tokens, by the 60-30-10 rule: 60 butter yellow #FDD77A (the ground, pale butter wells, cream cards),
+   30 chocolate #421E0E (ink, the clay outlines, the header block on each screen), 10 cobalt #0047AB
+   (primary buttons, links, the current place, a choice, focus). Three state colours always mean the same thing: green is right,
    red is wrong, orange is flagged or middling. State is never colour alone: a right
    answer also carries a check, a wrong one a cross, a flag the flag icon. Kumo's --color-kumo-* tokens
    point at these, so its components follow. Every text pair is checked in contrast.test.ts. */
@@ -39,29 +39,33 @@
   --radius-control: 8px; --radius-card: 12px; --radius-tile: 20px; --radius-pill: 999px;
   /* The activity grid: five steps from empty (paper-3) to busiest, butter to deep gold. */
   --heat-cell: 0.6875rem; --heat-gap: 3px;
-  --heat-0: var(--color-paper-3); --heat-1: oklch(94% 0.07 95); --heat-2: oklch(88% 0.13 92); --heat-3: oklch(80% 0.16 85); --heat-4: oklch(63% 0.13 70);
+  --heat-0: var(--color-paper-3); --heat-1: oklch(87% 0.13 88); --heat-2: oklch(81% 0.15 82); --heat-3: oklch(74% 0.15 72); --heat-4: oklch(67% 0.14 62);
   --measure-app: 48rem; --container-app: 72rem; --sidebar-w: 15rem; --header-h: 48px; --tabbar-h: 56px; --sticky-offset: env(safe-area-inset-top, 0px);
   --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px); --safe-left: env(safe-area-inset-left, 0px); --safe-right: env(safe-area-inset-right, 0px);
 
-  --color-paper: oklch(98.5% 0.005 95); --color-paper-2: oklch(96.2% 0.012 95); --color-paper-3: oklch(93.5% 0.018 95);
-  --color-card: oklch(100% 0 0);
-  --color-ink: oklch(24% 0.015 80); --color-ink-2: oklch(33% 0.015 80); --color-muted: oklch(48% 0.02 80);
-  --color-rule: oklch(91% 0.012 90); --color-line: oklch(24% 0.015 80 / 0.12); --color-control: oklch(68% 0.02 85);
-  /* the 10: warm near-black for primary buttons, rings and focus; a golden brown for links; butter for the current tab and a selection */
-  --color-accent: oklch(24% 0.015 80); --color-accent-deep: oklch(15% 0.01 80); --color-accent-ink: oklch(100% 0 0);
-  --color-accent-text: oklch(45% 0.09 70); --color-accent-edge: oklch(24% 0.015 80); --color-accent-soft: oklch(95.5% 0.06 95); --color-on-soft: oklch(24% 0.015 80);
-  --color-focus: oklch(24% 0.015 80);
+  /* the 60: butter yellow #FDD77A ground, paler butter for wells and hovers, cream cards */
+  --color-paper: oklch(89.3% 0.12 87.7); --color-paper-2: oklch(95.5% 0.05 90); --color-paper-3: oklch(92.5% 0.075 89);
+  --color-card: oklch(99.2% 0.012 92);
+  /* the 30: chocolate #421E0E ink, and browns stepped from it */
+  --color-ink: oklch(28.3% 0.062 43.5); --color-ink-2: oklch(35% 0.06 45); --color-muted: oklch(43% 0.06 50);
+  --color-rule: oklch(87% 0.06 82); --color-line: oklch(28.3% 0.062 43.5 / 0.15); --color-control: oklch(60% 0.06 60);
+  /* the 10: cobalt #0047AB for primary buttons, links, rings and focus; pale cobalt for the current tab and a selection */
+  --color-accent: oklch(42.8% 0.172 259.7); --color-accent-deep: oklch(34% 0.15 262); --color-accent-ink: oklch(100% 0 0);
+  --color-accent-text: oklch(42.8% 0.172 259.7); --color-accent-edge: oklch(42.8% 0.172 259.7); --color-accent-soft: oklch(93% 0.035 255); --color-on-soft: oklch(28.3% 0.062 43.5);
+  --color-focus: oklch(42.8% 0.172 259.7);
   /* right, wrong, flagged: text, fill (rings and icons) and tint (backgrounds) */
   --color-success: oklch(51.5% 0.109 160.6); --color-success-fill: oklch(62.1% 0.132 160); --color-success-tint: oklch(95% 0.024 163.1);
   --color-error: oklch(53.1% 0.172 25.2); --color-error-fill: oklch(59.7% 0.182 24.5); --color-error-tint: oklch(94.4% 0.022 17.5);
-  --color-warning: oklch(46% 0.12 50); --color-warning-fill: oklch(62% 0.16 45); --color-warning-tint: oklch(95.5% 0.022 65); --color-info-tint: oklch(96% 0.04 95);
-  --color-shade: oklch(24% 0.015 80 / 0.45);
-  /* the 30: the golden header block, one per screen, holding its figure (the quiz bar, the Stats gauge, the score) */
-  --color-inverse: oklch(86% 0.16 88); --color-inverse-ink: oklch(24% 0.015 80); --color-inverse-muted: oklch(38% 0.05 75); --color-inverse-tint: oklch(80% 0.15 84);
-  /* deep gold for a large figure on a white card (the projected rating): 3.5:1, large text only */
-  --color-gold: oklch(63% 0.13 78);
-  /* the primary button: near-black with a white label */
-  --color-button: oklch(24% 0.015 80); --color-button-deep: oklch(15% 0.01 80); --color-button-ink: oklch(100% 0 0);
+  --color-warning: oklch(46% 0.12 50); --color-warning-fill: oklch(62% 0.16 45); --color-warning-tint: oklch(95.5% 0.022 65); --color-info-tint: oklch(95% 0.025 255);
+  /* orange bright enough for text on the chocolate block (the low timer) */
+  --color-warning-bright: oklch(76% 0.15 58);
+  --color-shade: oklch(28.3% 0.062 43.5 / 0.45);
+  /* the 30: the chocolate header block, one per screen, holding its figure (the quiz bar, the Stats gauge, the score), in butter type */
+  --color-inverse: oklch(28.3% 0.062 43.5); --color-inverse-ink: oklch(89.3% 0.12 87.7); --color-inverse-muted: oklch(80% 0.07 75); --color-inverse-tint: oklch(40% 0.07 45);
+  /* deep gold for a large figure on a cream card (the projected rating): large text only */
+  --color-gold: oklch(60% 0.13 70);
+  /* the primary button: cobalt with a white label */
+  --color-button: oklch(42.8% 0.172 259.7); --color-button-deep: oklch(34% 0.15 262); --color-button-ink: oklch(100% 0 0);
   /* The clay look of the sign-in card, everywhere: a 2px ink outline and a solid ink shadow under it, no blur.
      Drawn with box-shadow, so the outline takes no layout space. */
   --shadow-card: 0 0 0 2px var(--color-ink), 0 4px 0 var(--color-ink);
@@ -73,7 +77,7 @@
   --shadow-side: 1px 0 3px oklch(0% 0 0 / 0.06), 4px 0 12px -6px oklch(0% 0 0 / 0.06);
 
   /* Kumo's tokens, pointed at the palette so its components match */
-  --color-kumo-canvas: var(--color-paper); --color-kumo-base: var(--color-card); --color-kumo-elevated: var(--color-paper);
+  --color-kumo-canvas: var(--color-paper); --color-kumo-base: var(--color-card); --color-kumo-elevated: var(--color-card);
   --color-kumo-recessed: var(--color-paper-2); --color-kumo-tint: var(--color-paper-2); --color-kumo-fill: var(--color-paper-3);
   --color-kumo-control: var(--color-card); --color-kumo-line: var(--color-line); --color-kumo-hairline: var(--color-rule);
   --color-kumo-brand: var(--color-accent); --color-kumo-brand-hover: var(--color-accent-deep);

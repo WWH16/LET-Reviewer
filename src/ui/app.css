@@ -1,16 +1,16 @@
 /* Hallmark · shape: app screen · genre: modern-minimal · theme: exam-prep light, after the Pocket Prep apps (by request: their structure, flows and look; our own name, mark and palette) on Kumo components 2.18.1, the Dose faces kept · redesign: polish (quizzes rework, 2026-11-24, brand kept)
- * nav: a side menu at 60rem and up (Study, Quizzes, Mock exams, Missed questions, Stats, then the Settings pages) and a five-tab bottom bar on phones (Study, Quizzes, Mock, Stats, Settings) · screen: a six-column bento from 60rem (Study: the golden greeting beside resume and backup, the ways to study as tiles with New quiz large on butter; Quizzes: one tile per part listing the subjects with quizzes; Stats: the ring beside the rating, subjects beside the weakest subjects, the streak across; Mock setup: the form beside the open and past exams; mock results: the score beside the rating, the subject breakdown and the retake), one column below · signature: the golden greeting on Study holding the countdown and the week; one golden yellow block per screen holding its figure (the greeting, the quiz bar, the Stats ring, the score) · answers: a near-black ring on butter when chosen, green with a check when right, red with a cross when wrong · states: loading, empty, full
- * axes: light/grotesk-sans/60 white, 30 yellow, 10 near-black, with green, red and orange for state · posture: friendly-quiet · contrast: pass · modes: light · v2.0.0 */
+ * nav: a side menu at 60rem and up (Study, Quizzes, Mock exams, Missed questions, Stats, then the Settings pages) and a five-tab bottom bar on phones (Study, Quizzes, Mock, Stats, Settings) · screen: a six-column bento from 60rem (Study: the chocolate greeting beside resume and backup, the ways to study as tiles with New quiz large on pale cobalt; Quizzes: one tile per part listing the subjects with quizzes; Stats: the ring beside the rating, subjects beside the weakest subjects, the streak across; Mock setup: the form beside the open and past exams; mock results: the score beside the rating, the subject breakdown and the retake), one column below · signature: the chocolate greeting on Study holding the countdown and the week; one chocolate block per screen holding its figure (the greeting, the quiz bar, the Stats ring, the score) · answers: a cobalt ring on pale cobalt when chosen, green with a check when right, red with a cross when wrong · states: loading, empty, full
+ * axes: light/grotesk-sans/60 butter yellow, 30 chocolate, 10 cobalt, with green, red and orange for state · posture: friendly-quiet · contrast: pass · modes: light · v2.0.0 */
 /* Hallmark · waive 7b · surface: absolute on --print-ink and --print-paper only, used inside .paper and @media print · the printed booklet and answer sheet need pure black toner on white bond, and the corner markers must scan */
 /* Hallmark · dismissed 41 · the state fills (green, red, orange) carry icons in --color-card, never text in ink; every text pair is in contrast.test.ts */
 /* Hallmark · answered F4 · buttons are Kumo's own classes (src/ui/btn.ts): one primary per screen, secondary for the rest, ghost for quiet links; aria-pressed is a toggle on the secondary */
-/* Hallmark · answered F7 · surfaces follow one ladder: white cards at 16px with the card shadow on a warm off-white ground, flat wells inside them, one yellow block per screen; tiles in a bento row share its height; choices and feedback keep Kumo's 12px card; inputs share Kumo's one input recipe because they are one role */
+/* Hallmark · answered F7 · surfaces follow one ladder: cream cards at 16px with the card shadow on a butter ground, flat wells inside them, one chocolate block per screen; tiles in a bento row share its height; choices and feedback keep Kumo's 12px card; inputs share Kumo's one input recipe because they are one role */
 /* Hallmark · waive 24b · 10px and 6px only, on dense rows (.option, .choice, .list > li, th, the quiz bar) and small gaps (.field, .week-streak, .subject) · these rows sit between Kumo's 8 and 12 steps; on the 4px scale the list rows and answer cards read either cramped or loose */
 /* Hallmark · dismissed 49 · "Replace data on this device" is a dialog's destructive choice; it wraps inside the dialog's row by design rather than clipping */
 /* Hallmark · dismissed 70 · "New code sent" follows a real request: run() in AccountSection awaits the resendCode request and announces only when it succeeds */
 /* Hallmark · finish-review: in-thread · audit after the quizzes rework (reviews/hallmark-audit-quizzes.md) · 16 findings · all resolved · gap: none */
-/* Hallmark · pre-emit critique: P4 H4 E4 S3 R4 V3 · weakest: S, the look follows a named reference by request; the golden greeting with the week and the New quiz tile are what Study is known by now, and the tiles keep the list's order on a phone */
-/* Hallmark · redesign: full (sign-in screen, 2026-11-25, brand kept, app renamed LET Prep) · the app's paper ground; a crowd of nine cheering Avataaars reviewers stands on a golden arc along the bottom edge, behind the form (decorative, under 5s, still under reduced motion); pointing at or tapping a reviewer lifts them a little; type a step under the app's page titles (h1 20 to 24px, wordmark 16px); the mark and the name over the form on a clay card (2px ink edge, solid ink shadow); Sign in and Create account in one track, a yellow ink-edged pill sliding between them, the form below sliding in from the side of the tab picked (staggered, 240ms, none under reduced motion), one primary each; a Show button in the password field; a field's error under it in red words with the alert icon and a red edge, checked before sending; errors that belong to no field (the service, the network) on the red tint with the alert icon · dropped the promise line and the what-is-stored line from the sign-in screen at the owner's request (Settings, Account keeps the what-is-stored line) */
+/* Hallmark · pre-emit critique: P4 H4 E4 S3 R4 V3 · weakest: S, the look follows a named reference by request; the chocolate greeting with the week and the New quiz tile are what Study is known by now, and the tiles keep the list's order on a phone */
+/* Hallmark · redesign: full (sign-in screen, 2026-11-25, brand kept, app renamed LET Prep) · the app's paper ground; a crowd of nine cheering Avataaars reviewers stands on a chocolate arc along the bottom edge, behind the form (decorative, under 5s, still under reduced motion); pointing at or tapping a reviewer lifts them a little; type a step under the app's page titles (h1 20 to 24px, wordmark 16px); the mark and the name over the form on a clay card (2px ink edge, solid ink shadow); Sign in and Create account in one track, a chocolate ink-edged pill sliding between them, the form below sliding in from the side of the tab picked (staggered, 240ms, none under reduced motion), one primary each; a Show button in the password field; a field's error under it in red words with the alert icon and a red edge, checked before sending; errors that belong to no field (the service, the network) on the red tint with the alert icon · dropped the promise line and the what-is-stored line from the sign-in screen at the owner's request (Settings, Account keeps the what-is-stored line) */
 @import '@cloudflare/kumo/styles/kumo-standalone';
 @import url('./tokens.css');
 @import url('./base.css');
@@ -177,7 +177,7 @@ h1:not(.sr-only) + p {
 /* ---------- Surfaces: ground, tile, action tile, well, inverse ----------
    A tile is one bento block: one topic under its own heading. An action tile is a whole-tile choice and
    sits one shadow step higher. A well is a flat grey inset for secondary facts inside a tile, never a
-   card in a card. The inverse tile is the one yellow block on a screen and holds the figure it exists for. */
+   card in a card. The inverse tile is the one chocolate block on a screen and holds the figure it exists for. */
 .tile {
   display: flex;
   flex-direction: column;
@@ -213,11 +213,12 @@ h1:not(.sr-only) + p {
   --color-kumo-line: color-mix(in oklab, var(--color-inverse-ink) 35%, transparent);
   --text-color-kumo-default: var(--color-inverse-ink);
 }
-/* The fills wash out on yellow, so the quiz bar segments and the low timer take the stronger text tones there. */
+/* The text tones sink into chocolate, so state text there takes the fills, and the low timer a bright orange. */
 :is(.tile-inverse, .quiz-bar) {
-  --color-success-fill: var(--color-success);
-  --color-error-fill: var(--color-error);
-  --color-warning-fill: var(--color-warning);
+  --color-success: var(--color-success-fill);
+  --color-error: var(--color-error-fill);
+  --color-warning: var(--color-warning-bright);
+  --color-warning-fill: var(--color-warning-bright);
 }
 .tile-inverse :is(.muted, .meta, .display-unit, .label) {
   color: var(--color-inverse-muted);
@@ -303,7 +304,7 @@ h1:not(.sr-only) + p {
 }
 
 /* Option cards: a radio choice that needs a sentence to explain each side (the mock's form). Flat grey
-   at rest, a butter tint with a near-black ring when chosen. */
+   at rest, a pale cobalt tint with a cobalt ring when chosen. */
 .options {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
@@ -471,7 +472,7 @@ a.brand {
 .nav a:active {
   background: var(--color-paper-3);
 }
-/* The current tab sits on butter, label and icon both, as in a phone exam-prep app. */
+/* The current tab sits on pale cobalt, label and icon both, as in a phone exam-prep app. */
 .nav a[aria-current='page'] {
   background: var(--color-accent-soft);
   color: var(--color-accent-text);
@@ -480,7 +481,7 @@ a.brand {
 .nav a[aria-current='page'] svg {
   color: var(--color-accent-text);
 }
-/* Wide screens: the current place is the sign-in tab's pill, yellow with an ink edge. */
+/* Wide screens: the current place is the sign-in tab's pill, chocolate with an ink edge. */
 @media (min-width: 60rem) {
   .nav a[aria-current='page'] {
     background: var(--color-inverse);
@@ -639,7 +640,7 @@ a.brand {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
-/* Sign in: a crowd of fellow reviewers stands on a golden rise along the bottom edge. The form stands
+/* Sign in: a crowd of fellow reviewers stands on a chocolate rise along the bottom edge. The form stands
    above them on a clay card (a thick ink edge and a solid ink shadow, so it reads as something to press).
    The party is one layer behind the form, decorative, clipped to the screen. --crowd is one face's width. */
 .auth {
@@ -724,7 +725,7 @@ a.brand {
   overflow: clip;
   pointer-events: none;
 }
-/* the golden rise the crowd stands on: a wide arc, wider than the screen so only its crown shows */
+/* the chocolate rise the crowd stands on: a wide arc, wider than the screen so only its crown shows */
 .auth-rise {
   position: absolute;
   right: -12%;
@@ -770,7 +771,7 @@ a.brand {
   }
 }
 
-/* The tab: Sign in and Create account in one track. A yellow pill with an ink edge marks the one in use and
+/* The tab: Sign in and Create account in one track. A chocolate pill with an ink edge marks the one in use and
    slides to the other half when it changes; the pill is the track's ::before, moved with transform only. */
 .seg {
   position: relative;
@@ -1181,7 +1182,7 @@ main.wide {
     display: none;
   }
 }
-/* The primary is Kumo's secondary button in near-black. The label colour comes in
+/* The primary is Kumo's secondary button in cobalt. The label colour comes in
    through Kumo's text token, so it follows --color-button-ink. */
 .btn-primary {
   --text-color-kumo-default: var(--color-button-ink);
@@ -1204,10 +1205,11 @@ main.wide {
 .btn.ring:not(.btn-primary):not([aria-pressed='true']):hover:not(:disabled) {
   box-shadow: inset 0 0 0 2px var(--color-muted);
 }
-/* A pressed toggle is the sign-in tab's pill: yellow with an ink edge. */
+/* A pressed toggle is the sign-in tab's pill: chocolate with an ink edge. */
 .btn[aria-pressed='true'] {
   background: var(--color-inverse);
   color: var(--color-inverse-ink);
+  --text-color-kumo-default: var(--color-inverse-ink);
   box-shadow: inset 0 0 0 2px var(--color-ink), 0 2px 0 var(--color-ink);
 }
 .btn[aria-busy='true'] {
@@ -1950,7 +1952,7 @@ dialog::backdrop {
 }
 
 /* ---------- Study: the greeting, this week, the quiz modes ----------
-   The greeting is Study's yellow block: it holds the countdown to the LET and the week, the figures
+   The greeting is Study's chocolate block: it holds the countdown to the LET and the week, the figures
    the screen opens on. .tile-inverse on the element swaps the tokens inside it. */
 
 .greet {
@@ -2052,17 +2054,17 @@ dialog::backdrop {
 .week-streak svg {
   color: var(--color-ink);
 }
-/* Not studied yet today: the streak turns into a dark pill on the yellow, the loudest thing on the card. */
+/* Not studied yet today: the streak turns into a cobalt pill on the chocolate, the loudest thing on the card. */
 a.week-streak.is-at-risk {
   min-height: 36px;
   padding: 0 var(--space-sm);
   border-radius: var(--radius-pill);
-  background: var(--color-ink);
+  background: var(--color-accent);
   color: var(--color-accent-ink);
   text-decoration: none;
 }
 a.week-streak.is-at-risk svg {
-  color: var(--color-inverse);
+  color: var(--color-inverse-ink);
 }
 a.week-streak.is-at-risk:hover {
   background: var(--color-accent-deep);
@@ -2081,7 +2083,7 @@ a.week-streak.is-at-risk:hover {
   text-decoration: none;
 }
 .resume:hover {
-  background: var(--color-paper);
+  background: var(--color-paper-2);
 }
 a.resume,
 a.mode {
@@ -2117,7 +2119,7 @@ a.mode {
   text-decoration: none;
 }
 a.mode:hover {
-  background: var(--color-paper);
+  background: var(--color-paper-2);
 }
 a.mode:active {
   background: var(--color-paper-2);
@@ -2129,7 +2131,7 @@ a.mode:focus-visible {
   flex: none;
   color: var(--color-muted);
 }
-/* One icon family: a near-black glyph on butter, so the tiles read as one set and the yellow carries them. */
+/* One icon family: a chocolate glyph on pale cobalt, so the tiles read as one set. */
 .mode-icon {
   display: grid;
   place-items: center;
@@ -2168,7 +2170,7 @@ a.mode:focus-visible {
 .mode.is-idle .mode-icon {
   opacity: 0.55;
 }
-/* 48rem and up the list becomes tiles on the bento's gap. Tablets: Quick 10 across the top on the butter
+/* 48rem and up the list becomes tiles on the bento's gap. Tablets: Quick 10 across the top on the pale cobalt
    tint, then the other six in pairs. 60rem and up: Quick 10 two rows tall, four thirds beside it, then the
    two modes you set up (Build your own, Mock exam) as halves. Seven tiles, no empty cell at either size. */
 @media (min-width: 48rem) {
@@ -2217,13 +2219,13 @@ a.mode:focus-visible {
     color: var(--color-on-soft);
   }
   .modes > li:first-child a.mode:hover {
-    background: var(--heat-2);
+    background: color-mix(in oklab, var(--color-accent-soft), var(--color-accent) 12%);
   }
   .modes > li:first-child .mode-icon {
     width: 3rem;
     height: 3rem;
     background: var(--color-accent);
-    color: var(--color-inverse);
+    color: var(--color-accent-ink);
   }
   .modes > li:first-child .mode-name {
     font-family: var(--font-display);
@@ -2383,7 +2385,7 @@ a.mode:focus-visible {
 .stats-count {
   font-weight: var(--weight-strong);
 }
-/* By part: a name and its figure, a near-black bar, a line of detail. Only the figure takes the
+/* By part: a name and its figure, a cobalt bar, a line of detail. Only the figure takes the
    LET's own lines: green at a passing 75%, orange from the 50% floor, red under it. */
 .subjects {
   display: grid;
@@ -2419,12 +2421,12 @@ a.mode:focus-visible {
 .subject-pct.is-low {
   color: var(--color-error);
 }
-/* The projected rating's figure in deep gold, on a white card only (large text, 3:1). */
+/* The projected rating's figure in deep gold, on a cream card only (large text, 3:1). */
 .rating:not(.tile-inverse) .display {
   color: var(--color-gold);
 }
 
-/* ---------- Quiz: the yellow bar, its segments, the close button, the count and the clock ---------- */
+/* ---------- Quiz: the chocolate bar, its segments, the close button, the count and the clock ---------- */
 
 .quiz-bar {
   display: grid;
@@ -2499,7 +2501,7 @@ a.mode:focus-visible {
 .quiz-timer.is-low {
   color: var(--color-warning-fill);
 }
-/* Results: the score in the yellow block, the screen's lead figure. */
+/* Results: the score in the chocolate block, the screen's lead figure. */
 .quiz-score .display {
   font-size: calc(var(--text-figure-lead) * 1.25);
 }

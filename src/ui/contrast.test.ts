@@ -65,10 +65,12 @@ describe('tokens', () => {
     ['color-accent-edge', 'color-paper', 3],
     ['color-accent-edge', 'color-accent-soft', 3],
     ['color-accent-text', 'color-accent-soft', 4.5],
-    // On the yellow block the state colours stand in for their fills (app.css), and the low timer is text.
-    ['color-warning', 'color-inverse', 4.5],
-    ['color-success', 'color-inverse', 3],
-    ['color-error', 'color-inverse', 3],
+    // On the chocolate block the segments take the fills and the low timer is a bright orange (app.css).
+    ['color-warning-bright', 'color-inverse', 4.5],
+    ['color-success-fill', 'color-inverse', 3],
+    ['color-error-fill', 'color-inverse', 3],
+    // The at-risk streak pill: a butter flame on cobalt.
+    ['color-inverse-ink', 'color-accent', 3],
     // White checks, crosses and flags sit on the state fills.
     ['color-card', 'color-success-fill', 3],
     ['color-card', 'color-error-fill', 3],
