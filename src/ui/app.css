@@ -2018,6 +2018,22 @@ dialog::backdrop {
 .back svg {
   color: var(--color-muted);
 }
+/* The phone's "You" tab: her face where the other tabs have an icon, ringed in ink when it is the current tab. */
+.nav-avatar {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--color-line);
+}
+.nav-avatar .avatar {
+  display: block;
+  box-shadow: none;
+}
+[aria-current='page'] > .nav-avatar {
+  box-shadow: 0 0 0 2px var(--color-ink);
+}
 /* The phone's back link: a left chevron and the parent's name at the top left, a 44px target. */
 a.back-link {
   display: inline-flex;

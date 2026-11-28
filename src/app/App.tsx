@@ -1,5 +1,6 @@
 import { Link, Route, Routes, useLocation, useMatch } from 'react-router-dom';
 import { Page } from '../ui/Page';
+import { Avatar } from '../ui/Avatar';
 import { Icon } from '../ui/Icon';
 import { Home } from '../features/home/Home';
 import { useMeta, useSettings, useUnfinishedCount } from '../db/hooks';
@@ -91,8 +92,20 @@ export function App() {
                 return (
                   <li key={item.to} className={item.wideOnly ? 'only-wide' : item.narrowOnly ? 'only-narrow' : undefined}>
                     <Link to={item.to} aria-current={on ? 'page' : undefined}>
-                      <Icon name={item.icon} size={20} filled={on} />
-                      {item.short ? (
+                      {/* The phone's last tab is hers: her face, "You", as Instagram and WhatsApp do, leading to
+                          the same Settings list with Profile first. */}
+                      {item.to === '/settings' && settings ? (
+                        <span className="nav-avatar">
+                          <Avatar who={settings} size={24} />
+                        </span>
+                      ) : (
+                        <Icon name={item.icon} size={20} filled={on} />
+                      )}
+                      {item.to === '/settings' ? (
+                        <>
+                          You<span className="sr-only">: profile and settings</span>
+                        </>
+                      ) : item.short ? (
                         <>
                           <span className="only-wide">{item.label}</span>
                           <span className="only-narrow">{item.short}</span>
