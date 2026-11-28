@@ -1465,11 +1465,49 @@ textarea.prose {
 .tile > .check + .check {
   margin-top: calc(-1 * var(--gap-tile));
 }
-.check input {
-  width: 16px;
-  height: 16px;
+/* The checkbox in the fields' recipe: a 2px brown edge on white, filling chocolate with a white tick when on. */
+.check input[type='checkbox'] {
+  appearance: none;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 20px;
+  height: 20px;
   margin: 0;
-  accent-color: var(--color-accent-deep);
+  border: 2px solid var(--color-control);
+  border-radius: 6px;
+  background: var(--color-card);
+  cursor: pointer;
+}
+.check input[type='checkbox']::after {
+  content: '';
+  width: 5px;
+  height: 10px;
+  border: solid var(--color-card);
+  border-width: 0 2px 2px 0;
+  transform: translateY(-1px) rotate(45deg) scale(0);
+}
+.check:hover input[type='checkbox']:not(:disabled) {
+  border-color: var(--color-ink);
+}
+.check input[type='checkbox']:checked {
+  border-color: var(--color-ink);
+  background: var(--color-ink);
+}
+.check input[type='checkbox']:checked::after {
+  transform: translateY(-1px) rotate(45deg) scale(1);
+}
+.check input[type='checkbox']:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .check input[type='checkbox'] {
+    transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+  }
+  .check input[type='checkbox']::after {
+    transition: transform var(--dur-short) var(--ease-out);
+  }
 }
 fieldset {
   min-width: 0;
