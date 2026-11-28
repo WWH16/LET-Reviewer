@@ -14,12 +14,11 @@
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --dur-micro: 120ms; --dur-short: 200ms;
   --z-raised: 10; --z-sticky: 200; --z-sticky-nav: 300; --z-modal: 400; --z-toast: 500;
-  /* the faces, bundled: Newsreader, a free editorial serif with optical sizes, for every word (titles, reading,
-     labels and buttons), the closest free match for the serif Claude writes in; JetBrains Mono for timers, scores,
-     counts and IDs. Kumo's own font tokens point at them too. */
+  /* the faces, bundled: Newsreader (a free editorial serif, with optical sizes) for page titles and big figures,
+     Instrument Sans for everything else, DM Mono for timers, scores and IDs. Kumo's own font tokens point at them too. */
   --font-display: "Newsreader Variable", "Newsreader", ui-serif, Georgia, serif;
-  --font-body: "Newsreader Variable", "Newsreader", ui-serif, Georgia, serif;
-  --font-num: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-body: "Instrument Sans Variable", "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-num: "DM Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --font-sans: var(--font-body); --font-mono: var(--font-num); --default-font-family: var(--font-body); --default-mono-font-family: var(--font-num);
   --tracking-display: -0.015em;
   /* Type and spacing roles that grow smoothly with the screen: the phone value at 360px, the laptop value at
