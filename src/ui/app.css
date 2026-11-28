@@ -908,7 +908,7 @@ a.brand {
   height: 52px;
   border: 2px solid var(--color-control);
   border-radius: var(--radius-card);
-  background: var(--color-card);
+  background: var(--color-paper);
   font-family: var(--font-mono);
   font-size: var(--text-xl);
   font-weight: 600;
@@ -1312,7 +1312,7 @@ textarea {
   padding: var(--space-2xs) var(--space-sm);
   border: 2px solid var(--color-control);
   border-radius: var(--radius-card);
-  background: var(--color-card);
+  background: var(--color-paper);
   color: var(--color-ink);
   font: inherit;
   font-size: var(--text-body);
@@ -1561,7 +1561,7 @@ legend {
 .choice.is-correct:has(input:checked) .choice-letter {
   background: var(--color-success);
   box-shadow: none;
-  color: var(--color-card);
+  color: var(--color-paper);
 }
 .choice.is-correct .choice-note {
   color: var(--color-success);
@@ -1577,7 +1577,7 @@ legend {
 .choice.is-wrong:has(input:checked) .choice-letter {
   background: var(--color-error);
   box-shadow: none;
-  color: var(--color-card);
+  color: var(--color-paper);
 }
 .choice.is-wrong .choice-note {
   color: var(--color-error);
@@ -2523,7 +2523,7 @@ a.mode:focus-visible {
   height: 1.25rem;
   margin-top: var(--space-3xs);
   border-radius: 50%;
-  color: var(--color-card);
+  color: var(--color-paper);
 }
 .review-status.is-right {
   background: var(--color-success-fill);

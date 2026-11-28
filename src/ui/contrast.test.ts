@@ -60,7 +60,9 @@ describe('tokens', () => {
     ['color-accent-text', 'color-paper', 4.5],
     ['color-accent-text', 'color-card', 4.5],
     ['color-focus', 'color-paper', 3],
-    ['color-muted', 'color-card', 3],
+    // Meta text and a field's edge sit on the cream cards.
+    ['color-muted', 'color-card', 4.5],
+    ['color-control', 'color-card', 3],
     ['color-accent-edge', 'color-card', 3],
     ['color-accent-edge', 'color-paper', 3],
     ['color-accent-edge', 'color-accent-soft', 3],
@@ -74,10 +76,10 @@ describe('tokens', () => {
     ['color-inverse', 'color-ink', 4.5],
     // Cobalt is kept for the primary button and the focus ring.
     ['color-focus', 'color-card', 3],
-    // White checks, crosses and flags sit on the state fills.
-    ['color-card', 'color-success-fill', 3],
-    ['color-card', 'color-error-fill', 3],
-    ['color-card', 'color-warning-fill', 3],
+    // Light checks, crosses and flags (the canvas cream) sit on the state fills.
+    ['color-paper', 'color-success-fill', 3],
+    ['color-paper', 'color-error-fill', 3],
+    ['color-paper', 'color-warning-fill', 3],
     // The rating's gold figure is large text.
     ['color-gold', 'color-card', 3],
   ];

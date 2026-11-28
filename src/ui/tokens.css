@@ -1,4 +1,4 @@
-/* Role tokens, by the 60-30-10 rule: 60 light (a warm off-white ground and white cards), 30 butter yellow
+/* Role tokens, by the 60-30-10 rule: 60 light (the canvas cream #faf9f5 ground and flat surface-card cream #efe9de cards), 30 butter yellow
    #FDD77A (the header block on each screen, butter tints for the current place and a choice), 10 cobalt
    #0047AB, kept sparing: the one primary button per screen and the focus ring. Chocolate #421E0E is the
    ink, the clay outlines, the rings and the current place in the side menu. Three state colours always mean the same thing: green is right,
@@ -37,19 +37,21 @@
   --text-stat: clamp(1rem, 0.9583rem + 0.1852vw, 1.125rem);
   --pad-card: clamp(0.875rem, 0.75rem + 0.5556vw, 1.25rem); --gap-tile: clamp(0.75rem, 0.6667rem + 0.3704vw, 1rem);
   --gap-section: clamp(1rem, 0.9167rem + 0.3704vw, 1.25rem); --pad-page-top: clamp(1rem, 0.6667rem + 1.481vw, 2rem);
-  --radius-control: 8px; --radius-card: 12px; --radius-tile: 20px; --radius-pill: 999px;
+  --radius-control: 8px; --radius-card: 12px; --radius-tile: 16px; --radius-pill: 999px;
   /* The activity grid: five steps from empty (paper-3) to busiest, butter to deep gold. */
   --heat-cell: 0.6875rem; --heat-gap: 3px;
   --heat-0: var(--color-paper-3); --heat-1: oklch(87% 0.13 88); --heat-2: oklch(81% 0.15 82); --heat-3: oklch(74% 0.15 72); --heat-4: oklch(67% 0.14 62);
   --measure-app: 48rem; --container-app: 72rem; --sidebar-w: 15rem; --header-h: 48px; --tabbar-h: 56px; --sticky-offset: env(safe-area-inset-top, 0px);
   --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px); --safe-left: env(safe-area-inset-left, 0px); --safe-right: env(safe-area-inset-right, 0px);
 
-  /* the 60: a warm off-white ground, white cards, flat wells */
-  --color-paper: oklch(98.5% 0.005 95); --color-paper-2: oklch(96.2% 0.012 95); --color-paper-3: oklch(93.5% 0.018 95);
-  --color-card: oklch(100% 0 0);
+  /* the 60, flat cream colour blocks: the canvas #faf9f5 ground (and fields), surface soft #f5f0e8 for a tile's hover,
+     surface card #efe9de cards with no border or shadow, cream strong #e8e0d2 wells, one step darker for their hover */
+  --color-paper: oklch(98.2% 0.005 95.1); --color-paper-soft: oklch(95.7% 0.012 79.8);
+  --color-paper-2: oklch(90.9% 0.021 81.8); --color-paper-3: oklch(87.5% 0.025 80);
+  --color-card: oklch(93.6% 0.016 82.8);
   /* the ink: chocolate #421E0E, and browns stepped from it */
   --color-ink: oklch(28.3% 0.062 43.5); --color-ink-2: oklch(35% 0.06 45); --color-muted: oklch(43% 0.06 50);
-  --color-rule: oklch(91% 0.015 85); --color-line: oklch(28.3% 0.062 43.5 / 0.15); --color-control: oklch(60% 0.06 60);
+  --color-rule: oklch(90.7% 0.012 67.7); --color-line: oklch(28.3% 0.062 43.5 / 0.15); --color-control: oklch(60% 0.06 60);
   /* chocolate for rings, badges and checks with butter type on them; a warm brown for links; a butter tint for the current tab and a selection */
   --color-accent: oklch(28.3% 0.062 43.5); --color-accent-deep: oklch(20% 0.045 43); --color-accent-ink: oklch(89.3% 0.12 87.7);
   --color-accent-text: oklch(45% 0.1 55); --color-accent-edge: oklch(28.3% 0.062 43.5); --color-accent-soft: oklch(95.5% 0.06 92); --color-on-soft: oklch(28.3% 0.062 43.5);
@@ -62,16 +64,15 @@
   --color-shade: oklch(28.3% 0.062 43.5 / 0.45);
   /* the 30: the butter yellow header block, one per screen, holding its figure (the quiz bar, the Stats gauge, the score), in chocolate type */
   --color-inverse: oklch(89.3% 0.12 87.7); --color-inverse-ink: oklch(28.3% 0.062 43.5); --color-inverse-muted: oklch(40% 0.06 55); --color-inverse-tint: oklch(81% 0.14 82);
-  /* deep gold for a large figure on a white card (the projected rating): large text only */
+  /* deep gold for a large figure on a cream card (the projected rating): large text only */
   --color-gold: oklch(60% 0.13 70);
   /* the primary button: cobalt with a white label */
   --color-button: oklch(42.8% 0.172 259.7); --color-button-deep: oklch(34% 0.15 262); --color-button-ink: oklch(100% 0 0);
-  /* The clay look of the sign-in card, everywhere: a 2px ink outline and a solid ink shadow under it, no blur.
-     Drawn with box-shadow, so the outline takes no layout space. */
-  --shadow-card: 0 0 0 2px var(--color-ink), 0 4px 0 var(--color-ink);
-  /* an action tile sits one step higher than a tile: you press it */
-  --shadow-raised: 0 0 0 2px var(--color-ink), 0 6px 0 var(--color-ink);
-  --shadow-pop: 0 0 0 2px var(--color-ink), 0 6px 0 var(--color-ink);
+  /* Flat: depth comes from the cream colour blocks, not shadows. A tile you tap lifts a little on hover;
+     dialogs, toasts and drawers float on a soft shadow with a hairline edge. */
+  --shadow-card: none;
+  --shadow-raised: 0 1px 3px oklch(28.3% 0.062 43.5 / 0.08), 0 4px 12px -6px oklch(28.3% 0.062 43.5 / 0.1);
+  --shadow-pop: 0 0 0 1px var(--color-rule), 0 16px 48px -8px oklch(28.3% 0.062 43.5 / 0.16);
   --shadow-bar: 0 1px 3px oklch(0% 0 0 / 0.06), 0 4px 12px -6px oklch(0% 0 0 / 0.06);
   --shadow-bar-up: 0 -1px 3px oklch(0% 0 0 / 0.06), 0 -4px 12px -6px oklch(0% 0 0 / 0.06);
   --shadow-side: 1px 0 3px oklch(0% 0 0 / 0.06), 4px 0 12px -6px oklch(0% 0 0 / 0.06);
@@ -79,7 +80,7 @@
   /* Kumo's tokens, pointed at the palette so its components match */
   --color-kumo-canvas: var(--color-paper); --color-kumo-base: var(--color-card); --color-kumo-elevated: var(--color-card);
   --color-kumo-recessed: var(--color-paper-2); --color-kumo-tint: var(--color-paper-2); --color-kumo-fill: var(--color-paper-3);
-  --color-kumo-control: var(--color-card); --color-kumo-line: var(--color-line); --color-kumo-hairline: var(--color-rule);
+  --color-kumo-control: var(--color-paper); --color-kumo-line: var(--color-line); --color-kumo-hairline: var(--color-rule);
   --color-kumo-brand: var(--color-accent); --color-kumo-brand-hover: var(--color-accent-deep);
   --color-kumo-success: var(--color-success-fill); --color-kumo-success-tint: var(--color-success-tint);
   --text-color-kumo-default: var(--color-ink); --text-color-kumo-strong: var(--color-ink-2); --text-color-kumo-subtle: var(--color-muted);
