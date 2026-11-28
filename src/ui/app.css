@@ -1145,10 +1145,12 @@ a.brand {
   }
 }
 
-/* During a timed mock the phone's tab bar goes, so one stray tap cannot leave the exam. The top bar keeps
-   the brand link, and the exam's own bar keeps Submit. */
+/* During a timed mock, and while a quiz's questions are on screen (its bar is up), the phone's tab bar goes,
+   so one stray tap cannot leave. The top bar keeps the brand link; the quiz bar keeps its close button and the
+   exam's bar keeps Submit. The quiz's results bring the tabs back. */
 @media (max-width: 59.99rem) {
-  .in-exam .nav {
+  .in-exam .nav,
+  #root:has(.quiz-bar) .nav {
     display: none;
   }
 }
