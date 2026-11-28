@@ -73,10 +73,31 @@ export const AVATAR_BASES: Record<Settings['avatarBase'], { label: string; parts
 /** The parts the two starting faces differ in. Switching face replaces only these, so her other choices stay. */
 export const BASE_KEYS = Object.keys(AVATAR_BASES.girl.parts).filter((k) => AVATAR_BASES.girl.parts[k] !== AVATAR_BASES.boy.parts[k]);
 
-/** What a part shows: her choice when it is still a valid one (old styles stored other names), else the base. */
+/**
+ * Choices each starting face leaves out, so the editor and Shuffle offer only what suits it. The woman keeps
+ * the long styles, the hijab and the hats, with no facial hair; the man keeps the short cuts, bald, long
+ * dreads, the afro, the turban and the hats. Avataaars draws "shaved sides" as a long style with one side shaved.
+ */
+const HIDDEN: Record<Settings['avatarBase'], Partial<Record<string, string[]>>> = {
+  girl: {
+    top: ['none', 'sides', 'theCaesar', 'theCaesarAndSidePart', 'shortFlat', 'shortRound', 'shortWaved', 'shortCurly', 'frizzle', 'shaggy', 'shaggyMullet', 'dreads01', 'dreads02', 'turban'],
+    facialHair: ['beardLight', 'beardMedium', 'beardMajestic', 'moustacheFancy', 'moustacheMagnum'],
+  },
+  boy: {
+    top: ['bob', 'bun', 'curly', 'curvy', 'bigHair', 'longButNotTooLong', 'straight01', 'straight02', 'straightAndStrand', 'miaWallace', 'frida', 'froBand', 'shavedSides', 'hijab', 'winterHat04'],
+  },
+};
+
+/** A part's choices for this face. */
+export const choicesFor = (p: AvatarPart, base: Settings['avatarBase']) => p.choices.filter((c) => !HIDDEN[base][p.key]?.includes(c));
+
+/** The parts this face can change: a part left with one choice (facial hair on the woman) is not offered. */
+export const partsFor = (base: Settings['avatarBase']) => AVATAR_PARTS.filter((p) => choicesFor(p, base).length > 1);
+
+/** What a part shows: her choice when it still suits this face (old styles stored other names), else the face's own. */
 export function partValue(who: Who, p: AvatarPart): string {
   const v = who.avatarParts[p.key];
-  return v !== undefined && p.choices.includes(v) ? v : AVATAR_BASES[who.avatarBase].parts[p.key];
+  return v !== undefined && choicesFor(p, who.avatarBase).includes(v) ? v : AVATAR_BASES[who.avatarBase].parts[p.key];
 }
 
 // Drawn faces by base and parts. The editor's strips draw about 80 small faces; reopening them costs nothing.

@@ -1,14 +1,21 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { saveSettings } from '../../db/repo';
 import type { Settings } from '../../domain/types';
-import { AVATAR_BASES, AVATAR_PARTS, Avatar, BASE_KEYS, partValue, type AvatarPart } from '../../ui/Avatar';
+import { AVATAR_BASES, AVATAR_PARTS, Avatar, BASE_KEYS, choicesFor, partValue, partsFor, type AvatarPart } from '../../ui/Avatar';
 import { useAnnounce } from '../../ui/Status';
 import { btn } from '../../ui/btn';
 
 const TOP_COLOURS = ['skinColor', 'hairColor'];
 /** Parts too small to judge on a whole-body thumbnail: their strip zooms in on the face. */
 const FACE_PARTS = ['eyebrows', 'eyes', 'mouth', 'accessories', 'facialHair'];
-const without = (parts: Record<string, string>, keys: string[]) => Object.fromEntries(Object.entries(parts).filter(([k]) => !keys.includes(k)));
+/** Her choices to carry over to another face: not the parts the faces differ in, and only what suits the new face. */
+const carryOver = (parts: Record<string, string>, base: Settings['avatarBase']) =>
+  Object.fromEntries(
+    Object.entries(parts).filter(([k, v]) => {
+      const p = AVATAR_PARTS.find((x) => x.key === k);
+      return !BASE_KEYS.includes(k) && p !== undefined && choicesFor(p, base).includes(v);
+    }),
+  );
 
 /**
  * Name and avatar, shared by the welcome screen and Settings. The avatar is shown large, starts from a
@@ -50,7 +57,7 @@ export function ProfileEditor({ s, footer }: { s: Settings; footer?: ReactNode }
     <fieldset key={p.key} className="stack-sm">
       {legend(p)}
       <div className="swatches">
-        {p.choices.map((c) => (
+        {choicesFor(p, s.avatarBase).map((c) => (
           <label key={c} className="swatch" title={p.names[c]}>
             <input
               type="radio"
@@ -75,7 +82,7 @@ export function ProfileEditor({ s, footer }: { s: Settings; footer?: ReactNode }
     <fieldset key={p.key} className="stack-sm">
       {legend(p)}
       <div className="part-strip">
-        {p.choices.map((c) => (
+        {choicesFor(p, s.avatarBase).map((c) => (
           <label key={c} className="part-option">
             <input type="radio" name={`part-${p.key}`} className="sr-only" checked={partValue(s, p) === c} onChange={() => setPart(p.key, c)} />
             <span className={FACE_PARTS.includes(p.key) ? 'part-thumb face' : 'part-thumb'}>
@@ -99,7 +106,12 @@ export function ProfileEditor({ s, footer }: { s: Settings; footer?: ReactNode }
             onClick={() =>
               replaceFace(
                 {
-                  ...Object.fromEntries(AVATAR_PARTS.map((p) => [p.key, p.choices[Math.floor(Math.random() * p.choices.length)]])),
+                  ...Object.fromEntries(
+                    AVATAR_PARTS.map((p) => {
+                      const choices = choicesFor(p, s.avatarBase);
+                      return [p.key, choices[Math.floor(Math.random() * choices.length)]];
+                    }),
+                  ),
                   // Skin tone stays: shuffling it would change who she is, not how she looks today.
                   skinColor: partValue(s, AVATAR_PARTS[0]),
                 },
@@ -137,8 +149,9 @@ export function ProfileEditor({ s, footer }: { s: Settings; footer?: ReactNode }
           <legend className="label">Start from</legend>
           <div className="row">
             {(Object.keys(AVATAR_BASES) as Settings['avatarBase'][]).map((b) => {
-              // Only the hair and clothes that make the face change: her skin tone, glasses and colours stay.
-              const parts = without(s.avatarParts, BASE_KEYS);
+              // Only the hair and clothes that make the face change, and anything that does not suit the new face
+              // (a beard on the woman): her skin tone, glasses and colours stay.
+              const parts = carryOver(s.avatarParts, b);
               return (
                 <label key={b} className="avatar-pick">
                   <input type="radio" name="avatar-base" className="sr-only" checked={s.avatarBase === b} onChange={() => saveSettings({ avatarBase: b, avatarParts: parts })} />
@@ -155,7 +168,7 @@ export function ProfileEditor({ s, footer }: { s: Settings; footer?: ReactNode }
           {/* Drawn only while open: every option is its own small avatar. */}
           {partsOpen && (
             <div ref={strips} className="stack part-strips">
-              {AVATAR_PARTS.filter((p) => !TOP_COLOURS.includes(p.key)).map((p) => (p.colour ? swatches(p) : strip(p)))}
+              {partsFor(s.avatarBase).filter((p) => !TOP_COLOURS.includes(p.key)).map((p) => (p.colour ? swatches(p) : strip(p)))}
             </div>
           )}
         </details>
