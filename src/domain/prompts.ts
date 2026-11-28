@@ -18,12 +18,39 @@ const QUIZ_SCHEMA = `{
   ]
 }`;
 
-/** The prompt that asks Claude for one quiz's questions. Its reply comes back through the paste box. */
-export function quizPrompt(o: { area: Area; subject: string; level: Level; major: string; n: number }): string {
+/**
+ * The prompt that asks Claude for one quiz's questions. Its reply comes back through the paste box.
+ * The topic leads: it is the quiz's scope, and the subject and part only place it, e.g. "Piaget's stages" in Child Development.
+ */
+export function quizPrompt(o: {
+  area: Area;
+  subject: string;
+  topic: string;
+  /** She attaches her own file (a handout, a module) in the chat; the questions come only from it. */
+  fromFile?: boolean;
+  level: Level;
+  major: string;
+  n: number;
+}): string {
   const levelText = o.level === 'secondary' ? `Secondary${o.major ? `, ${o.major}` : ''}` : 'Elementary';
-  return `Write ${o.n} LET-style multiple-choice questions (4 choices, exactly one correct) on:
-Part: ${PARTS[o.area].name}${o.area === 'Major' && o.major ? ` (${o.major})` : ''}  Subject: ${o.subject}
+  const scope = o.fromFile
+    ? `Base every question only on the file attached to this message.
+Every correct answer must be stated in the file or follow directly from it; add no outside facts.
+Ask about the file's content the way the LET would ask it under ${o.subject}.
+Cover different parts of the file; never ask about the same fact twice.
+In each explanation, also say where in the file the answer comes from (its section, heading or page).
+If the file cannot fill ${o.n} different questions, write fewer rather than add outside facts.
+If no file is attached, or you cannot read it, reply with {"questions": [], "answers": []} and nothing else.`
+    : `Every question must test ${o.topic} itself, as the LET asks it under ${o.subject}.
+Other parts of ${o.subject} may appear only as context, never as the point of a question.
+Cover different parts of the topic; never ask about the same fact twice.
+If the topic cannot fill ${o.n} different questions, write fewer rather than leave the topic.`;
+  return `Write ${o.n} LET-style multiple-choice questions (4 choices, exactly one correct) ${o.fromFile ? 'from the attached file' : 'on one topic'}:
+${o.fromFile ? 'File' : 'Topic'}: ${o.topic}
+Subject: ${o.subject}  Part: ${PARTS[o.area].name}${o.area === 'Major' && o.major ? ` (${o.major})` : ''}
 Level: ${levelText}
+
+${scope}
 
 Mix: ~40% recall, ~40% application/scenario, ~20% analysis.
 Distractors must be plausible (common misconceptions), not silly.
@@ -40,7 +67,7 @@ ${QUIZ_SCHEMA}
 Keep the answers hidden until the end: never put an answer or explanation inside "questions".
 After the last question, list every answer and its explanation in "answers", numbered from 1
 in the same order as the questions.
-Write exactly ${o.n} questions and exactly ${o.n} answers: one answer for every question, none skipped.
+Write at most ${o.n} questions and exactly one answer for every question, none skipped.
 For each answer, look back at that question's choices: "answer" is the letter of the correct choice,
 and "answerText" is that same choice's text, copied word for word. The correct answer must be one of
 the four choices; if it is not, rewrite the question.

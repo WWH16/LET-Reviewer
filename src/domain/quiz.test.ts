@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { batchQuizId, groupQuizzes, newQuizId, quizQuestionId, upgradeQuestion } from './quiz';
+import { batchQuizId, groupQuizzes, newQuizId, quizQuestionId, topicTag, upgradeQuestion } from './quiz';
 import type { Question } from './types';
 
 const old = (over: Partial<Question> & { importBatchId?: string }) => ({ id: 'x', subarea: 'english', importBatchId: 'batch-2026-11-01T08:00:00.000Z', ...over }) as Question;
@@ -41,5 +41,12 @@ describe('groupQuizzes', () => {
       'filipino Quiz 1 1',
     ]);
     expect(list[2].createdAt).toBe('2026-11-03T00:00:00.000Z');
+  });
+  it('adds the topic to the name, and ignores other tags', () => {
+    const list = groupQuizzes([
+      qq('quiz-2026-11-01T00:00:00.000Z', { tags: ['sample'] }),
+      qq('quiz-2026-11-02T00:00:00.000Z', { tags: [topicTag('Subject-verb agreement')] }),
+    ]);
+    expect(list.map((z) => z.name)).toEqual(['Quiz 1', 'Quiz 2: Subject-verb agreement']);
   });
 });

@@ -9,7 +9,7 @@ import { importQuestions, nowIso, protectStorage, saveSettings } from '../../db/
 import { subjectId, subjectsOf } from '../../domain/subjects';
 import { PARTS, partsFor } from '../../domain/let-config';
 import { quizPrompt } from '../../domain/prompts';
-import { newQuizId } from '../../domain/quiz';
+import { newQuizId, topicTag } from '../../domain/quiz';
 import { parsePasted, previewQuiz } from '../../domain/validate';
 import type { Area } from '../../domain/types';
 import { btn } from '../../ui/btn';
@@ -42,6 +42,8 @@ export function NewQuiz() {
   // Digits only, never above MAX while she types; below MIN it is read as MIN and set to it when she leaves the field.
   const [nText, setNText] = useState(String(MIN));
   const n = Math.min(MAX, Math.max(MIN, Number(nText) || MIN));
+  const [topic, setTopic] = useState('');
+  const [fromFile, setFromFile] = useState(false);
   const [text, setText] = useState('');
   const [clipError, setClipError] = useState('');
   /** The save under way: `take` for Save and take it, `only` for Save only. That button shows the spinner. */
@@ -56,7 +58,8 @@ export function NewQuiz() {
   const subs = area && settings && qmap ? subjectsOf(area, settings.subjects, qmap.values()) : [];
   const sub = subs.find((s) => s.id === subPick) ?? subs[0] ?? null;
   const subjectName = sub?.name ?? '';
-  const ready = !!sub;
+  // A file quiz's questions come from the file, so its name is optional; a topic quiz needs its topic.
+  const ready = !!sub && (fromFile || !!topic.trim());
 
   const parsed = useMemo(() => parsePasted(text), [text]);
   const preview = useMemo(
@@ -65,7 +68,7 @@ export function NewQuiz() {
   );
 
   if (!settings || !qmap || !area) return <Page title="New quiz">{null}</Page>;
-  const prompt = quizPrompt({ area, subject: subjectName || '<subject>', level: settings.level, major: settings.major, n });
+  const prompt = quizPrompt({ area, subject: subjectName || '<subject>', topic: topic.trim() || (fromFile ? 'the attached file' : '<topic>'), fromFile, level: settings.level, major: settings.major, n });
   const back = sub ? `/quizzes/${area}/${sub.id}` : '/quizzes';
 
   const openAdd = () => (setDraft(''), setDraftError(''), setAdding(true));
@@ -105,7 +108,8 @@ export function NewQuiz() {
       const now = nowIso();
       const id = newQuizId(now);
       const { ready: qs } = previewQuiz(parsed.items, { id, area, subarea }, now);
-      await importQuestions(qs);
+      const t = topic.trim() || (fromFile ? 'From a file' : '');
+      await importQuestions(t ? qs.map((q) => ({ ...q, tags: [topicTag(t)] })) : qs);
       protectStorage(); // first real data: ask the browser not to evict it
       announce(`${subjectName} quiz saved with ${qs.length} questions`);
       navigate(start ? `/session?mode=quiz&quiz=${encodeURIComponent(id)}` : `/quizzes/${area}/${subarea}`);
@@ -118,7 +122,7 @@ export function NewQuiz() {
   return (
     <Page title="New quiz" crumbs={[{ to: '/quizzes', label: 'Quizzes' }, ...(sub ? [{ to: back, label: `${sub.name} quizzes` }] : [])]}>
       <section className="tile stack quiz-pick" aria-labelledby="nq-1">
-        <h2 id="nq-1">1. Pick the subject</h2>
+        <h2 id="nq-1">1. Pick the subject and topic</h2>
         <MajorHint level={settings.level} />
         <div className="quiz-pick-fields">
           <div className="field">
@@ -198,16 +202,41 @@ export function NewQuiz() {
               From {MIN} to {MAX}.
             </span>
           </div>
+          {/* Its own row: a topic is a phrase, wider than the count's narrow track. Copy prompt waits for it. */}
+          {/* First, so the field below already reads right for the choice. The chat reads the file, not the app. */}
+          <label className="check quiz-pick-topic">
+            <input type="checkbox" checked={fromFile} onChange={(e) => setFromFile(e.target.checked)} />
+            Questions from a file I&rsquo;ll attach in the chat
+          </label>
+          <div className="field quiz-pick-topic">
+            <label htmlFor="nq-topic">{fromFile ? 'File name (optional)' : 'Topic'}</label>
+            <input
+              id="nq-topic"
+              type="text"
+              required={!fromFile}
+              maxLength={120}
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              aria-describedby="nq-topic-help"
+            />
+            <span id="nq-topic-help" className="meta">
+              {fromFile
+                ? 'What the file covers, like Module 3 handout. It names the quiz; left blank, the quiz is called From a file.'
+                : 'One topic inside the subject, like Subject-verb agreement in English. Type it to copy the prompt.'}
+            </span>
+          </div>
         </div>
       </section>
 
       <section className="tile stack" aria-labelledby="nq-2">
-        <h2 id="nq-2">2. Ask Claude or ChatGPT</h2>
+        <h2 id="nq-2">2. Ask an AI chat</h2>
         <div className="field">
           <label htmlFor="nq-prompt">Prompt</label>
           <textarea id="nq-prompt" className="mono" readOnly rows={8} value={prompt} aria-describedby="nq-prompt-help" />
           <span id="nq-prompt-help" className="meta">
-            Press Copy prompt, then paste it into a new chat and send it. The reply comes back as one code block.
+            {fromFile
+              ? 'Press Copy prompt, then paste it into a new chat, attach your file, and send it. The reply comes back as one code block.'
+              : 'Press Copy prompt, then paste it into a new chat and send it. The reply comes back as one code block.'}
           </span>
         </div>
         <div>
@@ -265,6 +294,14 @@ export function NewQuiz() {
               </strong>
               {preview.invalid.length > 0 && `, ${preview.invalid.length} left out`}
               {preview.repeats > 0 && `, ${preview.repeats} repeated and kept once`}.
+            </p>
+          )}
+          {/* An empty list is the prompt's answer for a file the chat could not read. */}
+          {preview && preview.ready.length + preview.invalid.length === 0 && (
+            <p>
+              {fromFile
+                ? 'The chat sent no questions, so it could not read your file. Attach the file again with the prompt and send it.'
+                : 'The chat sent no questions. Send the prompt again in a new chat.'}
             </p>
           )}
           {parsed.kind === 'questions' && parsed.answerCount !== undefined && parsed.answerCount !== parsed.items.length && (

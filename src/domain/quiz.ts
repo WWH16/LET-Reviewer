@@ -27,11 +27,15 @@ export function upgradeQuestion(q: Question): Question {
 /** A question a quiz or mock can ask: not removed, and it has an answer key. */
 export const counts = (q: Question) => !q.deleted && q.answer !== null;
 
+/** A quiz's topic rides on its questions' tags as `topic:<text>`, so it syncs and backs up with them. */
+export const topicTag = (topic: string) => `topic:${topic}`;
+export const topicOf = (q: Question) => q.tags?.find((t) => t.startsWith('topic:'))?.slice(6) ?? '';
+
 export interface Quiz {
   id: string;
   area: Question['area'];
   subarea: string;
-  /** "Quiz 2": its place among the subject's quizzes, oldest first. */
+  /** "Quiz 2": its place among the subject's quizzes, oldest first, then its topic if it has one. */
   name: string;
   /** When it was made: from its id, or its oldest question for one with no time in its id. */
   createdAt: string;
@@ -52,7 +56,8 @@ export function groupQuizzes(questions: Iterable<Question>): Quiz[] {
   for (const z of dated) {
     const k = `${z.area}/${z.subarea}`;
     n.set(k, (n.get(k) ?? 0) + 1);
-    z.name = `Quiz ${n.get(k)}`;
+    const topic = topicOf(z.questions[0]);
+    z.name = topic ? `Quiz ${n.get(k)}: ${topic}` : `Quiz ${n.get(k)}`;
   }
   return dated;
 }
