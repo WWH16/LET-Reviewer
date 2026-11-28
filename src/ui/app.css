@@ -2598,6 +2598,18 @@ a.mode:focus-visible {
 .review-row > :not(.review-status) {
   grid-column: 2;
 }
+/* A long question shows three lines until its row is opened, so the list and the buttons stay in reach. */
+.review-stem {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+details[open] > .review-row > .review-stem {
+  display: block;
+  overflow: visible;
+}
 .review-status {
   display: grid;
   place-items: center;

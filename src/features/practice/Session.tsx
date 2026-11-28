@@ -198,7 +198,7 @@ export function Session() {
                           <Icon name="cross" size={14} />
                           <span className="sr-only">Incorrect: </span>
                         </span>
-                        <span>{q.stem}</span>
+                        <span className="review-stem">{q.stem}</span>
                         <span className="meta">
                           You chose {r.chosen}. The answer is {q.answer}.
                         </span>
