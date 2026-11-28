@@ -1,10 +1,10 @@
 /* Hallmark · shape: app screen · genre: modern-minimal · theme: exam-prep light, after the Pocket Prep apps (by request: their structure, flows and look; our own name, mark and palette) on Kumo components 2.18.1, the Dose faces kept · redesign: polish (quizzes rework, 2026-11-24, brand kept)
  * nav: a side menu at 60rem and up (Study, Quizzes, Mock exams, Missed questions, Stats, then the Settings pages) and a five-tab bottom bar on phones (Study, Quizzes, Mock, Stats, Settings) · screen: a six-column bento from 60rem (Study: the butter greeting beside resume and backup, the ways to study as tiles with New quiz large on butter; Quizzes: one tile per part listing the subjects with quizzes; Stats: the ring beside the rating, subjects beside the weakest subjects, the streak across; Mock setup: the form beside the open and past exams; mock results: the score beside the rating, the subject breakdown and the retake), one column below · signature: the butter greeting on Study holding the countdown and the week; one butter block per screen holding its figure (the greeting, the quiz bar, the Stats ring, the score) · answers: a chocolate ring on butter when chosen, green with a check when right, red with a cross when wrong · states: loading, empty, full
- * axes: light/serif-titles/60 cream, 30 butter yellow, 10 cobalt (primary button and focus only), chocolate ink and rings, with green, red and orange for state · posture: friendly-quiet · contrast: pass · modes: light · v2.0.0 */
+ * axes: light/serif-titles/60 white, 30 butter yellow, 10 cobalt (primary button and focus only), chocolate ink and rings, with green, red and orange for state · posture: friendly-quiet · contrast: pass · modes: light · v2.0.0 */
 /* Hallmark · waive 7b · surface: absolute on --print-ink and --print-paper only, used inside .paper and @media print · the printed booklet and answer sheet need pure black toner on white bond, and the corner markers must scan */
 /* Hallmark · dismissed 41 · the state fills (green, red, orange) carry icons in --color-card, never text in ink; every text pair is in contrast.test.ts */
 /* Hallmark · answered F4 · buttons are Kumo's own classes (src/ui/btn.ts): one primary per screen, secondary for the rest, ghost for quiet links; aria-pressed is a toggle on the secondary */
-/* Hallmark · answered F7 · surfaces follow one ladder: flat cream cards (#efe9de, no outline or shadow) on the canvas cream (#faf9f5), flat wells inside them, one butter block per screen; tiles in a bento row share its height; choices and feedback keep Kumo's 12px card; inputs share Kumo's one input recipe because they are one role */
+/* Hallmark · answered F7 · surfaces follow one ladder: white cards with a 1px neutral hairline on the Claude app's #faf9f5 ground, flat wells inside them, one butter block per screen; tiles in a bento row share its height; choices and feedback keep Kumo's 12px card; inputs share Kumo's one input recipe because they are one role */
 /* Hallmark · waive 24b · 10px and 6px only, on dense rows (.option, .choice, .list > li, th, the quiz bar) and small gaps (.field, .week-streak, .subject) · these rows sit between Kumo's 8 and 12 steps; on the 4px scale the list rows and answer cards read either cramped or loose */
 /* Hallmark · dismissed 49 · "Replace data on this device" is a dialog's destructive choice; it wraps inside the dialog's row by design rather than clipping */
 /* Hallmark · dismissed 70 · "New code sent" follows a real request: run() in AccountSection awaits the resendCode request and announces only when it succeeds */
@@ -294,11 +294,18 @@ h1:not(.sr-only) + p {
 /* Tablets only: the Stats score tile holds a ring and its figures side by side, too much for half a tablet,
    so it takes the row; the rating and the parts pair up below it. */
 @media (min-width: 48rem) and (max-width: 59.99rem) {
-  .bento > .stats-hero {
+  /* Home's greeting and the way back in each take the row too: halves squeeze the greeting's title onto
+     two lines and leave the resume tile mostly empty. */
+  .bento > :is(.stats-hero, .greet, .home-side) {
     grid-column: 1 / -1;
   }
 }
 @media (min-width: 60rem) {
+  /* Stats: the subject list spans the parts row and the streak row. The last row is flexible, so the list's
+     extra height lands beside the streak instead of opening a gap under the parts. */
+  .bento:has(> .stats-hero) {
+    grid-template-rows: auto auto 1fr;
+  }
   .bento {
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
@@ -923,7 +930,7 @@ a.brand {
   height: 52px;
   border: 2px solid var(--color-control);
   border-radius: var(--radius-card);
-  background: var(--color-paper);
+  background: var(--color-card);
   font-family: var(--font-mono);
   font-size: var(--text-xl);
   font-weight: 500;
@@ -1142,13 +1149,15 @@ a.brand {
   }
 }
 
+/* Every screen shares one left edge: main is the wide container, centred, and a reading screen keeps the
+   reading measure inside it, flush left, so titles never jump sideways between screens. */
 main {
-  max-width: var(--measure-app);
+  max-width: var(--container-app);
   margin-inline: auto;
   padding: var(--pad-page-top) var(--space-lg) var(--space-2xl);
 }
-main.wide {
-  max-width: var(--container-app);
+main:not(.wide) > .stack-lg {
+  max-width: var(--measure-app);
 }
 @media (max-width: 59.99rem) {
   main {
@@ -1326,7 +1335,7 @@ textarea {
   padding: var(--space-2xs) var(--space-sm);
   border: 2px solid var(--color-control);
   border-radius: var(--radius-card);
-  background: var(--color-paper);
+  background: var(--color-card);
   color: var(--color-ink);
   font: inherit;
   font-size: var(--text-body);
