@@ -1,16 +1,16 @@
 /* Hallmark · shape: app screen · genre: modern-minimal · theme: exam-prep light, after the Pocket Prep apps (by request: their structure, flows and look; our own name, mark and palette) on Kumo components 2.18.1, the Dose faces kept · redesign: polish (quizzes rework, 2026-11-24, brand kept)
  * nav: a side menu at 60rem and up (Study, Quizzes, Mock exams, Missed questions, Stats, then the Settings pages) and a five-tab bottom bar on phones (Study, Quizzes, Mock, Stats, Settings) · screen: a six-column bento from 60rem (Study: the butter greeting beside resume and backup, the ways to study as tiles with New quiz large on butter; Quizzes: one tile per part listing the subjects with quizzes; Stats: the ring beside the rating, subjects beside the weakest subjects, the streak across; Mock setup: the form beside the open and past exams; mock results: the score beside the rating, the subject breakdown and the retake), one column below · signature: the butter greeting on Study holding the countdown and the week; one butter block per screen holding its figure (the greeting, the quiz bar, the Stats ring, the score) · answers: a chocolate ring on butter when chosen, green with a check when right, red with a cross when wrong · states: loading, empty, full
- * axes: light/grotesk-sans/60 white, 30 butter yellow, 10 cobalt (primary button and focus only), chocolate ink and rings, with green, red and orange for state · posture: friendly-quiet · contrast: pass · modes: light · v2.0.0 */
+ * axes: light/serif-titles/60 white, 30 butter yellow, 10 cobalt (primary button and focus only), chocolate ink and rings, with green, red and orange for state · posture: friendly-quiet · contrast: pass · modes: light · v2.0.0 */
 /* Hallmark · waive 7b · surface: absolute on --print-ink and --print-paper only, used inside .paper and @media print · the printed booklet and answer sheet need pure black toner on white bond, and the corner markers must scan */
 /* Hallmark · dismissed 41 · the state fills (green, red, orange) carry icons in --color-card, never text in ink; every text pair is in contrast.test.ts */
 /* Hallmark · answered F4 · buttons are Kumo's own classes (src/ui/btn.ts): one primary per screen, secondary for the rest, ghost for quiet links; aria-pressed is a toggle on the secondary */
-/* Hallmark · answered F7 · surfaces follow one ladder: white cards at 16px with the card shadow on a warm off-white ground, flat wells inside them, one butter block per screen; tiles in a bento row share its height; choices and feedback keep Kumo's 12px card; inputs share Kumo's one input recipe because they are one role */
+/* Hallmark · answered F7 · surfaces follow one ladder: flat cream cards (#efe9de, no outline or shadow) on the canvas cream (#faf9f5), flat wells inside them, one butter block per screen; tiles in a bento row share its height; choices and feedback keep Kumo's 12px card; inputs share Kumo's one input recipe because they are one role */
 /* Hallmark · waive 24b · 10px and 6px only, on dense rows (.option, .choice, .list > li, th, the quiz bar) and small gaps (.field, .week-streak, .subject) · these rows sit between Kumo's 8 and 12 steps; on the 4px scale the list rows and answer cards read either cramped or loose */
 /* Hallmark · dismissed 49 · "Replace data on this device" is a dialog's destructive choice; it wraps inside the dialog's row by design rather than clipping */
 /* Hallmark · dismissed 70 · "New code sent" follows a real request: run() in AccountSection awaits the resendCode request and announces only when it succeeds */
 /* Hallmark · finish-review: in-thread · audit after the quizzes rework (reviews/hallmark-audit-quizzes.md) · 16 findings · all resolved · gap: none */
 /* Hallmark · pre-emit critique: P4 H4 E4 S3 R4 V3 · weakest: S, the look follows a named reference by request; the butter greeting with the week and the New quiz tile are what Study is known by now, and the tiles keep the list's order on a phone */
-/* Hallmark · redesign: full (sign-in screen, 2026-11-25, brand kept, app renamed LET Prep) · the app's paper ground; a crowd of nine cheering Avataaars reviewers stands on a butter arc along the bottom edge, behind the form (decorative, under 5s, still under reduced motion); pointing at or tapping a reviewer lifts them a little; type a step under the app's page titles (h1 20 to 24px, wordmark 16px); the mark and the name over the form on a clay card (2px ink edge, solid ink shadow); Sign in and Create account in one track, a butter ink-edged pill sliding between them, the form below sliding in from the side of the tab picked (staggered, 240ms, none under reduced motion), one primary each; a Show button in the password field; a field's error under it in red words with the alert icon and a red edge, checked before sending; errors that belong to no field (the service, the network) on the red tint with the alert icon · dropped the promise line and the what-is-stored line from the sign-in screen at the owner's request (Settings, Account keeps the what-is-stored line) */
+/* Hallmark · redesign: full (sign-in screen, 2026-11-25, brand kept, app renamed LET Prep) · the app's paper ground; a crowd of nine cheering Avataaars reviewers stands on a butter arc along the bottom edge, behind the form (decorative, under 5s, still under reduced motion); pointing at or tapping a reviewer lifts them a little; type a step under the app's page titles (h1 20 to 24px, wordmark 16px); the mark and the name over the form on a flat cream card; Sign in and Create account in one track, a butter pill sliding between them, the form below sliding in from the side of the tab picked (staggered, 240ms, none under reduced motion), one primary each; a Show button in the password field; a field's error under it in red words with the alert icon and a red edge, checked before sending; errors that belong to no field (the service, the network) on the red tint with the alert icon · dropped the promise line and the what-is-stored line from the sign-in screen at the owner's request (Settings, Account keeps the what-is-stored line) */
 @import '@cloudflare/kumo/styles/kumo-standalone';
 @import url('./tokens.css');
 @import url('./base.css');
@@ -486,7 +486,6 @@ a.brand {
     background: var(--color-ink);
     color: var(--color-inverse);
     font-weight: var(--weight-strong);
-    box-shadow: 0 2px 0 var(--color-accent-deep);
   }
   .nav a[aria-current='page'] svg {
     color: var(--color-inverse);
@@ -640,7 +639,7 @@ a.brand {
   outline-offset: 2px;
 }
 /* Sign in: a crowd of fellow reviewers stands on a butter rise along the bottom edge. The form stands
-   above them on a clay card (a thick ink edge and a solid ink shadow, so it reads as something to press).
+   above them on a flat cream card.
    The party is one layer behind the form, decorative, clipped to the screen. --crowd is one face's width. */
 .auth {
   --crowd: clamp(120px, 13vw, 200px);
@@ -667,9 +666,7 @@ a.brand {
 .auth-card {
   gap: var(--space-md);
   padding: var(--space-lg);
-  border: 2px solid var(--color-ink);
   border-radius: 24px;
-  box-shadow: 0 6px 0 var(--color-ink);
 }
 .auth-card :is(h1, h2) {
   font-size: var(--text-h1);
@@ -770,7 +767,7 @@ a.brand {
   }
 }
 
-/* The tab: Sign in and Create account in one track. A butter pill with an ink edge marks the one in use and
+/* The tab: Sign in and Create account in one track. A butter pill marks the one in use and
    slides to the other half when it changes; the pill is the track's ::before, moved with transform only. */
 .seg {
   position: relative;
@@ -788,7 +785,6 @@ a.brand {
   width: calc(50% - var(--space-2xs));
   border-radius: var(--radius-pill);
   background: var(--color-inverse);
-  box-shadow: inset 0 0 0 2px var(--color-ink), 0 2px 0 var(--color-ink);
   transition: transform var(--dur-short) var(--ease-out);
 }
 .seg:has(> button:last-child[aria-pressed='true'])::before {
@@ -1204,12 +1200,11 @@ main.wide {
 .btn.ring:not(.btn-primary):not([aria-pressed='true']):hover:not(:disabled) {
   box-shadow: inset 0 0 0 2px var(--color-muted);
 }
-/* A pressed toggle is the sign-in tab's pill: butter with an ink edge. */
+/* A pressed toggle is the sign-in tab's pill: butter. */
 .btn[aria-pressed='true'] {
   background: var(--color-inverse);
   color: var(--color-inverse-ink);
   --text-color-kumo-default: var(--color-inverse-ink);
-  box-shadow: inset 0 0 0 2px var(--color-ink), 0 2px 0 var(--color-ink);
 }
 .btn[aria-busy='true'] {
   cursor: progress;
@@ -2078,11 +2073,12 @@ a.week-streak.is-at-risk:hover {
   border-radius: var(--radius-tile);
   background: var(--color-card);
   color: var(--color-ink);
-  box-shadow: var(--shadow-raised);
+  box-shadow: var(--shadow-card);
   text-decoration: none;
 }
 .resume:hover {
-  background: var(--color-paper-2);
+  background: var(--color-paper-soft);
+  box-shadow: var(--shadow-raised);
 }
 a.resume,
 a.mode {
@@ -2118,7 +2114,8 @@ a.mode {
   text-decoration: none;
 }
 a.mode:hover {
-  background: var(--color-paper-2);
+  background: var(--color-paper-soft);
+  box-shadow: var(--shadow-raised);
 }
 a.mode:active {
   background: var(--color-paper-2);
@@ -2987,7 +2984,7 @@ dialog.command input:focus-visible {
   margin-bottom: var(--space-lg);
   padding: var(--space-xl);
   border-radius: var(--radius-card);
-  box-shadow: var(--shadow-card);
+  box-shadow: 0 0 0 1px var(--color-rule);
 }
 .paper h2 {
   font-size: 1.1em;
