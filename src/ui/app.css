@@ -2136,7 +2136,7 @@ dialog::backdrop {
   }
 }
 @media (prefers-reduced-motion: no-preference) {
-  /* The new icon turns in; the page itself cross-fades (theme.ts uses a view transition, as the quiz's question change does). */
+  /* The new icon turns in; the quiz's question change cross-fades over 300ms. */
   .theme-toggle-icon {
     animation: icon-turn var(--dur-short) var(--ease-out);
   }
@@ -2145,6 +2145,19 @@ dialog::backdrop {
     animation-duration: 300ms;
     animation-timing-function: var(--ease-out);
   }
+}
+/* Switching theme from the toggle: theme.ts grows the new theme as a circle out of the button, so both snapshots
+   hold still and unblended while it does. */
+:root.theme-reveal::view-transition-old(root),
+:root.theme-reveal::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+/* A switch the device makes, or any switch under reduced motion: a short cross-fade, colour only, no movement. */
+:root.theme-fade::view-transition-old(root),
+:root.theme-fade::view-transition-new(root) {
+  animation-duration: 240ms;
+  animation-timing-function: var(--ease-out);
 }
 @keyframes icon-turn {
   from {

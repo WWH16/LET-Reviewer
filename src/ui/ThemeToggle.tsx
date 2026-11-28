@@ -15,7 +15,11 @@ export function ThemeToggle() {
       aria-label="Dark theme"
       aria-pressed={dark}
       title={dark ? 'Switch to light' : 'Switch to dark'}
-      onClick={() => setTheme(dark ? 'light' : 'dark')}
+      onClick={(e) => {
+        // The new theme grows out of this button: its centre, which a tap and Enter or Space alike start from.
+        const b = e.currentTarget.getBoundingClientRect();
+        setTheme(dark ? 'light' : 'dark', { x: b.left + b.width / 2, y: b.top + b.height / 2 });
+      }}
     >
       {/* Keyed on the theme, so the new icon turns in each time it changes. */}
       <span key={dark ? 'dark' : 'light'} className="theme-toggle-icon">
