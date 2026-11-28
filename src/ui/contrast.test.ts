@@ -83,8 +83,8 @@ describe('tokens', () => {
     ['color-paper', 'color-success-fill', 3],
     ['color-paper', 'color-error-fill', 3],
     ['color-paper', 'color-warning-fill', 3],
-    // The rating's gold figure is large text.
-    ['color-gold', 'color-card', 3],
+    // The rating's gold figure is 22px on a phone, under large-text size, so it needs 4.5:1.
+    ['color-gold', 'color-card', 4.5],
   ];
   it.each(pairs)('%s on %s', (fg, bg, min) => {
     expect(t[fg], fg).toBeDefined();

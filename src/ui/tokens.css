@@ -64,8 +64,8 @@
   --color-shade: oklch(28.3% 0.062 43.5 / 0.45);
   /* the 30: the golden yellow header block, one per screen, holding its figure (the quiz bar, the Stats gauge, the score), in chocolate type */
   --color-inverse: oklch(86% 0.16 88); --color-inverse-ink: oklch(28.3% 0.062 43.5); --color-inverse-muted: oklch(40% 0.06 55); --color-inverse-tint: oklch(80% 0.15 84);
-  /* deep gold for a large figure on a white card (the projected rating): large text only */
-  --color-gold: oklch(63% 0.13 78);
+  /* deep gold for the projected rating on a white card: 4.5:1, since it is 22px on a phone */
+  --color-gold: oklch(54% 0.115 72);
   /* the primary button: chocolate with a white label, a step darker when pressed */
   --color-button: oklch(28.3% 0.062 43.5); --color-button-deep: oklch(20% 0.045 43); --color-button-ink: oklch(100% 0 0);
   /* The clay look, everywhere: a 2px chocolate outline and a solid chocolate shadow under it, no blur. Drawn with

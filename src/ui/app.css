@@ -2452,7 +2452,7 @@ a.mode:focus-visible {
 .subject-pct.is-low {
   color: var(--color-error);
 }
-/* The projected rating's figure in deep gold, on a white card only (large text, 3:1). */
+/* The projected rating's figure in deep gold, on a white card only (4.5:1: it is 22px on a phone). */
 .rating:not(.tile-inverse) .display {
   color: var(--color-gold);
 }
