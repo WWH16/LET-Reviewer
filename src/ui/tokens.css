@@ -1,6 +1,6 @@
-/* Role tokens, by the 60-30-10 rule: 60 butter yellow #FDD77A (the ground, pale butter wells, cream cards),
-   30 chocolate #421E0E (ink, the clay outlines, the header block on each screen), 10 cobalt #0047AB
-   (primary buttons, links, the current place, a choice, focus). Three state colours always mean the same thing: green is right,
+/* Role tokens, by the 60-30-10 rule: 60 light (a warm off-white ground and white cards), 30 butter yellow
+   #FDD77A (the header block on each screen, butter tints for the current place and a choice), 10 cobalt
+   #0047AB (primary buttons, links, rings, focus). Chocolate #421E0E is the ink and the clay outlines. Three state colours always mean the same thing: green is right,
    red is wrong, orange is flagged or middling. State is never colour alone: a right
    answer also carries a check, a wrong one a cross, a flag the flag icon. Kumo's --color-kumo-* tokens
    point at these, so its components follow. Every text pair is checked in contrast.test.ts. */
@@ -43,26 +43,24 @@
   --measure-app: 48rem; --container-app: 72rem; --sidebar-w: 15rem; --header-h: 48px; --tabbar-h: 56px; --sticky-offset: env(safe-area-inset-top, 0px);
   --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px); --safe-left: env(safe-area-inset-left, 0px); --safe-right: env(safe-area-inset-right, 0px);
 
-  /* the 60: butter yellow #FDD77A ground, paler butter for wells and hovers, cream cards */
-  --color-paper: oklch(89.3% 0.12 87.7); --color-paper-2: oklch(95.5% 0.05 90); --color-paper-3: oklch(92.5% 0.075 89);
-  --color-card: oklch(99.2% 0.012 92);
-  /* the 30: chocolate #421E0E ink, and browns stepped from it */
+  /* the 60: a warm off-white ground, white cards, flat wells */
+  --color-paper: oklch(98.5% 0.005 95); --color-paper-2: oklch(96.2% 0.012 95); --color-paper-3: oklch(93.5% 0.018 95);
+  --color-card: oklch(100% 0 0);
+  /* the ink: chocolate #421E0E, and browns stepped from it */
   --color-ink: oklch(28.3% 0.062 43.5); --color-ink-2: oklch(35% 0.06 45); --color-muted: oklch(43% 0.06 50);
-  --color-rule: oklch(87% 0.06 82); --color-line: oklch(28.3% 0.062 43.5 / 0.15); --color-control: oklch(60% 0.06 60);
-  /* the 10: cobalt #0047AB for primary buttons, links, rings and focus; pale cobalt for the current tab and a selection */
+  --color-rule: oklch(91% 0.015 85); --color-line: oklch(28.3% 0.062 43.5 / 0.15); --color-control: oklch(60% 0.06 60);
+  /* the 10: cobalt #0047AB for primary buttons, links, rings and focus; a butter tint for the current tab and a selection */
   --color-accent: oklch(42.8% 0.172 259.7); --color-accent-deep: oklch(34% 0.15 262); --color-accent-ink: oklch(100% 0 0);
-  --color-accent-text: oklch(42.8% 0.172 259.7); --color-accent-edge: oklch(42.8% 0.172 259.7); --color-accent-soft: oklch(93% 0.035 255); --color-on-soft: oklch(28.3% 0.062 43.5);
+  --color-accent-text: oklch(42.8% 0.172 259.7); --color-accent-edge: oklch(42.8% 0.172 259.7); --color-accent-soft: oklch(95.5% 0.06 92); --color-on-soft: oklch(28.3% 0.062 43.5);
   --color-focus: oklch(42.8% 0.172 259.7);
   /* right, wrong, flagged: text, fill (rings and icons) and tint (backgrounds) */
   --color-success: oklch(51.5% 0.109 160.6); --color-success-fill: oklch(62.1% 0.132 160); --color-success-tint: oklch(95% 0.024 163.1);
   --color-error: oklch(53.1% 0.172 25.2); --color-error-fill: oklch(59.7% 0.182 24.5); --color-error-tint: oklch(94.4% 0.022 17.5);
-  --color-warning: oklch(46% 0.12 50); --color-warning-fill: oklch(62% 0.16 45); --color-warning-tint: oklch(95.5% 0.022 65); --color-info-tint: oklch(95% 0.025 255);
-  /* orange bright enough for text on the chocolate block (the low timer) */
-  --color-warning-bright: oklch(76% 0.15 58);
+  --color-warning: oklch(46% 0.12 50); --color-warning-fill: oklch(62% 0.16 45); --color-warning-tint: oklch(95.5% 0.022 65); --color-info-tint: oklch(96% 0.04 92);
   --color-shade: oklch(28.3% 0.062 43.5 / 0.45);
-  /* the 30: the chocolate header block, one per screen, holding its figure (the quiz bar, the Stats gauge, the score), in butter type */
-  --color-inverse: oklch(28.3% 0.062 43.5); --color-inverse-ink: oklch(89.3% 0.12 87.7); --color-inverse-muted: oklch(80% 0.07 75); --color-inverse-tint: oklch(40% 0.07 45);
-  /* deep gold for a large figure on a cream card (the projected rating): large text only */
+  /* the 30: the butter yellow header block, one per screen, holding its figure (the quiz bar, the Stats gauge, the score), in chocolate type */
+  --color-inverse: oklch(89.3% 0.12 87.7); --color-inverse-ink: oklch(28.3% 0.062 43.5); --color-inverse-muted: oklch(40% 0.06 55); --color-inverse-tint: oklch(81% 0.14 82);
+  /* deep gold for a large figure on a white card (the projected rating): large text only */
   --color-gold: oklch(60% 0.13 70);
   /* the primary button: cobalt with a white label */
   --color-button: oklch(42.8% 0.172 259.7); --color-button-deep: oklch(34% 0.15 262); --color-button-ink: oklch(100% 0 0);

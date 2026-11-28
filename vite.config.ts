@@ -16,8 +16,8 @@ export default defineConfig({
         description: 'Offline practice for the Licensure Examination for Teachers',
         display: 'standalone',
         start_url: '.',
-        background_color: '#FDD77A',
-        theme_color: '#FDD77A',
+        background_color: '#FBFAF6',
+        theme_color: '#FBFAF6',
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'icon-512.png', sizes: '512x512', type: 'image/png' },
