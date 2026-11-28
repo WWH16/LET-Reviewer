@@ -2014,6 +2014,26 @@ dialog::backdrop {
 .back svg {
   color: var(--color-muted);
 }
+/* The phone's back link: a left chevron and the parent's name at the top left, a 44px target. */
+a.back-link {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: var(--space-3xs);
+  min-height: 44px;
+  margin-block: calc(-1 * var(--space-sm));
+  margin-inline-start: -6px;
+  font-size: var(--text-name);
+  font-weight: var(--weight-strong);
+  color: var(--color-accent-text);
+  text-decoration: none;
+}
+.back-link svg {
+  rotate: 180deg;
+}
+a.back-link:hover {
+  text-decoration: underline;
+}
 
 /* ---------- Empty: nothing here yet ----------
    An icon tile, what belongs here and why it is empty, then the way to fill it. Left-aligned like the

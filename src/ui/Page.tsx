@@ -33,16 +33,24 @@ export function Page({
     <main id="main" className={wide ? 'wide' : undefined}>
       <div className="stack-lg">
         {crumbs && (
-          <nav className="back" aria-label="Breadcrumb">
-            <ol>
-              {crumbs.map((c) => (
-                <li key={c.to}>
-                  <Link to={c.to}>{c.label}</Link>
-                  <Icon name="caret" size={14} />
-                </li>
-              ))}
-            </ol>
-          </nav>
+          <>
+            {/* Phones and tablets: one back link to the nearest parent, a left chevron as on iOS and Android.
+                Wide screens keep the full trail, the web's own convention. */}
+            <Link className="back-link only-narrow" to={crumbs[crumbs.length - 1].to} aria-label={`Back to ${crumbs[crumbs.length - 1].label}`}>
+              <Icon name="caret" size={18} />
+              {crumbs[crumbs.length - 1].label}
+            </Link>
+            <nav className="back only-wide" aria-label="Breadcrumb">
+              <ol>
+                {crumbs.map((c) => (
+                  <li key={c.to}>
+                    <Link to={c.to}>{c.label}</Link>
+                    <Icon name="caret" size={14} />
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          </>
         )}
         <h1 ref={heading} tabIndex={-1} className={titleHidden ? 'sr-only' : undefined}>
           {title}
