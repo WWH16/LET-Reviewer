@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { parsePasted, previewImport, previewQuiz, validateItem } from './validate';
 import { examLabel } from './ids';
-import { dayKey, heatWeeks, monthWeeks, streak } from './dates';
+import { dayKey, heatWeeks, monthWeeks, streak, studyDays } from './dates';
 import { drawMock, quotas } from './examDraw';
 import { PARTS } from './let-config';
 import { lastResults, projectedRating, recentByArea, recentPartScores, tallyBy, weakestSubjects } from './scoring';
@@ -147,6 +147,25 @@ describe('days and streaks', () => {
   it('counts 00:30 as the night before, and streaks across days', () => {
     expect(dayKey(new Date(2026, 10, 16, 0, 30))).toBe('2026-11-15');
     expect(streak(new Set(['2026-11-13', '2026-11-14', '2026-11-15']), '2026-11-15')).toBe(3);
+  });
+  it('counts only answered items toward study days, not a graded mock left blank', () => {
+    const at = (d: number) => new Date(2026, 10, d, 10).toISOString();
+    const { days, today } = studyDays(
+      [
+        { at: at(14), chosen: 'A' },
+        { at: at(15), chosen: null },
+        { at: at(15), chosen: null },
+        { at: at(16), chosen: 'B' },
+        { at: at(16), chosen: null },
+      ],
+      '2026-11-16',
+    );
+    expect([...days]).toEqual([
+      ['2026-11-14', 1],
+      ['2026-11-16', 1],
+    ]);
+    expect(today).toHaveLength(1);
+    expect(streak(days, '2026-11-16')).toBe(1);
   });
   it('keeps a streak alive until tonight, across a month end', () => {
     const days = ['2026-10-30', '2026-10-31', '2026-11-01', '2026-11-02', '2026-11-14', '2026-11-15'];

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useAttempts, useQuestionMap, useSettings } from '../../db/hooks';
 import { isCorrect, projectedRating, recentPartScores } from '../../domain/scoring';
-import { dayKey } from '../../domain/dates';
+import { dayKey, studyDays } from '../../domain/dates';
 
 export const MIN_PART_ANSWERS = 20;
 
@@ -19,14 +19,8 @@ export function useStats() {
       settings.level,
       Object.fromEntries(Object.entries(parts).map(([a, v]) => [a, v!.total >= MIN_PART_ANSWERS ? v!.pct : null])),
     );
-    // Answers per study day: the streak reads its keys, the activity grid its counts.
-    const days = new Map<string, number>();
-    const todayAttempts: typeof attempts = [];
-    for (const a of attempts) {
-      const day = dayKey(a.at);
-      days.set(day, (days.get(day) ?? 0) + 1);
-      if (day === today) todayAttempts.push(a);
-    }
+    // Answers per study day (blank mock items left out): the streak reads its keys, the activity grid its counts.
+    const { days, today: todayAttempts } = studyDays(attempts, today);
     const todayCorrect = todayAttempts.filter((a) => isCorrect(a, qmap.get(a.questionId))).length;
     const hasQuestions = [...qmap.values()].some((q) => !q.deleted);
     return { qmap, attempts, settings, today, parts, rating, days, todayAttempts, todayCorrect, hasQuestions };

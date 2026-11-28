@@ -31,6 +31,22 @@ export function daysBetween(from: string, to: string): number {
   return Math.round((b - a) / 86400000);
 }
 
+/**
+ * Answers per study day, and today's answers. Only answered items count: a graded mock saves its blank items
+ * too (they score as wrong), but leaving a mock blank is not studying, so they neither start a day nor add to it.
+ */
+export function studyDays<T extends { at: string; chosen: unknown }>(attempts: readonly T[], today: string) {
+  const days = new Map<string, number>();
+  const todays: T[] = [];
+  for (const a of attempts) {
+    if (a.chosen === null) continue;
+    const day = dayKey(a.at);
+    days.set(day, (days.get(day) ?? 0) + 1);
+    if (day === today) todays.push(a);
+  }
+  return { days, today: todays };
+}
+
 /** Consecutive study days ending today (or yesterday, so the streak survives until tonight). */
 export function streak(days: { has(day: string): boolean }, today: string): number {
   let d = days.has(today) ? today : addDays(today, -1);
