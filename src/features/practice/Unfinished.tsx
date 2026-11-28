@@ -31,12 +31,12 @@ export function Unfinished() {
   if (!quizzes.length && !mocks.length)
     return (
       <Page title="Unfinished">
-        <Empty icon="check" title="Nothing unfinished" text="A quiz or mock you leave midway shows up here, ready to continue.">
+        <Empty icon="check" title="Nothing unfinished" text="A quiz or mock exam you leave midway shows up here, ready to continue.">
           <Link className={btn.primary} to="/quizzes">
             Take a quiz
           </Link>
           <Link className={btn.secondary} to="/mock">
-            Start a mock
+            Start a mock exam
           </Link>
         </Empty>
       </Page>
@@ -71,7 +71,7 @@ export function Unfinished() {
                       onClick={async () => {
                         await dropTake(t.id);
                         // Her answers so far are already saved; only the place in the quiz goes.
-                        announce('Quiz take discarded', () => saveTake(t));
+                        announce('Quiz progress discarded', () => saveTake(t));
                       }}
                     >
                       Discard
@@ -99,7 +99,7 @@ export function Unfinished() {
                       <span className="mono">{e.label}</span>
                       <span className="meta">
                         {PARTS[e.part].name}.{' '}
-                        {printed ? 'Printed; the answers are not entered yet.' : `${answered} of ${e.itemIds.length} answered.`}
+                        {printed ? 'Printed. Enter the answers from the sheet to grade it.' : `${answered} of ${e.itemIds.length} answered.`}
                       </span>
                     </span>
                   </Link>

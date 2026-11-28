@@ -59,7 +59,7 @@ export function MockHistory() {
                     <span className="mono">{e.label}</span>
                     <span className="meta">
                       {PARTS[e.part].name}, {e.form}, {fmtDate(e.submittedAt ?? e.updatedAt)}. {s.correct} of {s.total} right
-                      {s.pct < PART_FLOOR ? `, below the ${PART_FLOOR}% floor` : ''}.
+                      {s.pct < PART_FLOOR ? `, below the ${PART_FLOOR}% minimum` : ''}.
                     </span>
                   </span>
                   <span className={`subject-pct num ${scoreTone(s.pct)}`}>{Math.round(s.pct)}%</span>

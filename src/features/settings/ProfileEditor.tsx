@@ -142,7 +142,7 @@ export function ProfileEditor({ s, footer }: { s: Settings; footer?: ReactNode }
             onChange={(e) => saveSettings({ name: e.target.value })}
           />
           <p id="s-name-hint" className="muted">
-            Study greets you by this name, with LPT after it.
+            Home greets you by this name, with LPT after it.
           </p>
         </div>
         <fieldset className="stack-sm">

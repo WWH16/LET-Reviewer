@@ -62,9 +62,9 @@ export function MockResults() {
   if (!exam || !qmap || !settings || !exams) return <Page title="Exam results">{null}</Page>;
   if (exam.deleted)
     return (
-      <Page title="Exam deleted">
+      <Page title="Exam removed">
         <p>
-          {exam.label} was deleted. <Link to="/mock/results">See all mock results</Link>
+          {exam.label} was removed. <Link to="/mock/results">See all mock results</Link>
         </p>
       </Page>
     );
@@ -167,7 +167,7 @@ export function MockResults() {
             <span className="display-unit">{s.pct.toFixed(1)}%</span>
           </p>
           <p>
-            {s.pct >= PART_FLOOR ? `Above the ${PART_FLOOR}% floor for this part.` : `Below the ${PART_FLOOR}% floor. A part under ${PART_FLOOR}% fails the exam.`}
+            {s.pct >= PART_FLOOR ? `Above the ${PART_FLOOR}% minimum for a part.` : `Below the ${PART_FLOOR}% minimum. Any part under ${PART_FLOOR}% fails the whole exam.`}
             {weight ? ` This part is ${Math.round(weight * 100)}% of your rating.` : ''}
           </p>
           <p className="well">
@@ -193,7 +193,7 @@ export function MockResults() {
               <tr>
                 <th scope="col">Subject</th>
                 <th scope="col" className="num">
-                  Right
+                  Correct
                 </th>
                 <th scope="col" className="num">
                   Score
@@ -251,7 +251,7 @@ export function MockResults() {
               </button>
             )}
             <Link className={btn.secondary} to="/mock">
-              New mock, new questions
+              New mock exam
             </Link>
           </div>
         </section>
@@ -259,7 +259,7 @@ export function MockResults() {
         {hasPacing && (
           <section className="tile span-3" aria-labelledby="mr-pace">
             <h2 id="mr-pace">Pacing</h2>
-            <p className="muted">LET pace is where you would be at the real exam’s speed.</p>
+            <p className="muted">When you reached each mark, next to the time the real LET gives for that many items.</p>
             <table>
               <thead>
                 <tr>
@@ -268,7 +268,7 @@ export function MockResults() {
                     Time
                   </th>
                   <th scope="col" className="num">
-                    LET pace
+                    Real LET
                   </th>
                 </tr>
               </thead>
@@ -290,7 +290,7 @@ export function MockResults() {
       </div>
 
       <section className="stack reading" aria-labelledby="mr-check">
-        <h2 id="mr-check">Checking the paper</h2>
+        <h2 id="mr-check">Item by item</h2>
         <div className="row" role="group" aria-label="Show">
           {(['all', 'wrong', 'flagged', 'unanswered'] as Filter[]).map((f) => (
             <button key={f} type="button" className={btn.secondary} aria-pressed={filter === f} onClick={() => setFilter(f)}>
@@ -327,12 +327,12 @@ export function MockResults() {
           Home
         </Link>
         <button type="button" className={btn.quiet} onClick={() => setConfirmDelete(true)}>
-          Delete exam
+          Remove exam
         </button>
       </div>
 
-      <Dialog open={confirmDelete} onClose={() => setConfirmDelete(false)} title={`Delete ${exam.label}?`}>
-        <p>It leaves your mock results. Your answers stay in Stats.</p>
+      <Dialog open={confirmDelete} onClose={() => setConfirmDelete(false)} title={`Remove ${exam.label}?`}>
+        <p>It comes off Mock results. Your answers still count in Stats.</p>
         <div className="row">
           <button type="button" className={btn.primary} data-autofocus onClick={() => setConfirmDelete(false)}>
             Keep it
@@ -341,11 +341,11 @@ export function MockResults() {
             className={btn.secondary}
             onClick={async () => {
               await updateExam(exam.id, { deleted: true });
-              announce('Exam deleted', () => updateExam(exam.id, { deleted: false }));
+              announce('Exam removed', () => updateExam(exam.id, { deleted: false }));
               navigate('/mock/results');
             }}
           >
-            Delete exam
+            Remove exam
           </AsyncButton>
         </div>
       </Dialog>

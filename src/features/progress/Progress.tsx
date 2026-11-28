@@ -12,7 +12,7 @@ import { loadDemoData } from '../../db/repo';
 import { AsyncButton } from '../../ui/AsyncButton';
 import { subareaName } from '../../domain/subjects';
 
-const fmt = (p: number | null) => (p === null ? 'Not yet' : `${Math.round(p)}%`);
+const fmt = (p: number | null) => (p === null ? 'No answers' : `${Math.round(p)}%`);
 
 export function Progress() {
   const stats = useStats();
@@ -28,7 +28,7 @@ export function Progress() {
             Take a quiz
           </Link>
           <AsyncButton className={btn.secondary} onClick={async () => announce(`Added ${await loadDemoData()} sample answers`)}>
-            Fill with sample answers
+            Add sample answers
           </AsyncButton>
         </Empty>
       </Page>
@@ -56,7 +56,7 @@ export function Progress() {
               <p className="stats-count">
                 <span className="num">{right}</span> of <span className="num">{answered}</span> answered correctly
               </p>
-              <p className="meta">Each part’s most recent 150 answers.</p>
+              <p className="meta">From your last 150 answers in each part.</p>
             </div>
             <dl className="stat-row">
               <div>

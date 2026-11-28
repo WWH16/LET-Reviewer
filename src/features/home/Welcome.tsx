@@ -45,7 +45,7 @@ export function Welcome({ settings }: { settings: Settings }) {
                   {level === 'secondary' && (
                     <div className="field">
                       <label htmlFor="w-major">Major</label>
-                      <input id="w-major" type="text" required placeholder="e.g. Filipino" value={major} onChange={(e) => setMajor(e.target.value)} />
+                      <input id="w-major" type="text" required placeholder="For example, Filipino" value={major} onChange={(e) => setMajor(e.target.value)} />
                     </div>
                   )}
                 </div>

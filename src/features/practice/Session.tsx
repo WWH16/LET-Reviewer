@@ -189,7 +189,7 @@ export function Session() {
         </section>
         {wrong.length > 0 && (
           <section className="stack-sm" aria-labelledby="res-wrong">
-            <h2 id="res-wrong">To review</h2>
+            <h2 id="res-wrong">Questions you missed</h2>
             <ul className="list review-list">
               {wrong.map((r) => {
                 const q = shown(qmap.get(r.id)!, orders.get(r.id));
@@ -374,7 +374,7 @@ export function Session() {
                 </button>
                 {/* A wrong key from Claude would mark every retake wrong, so the fix is one tap away. */}
                 <Link className={btn.quiet} to={`/question/${encodeURIComponent(q.id)}`}>
-                  Fix this question
+                  Edit this question
                 </Link>
               </div>
             </div>

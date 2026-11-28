@@ -152,7 +152,7 @@ export function EditQuestion() {
       </form>
 
       <Dialog open={confirm} onClose={() => setConfirm(false)} title="Remove this question?">
-        <p>It leaves this quiz and future mocks. Your past answers to it stay in your history.</p>
+        <p>It comes off this quiz and new mock exams. Your past answers to it still count in Stats.</p>
         <div className="row">
           <button type="button" className={btn.primary} data-autofocus onClick={() => setConfirm(false)}>
             Keep it

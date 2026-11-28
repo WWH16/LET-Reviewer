@@ -40,7 +40,7 @@ export async function deviceCounts(): Promise<Counts> {
 export function checkBackup(v: Record<string, unknown>): { ok: true; backup: Backup; counts: Counts } | { ok: false; error: string } {
   const version = Number(v.schemaVersion);
   if (!Number.isInteger(version) || version < 1)
-    return { ok: false, error: 'This file has no schema version, so it is not a backup made by this app. Nothing was restored.' };
+    return { ok: false, error: 'This file is not a backup made by this app. Nothing was restored.' };
   if (version > SCHEMA_VERSION)
     return {
       ok: false,

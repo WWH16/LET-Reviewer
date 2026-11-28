@@ -265,7 +265,7 @@ export function MockExam() {
       <Page title="Exam not found">
         <Empty icon="mock" title="This exam is not on this device" text="It may have been removed, or made on another device.">
           <Link className={btn.primary} to="/mock">
-            Back to Mock exam
+            Back to Mock exams
           </Link>
         </Empty>
       </Page>
@@ -359,7 +359,7 @@ export function MockExam() {
           </button>
         </p>
       )}
-      {settings.strictSheet && <p className="muted">Strict sheet is on: shade your answers on the answer sheet.</p>}
+      {settings.strictSheet && <p className="muted">Strict answer sheet is on: pick your answers on the answer sheet.</p>}
 
       <div className="exam">
         <div className="booklet">
@@ -380,7 +380,7 @@ export function MockExam() {
             ) : (
               <section className="item" key={qid}>
                 <h2>{n}</h2>
-                <p className="muted">This question was removed from the bank.</p>
+                <p className="muted">This question was removed from its quiz.</p>
               </section>
             );
           })}

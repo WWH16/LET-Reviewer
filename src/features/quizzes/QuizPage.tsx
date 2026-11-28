@@ -60,18 +60,18 @@ export function QuizPage() {
         }}
       >
         <div className="field">
-          <label htmlFor="qp-min">Minutes for a timed take</label>
+          <label htmlFor="qp-min">Minutes for a timed quiz</label>
           <input id="qp-min" type="number" inputMode="numeric" min={1} placeholder={String(pace)} value={minutes} onChange={(e) => setMinutes(e.target.value)} />
         </div>
         <button type="submit" className={btn.secondary}>
-          Take timed
+          Take with timer
         </button>
       </form>
       <p className="meta">Every take shuffles the questions and their choices. Blank minutes use the real LET pace, {pace} for this quiz.</p>
 
       <section className="stack-sm" aria-labelledby="qp-list">
         <h2 id="qp-list">Questions</h2>
-        <p className="meta">Open one to fix its answer or wording, or to remove it.</p>
+        <p className="meta">Open one to edit or remove it.</p>
         <ul className="list">
           {z.questions.map((q, i) => (
             <li key={q.id}>
@@ -94,7 +94,7 @@ export function QuizPage() {
       </div>
 
       <Dialog open={confirm} onClose={() => setConfirm(false)} title={`Remove ${subject}, ${z.name}?`}>
-        <p>Its {count(z.questions.length, 'question')} leave your quizzes and future mocks. Your past answers stay in Stats.</p>
+        <p>Its {count(z.questions.length, 'question')} come off your quizzes and new mock exams. Your past answers still count in Stats.</p>
         <div className="row">
           <button type="button" className={btn.primary} data-autofocus onClick={() => setConfirm(false)}>
             Keep it

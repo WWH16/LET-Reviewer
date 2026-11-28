@@ -116,17 +116,17 @@ export function MockSetup() {
           <p className="muted">Answers are graded only after you submit, like the paper LET.</p>
 
           <fieldset className="stack-sm">
-            <legend className="label">Form</legend>
+            <legend className="label">How you take it</legend>
             {/* The one choice that changes the whole exam, so each option says what it means. */}
             <div className="options">
               <label className="option">
                 <input type="radio" name="form" className="sr-only" checked={form === 'digital'} onChange={() => setForm('digital')} />
-                <span className="option-title">Digital paper</span>
+                <span className="option-title">On screen</span>
                 <span className="meta">Booklet and bubble sheet on screen, with the timer.</span>
               </label>
               <label className="option">
                 <input type="radio" name="form" className="sr-only" checked={form === 'printed'} onChange={() => setForm('printed')} />
-                <span className="option-title">Printed paper</span>
+                <span className="option-title">Printed</span>
                 <span className="meta">Print it, answer with a pencil, then enter the answers.</span>
               </label>
             </div>
@@ -151,7 +151,7 @@ export function MockSetup() {
               </Select>
             </div>
             <div className="field">
-              <label htmlFor="mk-len">Length</label>
+              <label htmlFor="mk-len">Number of items</label>
               <Select id="mk-len" value={length} onChange={(v) => setLength(v as Length)}>
                 <option value="short">Short: {SHORT} items</option>
                 <option value="half">Half: {Math.round(PARTS[part].items / 2)} items</option>
@@ -179,7 +179,7 @@ export function MockSetup() {
 
           <fieldset className="stack-sm">
             <legend className="label">Subjects</legend>
-            <p className="meta">Items are split evenly across the subjects you pick, from your quiz questions in them.</p>
+            <p className="meta">Items come from your quizzes in the subjects you pick, split evenly between them.</p>
             {all.map((s) => (
               <label key={s.id} className="check">
                 <input type="checkbox" checked={subjects.includes(s.id)} onChange={() => toggle(s.id)} />
@@ -229,7 +229,7 @@ export function MockSetup() {
               </p>
             ) : (
               <div className="stack-sm">
-                <p>Some subjects need more quiz questions for this length:</p>
+                <p>Some subjects need more quiz questions for this many items:</p>
                 <ul className="list">
                   {short.map((x) => (
                     <li key={x.id} className="spread">

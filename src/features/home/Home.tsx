@@ -46,7 +46,7 @@ export function Home() {
     { name: 'New quiz', line: 'Pick a subject, ask Claude, then take it.', icon: 'lightning', to: '/quizzes/new' },
     {
       name: 'Unfinished',
-      line: unfinished ? `${unfinished} to continue.` : 'Nothing left midway.',
+      line: unfinished ? `${unfinished} to continue.` : 'Nothing to continue.',
       icon: 'clock',
       to: unfinished ? '/unfinished' : undefined,
       count: unfinished || undefined,
@@ -92,7 +92,7 @@ export function Home() {
                   <>
                     Exam date has passed.{' '}
                     <Link to="/settings/exam" state={{ focus: 's-date' }}>
-                      Update it
+                      Change the date
                     </Link>
                   </>
                 )}

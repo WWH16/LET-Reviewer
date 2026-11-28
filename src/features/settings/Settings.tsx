@@ -136,7 +136,7 @@ export function Settings() {
             {s.level === 'secondary' && (
               <div className="field">
                 <label htmlFor="s-major">Major</label>
-                <input id="s-major" type="text" placeholder="e.g. Filipino" value={s.major} onChange={(e) => saveSettings({ major: e.target.value })} />
+                <input id="s-major" type="text" placeholder="For example, Filipino" value={s.major} onChange={(e) => saveSettings({ major: e.target.value })} />
               </div>
             )}
             <div className="field">
@@ -155,11 +155,11 @@ export function Settings() {
           </div>
           <label className="check">
             <input type="checkbox" checked={s.strictSheet} onChange={(e) => saveSettings({ strictSheet: e.target.checked })} />
-            Strict answer sheet: in digital mocks, answer on the bubble sheet only
+            Strict answer sheet: in on-screen mock exams, answer on the answer sheet only, as in the real LET
           </label>
           <label className="check">
             <input type="checkbox" checked={s.oneAtATime} onChange={(e) => saveSettings({ oneAtATime: e.target.checked })} />
-            One question at a time: in digital mocks, show one item per screen
+            One item at a time: in on-screen mock exams, show one item per screen
           </label>
         </section>
         )}
@@ -212,7 +212,7 @@ export function Settings() {
           <p className="muted">
             {demo
               ? `${demo} sample answers are mixed into your stats. Remove them before you study for real.`
-              : 'Six weeks of made-up answers, to see Stats and the streak full. Your own answers are not touched.'}
+              : 'Six weeks of made-up answers, to preview Stats and the streak. Your own answers are not touched.'}
           </p>
           <div className="row">
             {demo ? (

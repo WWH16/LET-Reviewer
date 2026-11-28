@@ -42,8 +42,8 @@ export interface SettingsPage {
 
 export const SETTINGS_PAGES: SettingsPage[] = [
   { id: 'profile', label: 'Profile', line: 'Your name and avatar.' },
-  { id: 'exam', label: 'Exam', line: 'Level, major, exam date and the mock timer.' },
-  { id: 'subjects', label: 'Subjects', line: 'The subjects in each part, for your quizzes and mocks.' },
+  { id: 'exam', label: 'Exam', line: 'Level, major, exam date and the mock exam timer.' },
+  { id: 'subjects', label: 'Subjects', line: 'The subjects in each part, for your quizzes and mock exams.' },
   ...(syncAvailable ? [{ id: 'account', label: 'Account', line: 'Your sign-in, syncing, and deleting your account.' }] : []),
   { id: 'data', label: 'Data', line: 'Back up, restore, sample answers, and erase this device.' },
 ];

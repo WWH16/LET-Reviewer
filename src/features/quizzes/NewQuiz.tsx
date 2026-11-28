@@ -221,22 +221,22 @@ export function NewQuiz() {
             />
             <span id="nq-topic-help" className="meta">
               {fromFile
-                ? 'What the file covers, like Module 3 handout. It names the quiz; left blank, the quiz is called From a file.'
-                : 'One topic inside the subject, like Subject-verb agreement in English. Type it to copy the prompt.'}
+                ? 'What the file covers, like Module 3 handout. It becomes the quiz name; left blank, the quiz is called From a file.'
+                : 'One topic in the subject, like Subject-verb agreement for English. Type a topic to copy the prompt.'}
             </span>
           </div>
         </div>
       </section>
 
       <section className="tile stack" aria-labelledby="nq-2">
-        <h2 id="nq-2">2. Ask an AI chat</h2>
+        <h2 id="nq-2">2. Ask Claude</h2>
         <div className="field">
           <label htmlFor="nq-prompt">Prompt</label>
           <textarea id="nq-prompt" className="mono" readOnly rows={8} value={prompt} aria-describedby="nq-prompt-help" />
           <span id="nq-prompt-help" className="meta">
             {fromFile
-              ? 'Press Copy prompt, then paste it into a new chat, attach your file, and send it. The reply comes back as one code block.'
-              : 'Press Copy prompt, then paste it into a new chat and send it. The reply comes back as one code block.'}
+              ? 'Press Copy prompt, then paste it into a new Claude chat, attach your file, and send it. The reply comes back as one code block.'
+              : 'Press Copy prompt, then paste it into a new Claude chat and send it. The reply comes back as one code block.'}
           </span>
         </div>
         <div>
@@ -276,7 +276,7 @@ export function NewQuiz() {
         </div>
         {clipError && <p role="alert">{clipError}</p>}
         <div className="field">
-          <label htmlFor="nq-paste">The chat&rsquo;s reply</label>
+          <label htmlFor="nq-paste">Claude&rsquo;s reply</label>
           <textarea id="nq-paste" value={text} spellCheck={false} onChange={(e) => setText(e.target.value)} />
         </div>
 
@@ -300,8 +300,8 @@ export function NewQuiz() {
           {preview && preview.ready.length + preview.invalid.length === 0 && (
             <p>
               {fromFile
-                ? 'The chat sent no questions, so it could not read your file. Attach the file again with the prompt and send it.'
-                : 'The chat sent no questions. Send the prompt again in a new chat.'}
+                ? 'Claude sent no questions, so it could not read your file. Attach the file again with the prompt and send it.'
+                : 'Claude sent no questions. Send the prompt again in a new chat.'}
             </p>
           )}
           {parsed.kind === 'questions' && parsed.answerCount !== undefined && parsed.answerCount !== parsed.items.length && (
